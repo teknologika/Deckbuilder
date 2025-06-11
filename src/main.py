@@ -49,7 +49,7 @@ mcp = FastMCP(
 )
 
 @mcp.tool()
-async def create_presentation(ctx: Context, fileName: str) -> str:
+async def create_presentation(ctx: Context, fileName: str = "Sample_Presentation") -> str:
     """Create a new presentation ready to add slides
 
     This tool is designed to create a new powerpoint presentation from the given context.
@@ -58,12 +58,44 @@ async def create_presentation(ctx: Context, fileName: str) -> str:
 
     Args:
         ctx: The MCP server provided context.
-        text: The name of the file that this server should create.
+        fileName: The name of the file that this server should create (default: Sample_Presentation).
     """
     try:
-        return f"Created a presentation: {fileName[:100]}..." if len(fileName) > 100 else f"Successfully saved memory: {fileName}"
-    except  Exception as e:
-        return f"Error creating presentation memory: {str(e)}"
+        # Get output folder from environment
+        output_folder = os.getenv('DECK_OUTPUT_FOLDER', '.')
+        
+        # Ensure output folder exists
+        os.makedirs(output_folder, exist_ok=True)
+        
+        # Create base filename with .latest.txt extension
+        base_name = fileName
+        latest_file = os.path.join(output_folder, f"{base_name}.latest.txt")
+        
+        # Handle versioning if file exists
+        if os.path.exists(latest_file):
+            # Find the highest version number
+            version_num = 1
+            while True:
+                version_file = os.path.join(output_folder, f"{base_name}.v{version_num:02d}.txt")
+                if not os.path.exists(version_file):
+                    break
+                version_num += 1
+            
+            # Rename current latest to versioned file
+            os.rename(latest_file, version_file)
+        
+        # Create new latest file
+        with open(latest_file, 'w') as f:
+            f.write(f"Presentation: {fileName}\n")
+            f.write(f"Created: {os.path.basename(latest_file)}\n")
+            f.write("This is a test presentation file.\n")
+        
+        return f"Successfully created presentation: {os.path.basename(latest_file)}"
+    except Exception as e:
+        return f"Error creating presentation: {str(e)}"
+
+
+
 
 async def main():
     transport = os.getenv("TRANSPORT", "sse")

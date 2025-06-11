@@ -6,7 +6,7 @@ MCP Server for building powerpoint presentations
 Add this to your Claude Desktop config file:
 
 ```json
-"mcp-deckbuilder": {
+"deckbuilder": {
   "command": "/Users/bruce/GitHub/teknologika/deck-builder-mcp/.venv/bin/python",
   "args": ["/Users/bruce/GitHub/teknologika/deck-builder-mcp/src/main.py"],
   "env": {
