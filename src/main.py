@@ -81,6 +81,10 @@ async def create_presentation(ctx: Context, fileName: str = "Sample_Presentation
                     break
                 version_num += 1
             
+            # Trim the .latest of the version_file name when we rename it
+            # Create versioned filename without .latest (e.g. Sample_Presentation.v01.txt instead of Sample_Presentation.latest.v01.txt)
+            version_file = os.path.join(output_folder, f"{base_name}.v{version_num:02d}.txt")
+            
             # Rename current latest to versioned file
             os.rename(latest_file, version_file)
         
