@@ -16,6 +16,7 @@ load_dotenv()
 @dataclass
 class DeckbuilderContext:
     """Context for the Deckbuilder MCP server."""
+    deckbuilder_client: str
 
 @asynccontextmanager
 async def deckbuilder_lifespan(server: FastMCP) -> AsyncIterator[DeckbuilderContext]:
@@ -29,8 +30,8 @@ async def deckbuilder_lifespan(server: FastMCP) -> AsyncIterator[DeckbuilderCont
         PresentationContext: The context containing the Deckbuilder client
     """
     
-    # Create and return the Deckbuilder Client with the helper function in deckbuidlder.py
-    deckbuilder_client = get_deckbuilder_client
+    # Create and return the Deckbuilder Client with the helper function in deckbuilder.py
+    deckbuilder_client = get_deckbuilder_client()
 
     try:
         yield DeckbuilderContext(deckbuilder_client=deckbuilder_client)
@@ -40,7 +41,7 @@ async def deckbuilder_lifespan(server: FastMCP) -> AsyncIterator[DeckbuilderCont
 
 # Initialize FastMCP server with the Deckbuilder client as context
 mcp = FastMCP(
-    "mcp-deckbuilder",
+    "deckbuilder",
     description="MCP server for creation of powerpoint decks",
     lifespan=deckbuilder_lifespan,
     host=os.getenv("HOST", "0.0.0.0"),
