@@ -64,7 +64,8 @@ async def create_presentation(ctx: Context, title: str = "Presentation Title", s
         author: The author of the presentation.
     """
     try:
-
+        template_name = deck.template_name or 'default'
+        result = deck.create_presentation(title, template_name)
         return f"Successfully created the presentation and added a title slide {title}"
     except Exception as e:
         return f"Error creating presentation: {str(e)}"

@@ -19,10 +19,10 @@ class Deckbuilder:
         self.prs = Presentation()
         
         # Ensure default template exists in templates folder
-        self._ensure_default_template()
+        self._check_template_exists()
         
-    def _ensure_default_template(self, templateName = 'default'):
-        """Ensure default.pptx template exists in the templates folder."""
+    def _check_template_exists(self, templateName = 'default'):
+        """Check if template exists in the templates folder and copy if needed."""
         # Ensure templateName ends with .pptx
         if not templateName.endswith('.pptx'):
             templateName += '.pptx'
@@ -44,8 +44,15 @@ class Deckbuilder:
                 pass
     
     def create_presentation(self, fileName: str, templateName: str = "default") -> str:
-        # Implementation for creating presentations
-        self.prs = Presentation(self.template_path) if self.template_path else Presentation()
+        # Check template exists
+        self._check_template_exists(templateName)
+        
+        # Create deck with template
+        if not templateName.endswith('.pptx'):
+            templateName += '.pptx'
+        template_path = os.path.join(self.template_path, templateName) if self.template_path else None
+        self.prs = Presentation(template_path) if template_path and os.path.exists(template_path) else Presentation()
+        
         return f"Creating presentation: {fileName}"
 
 def get_deckbuilder_client():
