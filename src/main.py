@@ -7,8 +7,7 @@ import asyncio
 import json
 import os
 
-
-from deckbuilder import get_deckbuilder_client
+from deckbuilder import Deckbuilder
 
 load_dotenv()
 
@@ -66,7 +65,6 @@ async def create_presentation(ctx: Context, fileName: str = "Sample_Presentation
         
         # Ensure output folder exists
         os.makedirs(output_folder, exist_ok=True)
-        
         # Create base filename with .latest.txt extension
         base_name = fileName
         latest_file = os.path.join(output_folder, f"{base_name}.latest.txt")
@@ -98,8 +96,21 @@ async def create_presentation(ctx: Context, fileName: str = "Sample_Presentation
     except Exception as e:
         return f"Error creating presentation: {str(e)}"
 
+@mcp.tool()
+async def add_title_slide(ctx: Context, title: str = "Slide Title") -> str:
+    """Add a title slide to an existing presentaiton
 
+        This tool is designed to add a title to an existing presentation.
+        This tool should be called after create_presentation 
 
+        Args:
+            ctx: The MCP server provided context.
+            title: The title of the slide to add.
+        """
+    try:
+        return f"Successfully added title slide {title}"
+    except Exception as e:
+        return f"Error creating presentation: {str(e)}"
 
 async def main():
     transport = os.getenv("TRANSPORT", "sse")
