@@ -11,6 +11,9 @@ from deckbuilder import Deckbuilder
 from deckbuilder import get_deckbuilder_client
 deck = get_deckbuilder_client()
 
+
+
+
 load_dotenv()
 
 # Create a dataclass for our application context
@@ -50,7 +53,7 @@ mcp = FastMCP(
 )
 
 @mcp.tool()
-async def create_presentation(ctx: Context, title: str = "Presentation Title", subTitle: str = "", author: str = "") -> str:
+async def create_presentation(ctx: Context, templateName: str, title: str = "Presentation Title", subTitle: str = "", author: str = "") -> str:
     """Create a new presentation ready to add slides
 
     This tool is designed to create a new powerpoint presentation from the given context.
@@ -61,12 +64,11 @@ async def create_presentation(ctx: Context, title: str = "Presentation Title", s
         ctx: The MCP server provided context.
         title: The title of the presentation (default: Sample_Presentation).
         subTitle: The sub-title of the presentation (default: blank).
-        tempplateName: The name of the tempate to use (default: default)
+        templateName: The name of the tempate to use (default: default)
         author: The author of the presentation.
     """
     try:
-        template_name = deck.template_name or 'default'
-        result = deck.create_presentation(title, template_name)
+        result = deck.create_presentation(title, templateName)
         return f"Successfully created the presentation and added a title slide {title}"
     except Exception as e:
         return f"Error creating presentation: {str(e)}"
@@ -86,7 +88,6 @@ async def write_presentation(ctx: Context, fileName: str = "Sample_Presentation"
     except Exception as e:
         return f"Error creating presentation: {str(e)}"
 
-@mcp.tool()
 async def add_title_slide(ctx: Context, title: str = "Slide Title", subTitle: str = "", author: str = "") -> str:
     """Add a title slide to an existing presentaiton
 
@@ -102,9 +103,77 @@ async def add_title_slide(ctx: Context, title: str = "Slide Title", subTitle: st
             
         """
     try:
+
         return f"Successfully added title slide {title}"
     except Exception as e:
         return f"Error creating presentation: {str(e)}"
+
+@mcp.tool()
+async def add_slide(ctx: Context, json_data) -> str:
+    """Add a slide to the presentation using JSON data
+    
+    This tool accepts a JSON string containing slide information and adds it to the current presentation.
+    
+    Args:
+        ctx: The MCP server provided context.
+        json_data: JSON string containing slide data with title, content, etc.
+        
+    Example JSON formats:
+        Single slide: "slides": [{"title": "My Title", "content": "My content"}]
+        Multiple slides:
+             "slides": [
+            {
+                "type": "title",
+                "title": "My Title",
+                "subtitle": "My subtitle"
+            },
+            {
+                "type": "content",
+                "title": "Content Slide title",
+                "content": [
+                    "Content line one.",
+                    "Content line two.",
+                    "Content line three.",
+                    "Content line four."
+                ]
+            }
+
+    Supported slide layouts, and sample json for each
+        Title slide:
+            {
+                "type": "title",
+                "title": "My Title",
+                "subtitle": "My subtitle"
+            } 
+        Content slide:
+            {
+                "type": "content",
+                "title": "Content Slide title",
+                "content": [
+                    "Content line one.",
+                    "Content line two.",
+                    "Content line three.",
+                    "Content line four."
+                ]
+            }
+        Table slide:
+            {
+                "type": "table",
+                "title": "Key Metrics",
+                "table": {
+                    "rows": [
+                        ["Metric", "Q2 2024", "Q1 2024", "YoY Change"],
+                        ["Revenue", "$12.5M", "$11.2M", "+11.6%"],
+                        ["Operating Margin", "28.4%", "26.8%", "+1.6pp"],
+                        ["Customer Base", "145K", "128K", "+13.3%"],
+                        ["Employee Count", "520", "480", "+8.3%"]
+                    ]
+                }
+    """
+    try:
+        return deck.add_slide_from_json(json_data)
+    except Exception as e:
+        return f"Error adding slide from JSON: {str(e)}"
 
 async def main():
     transport = os.getenv("TRANSPORT", "sse")
