@@ -61,6 +61,7 @@ async def create_presentation(ctx: Context, title: str = "Presentation Title", s
         ctx: The MCP server provided context.
         title: The title of the presentation (default: Sample_Presentation).
         subTitle: The sub-title of the presentation (default: blank).
+        tempplateName: The name of the tempate to use (default: default)
         author: The author of the presentation.
     """
     try:
@@ -81,39 +82,7 @@ async def write_presentation(ctx: Context, fileName: str = "Sample_Presentation"
         fileName: The name of the file that this server should create (default: Sample_Presentation).
     """
     try:
-
-        # Get output folder from environment
-        output_folder = os.getenv('DECK_OUTPUT_FOLDER', '.')
-        
-        # Ensure output folder exists
-        os.makedirs(output_folder, exist_ok=True)
-        
-        # Create base filename with .latest.txt extension
-        base_name = f"{fileName}.latest.pptx"
-        
-        latest_file = os.path.join(output_folder, base_name)
-        
-        # Handle versioning if file exists
-        if os.path.exists(latest_file):
-            # Find the highest version number
-            version_num = 1
-            while True:
-                version_file = os.path.join(output_folder, f"{base_name}.v{version_num:02d}.pptx")
-                if not os.path.exists(version_file):
-                    break
-                version_num += 1
-            
-            # Trim the .latest of the version_file name when we rename it
-            # Create versioned filename without .latest (e.g. Sample_Presentation.v01.pptx instead of Sample_Presentation.latest.pptx)
-            version_file = os.path.join(output_folder, f"{base_name}.v{version_num:02d}.pptx")
-            
-            # Rename current latest to versioned file
-            os.rename(latest_file, version_file)
-        
-        # Write the latest file
-        deck.prs.save(latest_file)
-        
-        return f"Successfully created presentation: {os.path.basename(latest_file)}"
+        return deck.write_presentation(fileName)
     except Exception as e:
         return f"Error creating presentation: {str(e)}"
 
