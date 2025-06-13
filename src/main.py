@@ -8,6 +8,8 @@ import json
 import os
 
 from deckbuilder import Deckbuilder
+from deckbuilder import get_deckbuilder_client
+deck = get_deckbuilder_client()
 
 load_dotenv()
 
@@ -48,7 +50,7 @@ mcp = FastMCP(
 )
 
 @mcp.tool()
-async def create_presentation(ctx: Context, fileName: str = "Sample_Presentation") -> str:
+async def create_presentation(ctx: Context, title: str = "Presentation Title", subTitle: str = "", author: str = "") -> str:
     """Create a new presentation ready to add slides
 
     This tool is designed to create a new powerpoint presentation from the given context.
@@ -57,55 +59,77 @@ async def create_presentation(ctx: Context, fileName: str = "Sample_Presentation
 
     Args:
         ctx: The MCP server provided context.
+        title: The title of the presentation (default: Sample_Presentation).
+        subTitle: The sub-title of the presentation (default: blank).
+        author: The author of the presentation.
+    """
+    try:
+
+        return f"Successfully created the presentation and added a title slide {title}"
+    except Exception as e:
+        return f"Error creating presentation: {str(e)}"
+
+@mcp.tool()
+async def write_presentation(ctx: Context, fileName: str = "Sample_Presentation" ) -> str:
+    """Writes the presentation to disk
+
+    This tool is designed to save the current presentation that has been created to a file.
+
+    Args:
+        ctx: The MCP server provided context.
         fileName: The name of the file that this server should create (default: Sample_Presentation).
     """
     try:
+
         # Get output folder from environment
         output_folder = os.getenv('DECK_OUTPUT_FOLDER', '.')
         
         # Ensure output folder exists
         os.makedirs(output_folder, exist_ok=True)
+        
         # Create base filename with .latest.txt extension
-        base_name = fileName
-        latest_file = os.path.join(output_folder, f"{base_name}.latest.txt")
+        base_name = f"{fileName}.latest.pptx"
+        
+        latest_file = os.path.join(output_folder, base_name)
         
         # Handle versioning if file exists
         if os.path.exists(latest_file):
             # Find the highest version number
             version_num = 1
             while True:
-                version_file = os.path.join(output_folder, f"{base_name}.v{version_num:02d}.txt")
+                version_file = os.path.join(output_folder, f"{base_name}.v{version_num:02d}.pptx")
                 if not os.path.exists(version_file):
                     break
                 version_num += 1
             
             # Trim the .latest of the version_file name when we rename it
-            # Create versioned filename without .latest (e.g. Sample_Presentation.v01.txt instead of Sample_Presentation.latest.v01.txt)
-            version_file = os.path.join(output_folder, f"{base_name}.v{version_num:02d}.txt")
+            # Create versioned filename without .latest (e.g. Sample_Presentation.v01.pptx instead of Sample_Presentation.latest.pptx)
+            version_file = os.path.join(output_folder, f"{base_name}.v{version_num:02d}.pptx")
             
             # Rename current latest to versioned file
             os.rename(latest_file, version_file)
         
-        # Create new latest file
-        with open(latest_file, 'w') as f:
-            f.write(f"Presentation: {fileName}\n")
-            f.write(f"Created: {os.path.basename(latest_file)}\n")
-            f.write("This is a test presentation file.\n")
+        # Write the latest file
+        deck.prs.save(latest_file)
         
         return f"Successfully created presentation: {os.path.basename(latest_file)}"
     except Exception as e:
         return f"Error creating presentation: {str(e)}"
 
 @mcp.tool()
-async def add_title_slide(ctx: Context, title: str = "Slide Title") -> str:
+async def add_title_slide(ctx: Context, title: str = "Slide Title", subTitle: str = "", author: str = "") -> str:
     """Add a title slide to an existing presentaiton
 
         This tool is designed to add a title to an existing presentation.
+        If a title slide already exists, it will replace it.
         This tool should be called after create_presentation 
 
         Args:
             ctx: The MCP server provided context.
-            title: The title of the slide to add.
+            title: The title of the presentation (default: Sample_Presentation).
+            subTitle: The sub-title of the presentation (default: blank).
+            author: The author of the presentation.
+            
         """
     try:
         return f"Successfully added title slide {title}"
