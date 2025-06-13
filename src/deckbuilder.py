@@ -21,15 +21,19 @@ class Deckbuilder:
         # Ensure default template exists in templates folder
         self._ensure_default_template()
         
-    def _ensure_default_template(self):
+    def _ensure_default_template(self, templateName = 'default'):
         """Ensure default.pptx template exists in the templates folder."""
+        # Ensure templateName ends with .pptx
+        if not templateName.endswith('.pptx'):
+            templateName += '.pptx'
+        
         if self.template_path:
             try:
                 # Create templates folder if it doesn't exist
                 os.makedirs(self.template_path, exist_ok=True)
                 
-                # Check if default.pptx exists in templates folder
-                default_template = os.path.join(self.template_path, 'default.pptx')
+                # Check if template exists in templates folder
+                default_template = os.path.join(self.template_path, templateName)
                 if not os.path.exists(default_template):
                     # Copy from src/default.pptx
                     src_template = os.path.join(os.path.dirname(__file__), 'default.pptx')
@@ -39,7 +43,7 @@ class Deckbuilder:
                 # Handle file operation errors silently
                 pass
     
-    def create_presentation(self, fileName: str) -> str:
+    def create_presentation(self, fileName: str, templateName: str = "default") -> str:
         # Implementation for creating presentations
         self.prs = Presentation(self.template_path) if self.template_path else Presentation()
         return f"Creating presentation: {fileName}"
