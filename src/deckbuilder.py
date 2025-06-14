@@ -74,6 +74,7 @@ class Deckbuilder:
                 # Handle file operation errors silently
                 pass
     
+    
     def create_presentation(self, fileName: str, templateName: str = "default") -> str:
         # Check template exists
         self._check_template_exists(templateName)
@@ -84,7 +85,10 @@ class Deckbuilder:
         template_path = os.path.join(self.template_path, templateName) if self.template_path else None
         self.prs = Presentation(template_path) if template_path and os.path.exists(template_path) else Presentation()
         
+        self._clear_slides()
+
         return f"Creating presentation: {fileName}"
+
 
     def write_presentation(self, fileName: str = "Sample_Presentation") -> str:
         """Writes the presentation to disk with versioning."""
@@ -174,8 +178,12 @@ class Deckbuilder:
         Args:
             slide_data: Dictionary containing slide information
         """
-        # Basic slide creation - can be expanded based on slide_data structure
-        slide_layout = self.prs.slide_layouts[0]  # Use first layout as default
+        # Get slide type and determine layout
+        slide_type = slide_data.get("type", "content")
+        layout_name = self.DEFAULT_LAYOUTS.get(slide_type, "titleandcontent")
+        layout_index = self.DEFAULT_PPT_LAYOUTS.get(layout_name, 1)
+        
+        slide_layout = self.prs.slide_layouts[layout_index]
         slide = self.prs.slides.add_slide(slide_layout)
         
         # Add title if provided

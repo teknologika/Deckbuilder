@@ -88,27 +88,55 @@ async def write_presentation(ctx: Context, fileName: str = "Sample_Presentation"
     except Exception as e:
         return f"Error creating presentation: {str(e)}"
 
-async def add_title_slide(ctx: Context, title: str = "Slide Title", subTitle: str = "", author: str = "") -> str:
-    """Add a title slide to an existing presentaiton
-
-        This tool is designed to add a title to an existing presentation.
-        If a title slide already exists, it will replace it.
-        This tool should be called after create_presentation 
-
-        Args:
-            ctx: The MCP server provided context.
-            title: The title of the presentation (default: Sample_Presentation).
-            subTitle: The sub-title of the presentation (default: blank).
-            author: The author of the presentation.
-            
-        """
+@mcp.tool()
+async def add_title_slide(ctx: Context, json_data) -> str:
+    """Add a Title slide to the presentation using JSON data
+    
+    This tool accepts a JSON string containing slide information and adds it to the current presentation.
+    
+    Args:
+        ctx: The MCP server provided context.
+        json_data: JSON string containing slide data with title, content, etc.
+        
+    Example JSON format for the Title slide:
+        {
+            "type": "title",
+            "title": "My Title",
+            "subtitle": "My subtitle"
+        } 
+    """
     try:
-
-        return f"Successfully added title slide {title}"
+        return deck.add_slide_from_json(json_data)
     except Exception as e:
-        return f"Error creating presentation: {str(e)}"
+        return f"Error adding slide from JSON: {str(e)}"
 
 @mcp.tool()
+async def add_content_slide(ctx: Context, json_data) -> str:
+    """Add a Content slide to the presentation using JSON data
+    
+    This tool accepts a JSON string containing slide information and adds it to the current presentation.
+    
+    Args:
+        ctx: The MCP server provided context.
+        json_data: JSON string containing slide data with title, content, etc.
+        
+    Example JSON format for the Content slide:
+        {
+            "type": "content",
+            "title": "Content Slide title",
+            "content": [
+                "Content line one.",
+                "Content line two.",
+                "Content line three.",
+                "Content line four."
+            ]
+        }
+    """
+    try:
+        return deck.add_slide_from_json(json_data)
+    except Exception as e:
+        return f"Error adding slide from JSON: {str(e)}"
+    
 async def add_slide(ctx: Context, json_data) -> str:
     """Add a slide to the presentation using JSON data
     
