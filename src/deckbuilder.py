@@ -4,8 +4,8 @@ import json
 from pptx import Presentation
 from pptx.util import Cm
 from pptx.dml.color import RGBColor
-from pptx.enum.text import MSO_ANCHOR, MSO_AUTO_SIZE
 from table_styles import TABLE_HEADER_STYLES, TABLE_ROW_STYLES, TABLE_BORDER_STYLES
+from slide_layouts import DEFAULT_LAYOUTS, DEFAULT_PPT_LAYOUTS
 
 def singleton(cls):
     instances = {}
@@ -18,29 +18,6 @@ def singleton(cls):
 @singleton
 class Deckbuilder:
 
-# Default layout mappings if not specified in settings
-    DEFAULT_LAYOUTS = {
-        "title": "title",                # Title slide with subtitle
-        "table": "titleandcontent",      # Slide with title and table
-        "content": "titleandcontent",    # Slide with title and bullet points
-        "section": "sectionHeader",      # Section divider slide
-        "blank": "blank"                 # Blank slide
-    }   
-
-    # Standard PowerPoint layout names and their indices
-    DEFAULT_PPT_LAYOUTS = {
-        "title": 0,                    # Title Slide
-        "titleandcontent": 1,          # Title and Content
-        "sectionHeader": 2,            # Section Header
-        "twoContent": 3,              # Two Content
-        "comparison": 4,              # Comparison
-        "titleOnly": 5,               # Title Only
-        "blank": 6,                   # Blank
-        "contentWithCaption": 7,      # Content with Caption
-        "pictureWithCaption": 8,      # Picture with Caption
-        "titleAndVerticalText": 9,    # Title and Vertical Text
-        "verticalTitleAndText": 10    # Vertical Title and Text
-        }
 
     def __init__(self):
         self.template_path = os.getenv('DECK_TEMPLATE_FOLDER')
@@ -184,8 +161,8 @@ class Deckbuilder:
         """
         # Get slide type and determine layout
         slide_type = slide_data.get("type", "content")
-        layout_name = self.DEFAULT_LAYOUTS.get(slide_type, "titleandcontent")
-        layout_index = self.DEFAULT_PPT_LAYOUTS.get(layout_name, 1)
+        layout_name = DEFAULT_LAYOUTS.get(slide_type, "titleandcontent")
+        layout_index = DEFAULT_PPT_LAYOUTS.get(layout_name, 1)
         
         slide_layout = self.prs.slide_layouts[layout_index]
         slide = self.prs.slides.add_slide(slide_layout)
