@@ -18,7 +18,6 @@ def singleton(cls):
 @singleton
 class Deckbuilder:
 
-
     def __init__(self):
         self.template_path = os.getenv('DECK_TEMPLATE_FOLDER')
         self.template_name = os.getenv('DECK_TEMPLATE_NAME')
