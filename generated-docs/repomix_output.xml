@@ -1,0 +1,1651 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<repository>
+<repository_structure>
+  <file name="LICENSE"/>
+  <file name=".mcp.json"/>
+  <directory name=".claude">
+    <file name="settings.local.json"/>
+  </directory>
+  <file name="README.md"/>
+  <file name=".gitignore"/>
+  <file name="table-styles.html"/>
+  <file name="CLAUDE.md"/>
+  <file name="table-styles.css"/>
+  <directory name="src">
+    <file name="main.py"/>
+    <file name="deckbuilder.py"/>
+  </directory>
+</repository_structure>
+<repository_files>
+  <file>
+    
+  
+    <path>LICENSE</path>
+    
+  
+    <content>Apache License
+                           Version 2.0, January 2004
+                        http://www.apache.org/licenses/
+
+   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+
+   1. Definitions.
+
+      &quot;License&quot; shall mean the terms and conditions for use, reproduction,
+      and distribution as defined by Sections 1 through 9 of this document.
+
+      &quot;Licensor&quot; shall mean the copyright owner or entity authorized by
+      the copyright owner that is granting the License.
+
+      &quot;Legal Entity&quot; shall mean the union of the acting entity and all
+      other entities that control, are controlled by, or are under common
+      control with that entity. For the purposes of this definition,
+      &quot;control&quot; means (i) the power, direct or indirect, to cause the
+      direction or management of such entity, whether by contract or
+      otherwise, or (ii) ownership of fifty percent (50%) or more of the
+      outstanding shares, or (iii) beneficial ownership of such entity.
+
+      &quot;You&quot; (or &quot;Your&quot;) shall mean an individual or Legal Entity
+      exercising permissions granted by this License.
+
+      &quot;Source&quot; form shall mean the preferred form for making modifications,
+      including but not limited to software source code, documentation
+      source, and configuration files.
+
+      &quot;Object&quot; form shall mean any form resulting from mechanical
+      transformation or translation of a Source form, including but
+      not limited to compiled object code, generated documentation,
+      and conversions to other media types.
+
+      &quot;Work&quot; shall mean the work of authorship, whether in Source or
+      Object form, made available under the License, as indicated by a
+      copyright notice that is included in or attached to the work
+      (an example is provided in the Appendix below).
+
+      &quot;Derivative Works&quot; shall mean any work, whether in Source or Object
+      form, that is based on (or derived from) the Work and for which the
+      editorial revisions, annotations, elaborations, or other modifications
+      represent, as a whole, an original work of authorship. For the purposes
+      of this License, Derivative Works shall not include works that remain
+      separable from, or merely link (or bind by name) to the interfaces of,
+      the Work and Derivative Works thereof.
+
+      &quot;Contribution&quot; shall mean any work of authorship, including
+      the original version of the Work and any modifications or additions
+      to that Work or Derivative Works thereof, that is intentionally
+      submitted to Licensor for inclusion in the Work by the copyright owner
+      or by an individual or Legal Entity authorized to submit on behalf of
+      the copyright owner. For the purposes of this definition, &quot;submitted&quot;
+      means any form of electronic, verbal, or written communication sent
+      to the Licensor or its representatives, including but not limited to
+      communication on electronic mailing lists, source code control systems,
+      and issue tracking systems that are managed by, or on behalf of, the
+      Licensor for the purpose of discussing and improving the Work, but
+      excluding communication that is conspicuously marked or otherwise
+      designated in writing by the copyright owner as &quot;Not a Contribution.&quot;
+
+      &quot;Contributor&quot; shall mean Licensor and any individual or Legal Entity
+      on behalf of whom a Contribution has been received by Licensor and
+      subsequently incorporated within the Work.
+
+   2. Grant of Copyright License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      copyright license to reproduce, prepare Derivative Works of,
+      publicly display, publicly perform, sublicense, and distribute the
+      Work and such Derivative Works in Source or Object form.
+
+   3. Grant of Patent License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      (except as stated in this section) patent license to make, have made,
+      use, offer to sell, sell, import, and otherwise transfer the Work,
+      where such license applies only to those patent claims licensable
+      by such Contributor that are necessarily infringed by their
+      Contribution(s) alone or by combination of their Contribution(s)
+      with the Work to which such Contribution(s) was submitted. If You
+      institute patent litigation against any entity (including a
+      cross-claim or counterclaim in a lawsuit) alleging that the Work
+      or a Contribution incorporated within the Work constitutes direct
+      or contributory patent infringement, then any patent licenses
+      granted to You under this License for that Work shall terminate
+      as of the date such litigation is filed.
+
+   4. Redistribution. You may reproduce and distribute copies of the
+      Work or Derivative Works thereof in any medium, with or without
+      modifications, and in Source or Object form, provided that You
+      meet the following conditions:
+
+      (a) You must give any other recipients of the Work or
+          Derivative Works a copy of this License; and
+
+      (b) You must cause any modified files to carry prominent notices
+          stating that You changed the files; and
+
+      (c) You must retain, in the Source form of any Derivative Works
+          that You distribute, all copyright, patent, trademark, and
+          attribution notices from the Source form of the Work,
+          excluding those notices that do not pertain to any part of
+          the Derivative Works; and
+
+      (d) If the Work includes a &quot;NOTICE&quot; text file as part of its
+          distribution, then any Derivative Works that You distribute must
+          include a readable copy of the attribution notices contained
+          within such NOTICE file, excluding those notices that do not
+          pertain to any part of the Derivative Works, in at least one
+          of the following places: within a NOTICE text file distributed
+          as part of the Derivative Works; within the Source form or
+          documentation, if provided along with the Derivative Works; or,
+          within a display generated by the Derivative Works, if and
+          wherever such third-party notices normally appear. The contents
+          of the NOTICE file are for informational purposes only and
+          do not modify the License. You may add Your own attribution
+          notices within Derivative Works that You distribute, alongside
+          or as an addendum to the NOTICE text from the Work, provided
+          that such additional attribution notices cannot be construed
+          as modifying the License.
+
+      You may add Your own copyright statement to Your modifications and
+      may provide additional or different license terms and conditions
+      for use, reproduction, or distribution of Your modifications, or
+      for any such Derivative Works as a whole, provided Your use,
+      reproduction, and distribution of the Work otherwise complies with
+      the conditions stated in this License.
+
+   5. Submission of Contributions. Unless You explicitly state otherwise,
+      any Contribution intentionally submitted for inclusion in the Work
+      by You to the Licensor shall be under the terms and conditions of
+      this License, without any additional terms or conditions.
+      Notwithstanding the above, nothing herein shall supersede or modify
+      the terms of any separate license agreement you may have executed
+      with Licensor regarding such Contributions.
+
+   6. Trademarks. This License does not grant permission to use the trade
+      names, trademarks, service marks, or product names of the Licensor,
+      except as required for reasonable and customary use in describing the
+      origin of the Work and reproducing the content of the NOTICE file.
+
+   7. Disclaimer of Warranty. Unless required by applicable law or
+      agreed to in writing, Licensor provides the Work (and each
+      Contributor provides its Contributions) on an &quot;AS IS&quot; BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+      implied, including, without limitation, any warranties or conditions
+      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
+      PARTICULAR PURPOSE. You are solely responsible for determining the
+      appropriateness of using or redistributing the Work and assume any
+      risks associated with Your exercise of permissions under this License.
+
+   8. Limitation of Liability. In no event and under no legal theory,
+      whether in tort (including negligence), contract, or otherwise,
+      unless required by applicable law (such as deliberate and grossly
+      negligent acts) or agreed to in writing, shall any Contributor be
+      liable to You for damages, including any direct, indirect, special,
+      incidental, or consequential damages of any character arising as a
+      result of this License or out of the use or inability to use the
+      Work (including but not limited to damages for loss of goodwill,
+      work stoppage, computer failure or malfunction, or any and all
+      other commercial damages or losses), even if such Contributor
+      has been advised of the possibility of such damages.
+
+   9. Accepting Warranty or Additional Liability. While redistributing
+      the Work or Derivative Works thereof, You may choose to offer,
+      and charge a fee for, acceptance of support, warranty, indemnity,
+      or other liability obligations and/or rights consistent with this
+      License. However, in accepting such obligations, You may act only
+      on Your own behalf and on Your sole responsibility, not on behalf
+      of any other Contributor, and only if You agree to indemnify,
+      defend, and hold each Contributor harmless for any liability
+      incurred by, or claims asserted against, such Contributor by reason
+      of your accepting any such warranty or additional liability.
+
+   END OF TERMS AND CONDITIONS
+
+   APPENDIX: How to apply the Apache License to your work.
+
+      To apply the Apache License to your work, attach the following
+      boilerplate notice, with the fields enclosed by brackets &quot;[]&quot;
+      replaced with your own identifying information. (Don't include
+      the brackets!)  The text should be enclosed in the appropriate
+      comment syntax for the file format. We also recommend that a
+      file or class name and description of purpose be included on the
+      same &quot;printed page&quot; as the copyright notice for easier
+      identification within third-party archives.
+
+   Copyright [yyyy] [name of copyright owner]
+
+   Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.</content>
+    
+
+  </file>
+  <file>
+    
+  
+    <path>.mcp.json</path>
+    
+  
+    <content>{
+  &quot;mcpServers&quot;: {
+    &quot;awslabs.code-doc-gen-mcp-server&quot;: {
+      &quot;type&quot;: &quot;stdio&quot;,
+      &quot;command&quot;: &quot;uvx&quot;,
+      &quot;args&quot;: [
+        &quot;awslabs.code-doc-gen-mcp-server@latest&quot;
+      ],
+      &quot;env&quot;: {
+        &quot;FASTMCP_LOG_LEVEL&quot;: &quot;ERROR&quot;
+      }
+    }
+  }
+}</content>
+    
+
+  </file>
+  <file>
+    
+  
+    <path>.claude/settings.local.json</path>
+    
+  
+    <content>{
+  &quot;enabledMcpjsonServers&quot;: [
+    &quot;awslabs.code-doc-gen-mcp-server&quot;
+  ],
+  &quot;enableAllProjectMcpServers&quot;: true
+}</content>
+    
+
+  </file>
+  <file>
+    
+  
+    <path>README.md</path>
+    
+  
+    <content># deck-builder-mcp
+MCP Server for building powerpoint presentations
+
+## Configuration
+
+Add this to your Claude Desktop config file:
+
+```json
+&quot;deckbuilder&quot;: {
+  &quot;command&quot;: &quot;/Users/bruce/GitHub/teknologika/deck-builder-mcp/.venv/bin/python&quot;,
+  &quot;args&quot;: [&quot;/Users/bruce/GitHub/teknologika/deck-builder-mcp/src/main.py&quot;],
+  &quot;env&quot;: {
+    &quot;TRANSPORT&quot;: &quot;stdio&quot;,
+    &quot;DECK_TEMPLATE_FOLDER&quot;: &quot;/Users/bruce/Documents/Deckbuilder/Templates&quot;,
+    &quot;DECK_TEMPLATE_NAME&quot;: &quot;defailt&quot;,
+    &quot;DECK_OUTPUT_FOLDER&quot;: &quot;/Users/bruce/Documents/Deckbuilder&quot;
+  }
+}
+```</content>
+    
+
+  </file>
+  <file>
+    
+  
+    <path>.gitignore</path>
+    
+  
+    <content># Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+#   For a library or package, you might want to ignore these files since the code is
+#   intended to run in multiple environments; otherwise, check them in:
+# .python-version
+
+# pipenv
+#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
+#   However, in case of collaboration, if having platform-specific dependencies or dependencies
+#   having no cross-platform support, pipenv may install dependencies that don't work, or not
+#   install all needed dependencies.
+#Pipfile.lock
+
+# UV
+#   Similar to Pipfile.lock, it is generally recommended to include uv.lock in version control.
+#   This is especially recommended for binary packages to ensure reproducibility, and is more
+#   commonly ignored for libraries.
+#uv.lock
+
+# poetry
+#   Similar to Pipfile.lock, it is generally recommended to include poetry.lock in version control.
+#   This is especially recommended for binary packages to ensure reproducibility, and is more
+#   commonly ignored for libraries.
+#   https://python-poetry.org/docs/basic-usage/#commit-your-poetrylock-file-to-version-control
+#poetry.lock
+
+# pdm
+#   Similar to Pipfile.lock, it is generally recommended to include pdm.lock in version control.
+#pdm.lock
+#   pdm stores project-wide configurations in .pdm.toml, but it is recommended to not include it
+#   in version control.
+#   https://pdm.fming.dev/latest/usage/project/#working-with-version-control
+.pdm.toml
+.pdm-python
+.pdm-build/
+
+# PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# PyCharm
+#  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
+#  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
+#  and can be added to the global gitignore or merged into this file.  For a more nuclear
+#  option (not recommended) you can uncomment the following to ignore the entire idea folder.
+#.idea/
+
+# Abstra
+# Abstra is an AI-powered process automation framework.
+# Ignore directories containing user credentials, local state, and settings.
+# Learn more at https://abstra.io/docs
+.abstra/
+
+# Visual Studio Code
+#  Visual Studio Code specific template is maintained in a separate VisualStudioCode.gitignore 
+#  that can be found at https://github.com/github/gitignore/blob/main/Global/VisualStudioCode.gitignore
+#  and can be added to the global gitignore or merged into this file. However, if you prefer, 
+#  you could uncomment the following to ignore the enitre vscode folder
+# .vscode/
+
+# Ruff stuff:
+.ruff_cache/
+
+# PyPI configuration file
+.pypirc
+
+# Cursor
+#  Cursor is an AI-powered code editor. `.cursorignore` specifies files/directories to
+#  exclude from AI features like autocomplete and code analysis. Recommended for sensitive data
+#  refer to https://docs.cursor.com/context/ignore-files
+.cursorignore
+.cursorindexingignore
+
+# MCP Server configuration
+.mcp.json
+
+# Claude Code configuration
+.claude/</content>
+    
+
+  </file>
+  <file>
+    
+  
+    <path>table-styles.html</path>
+    
+  
+    <content>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+    &lt;title&gt;PowerPoint Table Style Visualizer&lt;/title&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;table-styles.css&quot;&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class=&quot;container&quot;&gt;
+        &lt;h1&gt;PowerPoint Table Style Visualizer&lt;/h1&gt;
+        &lt;p&gt;Preview different table styling combinations for the deck builder&lt;/p&gt;
+
+        &lt;h2&gt;Header Styles&lt;/h2&gt;
+        
+        &lt;h3&gt;dark_blue_white_text&lt;/h3&gt;
+        &lt;table class=&quot;header-dark-blue&quot;&gt;
+            &lt;tr&gt;
+                &lt;th&gt;Name&lt;/th&gt;
+                &lt;th&gt;Sales&lt;/th&gt;
+                &lt;th&gt;Region&lt;/th&gt;
+                &lt;th&gt;Year&lt;/th&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;John Smith&lt;/td&gt;
+                &lt;td&gt;$125,000&lt;/td&gt;
+                &lt;td&gt;North&lt;/td&gt;
+                &lt;td&gt;2024&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Sarah Johnson&lt;/td&gt;
+                &lt;td&gt;$98,500&lt;/td&gt;
+                &lt;td&gt;South&lt;/td&gt;
+                &lt;td&gt;2024&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Mike Chen&lt;/td&gt;
+                &lt;td&gt;$156,700&lt;/td&gt;
+                &lt;td&gt;East&lt;/td&gt;
+                &lt;td&gt;2024&lt;/td&gt;
+            &lt;/tr&gt;
+        &lt;/table&gt;
+
+        &lt;h3&gt;light_blue_dark_text&lt;/h3&gt;
+        &lt;table class=&quot;header-light-blue&quot;&gt;
+            &lt;tr&gt;
+                &lt;th&gt;Name&lt;/th&gt;
+                &lt;th&gt;Sales&lt;/th&gt;
+                &lt;th&gt;Region&lt;/th&gt;
+                &lt;th&gt;Year&lt;/th&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;John Smith&lt;/td&gt;
+                &lt;td&gt;$125,000&lt;/td&gt;
+                &lt;td&gt;North&lt;/td&gt;
+                &lt;td&gt;2024&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Sarah Johnson&lt;/td&gt;
+                &lt;td&gt;$98,500&lt;/td&gt;
+                &lt;td&gt;South&lt;/td&gt;
+                &lt;td&gt;2024&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Mike Chen&lt;/td&gt;
+                &lt;td&gt;$156,700&lt;/td&gt;
+                &lt;td&gt;East&lt;/td&gt;
+                &lt;td&gt;2024&lt;/td&gt;
+            &lt;/tr&gt;
+        &lt;/table&gt;
+
+        &lt;h3&gt;dark_gray_white_text&lt;/h3&gt;
+        &lt;table class=&quot;header-dark-gray&quot;&gt;
+            &lt;tr&gt;
+                &lt;th&gt;Name&lt;/th&gt;
+                &lt;th&gt;Sales&lt;/th&gt;
+                &lt;th&gt;Region&lt;/th&gt;
+                &lt;th&gt;Year&lt;/th&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;John Smith&lt;/td&gt;
+                &lt;td&gt;$125,000&lt;/td&gt;
+                &lt;td&gt;North&lt;/td&gt;
+                &lt;td&gt;2024&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Sarah Johnson&lt;/td&gt;
+                &lt;td&gt;$98,500&lt;/td&gt;
+                &lt;td&gt;South&lt;/td&gt;
+                &lt;td&gt;2024&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Mike Chen&lt;/td&gt;
+                &lt;td&gt;$156,700&lt;/td&gt;
+                &lt;td&gt;East&lt;/td&gt;
+                &lt;td&gt;2024&lt;/td&gt;
+            &lt;/tr&gt;
+        &lt;/table&gt;
+
+        &lt;h3&gt;light_gray_dark_text&lt;/h3&gt;
+        &lt;table class=&quot;header-light-gray&quot;&gt;
+            &lt;tr&gt;
+                &lt;th&gt;Name&lt;/th&gt;
+                &lt;th&gt;Sales&lt;/th&gt;
+                &lt;th&gt;Region&lt;/th&gt;
+                &lt;th&gt;Year&lt;/th&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;John Smith&lt;/td&gt;
+                &lt;td&gt;$125,000&lt;/td&gt;
+                &lt;td&gt;North&lt;/td&gt;
+                &lt;td&gt;2024&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Sarah Johnson&lt;/td&gt;
+                &lt;td&gt;$98,500&lt;/td&gt;
+                &lt;td&gt;South&lt;/td&gt;
+                &lt;td&gt;2024&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Mike Chen&lt;/td&gt;
+                &lt;td&gt;$156,700&lt;/td&gt;
+                &lt;td&gt;East&lt;/td&gt;
+                &lt;td&gt;2024&lt;/td&gt;
+            &lt;/tr&gt;
+        &lt;/table&gt;
+
+        &lt;h2&gt;Row Styles with Headers&lt;/h2&gt;
+
+        &lt;h3&gt;alternating_light_gray + dark_blue_white_text header&lt;/h3&gt;
+        &lt;table class=&quot;header-dark-blue rows-alternating-gray&quot;&gt;
+            &lt;tr&gt;
+                &lt;th&gt;Product&lt;/th&gt;
+                &lt;th&gt;Q1 Sales&lt;/th&gt;
+                &lt;th&gt;Q2 Sales&lt;/th&gt;
+                &lt;th&gt;Q3 Sales&lt;/th&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Widget A&lt;/td&gt;
+                &lt;td&gt;$45,000&lt;/td&gt;
+                &lt;td&gt;$52,000&lt;/td&gt;
+                &lt;td&gt;$48,000&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Widget B&lt;/td&gt;
+                &lt;td&gt;$38,500&lt;/td&gt;
+                &lt;td&gt;$41,200&lt;/td&gt;
+                &lt;td&gt;$39,800&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Widget C&lt;/td&gt;
+                &lt;td&gt;$62,100&lt;/td&gt;
+                &lt;td&gt;$59,900&lt;/td&gt;
+                &lt;td&gt;$64,300&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Widget D&lt;/td&gt;
+                &lt;td&gt;$29,800&lt;/td&gt;
+                &lt;td&gt;$33,400&lt;/td&gt;
+                &lt;td&gt;$31,600&lt;/td&gt;
+            &lt;/tr&gt;
+        &lt;/table&gt;
+
+        &lt;h3&gt;alternating_light_blue + dark_gray_white_text header&lt;/h3&gt;
+        &lt;table class=&quot;header-dark-gray rows-alternating-blue&quot;&gt;
+            &lt;tr&gt;
+                &lt;th&gt;Department&lt;/th&gt;
+                &lt;th&gt;Budget&lt;/th&gt;
+                &lt;th&gt;Spent&lt;/th&gt;
+                &lt;th&gt;Remaining&lt;/th&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Marketing&lt;/td&gt;
+                &lt;td&gt;$100,000&lt;/td&gt;
+                &lt;td&gt;$85,000&lt;/td&gt;
+                &lt;td&gt;$15,000&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Development&lt;/td&gt;
+                &lt;td&gt;$250,000&lt;/td&gt;
+                &lt;td&gt;$198,500&lt;/td&gt;
+                &lt;td&gt;$51,500&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Sales&lt;/td&gt;
+                &lt;td&gt;$150,000&lt;/td&gt;
+                &lt;td&gt;$142,800&lt;/td&gt;
+                &lt;td&gt;$7,200&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Support&lt;/td&gt;
+                &lt;td&gt;$75,000&lt;/td&gt;
+                &lt;td&gt;$68,200&lt;/td&gt;
+                &lt;td&gt;$6,800&lt;/td&gt;
+            &lt;/tr&gt;
+        &lt;/table&gt;
+
+        &lt;h3&gt;solid_white + light_blue_dark_text header&lt;/h3&gt;
+        &lt;table class=&quot;header-light-blue rows-solid-white&quot;&gt;
+            &lt;tr&gt;
+                &lt;th&gt;Metric&lt;/th&gt;
+                &lt;th&gt;January&lt;/th&gt;
+                &lt;th&gt;February&lt;/th&gt;
+                &lt;th&gt;March&lt;/th&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Revenue&lt;/td&gt;
+                &lt;td&gt;$450,000&lt;/td&gt;
+                &lt;td&gt;$482,000&lt;/td&gt;
+                &lt;td&gt;$501,000&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Customers&lt;/td&gt;
+                &lt;td&gt;1,250&lt;/td&gt;
+                &lt;td&gt;1,340&lt;/td&gt;
+                &lt;td&gt;1,425&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Conversion&lt;/td&gt;
+                &lt;td&gt;12.5%&lt;/td&gt;
+                &lt;td&gt;13.2%&lt;/td&gt;
+                &lt;td&gt;14.1%&lt;/td&gt;
+            &lt;/tr&gt;
+        &lt;/table&gt;
+
+        &lt;h2&gt;Border Styles&lt;/h2&gt;
+
+        &lt;h3&gt;thin_gray (all borders)&lt;/h3&gt;
+        &lt;table class=&quot;header-dark-blue border-thin-gray&quot;&gt;
+            &lt;tr&gt;
+                &lt;th&gt;Feature&lt;/th&gt;
+                &lt;th&gt;Basic&lt;/th&gt;
+                &lt;th&gt;Premium&lt;/th&gt;
+                &lt;th&gt;Enterprise&lt;/th&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Storage&lt;/td&gt;
+                &lt;td&gt;10GB&lt;/td&gt;
+                &lt;td&gt;100GB&lt;/td&gt;
+                &lt;td&gt;Unlimited&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Users&lt;/td&gt;
+                &lt;td&gt;5&lt;/td&gt;
+                &lt;td&gt;25&lt;/td&gt;
+                &lt;td&gt;Unlimited&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Support&lt;/td&gt;
+                &lt;td&gt;Email&lt;/td&gt;
+                &lt;td&gt;Phone + Email&lt;/td&gt;
+                &lt;td&gt;24/7 Dedicated&lt;/td&gt;
+            &lt;/tr&gt;
+        &lt;/table&gt;
+
+        &lt;h3&gt;header_only (border under header only)&lt;/h3&gt;
+        &lt;table class=&quot;header-dark-gray border-header-only&quot;&gt;
+            &lt;tr&gt;
+                &lt;th&gt;Task&lt;/th&gt;
+                &lt;th&gt;Owner&lt;/th&gt;
+                &lt;th&gt;Due Date&lt;/th&gt;
+                &lt;th&gt;Status&lt;/th&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Website Redesign&lt;/td&gt;
+                &lt;td&gt;Alice Cooper&lt;/td&gt;
+                &lt;td&gt;Mar 15&lt;/td&gt;
+                &lt;td&gt;In Progress&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Mobile App Update&lt;/td&gt;
+                &lt;td&gt;Bob Wilson&lt;/td&gt;
+                &lt;td&gt;Mar 22&lt;/td&gt;
+                &lt;td&gt;Planning&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Database Migration&lt;/td&gt;
+                &lt;td&gt;Carol Smith&lt;/td&gt;
+                &lt;td&gt;Apr 5&lt;/td&gt;
+                &lt;td&gt;Not Started&lt;/td&gt;
+            &lt;/tr&gt;
+        &lt;/table&gt;
+
+        &lt;h3&gt;outer_only (border around table perimeter)&lt;/h3&gt;
+        &lt;table class=&quot;header-light-gray border-outer-only&quot;&gt;
+            &lt;tr&gt;
+                &lt;th&gt;Region&lt;/th&gt;
+                &lt;th&gt;Population&lt;/th&gt;
+                &lt;th&gt;Growth Rate&lt;/th&gt;
+                &lt;th&gt;GDP&lt;/th&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;North America&lt;/td&gt;
+                &lt;td&gt;579M&lt;/td&gt;
+                &lt;td&gt;0.7%&lt;/td&gt;
+                &lt;td&gt;$26.3T&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Europe&lt;/td&gt;
+                &lt;td&gt;748M&lt;/td&gt;
+                &lt;td&gt;0.1%&lt;/td&gt;
+                &lt;td&gt;$23.2T&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Asia Pacific&lt;/td&gt;
+                &lt;td&gt;4.6B&lt;/td&gt;
+                &lt;td&gt;0.9%&lt;/td&gt;
+                &lt;td&gt;$38.5T&lt;/td&gt;
+            &lt;/tr&gt;
+        &lt;/table&gt;
+
+        &lt;h3&gt;no_borders&lt;/h3&gt;
+        &lt;table class=&quot;header-light-blue border-none&quot;&gt;
+            &lt;tr&gt;
+                &lt;th&gt;Color&lt;/th&gt;
+                &lt;th&gt;Hex Code&lt;/th&gt;
+                &lt;th&gt;RGB&lt;/th&gt;
+                &lt;th&gt;Usage&lt;/th&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Primary Blue&lt;/td&gt;
+                &lt;td&gt;#4472C4&lt;/td&gt;
+                &lt;td&gt;68, 114, 196&lt;/td&gt;
+                &lt;td&gt;Headers, Accents&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Light Gray&lt;/td&gt;
+                &lt;td&gt;#F8F8F8&lt;/td&gt;
+                &lt;td&gt;248, 248, 248&lt;/td&gt;
+                &lt;td&gt;Alternating Rows&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Dark Gray&lt;/td&gt;
+                &lt;td&gt;#666666&lt;/td&gt;
+                &lt;td&gt;102, 102, 102&lt;/td&gt;
+                &lt;td&gt;Text, Borders&lt;/td&gt;
+            &lt;/tr&gt;
+        &lt;/table&gt;
+
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</content>
+    
+
+  </file>
+  <file>
+    
+  
+    <path>CLAUDE.md</path>
+    
+  
+    <content># CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
+This is an MCP (Model Context Protocol) Server for building PowerPoint presentations. The repository is currently in its initial setup phase.
+
+## Architecture
+
+This project is designed to implement an MCP server that enables AI assistants to create and manipulate PowerPoint presentations programmatically.</content>
+    
+
+  </file>
+  <file>
+    
+  
+    <path>table-styles.css</path>
+    
+  
+    <content>/* PowerPoint Table Style Visualizer CSS */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 20px;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+h1 {
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 2.5em;
+}
+
+h2 {
+    color: #34495e;
+    border-bottom: 3px solid #4472C4;
+    padding-bottom: 10px;
+    margin-top: 40px;
+    margin-bottom: 25px;
+}
+
+h3 {
+    color: #4472C4;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    font-size: 1.2em;
+    background-color: #f8f9fa;
+    padding: 8px 12px;
+    border-radius: 4px;
+    border-left: 4px solid #4472C4;
+}
+
+p {
+    text-align: center;
+    color: #666;
+    font-size: 1.1em;
+    margin-bottom: 30px;
+}
+
+/* Base table styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 14px;
+    background-color: white;
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+}
+
+th {
+    font-weight: bold;
+}
+
+/* Header Styles */
+.header-dark-blue th {
+    background-color: #4472C4;
+    color: white;
+}
+
+.header-light-blue th {
+    background-color: #E6F3FF;
+    color: #333;
+}
+
+.header-dark-gray th {
+    background-color: #666666;
+    color: white;
+}
+
+.header-light-gray th {
+    background-color: #F0F0F0;
+    color: #333;
+}
+
+.header-white th {
+    background-color: white;
+    color: #333;
+    font-weight: bold;
+}
+
+.header-accent th {
+    background-color: #70AD47;
+    color: white;
+}
+
+/* Row Styles */
+.rows-alternating-gray tr:nth-child(even) {
+    background-color: #F8F8F8;
+}
+
+.rows-alternating-gray tr:nth-child(odd) {
+    background-color: white;
+}
+
+.rows-alternating-blue tr:nth-child(even) {
+    background-color: #E6F3FF;
+}
+
+.rows-alternating-blue tr:nth-child(odd) {
+    background-color: white;
+}
+
+.rows-solid-white tr {
+    background-color: white;
+}
+
+.rows-solid-light-gray tr {
+    background-color: #F8F8F8;
+}
+
+.rows-no-fill tr {
+    background-color: transparent;
+}
+
+/* Border Styles */
+.border-thin-gray,
+.border-thin-gray th,
+.border-thin-gray td {
+    border: 1px solid #CCCCCC;
+}
+
+.border-thick-gray,
+.border-thick-gray th,
+.border-thick-gray td {
+    border: 2px solid #CCCCCC;
+}
+
+.border-header-only {
+    border: none;
+}
+
+.border-header-only th {
+    border-bottom: 2px solid #333;
+}
+
+.border-header-only td {
+    border: none;
+}
+
+.border-outer-only {
+    border: 2px solid #CCCCCC;
+}
+
+.border-outer-only th,
+.border-outer-only td {
+    border: none;
+}
+
+.border-none,
+.border-none th,
+.border-none td {
+    border: none;
+}
+
+/* Color variations for different themes */
+.color-blue .header-accent th {
+    background-color: #4472C4;
+}
+
+.color-green .header-accent th {
+    background-color: #70AD47;
+}
+
+.color-red .header-accent th {
+    background-color: #E74C3C;
+}
+
+.color-orange .header-accent th {
+    background-color: #F39C12;
+}
+
+.color-purple .header-accent th {
+    background-color: #9B59B6;
+}
+
+.color-teal .header-accent th {
+    background-color: #1ABC9C;
+}
+
+.color-gray .header-accent th {
+    background-color: #95A5A6;
+}
+
+.color-black .header-accent th {
+    background-color: #2C3E50;
+}
+
+/* Hover effects for better interactivity */
+table:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+        margin: 10px;
+    }
+    
+    table {
+        font-size: 12px;
+    }
+    
+    th, td {
+        padding: 8px 10px;
+    }
+    
+    h1 {
+        font-size: 2em;
+    }
+}
+
+/* Table container for horizontal scrolling on mobile */
+.table-container {
+    overflow-x: auto;
+    margin: 20px 0;
+}
+
+/* Additional utility classes */
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.font-bold {
+    font-weight: bold;
+}
+
+.font-italic {
+    font-style: italic;
+}</content>
+    
+
+  </file>
+  <file>
+    
+  
+    <path>src/main.py</path>
+    
+  
+    <content>from mcp.server.fastmcp import FastMCP, Context
+from contextlib import asynccontextmanager
+from collections.abc import AsyncIterator
+from dataclasses import dataclass
+from dotenv import load_dotenv
+import asyncio
+import json
+import os
+
+from deckbuilder import Deckbuilder
+from deckbuilder import get_deckbuilder_client
+deck = get_deckbuilder_client()
+
+
+
+
+load_dotenv()
+
+# Create a dataclass for our application context
+@dataclass
+class DeckbuilderContext:
+    &quot;&quot;&quot;Context for the Deckbuilder MCP server.&quot;&quot;&quot;
+    deckbuilder_client: str
+
+@asynccontextmanager
+async def deckbuilder_lifespan(server: FastMCP) -&gt; AsyncIterator[DeckbuilderContext]:
+    &quot;&quot;&quot;
+    Manages the Deckbuilder client lifecycle.
+    
+    Args:
+        server: The Deckbuilder server instance
+        
+    Yields:
+        PresentationContext: The context containing the Deckbuilder client
+    &quot;&quot;&quot;
+    
+    # Create and return the Deckbuilder Client with the helper function in deckbuilder.py
+    deckbuilder_client = get_deckbuilder_client()
+
+    try:
+        yield DeckbuilderContext(deckbuilder_client=deckbuilder_client)
+    finally:
+        # Explicit cleanup goes here if any is required
+        pass
+
+# Initialize FastMCP server with the Deckbuilder client as context
+mcp = FastMCP(
+    &quot;deckbuilder&quot;,
+    description=&quot;MCP server for creation of powerpoint decks&quot;,
+    lifespan=deckbuilder_lifespan,
+    host=os.getenv(&quot;HOST&quot;, &quot;0.0.0.0&quot;),
+    port=os.getenv(&quot;PORT&quot;, &quot;8050&quot;)
+)
+
+@mcp.tool()
+async def create_presentation(ctx: Context, templateName: str, title: str = &quot;Presentation Title&quot;, subTitle: str = &quot;&quot;, author: str = &quot;&quot;) -&gt; str:
+    &quot;&quot;&quot;Create a new presentation ready to add slides
+
+    This tool is designed to create a new powerpoint presentation from the given context.
+    This tool creates an empty presentation, with no slides in it.
+    Slides can then be added by calling other tools.
+
+    Args:
+        ctx: The MCP server provided context.
+        title: The title of the presentation (default: Sample_Presentation).
+        subTitle: The sub-title of the presentation (default: blank).
+        templateName: The name of the tempate to use (default: default)
+        author: The author of the presentation.
+    &quot;&quot;&quot;
+    try:
+        result = deck.create_presentation(title, templateName)
+        return f&quot;Successfully created the presentation and added a title slide {title}&quot;
+    except Exception as e:
+        return f&quot;Error creating presentation: {str(e)}&quot;
+
+@mcp.tool()
+async def write_presentation(ctx: Context, fileName: str = &quot;Sample_Presentation&quot; ) -&gt; str:
+    &quot;&quot;&quot;Writes the presentation to disk
+
+    This tool is designed to save the current presentation that has been created to a file.
+
+    Args:
+        ctx: The MCP server provided context.
+        fileName: The name of the file that this server should create (default: Sample_Presentation).
+    &quot;&quot;&quot;
+    try:
+        return deck.write_presentation(fileName)
+    except Exception as e:
+        return f&quot;Error creating presentation: {str(e)}&quot;
+
+@mcp.tool()
+async def add_title_slide(ctx: Context, json_data) -&gt; str:
+    &quot;&quot;&quot;Add a Title slide to the presentation using JSON data
+    
+    This tool accepts a JSON string containing slide information and adds it to the current presentation.
+    
+    Args:
+        ctx: The MCP server provided context.
+        json_data: JSON string containing slide data with title, content, etc.
+        
+    Example JSON format for the Title slide:
+        {
+            &quot;type&quot;: &quot;title&quot;,
+            &quot;title&quot;: &quot;My Title&quot;,
+            &quot;subtitle&quot;: &quot;My subtitle&quot;
+        } 
+    &quot;&quot;&quot;
+    try:
+        return deck.add_slide_from_json(json_data)
+    except Exception as e:
+        return f&quot;Error adding slide from JSON: {str(e)}&quot;
+
+@mcp.tool()
+async def add_content_slide(ctx: Context, json_data) -&gt; str:
+    &quot;&quot;&quot;Add a Content slide to the presentation using JSON data
+    
+    This tool accepts a JSON string containing slide information and adds it to the current presentation.
+    
+    Args:
+        ctx: The MCP server provided context.
+        json_data: JSON string containing slide data with title, content, etc.
+        
+    Example JSON format for the Content slide:
+        {
+            &quot;type&quot;: &quot;content&quot;,
+            &quot;title&quot;: &quot;Content Slide title&quot;,
+            &quot;content&quot;: [
+                &quot;Content line one.&quot;,
+                &quot;Content line two.&quot;,
+                &quot;Content line three.&quot;,
+                &quot;Content line four.&quot;
+            ]
+        }
+    &quot;&quot;&quot;
+    try:
+        return deck.add_slide_from_json(json_data)
+    except Exception as e:
+        return f&quot;Error adding slide from JSON: {str(e)}&quot;
+
+@mcp.tool()
+async def add_table_slide(ctx: Context, json_data) -&gt; str:
+    &quot;&quot;&quot;Add a Table slide to the presentation using JSON data with custom styling support
+    
+    This tool accepts a JSON string containing table slide information and adds it to the current presentation.
+    Supports custom styling through predefined style names and color overrides.
+    
+    Args:
+        ctx: The MCP server provided context.
+        json_data: JSON string containing table slide data with styling options.
+        
+    Example JSON format for the Table slide:
+        {
+            &quot;type&quot;: &quot;table&quot;,
+            &quot;title&quot;: &quot;Sales Report&quot;,
+            &quot;table&quot;: {
+                &quot;header_style&quot;: &quot;dark_blue_white_text&quot;,
+                &quot;row_style&quot;: &quot;alternating_light_gray&quot;, 
+                &quot;border_style&quot;: &quot;thin_gray&quot;,
+                &quot;custom_colors&quot;: {
+                    &quot;header_bg&quot;: &quot;#2E5984&quot;,
+                    &quot;header_text&quot;: &quot;#FFFFFF&quot;,
+                    &quot;alt_row&quot;: &quot;#F0F8FF&quot;
+                },
+                &quot;data&quot;: [
+                    [&quot;Name&quot;, &quot;Sales&quot;, &quot;Region&quot;],
+                    [&quot;John Smith&quot;, &quot;$125,000&quot;, &quot;North&quot;],
+                    [&quot;Sarah Johnson&quot;, &quot;$98,500&quot;, &quot;South&quot;]
+                ]
+            }
+        }
+        
+    Available header_style options:
+        - &quot;dark_blue_white_text&quot; - Dark blue background, white text
+        - &quot;light_blue_dark_text&quot; - Light blue background, dark text
+        - &quot;dark_gray_white_text&quot; - Dark gray background, white text
+        - &quot;light_gray_dark_text&quot; - Light gray background, dark text
+        - &quot;white_dark_text&quot; - White background, dark text
+        - &quot;accent_color_white_text&quot; - Theme accent color background, white text
+        
+    Available row_style options:
+        - &quot;alternating_light_gray&quot; - White/light gray alternating rows
+        - &quot;alternating_light_blue&quot; - White/light blue alternating rows
+        - &quot;solid_white&quot; - All white rows
+        - &quot;solid_light_gray&quot; - All light gray rows
+        - &quot;no_fill&quot; - Transparent/no background
+        
+    Available border_style options:
+        - &quot;thin_gray&quot; - Thin gray borders all around
+        - &quot;thick_gray&quot; - Thick gray borders
+        - &quot;header_only&quot; - Border only under header
+        - &quot;outer_only&quot; - Border only around table perimeter
+        - &quot;no_borders&quot; - No borders
+        
+    Custom color overrides (hex codes):
+        - &quot;header_bg&quot; - Header background color
+        - &quot;header_text&quot; - Header text color
+        - &quot;alt_row&quot; - Alternating row background color
+        - &quot;border_color&quot; - Border color
+    &quot;&quot;&quot;
+    try:
+        return deck.add_slide_from_json(json_data)
+    except Exception as e:
+        return f&quot;Error adding table slide from JSON: {str(e)}&quot;
+    
+async def add_slide(ctx: Context, json_data) -&gt; str:
+    &quot;&quot;&quot;Add a slide to the presentation using JSON data
+    
+    This tool accepts a JSON string containing slide information and adds it to the current presentation.
+    
+    Args:
+        ctx: The MCP server provided context.
+        json_data: JSON string containing slide data with title, content, etc.
+        
+    Example JSON formats:
+        Single slide: &quot;slides&quot;: [{&quot;title&quot;: &quot;My Title&quot;, &quot;content&quot;: &quot;My content&quot;}]
+        Multiple slides:
+             &quot;slides&quot;: [
+            {
+                &quot;type&quot;: &quot;title&quot;,
+                &quot;title&quot;: &quot;My Title&quot;,
+                &quot;subtitle&quot;: &quot;My subtitle&quot;
+            },
+            {
+                &quot;type&quot;: &quot;content&quot;,
+                &quot;title&quot;: &quot;Content Slide title&quot;,
+                &quot;content&quot;: [
+                    &quot;Content line one.&quot;,
+                    &quot;Content line two.&quot;,
+                    &quot;Content line three.&quot;,
+                    &quot;Content line four.&quot;
+                ]
+            }
+
+    Supported slide layouts, and sample json for each
+        Title slide:
+            {
+                &quot;type&quot;: &quot;title&quot;,
+                &quot;title&quot;: &quot;My Title&quot;,
+                &quot;subtitle&quot;: &quot;My subtitle&quot;
+            } 
+        Content slide:
+            {
+                &quot;type&quot;: &quot;content&quot;,
+                &quot;title&quot;: &quot;Content Slide title&quot;,
+                &quot;content&quot;: [
+                    &quot;Content line one.&quot;,
+                    &quot;Content line two.&quot;,
+                    &quot;Content line three.&quot;,
+                    &quot;Content line four.&quot;
+                ]
+            }
+        Table slide:
+            {
+                &quot;type&quot;: &quot;table&quot;,
+                &quot;title&quot;: &quot;Key Metrics&quot;,
+                &quot;table&quot;: {
+                    &quot;rows&quot;: [
+                        [&quot;Metric&quot;, &quot;Q2 2024&quot;, &quot;Q1 2024&quot;, &quot;YoY Change&quot;],
+                        [&quot;Revenue&quot;, &quot;$12.5M&quot;, &quot;$11.2M&quot;, &quot;+11.6%&quot;],
+                        [&quot;Operating Margin&quot;, &quot;28.4%&quot;, &quot;26.8%&quot;, &quot;+1.6pp&quot;],
+                        [&quot;Customer Base&quot;, &quot;145K&quot;, &quot;128K&quot;, &quot;+13.3%&quot;],
+                        [&quot;Employee Count&quot;, &quot;520&quot;, &quot;480&quot;, &quot;+8.3%&quot;]
+                    ]
+                }
+    &quot;&quot;&quot;
+    try:
+        return deck.add_slide_from_json(json_data)
+    except Exception as e:
+        return f&quot;Error adding slide from JSON: {str(e)}&quot;
+
+async def main():
+    transport = os.getenv(&quot;TRANSPORT&quot;, &quot;sse&quot;)
+    if transport == 'sse':
+        # Run the MCP server with sse transport
+        await mcp.run_sse_async()
+    else:
+        # Run the MCP server with stdio transport
+        await mcp.run_stdio_async()
+
+if __name__ == &quot;__main__&quot;:
+    asyncio.run(main())</content>
+    
+
+  </file>
+  <file>
+    
+  
+    <path>src/deckbuilder.py</path>
+    
+  
+    <content>import os
+import shutil
+import json
+from pptx import Presentation
+
+def singleton(cls):
+    instances = {}
+    def get_instance(*args, **kwargs):
+        if cls not in instances:
+            instances[cls] = cls(*args, **kwargs)
+        return instances[cls]
+    return get_instance
+
+@singleton
+class Deckbuilder:
+
+# Default layout mappings if not specified in settings
+    DEFAULT_LAYOUTS = {
+        &quot;title&quot;: &quot;title&quot;,                # Title slide with subtitle
+        &quot;table&quot;: &quot;titleandcontent&quot;,      # Slide with title and table
+        &quot;content&quot;: &quot;titleandcontent&quot;,    # Slide with title and bullet points
+        &quot;section&quot;: &quot;sectionHeader&quot;,      # Section divider slide
+        &quot;blank&quot;: &quot;blank&quot;                 # Blank slide
+    }   
+
+    # Standard PowerPoint layout names and their indices
+    DEFAULT_PPT_LAYOUTS = {
+        &quot;title&quot;: 0,                    # Title Slide
+        &quot;titleandcontent&quot;: 1,          # Title and Content
+        &quot;sectionHeader&quot;: 2,            # Section Header
+        &quot;twoContent&quot;: 3,              # Two Content
+        &quot;comparison&quot;: 4,              # Comparison
+        &quot;titleOnly&quot;: 5,               # Title Only
+        &quot;blank&quot;: 6,                   # Blank
+        &quot;contentWithCaption&quot;: 7,      # Content with Caption
+        &quot;pictureWithCaption&quot;: 8,      # Picture with Caption
+        &quot;titleAndVerticalText&quot;: 9,    # Title and Vertical Text
+        &quot;verticalTitleAndText&quot;: 10    # Vertical Title and Text
+        }
+
+    def __init__(self):
+        self.template_path = os.getenv('DECK_TEMPLATE_FOLDER')
+        self.template_name = os.getenv('DECK_TEMPLATE_NAME')
+        self.output_folder = os.getenv('DECK_OUTPUT_FOLDER')
+        self.prs = Presentation()
+        
+        # Ensure default template exists in templates folder
+        self._check_template_exists(self.template_name or 'default')
+        
+    def _check_template_exists(self, templateName: str):
+        &quot;&quot;&quot;Check if template exists in the templates folder and copy if needed.&quot;&quot;&quot;
+
+        # Use self.template_name if available, otherwise use default
+        if not templateName or templateName == 'default':
+            templateName = self.template_name or 'default'
+
+        # Ensure templateName ends with .pptx
+        if not templateName.endswith('.pptx'):
+            templateName += '.pptx'
+        
+        if self.template_path:
+            try:
+                # Create templates folder if it doesn't exist
+                os.makedirs(self.template_path, exist_ok=True)
+                
+                # Check if template exists in templates folder
+                default_template = os.path.join(self.template_path, templateName)
+                if not os.path.exists(default_template):
+                    # Copy from src/default.pptx
+                    src_template = os.path.join(os.path.dirname(__file__), 'default.pptx')
+                    if os.path.exists(src_template):
+                        shutil.copy2(src_template, default_template)
+            except (OSError, IOError) as e:
+                # Handle file operation errors silently
+                pass
+    
+    
+    def create_presentation(self, fileName: str, templateName: str = &quot;default&quot;) -&gt; str:
+        # Check template exists
+        self._check_template_exists(templateName)
+        
+        # Create deck with template
+        if not templateName.endswith('.pptx'):
+            templateName += '.pptx'
+        template_path = os.path.join(self.template_path, templateName) if self.template_path else None
+        self.prs = Presentation(template_path) if template_path and os.path.exists(template_path) else Presentation()
+        
+        self._clear_slides()
+
+        return f&quot;Creating presentation: {fileName}&quot;
+
+
+    def write_presentation(self, fileName: str = &quot;Sample_Presentation&quot;) -&gt; str:
+        &quot;&quot;&quot;Writes the presentation to disk with versioning.&quot;&quot;&quot;
+        # Get output folder from environment or use default
+        output_folder = self.output_folder or '.'
+        
+        # Ensure output folder exists
+        os.makedirs(output_folder, exist_ok=True)
+        
+        # Create base filename with .latest.pptx extension
+        base_name = f&quot;{fileName}.latest.pptx&quot;
+        latest_file = os.path.join(output_folder, base_name)
+        
+        # Handle versioning if file exists
+        if os.path.exists(latest_file):
+            # Find the highest version number
+            version_num = 1
+            while True:
+                version_file = os.path.join(output_folder, f&quot;{fileName}.latest.pptx.v{version_num:02d}.pptx&quot;)
+                if not os.path.exists(version_file):
+                    break
+                version_num += 1
+            
+            # Rename current latest to versioned file
+            os.rename(latest_file, version_file)
+        
+        # Write the latest file
+        self.prs.save(latest_file)
+        
+        return f&quot;Successfully created presentation: {os.path.basename(latest_file)}&quot;
+
+    def add_slide_from_json(self, json_data) -&gt; str:
+        &quot;&quot;&quot;
+        Add a slide to the presentation using JSON data.
+        
+        Args:
+            json_data: JSON string or dictionary containing slide data
+            
+        Returns:
+            Success message
+        &quot;&quot;&quot;
+        try:
+            # Handle both string and dictionary inputs
+            if isinstance(json_data, str):
+                # Parse JSON data - handle potential double encoding
+                data = json.loads(json_data)
+                
+                # If the result is still a string, parse it again
+                if isinstance(data, str):
+                    data = json.loads(data)
+            else:
+                # Already a dictionary
+                data = json_data
+            
+            # Handle different JSON formats
+            if &quot;slides&quot; in data:
+                # Multiple slides format
+                for slide_data in data[&quot;slides&quot;]:
+                    self._add_slide(slide_data)
+            elif &quot;presentation&quot; in data and &quot;slides&quot; in data[&quot;presentation&quot;]:
+                # Presentation wrapper format
+                for slide_data in data[&quot;presentation&quot;][&quot;slides&quot;]:
+                    self._add_slide(slide_data)
+            else:
+                # Single slide format
+                self._add_slide(data)
+                
+            return &quot;Successfully added slide(s) from JSON data&quot;
+            
+        except json.JSONDecodeError as e:
+            return f&quot;Error parsing JSON: {str(e)}&quot;
+        except Exception as e:
+            return f&quot;Error adding slide: {str(e)}&quot;
+
+    def _clear_slides(self):
+        &quot;&quot;&quot;Clear all slides from the presentation.&quot;&quot;&quot;
+        slide_count = len(self.prs.slides)
+        for i in range(slide_count - 1, -1, -1):
+            rId = self.prs.slides._sldIdLst[i].rId
+            self.prs.part.drop_rel(rId)
+            del self.prs.slides._sldIdLst[i]
+
+    def _add_slide(self, slide_data: dict):
+        &quot;&quot;&quot;
+        Add a single slide to the presentation based on slide data.
+        
+        Args:
+            slide_data: Dictionary containing slide information
+        &quot;&quot;&quot;
+        # Get slide type and determine layout
+        slide_type = slide_data.get(&quot;type&quot;, &quot;content&quot;)
+        layout_name = self.DEFAULT_LAYOUTS.get(slide_type, &quot;titleandcontent&quot;)
+        layout_index = self.DEFAULT_PPT_LAYOUTS.get(layout_name, 1)
+        
+        slide_layout = self.prs.slide_layouts[layout_index]
+        slide = self.prs.slides.add_slide(slide_layout)
+        
+        # Add title if provided
+        if &quot;title&quot; in slide_data and slide.shapes.title:
+            slide.shapes.title.text = slide_data[&quot;title&quot;]
+        
+        # Add content if provided
+        if &quot;content&quot; in slide_data:
+            # This is a basic implementation - can be expanded
+            # to handle different content types (text, images, etc.)
+            for shape in slide.placeholders:
+                if shape.placeholder_format.idx == 1:  # Content placeholder
+                    if isinstance(slide_data[&quot;content&quot;], str):
+                        shape.text = slide_data[&quot;content&quot;]
+                    elif isinstance(slide_data[&quot;content&quot;], list):
+                        shape.text = &quot;\n&quot;.join(slide_data[&quot;content&quot;])
+                    break
+
+def get_deckbuilder_client():
+    # Return singleton instance of Deckbuilder
+    return Deckbuilder()</content>
+    
+
+  </file>
+</repository_files>
+<statistics>
+  <total_files>10</total_files>
+  <total_chars>48863</total_chars>
+  <total_tokens>0</total_tokens>
+  <generated_at>2025-06-14 18:23:54</generated_at>
+</statistics>
+</repository>
