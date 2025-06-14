@@ -136,6 +136,71 @@ async def add_content_slide(ctx: Context, json_data) -> str:
         return deck.add_slide_from_json(json_data)
     except Exception as e:
         return f"Error adding slide from JSON: {str(e)}"
+
+@mcp.tool()
+async def add_table_slide(ctx: Context, json_data) -> str:
+    """Add a Table slide to the presentation using JSON data with custom styling support
+    
+    This tool accepts a JSON string containing table slide information and adds it to the current presentation.
+    Supports custom styling through predefined style names and color overrides.
+    
+    Args:
+        ctx: The MCP server provided context.
+        json_data: JSON string containing table slide data with styling options.
+        
+    Example JSON format for the Table slide:
+        {
+            "type": "table",
+            "title": "Sales Report",
+            "table": {
+                "header_style": "dark_blue_white_text",
+                "row_style": "alternating_light_gray", 
+                "border_style": "thin_gray",
+                "custom_colors": {
+                    "header_bg": "#2E5984",
+                    "header_text": "#FFFFFF",
+                    "alt_row": "#F0F8FF"
+                },
+                "data": [
+                    ["Name", "Sales", "Region"],
+                    ["John Smith", "$125,000", "North"],
+                    ["Sarah Johnson", "$98,500", "South"]
+                ]
+            }
+        }
+        
+    Available header_style options:
+        - "dark_blue_white_text" - Dark blue background, white text
+        - "light_blue_dark_text" - Light blue background, dark text
+        - "dark_gray_white_text" - Dark gray background, white text
+        - "light_gray_dark_text" - Light gray background, dark text
+        - "white_dark_text" - White background, dark text
+        - "accent_color_white_text" - Theme accent color background, white text
+        
+    Available row_style options:
+        - "alternating_light_gray" - White/light gray alternating rows
+        - "alternating_light_blue" - White/light blue alternating rows
+        - "solid_white" - All white rows
+        - "solid_light_gray" - All light gray rows
+        - "no_fill" - Transparent/no background
+        
+    Available border_style options:
+        - "thin_gray" - Thin gray borders all around
+        - "thick_gray" - Thick gray borders
+        - "header_only" - Border only under header
+        - "outer_only" - Border only around table perimeter
+        - "no_borders" - No borders
+        
+    Custom color overrides (hex codes):
+        - "header_bg" - Header background color
+        - "header_text" - Header text color
+        - "alt_row" - Alternating row background color
+        - "border_color" - Border color
+    """
+    try:
+        return deck.add_slide_from_json(json_data)
+    except Exception as e:
+        return f"Error adding table slide from JSON: {str(e)}"
     
 async def add_slide(ctx: Context, json_data) -> str:
     """Add a slide to the presentation using JSON data

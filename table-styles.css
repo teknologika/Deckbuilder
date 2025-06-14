@@ -1,0 +1,253 @@
+/* PowerPoint Table Style Visualizer CSS */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 20px;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+h1 {
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 2.5em;
+}
+
+h2 {
+    color: #34495e;
+    border-bottom: 3px solid #4472C4;
+    padding-bottom: 10px;
+    margin-top: 40px;
+    margin-bottom: 25px;
+}
+
+h3 {
+    color: #4472C4;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    font-size: 1.2em;
+    background-color: #f8f9fa;
+    padding: 8px 12px;
+    border-radius: 4px;
+    border-left: 4px solid #4472C4;
+}
+
+p {
+    text-align: center;
+    color: #666;
+    font-size: 1.1em;
+    margin-bottom: 30px;
+}
+
+/* Base table styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 14px;
+    background-color: white;
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+}
+
+th {
+    font-weight: bold;
+}
+
+/* Header Styles */
+.header-dark-blue th {
+    background-color: #4472C4;
+    color: white;
+}
+
+.header-light-blue th {
+    background-color: #E6F3FF;
+    color: #333;
+}
+
+.header-dark-gray th {
+    background-color: #666666;
+    color: white;
+}
+
+.header-light-gray th {
+    background-color: #F0F0F0;
+    color: #333;
+}
+
+.header-white th {
+    background-color: white;
+    color: #333;
+    font-weight: bold;
+}
+
+.header-accent th {
+    background-color: #70AD47;
+    color: white;
+}
+
+/* Row Styles */
+.rows-alternating-gray tr:nth-child(even) {
+    background-color: #F8F8F8;
+}
+
+.rows-alternating-gray tr:nth-child(odd) {
+    background-color: white;
+}
+
+.rows-alternating-blue tr:nth-child(even) {
+    background-color: #E6F3FF;
+}
+
+.rows-alternating-blue tr:nth-child(odd) {
+    background-color: white;
+}
+
+.rows-solid-white tr {
+    background-color: white;
+}
+
+.rows-solid-light-gray tr {
+    background-color: #F8F8F8;
+}
+
+.rows-no-fill tr {
+    background-color: transparent;
+}
+
+/* Border Styles */
+.border-thin-gray,
+.border-thin-gray th,
+.border-thin-gray td {
+    border: 1px solid #CCCCCC;
+}
+
+.border-thick-gray,
+.border-thick-gray th,
+.border-thick-gray td {
+    border: 2px solid #CCCCCC;
+}
+
+.border-header-only {
+    border: none;
+}
+
+.border-header-only th {
+    border-bottom: 2px solid #333;
+}
+
+.border-header-only td {
+    border: none;
+}
+
+.border-outer-only {
+    border: 2px solid #CCCCCC;
+}
+
+.border-outer-only th,
+.border-outer-only td {
+    border: none;
+}
+
+.border-none,
+.border-none th,
+.border-none td {
+    border: none;
+}
+
+/* Color variations for different themes */
+.color-blue .header-accent th {
+    background-color: #4472C4;
+}
+
+.color-green .header-accent th {
+    background-color: #70AD47;
+}
+
+.color-red .header-accent th {
+    background-color: #E74C3C;
+}
+
+.color-orange .header-accent th {
+    background-color: #F39C12;
+}
+
+.color-purple .header-accent th {
+    background-color: #9B59B6;
+}
+
+.color-teal .header-accent th {
+    background-color: #1ABC9C;
+}
+
+.color-gray .header-accent th {
+    background-color: #95A5A6;
+}
+
+.color-black .header-accent th {
+    background-color: #2C3E50;
+}
+
+/* Hover effects for better interactivity */
+table:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+        margin: 10px;
+    }
+    
+    table {
+        font-size: 12px;
+    }
+    
+    th, td {
+        padding: 8px 10px;
+    }
+    
+    h1 {
+        font-size: 2em;
+    }
+}
+
+/* Table container for horizontal scrolling on mobile */
+.table-container {
+    overflow-x: auto;
+    margin: 20px 0;
+}
+
+/* Additional utility classes */
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.font-bold {
+    font-weight: bold;
+}
+
+.font-italic {
+    font-style: italic;
+}
