@@ -6,8 +6,22 @@ import re
 from pptx import Presentation
 from pptx.util import Cm, Pt
 from pptx.dml.color import RGBColor
-from table_styles import TABLE_HEADER_STYLES, TABLE_ROW_STYLES, TABLE_BORDER_STYLES
-from slide_layouts import DEFAULT_LAYOUTS, DEFAULT_PPT_LAYOUTS
+try:
+    from table_styles import TABLE_HEADER_STYLES, TABLE_ROW_STYLES, TABLE_BORDER_STYLES
+    from slide_layouts import DEFAULT_LAYOUTS, DEFAULT_PPT_LAYOUTS
+except ImportError:
+    # Fallback values if modules don't exist
+    TABLE_HEADER_STYLES = {
+        "dark_blue_white_text": {"bg": RGBColor(46, 89, 132), "text": RGBColor(255, 255, 255)}
+    }
+    TABLE_ROW_STYLES = {
+        "alternating_light_gray": {"primary": RGBColor(255, 255, 255), "alt": RGBColor(240, 240, 240)}
+    }
+    TABLE_BORDER_STYLES = {
+        "thin_gray": {"width": Pt(1), "color": RGBColor(128, 128, 128), "style": "all"}
+    }
+    DEFAULT_LAYOUTS = {"content": "titleandcontent", "title": "titleslide"}
+    DEFAULT_PPT_LAYOUTS = {"titleandcontent": 1, "titleslide": 0}
 
 def singleton(cls):
     instances = {}
@@ -52,7 +66,7 @@ class Deckbuilder:
                     src_template = os.path.join(os.path.dirname(__file__), 'default.pptx')
                     if os.path.exists(src_template):
                         shutil.copy2(src_template, default_template)
-            except (OSError, IOError) as e:
+            except (OSError, IOError):
                 # Handle file operation errors silently
                 pass
     
@@ -64,8 +78,11 @@ class Deckbuilder:
         # Create deck with template
         if not templateName.endswith('.pptx'):
             templateName += '.pptx'
-        template_path = os.path.join(self.template_path, templateName) if self.template_path else None
-        self.prs = Presentation(template_path) if template_path and os.path.exists(template_path) else Presentation()
+        if self.template_path:
+            template_path = os.path.join(self.template_path, templateName)
+            self.prs = Presentation(template_path) if os.path.exists(template_path) else Presentation()
+        else:
+            self.prs = Presentation()
         
         self._clear_slides()
 
@@ -190,8 +207,9 @@ class Deckbuilder:
         if "table" in slide_data:
             self._add_table_to_slide(slide, slide_data["table"])
 
+
     def _add_rich_content_to_slide(self, slide, rich_content: list):
-        """Add rich content blocks to a slide"""
+        """Add rich content blocks to a slide with improved formatting"""
         # Find the content placeholder
         content_placeholder = None
         for shape in slide.placeholders:
@@ -208,34 +226,46 @@ class Deckbuilder:
         text_frame.clear()
         text_frame.word_wrap = True
         
+        # Set margins for better spacing
+        text_frame.margin_left = Cm(0.25)
+        text_frame.margin_right = Cm(0.25)
+        text_frame.margin_top = Cm(0.25)
+        text_frame.margin_bottom = Cm(0.25)
+        
         # Add each content block with proper hierarchy
         first_content = True
         for block in rich_content:
-            # Add spacing between major content blocks (but not before first)
-            if not first_content and ("heading" in block):
-                p = text_frame.add_paragraph()
-                p.text = ""
-                p.level = 0
-            
             if "heading" in block:
                 p = text_frame.add_paragraph()
                 p.text = block["heading"]
-                p.level = 0  # No bullet for headings
                 p.font.bold = True
-                p.font.size = Pt(14)  # Slightly smaller heading for better fit
+                p.space_after = Pt(6)
+                p.space_before = Pt(12) if not first_content else Pt(0)
                 
             elif "paragraph" in block:
                 p = text_frame.add_paragraph()
                 p.text = block["paragraph"]
-                p.level = 0  # No bullet for paragraphs
-                p.font.size = Pt(11)  # Slightly smaller for better fit
+                p.space_after = Pt(6)
+                p.space_before = Pt(3)
                 
             elif "bullets" in block:
-                for bullet in block["bullets"]:
+                
+                # Get bullet levels if available, otherwise default to level 1
+                bullet_levels = block.get("bullet_levels", [1] * len(block["bullets"]))
+                
+                for bullet_idx, bullet in enumerate(block["bullets"]):
                     p = text_frame.add_paragraph()
                     p.text = bullet
-                    p.level = 1  # Indent bullets
-                    p.font.size = Pt(10)  # Smaller font for bullets
+                    
+                    # Use the parsed bullet level
+                    bullet_level = bullet_levels[bullet_idx] if bullet_idx < len(bullet_levels) else 1
+                    p.level = bullet_level
+                    
+                    # Set spacing based on level
+                    if bullet_level == 1:
+                        p.space_after = Pt(3)
+                    else:  # Level 2+ (sub-bullets)
+                        p.space_after = Pt(2)
             
             first_content = False
 
@@ -553,17 +583,34 @@ class Deckbuilder:
         return slide_data
 
     def _parse_rich_content(self, content: str) -> list:
-        """Parse mixed markdown content into structured content blocks"""
+        """Parse mixed markdown content into structured content blocks with better hierarchy"""
         blocks = []
         lines = content.split('\n')
         current_block = None
         
         for line in lines:
+            original_line = line
             line = line.strip()
             if not line:
                 continue
                 
-            if line.startswith('## '):  # Subheading
+            # Handle nested bullet points by preserving indentation
+            if line.startswith('- ') or line.startswith('* '):
+                # Determine indentation level
+                indent_level = len(original_line) - len(original_line.lstrip())
+                bullet_text = line[2:].strip()
+                
+                if not current_block or "bullets" not in current_block:
+                    if current_block:
+                        blocks.append(current_block)
+                    current_block = {"bullets": [], "bullet_levels": []}
+                
+                current_block["bullets"].append(bullet_text)
+                # Map indentation to bullet levels (0 indent = level 1, 2+ spaces = level 2, etc.)
+                level = 1 if indent_level < 2 else 2
+                current_block["bullet_levels"].append(level)
+                
+            elif line.startswith('## '):  # Subheading
                 if current_block:
                     blocks.append(current_block)
                 current_block = {
@@ -578,13 +625,6 @@ class Deckbuilder:
                     "heading": line[4:].strip(),
                     "level": 3
                 }
-                
-            elif line.startswith('- ') or line.startswith('* '):  # Bullet point
-                if not current_block or "bullets" not in current_block:
-                    if current_block:
-                        blocks.append(current_block)
-                    current_block = {"bullets": []}
-                current_block["bullets"].append(line[2:].strip())
                 
             else:  # Regular paragraph
                 if not current_block or "paragraph" not in current_block:

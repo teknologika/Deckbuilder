@@ -58,7 +58,8 @@ async def create_presentation(ctx: Context, templateName: str, fileName: str) ->
 
     This tool is designed to create a new powerpoint presentation from the given context.
     This tool creates an empty presentation, with no slides in it.
-    Slides can then be added by calling other tools.
+    Slides are then be added by calling other tools.
+    This does NOT add a title slide, you will need to call add_title_slide to do that.
 
     Args:
         ctx: The MCP server provided context.
@@ -208,6 +209,7 @@ async def create_presentation_from_markdown(ctx: Context, markdown_content: str,
     
     This tool accepts markdown content with frontmatter slide definitions and creates a complete presentation.
     Each slide is defined using YAML frontmatter followed by markdown content.
+    This tool does not save the presentation. After you call this tool call write_presentation
     
     Args:
         ctx: MCP context
@@ -269,6 +271,7 @@ async def create_presentation_from_markdown(ctx: Context, markdown_content: str,
     except Exception as e:
         return f"Error creating presentation from markdown: {str(e)}"
     
+@mcp.tool()
 async def add_slide(ctx: Context, json_data) -> str:
     """Add a slide to the presentation using JSON data
     
