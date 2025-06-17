@@ -198,3 +198,11 @@ cython_debug/
 
 # Claude Code configuration
 .claude/
+
+# Screenshots and images
+Screenshot*.png
+Screenshot*.jpg
+Screenshot*.jpeg
+*.screenshot.png
+*.screenshot.jpg
+*.screenshot.jpeg
