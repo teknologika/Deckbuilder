@@ -206,30 +206,38 @@ class Deckbuilder:
         content_placeholder.text = ""
         text_frame = content_placeholder.text_frame
         text_frame.clear()
+        text_frame.word_wrap = True
         
-        # Add each content block
-        for i, block in enumerate(rich_content):
-            if i > 0:  # Add spacing between blocks
+        # Add each content block with proper hierarchy
+        first_content = True
+        for block in rich_content:
+            # Add spacing between major content blocks (but not before first)
+            if not first_content and ("heading" in block):
                 p = text_frame.add_paragraph()
                 p.text = ""
+                p.level = 0
             
             if "heading" in block:
                 p = text_frame.add_paragraph()
                 p.text = block["heading"]
+                p.level = 0  # No bullet for headings
                 p.font.bold = True
-                p.font.size = Pt(16)  # Larger font for headings
-                p.level = 0
+                p.font.size = Pt(14)  # Slightly smaller heading for better fit
                 
             elif "paragraph" in block:
                 p = text_frame.add_paragraph()
                 p.text = block["paragraph"]
-                p.level = 0
+                p.level = 0  # No bullet for paragraphs
+                p.font.size = Pt(11)  # Slightly smaller for better fit
                 
             elif "bullets" in block:
                 for bullet in block["bullets"]:
                     p = text_frame.add_paragraph()
                     p.text = bullet
                     p.level = 1  # Indent bullets
+                    p.font.size = Pt(10)  # Smaller font for bullets
+            
+            first_content = False
 
     def _add_simple_content_to_slide(self, slide, content):
         """Add simple content to slide (backwards compatibility)"""
