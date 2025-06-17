@@ -64,8 +64,8 @@ cd deck-builder-mcp
 
 2. **Set up virtual environment:**
 ```bash
-python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
 3. **Install dependencies:**
@@ -73,7 +73,12 @@ source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. **Configure Claude Desktop:**
+4. **Run the server (for testing):**
+```bash
+./run_server.sh
+```
+
+5. **Configure Claude Desktop:**
 
 Add this configuration to your Claude Desktop config file:
 
@@ -81,7 +86,7 @@ Add this configuration to your Claude Desktop config file:
 {
   "mcpServers": {
     "deckbuilder": {
-      "command": "/path/to/deck-builder-mcp/.venv/bin/python",
+      "command": "/path/to/deck-builder-mcp/venv/bin/python",
       "args": ["/path/to/deck-builder-mcp/src/main.py"],
       "env": {
         "TRANSPORT": "stdio",
@@ -131,10 +136,19 @@ Add this configuration to your Claude Desktop config file:
 - JSON and markdown parsing with frontmatter support
 - Rich content rendering (headings, paragraphs, bullets)
 - File versioning and output management
+- Clean formatting without extra blank lines
 
-**`src/default.pptx`** - Default Template
-- Fallback PowerPoint template with standard layouts
-- Automatically copied to template directory if needed
+**`src/table_styles.py`** - Table styling definitions
+- Predefined header, row, and border styles for tables
+- Color schemes and formatting options
+
+**`src/slide_layouts.py`** - Slide layout mappings
+- Default PowerPoint layout configurations
+- Layout type to template index mappings
+
+**`run_server.sh`** - Server startup script
+- Virtual environment activation and server launch
+- Convenient development and testing script
 
 ### Available MCP Tools
 

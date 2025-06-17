@@ -221,7 +221,6 @@ class Deckbuilder:
             return
         
         # Clear existing content
-        content_placeholder.text = ""
         text_frame = content_placeholder.text_frame
         text_frame.clear()
         text_frame.word_wrap = True
@@ -236,25 +235,33 @@ class Deckbuilder:
         first_content = True
         for block in rich_content:
             if "heading" in block:
-                p = text_frame.add_paragraph()
+                if first_content:
+                    p = text_frame.paragraphs[0]  # Use existing first paragraph
+                else:
+                    p = text_frame.add_paragraph()
                 p.text = block["heading"]
                 p.font.bold = True
                 p.space_after = Pt(6)
                 p.space_before = Pt(12) if not first_content else Pt(0)
                 
             elif "paragraph" in block:
-                p = text_frame.add_paragraph()
+                if first_content:
+                    p = text_frame.paragraphs[0]  # Use existing first paragraph
+                else:
+                    p = text_frame.add_paragraph()
                 p.text = block["paragraph"]
                 p.space_after = Pt(6)
                 p.space_before = Pt(3)
                 
             elif "bullets" in block:
-                
                 # Get bullet levels if available, otherwise default to level 1
                 bullet_levels = block.get("bullet_levels", [1] * len(block["bullets"]))
                 
                 for bullet_idx, bullet in enumerate(block["bullets"]):
-                    p = text_frame.add_paragraph()
+                    if first_content and bullet_idx == 0:
+                        p = text_frame.paragraphs[0]  # Use existing first paragraph for first bullet
+                    else:
+                        p = text_frame.add_paragraph()
                     p.text = bullet
                     
                     # Use the parsed bullet level
