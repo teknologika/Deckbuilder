@@ -201,6 +201,73 @@ async def add_table_slide(ctx: Context, json_data) -> str:
         return deck.add_slide_from_json(json_data)
     except Exception as e:
         return f"Error adding table slide from JSON: {str(e)}"
+
+@mcp.tool()
+async def create_presentation_from_markdown(ctx: Context, markdown_content: str, fileName: str = "Sample_Presentation") -> str:
+    """Create presentation from formatted markdown with frontmatter
+    
+    This tool accepts markdown content with frontmatter slide definitions and creates a complete presentation.
+    Each slide is defined using YAML frontmatter followed by markdown content.
+    
+    Args:
+        ctx: MCP context
+        markdown_content: Markdown string with frontmatter slide definitions
+        fileName: Output filename (default: Sample_Presentation)
+        
+    Example markdown format:
+        ---
+        layout: title
+        ---
+        # Main Title
+        ## Subtitle
+        
+        ---
+        layout: content
+        ---
+        # Key Points
+        
+        ## Overview
+        This section covers the main features of our product.
+        
+        - Advanced analytics dashboard
+        - Real-time data processing  
+        - Seamless API integration
+        
+        The system scales automatically based on demand.
+        
+        ---
+        layout: table
+        style: dark_blue_white_text
+        ---
+        # Sales Report
+        | Name | Sales | Region |
+        | John Smith | $125,000 | North |
+        | Sarah Johnson | $98,500 | South |
+    
+    Supported layouts:
+        - title: Title slide with title and subtitle
+        - content: Content slide with rich text support (headings, paragraphs, bullets)
+        - table: Table slide with styling options
+        
+    Table styling options:
+        - style: Header style (dark_blue_white_text, light_blue_dark_text, etc.)
+        - row_style: Row style (alternating_light_gray, solid_white, etc.)
+        - border_style: Border style (thin_gray, thick_gray, no_borders, etc.)
+        - custom_colors: Custom color overrides (header_bg, header_text, alt_row, border_color)
+    """
+    try:
+        slides = deck.parse_markdown_with_frontmatter(markdown_content)
+        
+        # Create presentation
+        deck.create_presentation("default", fileName)
+        
+        # Add all slides
+        for slide_data in slides:
+            deck._add_slide(slide_data)
+            
+        return f"Successfully created presentation with {len(slides)} slides from markdown"
+    except Exception as e:
+        return f"Error creating presentation from markdown: {str(e)}"
     
 async def add_slide(ctx: Context, json_data) -> str:
     """Add a slide to the presentation using JSON data

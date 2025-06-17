@@ -1,8 +1,10 @@
 import os
 import shutil
 import json
+import yaml
+import re
 from pptx import Presentation
-from pptx.util import Cm
+from pptx.util import Cm, Pt
 from pptx.dml.color import RGBColor
 from table_styles import TABLE_HEADER_STYLES, TABLE_ROW_STYLES, TABLE_BORDER_STYLES
 from slide_layouts import DEFAULT_LAYOUTS, DEFAULT_PPT_LAYOUTS
@@ -170,21 +172,74 @@ class Deckbuilder:
         if "title" in slide_data and slide.shapes.title:
             slide.shapes.title.text = slide_data["title"]
         
-        # Add content if provided
-        if "content" in slide_data:
-            # This is a basic implementation - can be expanded
-            # to handle different content types (text, images, etc.)
+        # Add subtitle for title slides
+        if "subtitle" in slide_data and slide_type == "title":
             for shape in slide.placeholders:
-                if shape.placeholder_format.idx == 1:  # Content placeholder
-                    if isinstance(slide_data["content"], str):
-                        shape.text = slide_data["content"]
-                    elif isinstance(slide_data["content"], list):
-                        shape.text = "\n".join(slide_data["content"])
+                if shape.placeholder_format.idx == 1:  # Subtitle placeholder
+                    shape.text = slide_data["subtitle"]
                     break
+        
+        # Handle rich content
+        if "rich_content" in slide_data:
+            self._add_rich_content_to_slide(slide, slide_data["rich_content"])
+        elif "content" in slide_data:
+            # Fallback to simple content (backwards compatibility)
+            self._add_simple_content_to_slide(slide, slide_data["content"])
         
         # Add table if provided
         if "table" in slide_data:
             self._add_table_to_slide(slide, slide_data["table"])
+
+    def _add_rich_content_to_slide(self, slide, rich_content: list):
+        """Add rich content blocks to a slide"""
+        # Find the content placeholder
+        content_placeholder = None
+        for shape in slide.placeholders:
+            if shape.placeholder_format.idx == 1:  # Content placeholder
+                content_placeholder = shape
+                break
+        
+        if not content_placeholder:
+            return
+        
+        # Clear existing content
+        content_placeholder.text = ""
+        text_frame = content_placeholder.text_frame
+        text_frame.clear()
+        
+        # Add each content block
+        for i, block in enumerate(rich_content):
+            if i > 0:  # Add spacing between blocks
+                p = text_frame.add_paragraph()
+                p.text = ""
+            
+            if "heading" in block:
+                p = text_frame.add_paragraph()
+                p.text = block["heading"]
+                p.font.bold = True
+                p.font.size = Pt(16)  # Larger font for headings
+                p.level = 0
+                
+            elif "paragraph" in block:
+                p = text_frame.add_paragraph()
+                p.text = block["paragraph"]
+                p.level = 0
+                
+            elif "bullets" in block:
+                for bullet in block["bullets"]:
+                    p = text_frame.add_paragraph()
+                    p.text = bullet
+                    p.level = 1  # Indent bullets
+
+    def _add_simple_content_to_slide(self, slide, content):
+        """Add simple content to slide (backwards compatibility)"""
+        for shape in slide.placeholders:
+            if shape.placeholder_format.idx == 1:  # Content placeholder
+                if isinstance(content, str):
+                    shape.text = content
+                elif isinstance(content, list):
+                    shape.text = "\n".join(content)
+                break
 
     def _add_table_to_slide(self, slide, table_data):
         """
@@ -402,6 +457,166 @@ class Deckbuilder:
             pass
         
         return None
+
+    def parse_markdown_with_frontmatter(self, markdown_content: str) -> list:
+        """
+        Parse markdown content with frontmatter into slide data.
+        
+        Args:
+            markdown_content: Markdown string with frontmatter slide definitions
+            
+        Returns:
+            List of slide dictionaries ready for _add_slide()
+        """
+        slides = []
+        
+        # Split content by frontmatter boundaries
+        slide_blocks = re.split(r'^---\s*$', markdown_content, flags=re.MULTILINE)
+        
+        i = 0
+        while i < len(slide_blocks):
+            # Skip empty blocks
+            if not slide_blocks[i].strip():
+                i += 1
+                continue
+                
+            # Look for frontmatter + content pairs
+            if i + 1 < len(slide_blocks):
+                try:
+                    frontmatter_raw = slide_blocks[i].strip()
+                    content_raw = slide_blocks[i + 1].strip() if i + 1 < len(slide_blocks) else ""
+                    
+                    # Parse frontmatter
+                    slide_config = yaml.safe_load(frontmatter_raw) or {}
+                    
+                    # Parse markdown content into slide data
+                    slide_data = self._parse_slide_content(content_raw, slide_config)
+                    slides.append(slide_data)
+                    
+                    i += 2  # Skip both frontmatter and content blocks
+                except yaml.YAMLError:
+                    # If YAML parsing fails, treat as regular content
+                    content_raw = slide_blocks[i].strip()
+                    slide_data = self._parse_slide_content(content_raw, {})
+                    slides.append(slide_data)
+                    i += 1
+            else:
+                # Single block without frontmatter
+                content_raw = slide_blocks[i].strip()
+                slide_data = self._parse_slide_content(content_raw, {})
+                slides.append(slide_data)
+                i += 1
+        
+        return slides
+
+    def _parse_slide_content(self, content: str, config: dict) -> dict:
+        """Convert markdown content + config into slide data dict with mixed content support"""
+        slide_data = {
+            "type": config.get("layout", "content"),
+            **config  # Include all frontmatter as slide properties
+        }
+        
+        if not content.strip():
+            return slide_data
+            
+        lines = content.split('\n')
+        
+        # Extract title (first # header) 
+        title_found = False
+        content_lines = []
+        
+        for line in lines:
+            if line.startswith('# ') and not title_found:
+                slide_data["title"] = line[2:].strip()
+                title_found = True
+            elif line.startswith('## ') and slide_data["type"] == "title":
+                slide_data["subtitle"] = line[3:].strip()
+            else:
+                content_lines.append(line)
+        
+        # Parse mixed content based on slide type
+        if slide_data["type"] == "table":
+            slide_data["table"] = self._parse_markdown_table('\n'.join(content_lines), config)
+        elif slide_data["type"] != "title":  # Content slides get rich content
+            rich_content = self._parse_rich_content('\n'.join(content_lines))
+            if rich_content:
+                slide_data["rich_content"] = rich_content
+        
+        return slide_data
+
+    def _parse_rich_content(self, content: str) -> list:
+        """Parse mixed markdown content into structured content blocks"""
+        blocks = []
+        lines = content.split('\n')
+        current_block = None
+        
+        for line in lines:
+            line = line.strip()
+            if not line:
+                continue
+                
+            if line.startswith('## '):  # Subheading
+                if current_block:
+                    blocks.append(current_block)
+                current_block = {
+                    "heading": line[3:].strip(),
+                    "level": 2
+                }
+                
+            elif line.startswith('### '):  # Sub-subheading
+                if current_block:
+                    blocks.append(current_block)
+                current_block = {
+                    "heading": line[4:].strip(),
+                    "level": 3
+                }
+                
+            elif line.startswith('- ') or line.startswith('* '):  # Bullet point
+                if not current_block or "bullets" not in current_block:
+                    if current_block:
+                        blocks.append(current_block)
+                    current_block = {"bullets": []}
+                current_block["bullets"].append(line[2:].strip())
+                
+            else:  # Regular paragraph
+                if not current_block or "paragraph" not in current_block:
+                    if current_block:
+                        blocks.append(current_block)
+                    current_block = {"paragraph": line}
+                else:
+                    current_block["paragraph"] += " " + line
+        
+        if current_block:
+            blocks.append(current_block)
+            
+        return blocks
+
+    def _parse_markdown_table(self, content: str, config: dict) -> dict:
+        """Extract table from markdown and apply styling config"""
+        table_data = {
+            "data": [],
+            "header_style": config.get("style", "dark_blue_white_text"),
+            "row_style": config.get("row_style", "alternating_light_gray"),
+            "border_style": config.get("border_style", "thin_gray"),
+            "custom_colors": config.get("custom_colors", {})
+        }
+        
+        lines = [line.strip() for line in content.split('\n') if line.strip()]
+        
+        for line in lines:
+            if line.startswith('|') and line.endswith('|'):
+                # Parse table row
+                cells = [cell.strip() for cell in line[1:-1].split('|')]
+                table_data["data"].append(cells)
+            elif '|' in line and not line.startswith('|'):
+                # Handle tables without outer pipes
+                cells = [cell.strip() for cell in line.split('|')]
+                table_data["data"].append(cells)
+            elif line.startswith('---') or line.startswith('==='):
+                # Skip separator lines
+                continue
+        
+        return table_data
 
 def get_deckbuilder_client():
     # Return singleton instance of Deckbuilder
