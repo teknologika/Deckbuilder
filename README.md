@@ -4,20 +4,24 @@
 
 The Deck Builder MCP is a Model Context Protocol (MCP) server that enables AI assistants to programmatically create and manipulate PowerPoint presentations. Built with Python and FastMCP, this server provides a comprehensive set of tools for generating professional presentations with multiple slide types, custom styling, and template support.
 
-The server solves the common challenge of automating presentation creation by offering a JSON-based interface for defining slide content and structure. It's particularly useful for generating reports, dashboards, and structured presentations from data or user specifications.
+The server solves the common challenge of automating presentation creation by offering both JSON and markdown interfaces for defining slide content and structure. Users can choose between precise JSON control or intuitive markdown authoring with YAML frontmatter. It's particularly useful for generating reports, dashboards, and structured presentations from data or user specifications.
 
 **Technology Stack:**
 - **Backend Framework:** FastMCP (Model Context Protocol)
 - **Presentation Engine:** python-pptx
+- **Content Parsing:** PyYAML for frontmatter, custom markdown parser
 - **Transport:** stdio/SSE
 - **Language:** Python 3.x
 - **Configuration:** Environment variables with .env support
 
 ## Features
 
+- **Multiple Input Formats:** Support for both JSON and Markdown with YAML frontmatter
+- **Rich Content Support:** Mixed content with headings, paragraphs, and bullet points
 - **Multiple Slide Types:** Support for title slides, content slides, and data tables
 - **Template-Based Generation:** Use custom PowerPoint templates or default layouts
 - **JSON Configuration:** Define presentations using structured JSON data
+- **Markdown Authoring:** Create presentations using familiar markdown syntax with frontmatter
 - **Custom Table Styling:** Advanced table formatting with predefined styles and color overrides
 - **Automatic File Versioning:** Intelligent file naming to prevent overwrites
 - **Environment Configuration:** Flexible setup through environment variables
@@ -37,7 +41,7 @@ The server solves the common challenge of automating presentation creation by of
 ### Required Python Dependencies
 
 ```bash
-pip install python-pptx fastmcp python-dotenv
+pip install python-pptx fastmcp python-dotenv pyyaml
 ```
 
 ### Directory Structure Setup
@@ -66,7 +70,7 @@ source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
 3. **Install dependencies:**
 ```bash
-pip install python-pptx fastmcp python-dotenv
+pip install -r requirements.txt
 ```
 
 4. **Configure Claude Desktop:**
@@ -124,7 +128,8 @@ Add this configuration to your Claude Desktop config file:
 **`src/deckbuilder.py`** - Presentation Engine
 - Singleton Deckbuilder class for presentation management
 - PowerPoint template handling and slide creation
-- JSON data parsing and slide generation
+- JSON and markdown parsing with frontmatter support
+- Rich content rendering (headings, paragraphs, bullets)
 - File versioning and output management
 
 **`src/default.pptx`** - Default Template
@@ -134,10 +139,11 @@ Add this configuration to your Claude Desktop config file:
 ### Available MCP Tools
 
 1. **`create_presentation`** - Initialize a new presentation from template
-2. **`add_title_slide`** - Add title slides with heading and subtitle
-3. **`add_content_slide`** - Add content slides with bullet points
-4. **`add_table_slide`** - Add data tables with custom styling
-5. **`write_presentation`** - Save presentation to disk with versioning
+2. **`create_presentation_from_markdown`** - Create complete presentations from markdown with frontmatter
+3. **`add_title_slide`** - Add title slides with heading and subtitle
+4. **`add_content_slide`** - Add content slides with bullet points
+5. **`add_table_slide`** - Add data tables with custom styling
+6. **`write_presentation`** - Save presentation to disk with versioning
 
 ### Configuration Files
 
@@ -146,6 +152,65 @@ Add this configuration to your Claude Desktop config file:
 - **`table-styles.css/html`** - Table styling reference documentation
 
 ## Usage Examples
+
+### Markdown with Frontmatter (Recommended)
+
+Create presentations using familiar markdown syntax with YAML frontmatter for layout control:
+
+```markdown
+---
+layout: title
+---
+# AI-Powered Business Solutions
+## Transforming Your Workflow in 2024
+
+---
+layout: content
+---
+# Key Benefits
+
+## Performance Improvements
+Our platform delivers significant improvements across all key metrics.
+
+- Increased efficiency by 40%
+- Reduced manual errors by 68%
+- 24/7 availability and support
+- Scalable solutions for any business size
+
+The system automatically scales based on demand, ensuring optimal performance at all times.
+
+## Implementation Timeline
+We can have your system up and running in just 2 weeks.
+
+- Week 1: Setup and configuration
+- Week 2: Training and go-live support
+
+---
+layout: table
+style: dark_blue_white_text
+row_style: alternating_light_gray
+---
+# Performance Metrics
+| Metric | Before | After | Improvement |
+| Response Time | 2.5s | 0.8s | 68% faster |
+| Error Rate | 5.2% | 1.1% | 79% reduction |
+| Uptime | 95.5% | 99.9% | 4.4% increase |
+```
+
+**Supported Layouts:**
+- `title` - Title slide with title and subtitle
+- `content` - Rich content slide with mixed headings, paragraphs, and bullets
+- `table` - Data table with full styling support
+
+**Content Features:**
+- **Headings:** Use `## Heading` for bold section headers
+- **Paragraphs:** Regular text for explanatory content
+- **Bullets:** Use `- item` for bullet points
+- **Tables:** Standard markdown table syntax with styling options
+
+### JSON Configuration (Advanced)
+
+For precise control or programmatic generation:
 
 ### Basic Presentation Creation
 
