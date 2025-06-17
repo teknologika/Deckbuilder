@@ -1,0 +1,17 @@
+# Core MCP server dependencies
+fastmcp>=0.3.0
+
+# PowerPoint manipulation
+python-pptx>=1.0.0
+
+# Environment configuration
+python-dotenv>=1.0.0
+
+# Standard library dependencies (included with Python)
+# asyncio
+# json
+# os
+# shutil
+# collections.abc
+# contextlib
+# dataclasses

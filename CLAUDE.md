@@ -9,3 +9,7 @@ This is an MCP (Model Context Protocol) Server for building PowerPoint presentat
 ## Architecture
 
 This project is designed to implement an MCP server that enables AI assistants to create and manipulate PowerPoint presentations programmatically.
+
+## Important instructions
+
+Always design a feature first, and ask me to review the design before implementing it.

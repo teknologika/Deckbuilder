@@ -53,7 +53,7 @@ mcp = FastMCP(
 )
 
 @mcp.tool()
-async def create_presentation(ctx: Context, templateName: str, title: str = "Presentation Title", subTitle: str = "", author: str = "") -> str:
+async def create_presentation(ctx: Context, templateName: str, fileName: str) -> str:
     """Create a new presentation ready to add slides
 
     This tool is designed to create a new powerpoint presentation from the given context.
@@ -68,8 +68,8 @@ async def create_presentation(ctx: Context, templateName: str, title: str = "Pre
         author: The author of the presentation.
     """
     try:
-        result = deck.create_presentation(title, templateName)
-        return f"Successfully created the presentation and added a title slide {title}"
+        result = deck.create_presentation(templateName, fileName)
+        return f"Successfully created the presentation: {fileName}"
     except Exception as e:
         return f"Error creating presentation: {str(e)}"
 

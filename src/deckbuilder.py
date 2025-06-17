@@ -55,7 +55,7 @@ class Deckbuilder:
                 pass
     
     
-    def create_presentation(self, fileName: str, templateName: str = "default") -> str:
+    def create_presentation(self, templateName: str = "default", fileName: str = "Sample_Presentation") -> str:
         # Check template exists
         self._check_template_exists(templateName)
         
