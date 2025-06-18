@@ -73,11 +73,11 @@ row_style: alternating_light_gray
 ---
 # Formatting Test Results
 | Format Type | Syntax | Expected Result | Status |
-| **Bold** | `**text**` | Bold weight text | ✓ Test |
-| *Italic* | `*text*` | Slanted text | ✓ Test |
-| ___Underlined___ | `___text___` | Underlined text | ✓ Test |
-| ***Bold Italic*** | `***text***` | Bold and slanted | ✓ Test |
-| ***___All Three___*** | `***___text___***` | Bold, italic, underlined | ✓ Test |
+| **Bold** | \*\*text\*\* | Bold weight text | ✓ Test |
+| *Italic* | \*text\* | Slanted text | ✓ Test |
+| ___Underlined___ | \_\_\_text\_\_\_ | Underlined text | ✓ Test |
+| ***Bold Italic*** | \*\*\*text\*\*\* | Bold and slanted | ✓ Test |
+| ***___All Three___*** | \*\*\*\_\_\_text\_\_\_\*\*\* | Bold, italic, underlined | ✓ Test |
 
 ---
 layout: content

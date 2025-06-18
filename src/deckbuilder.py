@@ -177,13 +177,19 @@ class Deckbuilder:
         
         # Add title if provided
         if "title" in slide_data and slide.shapes.title:
-            slide.shapes.title.text = slide_data["title"]
+            if "title_formatted" in slide_data:
+                self._apply_formatted_segments_to_shape(slide.shapes.title, slide_data["title_formatted"])
+            else:
+                slide.shapes.title.text = slide_data["title"]
         
         # Add subtitle for title slides
         if "subtitle" in slide_data and slide_type == "title":
             for shape in slide.placeholders:
                 if shape.placeholder_format.idx == 1:  # Subtitle placeholder
-                    shape.text = slide_data["subtitle"]
+                    if "subtitle_formatted" in slide_data:
+                        self._apply_formatted_segments_to_shape(shape, slide_data["subtitle_formatted"])
+                    else:
+                        shape.text = slide_data["subtitle"]
                     break
         
         # Handle rich content
@@ -197,28 +203,28 @@ class Deckbuilder:
         if "table" in slide_data:
             self._add_table_to_slide(slide, slide_data["table"])
 
-    def _apply_inline_formatting(self, text, paragraph):
-        """Apply bold, italic, underline, and combined formatting to paragraph text runs."""
+    def _parse_inline_formatting(self, text):
+        """Parse inline formatting and return structured formatting data"""
         import re
         
-        # Clear any existing text
-        paragraph.text = ""
+        if not text:
+            return [{"text": "", "format": {}}]
         
         # Patterns in order of precedence (longest patterns first to avoid conflicts)
         patterns = [
-            (r'\*\*\*___(.*?)___\*\*\*', 'bold_italic_underline'),  # ***___text___***
-            (r'___\*\*\*(.*?)\*\*\*___', 'bold_italic_underline'),  # ___***text***___
-            (r'\*\*\*(.*?)\*\*\*', 'bold_italic'),                  # ***text***
-            (r'___(.*?)___', 'underline'),                          # ___text___
-            (r'\*\*(.*?)\*\*', 'bold'),                            # **text**
-            (r'\*(.*?)\*', 'italic')                               # *text*
+            (r'\*\*\*___(.*?)___\*\*\*', {'bold': True, 'italic': True, 'underline': True}),  # ***___text___***
+            (r'___\*\*\*(.*?)\*\*\*___', {'bold': True, 'italic': True, 'underline': True}),  # ___***text***___
+            (r'\*\*\*(.*?)\*\*\*', {'bold': True, 'italic': True}),                          # ***text***
+            (r'___(.*?)___', {'underline': True}),                                            # ___text___
+            (r'\*\*(.*?)\*\*', {'bold': True}),                                              # **text**
+            (r'\*(.*?)\*', {'italic': True})                                                 # *text*
         ]
         
         # Find all matches and their positions
         all_matches = []
-        for pattern, style in patterns:
+        for pattern, format_dict in patterns:
             for match in re.finditer(pattern, text):
-                all_matches.append((match.start(), match.end(), match.group(1), style))
+                all_matches.append((match.start(), match.end(), match.group(1), format_dict))
         
         # Sort matches by position
         all_matches.sort(key=lambda x: x[0])
@@ -226,41 +232,114 @@ class Deckbuilder:
         # Remove overlapping matches (keep the first one found)
         filtered_matches = []
         last_end = 0
-        for start, end, content, style in all_matches:
+        for start, end, content, format_dict in all_matches:
             if start >= last_end:
-                filtered_matches.append((start, end, content, style))
+                filtered_matches.append((start, end, content, format_dict))
                 last_end = end
         
-        # Build the paragraph with formatting
+        # Build the formatted text segments
+        segments = []
         last_pos = 0
-        for start, end, content, style in filtered_matches:
+        
+        for start, end, content, format_dict in filtered_matches:
             # Add plain text before the formatted text
             if start > last_pos:
                 plain_text = text[last_pos:start]
                 if plain_text:
-                    run = paragraph.add_run()
-                    run.text = plain_text
+                    segments.append({"text": plain_text, "format": {}})
             
             # Add formatted text
-            formatted_run = paragraph.add_run()
-            formatted_run.text = content
-            
-            # Apply formatting based on style
-            if 'bold' in style:
-                formatted_run.font.bold = True
-            if 'italic' in style:
-                formatted_run.font.italic = True
-            if 'underline' in style:
-                formatted_run.font.underline = True
-            
+            segments.append({"text": content, "format": format_dict})
             last_pos = end
         
         # Add any remaining plain text
         if last_pos < len(text):
             remaining_text = text[last_pos:]
             if remaining_text:
-                run = paragraph.add_run()
-                run.text = remaining_text
+                segments.append({"text": remaining_text, "format": {}})
+        
+        # If no formatting found, return the original text
+        if not segments:
+            segments = [{"text": text, "format": {}}]
+            
+        return segments
+
+    def _apply_inline_formatting(self, text, paragraph):
+        """Apply inline formatting to paragraph using parsed formatting data."""
+        # Clear any existing text
+        paragraph.text = ""
+        
+        # Parse the formatting
+        segments = self._parse_inline_formatting(text)
+        
+        # Apply each segment to the paragraph
+        for segment in segments:
+            run = paragraph.add_run()
+            run.text = segment["text"]
+            
+            # Apply formatting
+            format_dict = segment["format"]
+            if format_dict.get("bold"):
+                run.font.bold = True
+            if format_dict.get("italic"):
+                run.font.italic = True
+            if format_dict.get("underline"):
+                run.font.underline = True
+
+    def _apply_formatted_segments_to_shape(self, shape, segments):
+        """Apply formatted text segments to a shape's text frame."""
+        if not hasattr(shape, 'text_frame'):
+            # For shapes that don't have text_frame, fall back to simple text
+            shape.text = ''.join(segment["text"] for segment in segments)
+            return
+            
+        text_frame = shape.text_frame
+        text_frame.clear()
+        
+        # Use the first paragraph or create one
+        if text_frame.paragraphs:
+            paragraph = text_frame.paragraphs[0]
+        else:
+            paragraph = text_frame.add_paragraph()
+        
+        paragraph.text = ""
+        
+        # Apply each segment
+        for segment in segments:
+            run = paragraph.add_run()
+            run.text = segment["text"]
+            
+            # Apply formatting
+            format_dict = segment["format"]
+            if format_dict.get("bold"):
+                run.font.bold = True
+            if format_dict.get("italic"):
+                run.font.italic = True
+            if format_dict.get("underline"):
+                run.font.underline = True
+
+    def _apply_formatted_segments_to_cell(self, cell, segments):
+        """Apply formatted text segments to a table cell."""
+        text_frame = cell.text_frame
+        text_frame.clear()
+        
+        # Create first paragraph
+        paragraph = text_frame.paragraphs[0]
+        paragraph.text = ""
+        
+        # Apply each segment
+        for segment in segments:
+            run = paragraph.add_run()
+            run.text = segment["text"]
+            
+            # Apply formatting
+            format_dict = segment["format"]
+            if format_dict.get("bold"):
+                run.font.bold = True
+            if format_dict.get("italic"):
+                run.font.italic = True
+            if format_dict.get("underline"):
+                run.font.underline = True
 
     def _add_rich_content_to_slide(self, slide, rich_content: list):
         """Add rich content blocks to a slide with improved formatting"""
@@ -396,15 +475,30 @@ class Deckbuilder:
         
         # Create the table
         rows = len(data)
-        cols = len(data[0]) if data else 1
+        if data:
+            # Handle both old (list of strings) and new (list of dicts) formats
+            first_row = data[0]
+            if isinstance(first_row, list):
+                cols = len(first_row)
+            else:
+                cols = 1  # Fallback
+        else:
+            cols = 1
         
         table = slide.shapes.add_table(rows, cols, left, top, width, height).table
         
-        # Apply table data
+        # Apply table data with formatting support
         for row_idx, row_data in enumerate(data):
             for col_idx, cell_data in enumerate(row_data):
                 cell = table.cell(row_idx, col_idx)
-                cell.text = str(cell_data)
+                
+                # Handle both old (string) and new (formatted) cell data
+                if isinstance(cell_data, dict) and "formatted" in cell_data:
+                    # New formatted cell data
+                    self._apply_formatted_segments_to_cell(cell, cell_data["formatted"])
+                else:
+                    # Old string cell data
+                    cell.text = str(cell_data)
         
         # Apply styling
         self._apply_table_styling(table, header_style, row_style, border_style, custom_colors)
@@ -637,10 +731,14 @@ class Deckbuilder:
         
         for line in lines:
             if line.startswith('# ') and not title_found:
-                slide_data["title"] = line[2:].strip()
+                title_text = line[2:].strip()
+                slide_data["title"] = title_text
+                slide_data["title_formatted"] = self._parse_inline_formatting(title_text)
                 title_found = True
             elif line.startswith('## ') and slide_data["type"] == "title":
-                slide_data["subtitle"] = line[3:].strip()
+                subtitle_text = line[3:].strip()
+                slide_data["subtitle"] = subtitle_text
+                slide_data["subtitle_formatted"] = self._parse_inline_formatting(subtitle_text)
             else:
                 content_lines.append(line)
         
@@ -725,18 +823,84 @@ class Deckbuilder:
         
         for line in lines:
             if line.startswith('|') and line.endswith('|'):
-                # Parse table row
+                # Parse table row with inline formatting
                 cells = [cell.strip() for cell in line[1:-1].split('|')]
-                table_data["data"].append(cells)
+                formatted_cells = []
+                for cell in cells:
+                    formatted_cells.append({
+                        "text": cell,
+                        "formatted": self._parse_inline_formatting(cell)
+                    })
+                table_data["data"].append(formatted_cells)
             elif '|' in line and not line.startswith('|'):
-                # Handle tables without outer pipes
+                # Handle tables without outer pipes with inline formatting
                 cells = [cell.strip() for cell in line.split('|')]
-                table_data["data"].append(cells)
+                formatted_cells = []
+                for cell in cells:
+                    formatted_cells.append({
+                        "text": cell,
+                        "formatted": self._parse_inline_formatting(cell)
+                    })
+                table_data["data"].append(formatted_cells)
             elif line.startswith('---') or line.startswith('==='):
                 # Skip separator lines
                 continue
         
         return table_data
+
+    def _auto_parse_json_formatting(self, slide_data):
+        """Auto-parse inline formatting in JSON slide data."""
+        # Create a copy to avoid modifying original
+        processed_data = slide_data.copy()
+        
+        # Parse title if present
+        if "title" in processed_data and processed_data["title"]:
+            title_text = processed_data["title"]
+            processed_data["title_formatted"] = self._parse_inline_formatting(title_text)
+        
+        # Parse subtitle if present
+        if "subtitle" in processed_data and processed_data["subtitle"]:
+            subtitle_text = processed_data["subtitle"]
+            processed_data["subtitle_formatted"] = self._parse_inline_formatting(subtitle_text)
+        
+        # Parse content list if present
+        if "content" in processed_data and isinstance(processed_data["content"], list):
+            # Convert simple content to rich content with formatting
+            rich_content = []
+            for item in processed_data["content"]:
+                if isinstance(item, str):
+                    # Treat as paragraph text
+                    rich_content.append({
+                        "paragraph": item
+                    })
+            processed_data["rich_content"] = rich_content
+            # Remove old content key to avoid conflicts
+            del processed_data["content"]
+        
+        # Parse table data if present
+        if "table" in processed_data and "data" in processed_data["table"]:
+            table_data = processed_data["table"]
+            if isinstance(table_data["data"], list):
+                formatted_data = []
+                for row in table_data["data"]:
+                    if isinstance(row, list):
+                        formatted_row = []
+                        for cell in row:
+                            if isinstance(cell, str):
+                                formatted_row.append({
+                                    "text": cell,
+                                    "formatted": self._parse_inline_formatting(cell)
+                                })
+                            else:
+                                # Keep non-string cells as-is
+                                formatted_row.append(cell)
+                        formatted_data.append(formatted_row)
+                    else:
+                        # Keep non-list rows as-is
+                        formatted_data.append(row)
+                processed_data["table"]["data"] = formatted_data
+        
+        return processed_data
 
 def get_deckbuilder_client():
     # Return singleton instance of Deckbuilder
