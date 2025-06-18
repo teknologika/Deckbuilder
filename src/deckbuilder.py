@@ -90,34 +90,24 @@ class Deckbuilder:
 
 
     def write_presentation(self, fileName: str = "Sample_Presentation") -> str:
-        """Writes the presentation to disk with versioning."""
+        """Writes the generated presentation to disk with ISO timestamp."""
+        from datetime import datetime
+        
         # Get output folder from environment or use default
         output_folder = self.output_folder or '.'
         
         # Ensure output folder exists
         os.makedirs(output_folder, exist_ok=True)
         
-        # Create base filename with .latest.pptx extension
-        base_name = f"{fileName}.latest.pptx"
-        latest_file = os.path.join(output_folder, base_name)
+        # Create filename with ISO timestamp and .g.pptx extension for generated files
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H%M")
+        generated_filename = f"{fileName}.{timestamp}.g.pptx"
+        output_file = os.path.join(output_folder, generated_filename)
         
-        # Handle versioning if file exists
-        if os.path.exists(latest_file):
-            # Find the highest version number
-            version_num = 1
-            while True:
-                version_file = os.path.join(output_folder, f"{fileName}.latest.pptx.v{version_num:02d}.pptx")
-                if not os.path.exists(version_file):
-                    break
-                version_num += 1
-            
-            # Rename current latest to versioned file
-            os.rename(latest_file, version_file)
+        # Save the presentation (overwrites if same timestamp exists)
+        self.prs.save(output_file)
         
-        # Write the latest file
-        self.prs.save(latest_file)
-        
-        return f"Successfully created presentation: {os.path.basename(latest_file)}"
+        return f"Successfully created presentation: {os.path.basename(output_file)}"
 
     def add_slide_from_json(self, json_data) -> str:
         """
