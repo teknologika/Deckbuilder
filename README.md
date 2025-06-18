@@ -18,12 +18,13 @@ The server solves the common challenge of automating presentation creation by of
 
 - **Multiple Input Formats:** Support for both JSON and Markdown with YAML frontmatter
 - **Rich Content Support:** Mixed content with headings, paragraphs, and bullet points
+- **Inline Formatting:** Full support for bold, italic, underline, and combined formatting within text
 - **Multiple Slide Types:** Support for title slides, content slides, and data tables
 - **Template-Based Generation:** Use custom PowerPoint templates or default layouts
 - **JSON Configuration:** Define presentations using structured JSON data
 - **Markdown Authoring:** Create presentations using familiar markdown syntax with frontmatter
 - **Custom Table Styling:** Advanced table formatting with predefined styles and color overrides
-- **Automatic File Versioning:** Intelligent file naming to prevent overwrites
+- **Intelligent File Naming:** ISO timestamp format with `.g.pptx` extension for generated files
 - **Environment Configuration:** Flexible setup through environment variables
 - **Singleton Pattern:** Efficient memory management for presentation objects
 - **Async Support:** Full asynchronous operation for better performance
@@ -184,14 +185,14 @@ layout: content
 # Key Benefits
 
 ## Performance Improvements
-Our platform delivers significant improvements across all key metrics.
+Our platform delivers ***significant improvements*** across all key metrics with **proven results**.
 
-- Increased efficiency by 40%
-- Reduced manual errors by 68%
-- 24/7 availability and support
-- Scalable solutions for any business size
+- ***Efficiency Gains:*** **40% reduction** in routine task completion time
+- ***Quality Improvement:*** **68% fewer errors** through AI-assisted workflows  
+- ***Cost Savings:*** Average **25% reduction** in ___operational expenses___
+- ***Scalability:*** Solutions that ***automatically scale*** based on demand
 
-The system automatically scales based on demand, ensuring optimal performance at all times.
+The system provides *real-time monitoring* and **24/7 support** to ensure ___optimal performance___ at all times.
 
 ## Implementation Timeline
 We can have your system up and running in just 2 weeks.
@@ -221,6 +222,12 @@ row_style: alternating_light_gray
 - **Paragraphs:** Regular text for explanatory content
 - **Bullets:** Use `- item` for bullet points
 - **Tables:** Standard markdown table syntax with styling options
+- **Inline Formatting:** 
+  - *Italic text* using `*text*`
+  - **Bold text** using `**text**`
+  - ___Underlined text___ using `___text___`
+  - ***Bold italic text*** using `***text***`
+  - ***___Bold italic underlined text___*** using `***___text___***`
 
 ### JSON Configuration (Advanced)
 

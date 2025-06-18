@@ -17,8 +17,8 @@ AI integration is becoming a competitive necessity Our solution addresses these 
 
 ## Key Value Propositions
 We deliver three core benefits that set us apart from competitors.
-- Efficiency Gains: 40% reduction in routine task completion time
-- Quality Improvement: 68% fewer errors through AI-assisted workflows
+- **Efficiency Gains:** ***40% reduction*** *in routine task completion time*
+- _Quality Improvement:_ 68% fewer errors through AI-assisted workflows
 - Cost Savings: Average 25% reduction in operational expenses
   
 --- 

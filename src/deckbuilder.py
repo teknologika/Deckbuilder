@@ -197,6 +197,70 @@ class Deckbuilder:
         if "table" in slide_data:
             self._add_table_to_slide(slide, slide_data["table"])
 
+    def _apply_inline_formatting(self, text, paragraph):
+        """Apply bold, italic, underline, and combined formatting to paragraph text runs."""
+        import re
+        
+        # Clear any existing text
+        paragraph.text = ""
+        
+        # Patterns in order of precedence (longest patterns first to avoid conflicts)
+        patterns = [
+            (r'\*\*\*___(.*?)___\*\*\*', 'bold_italic_underline'),  # ***___text___***
+            (r'___\*\*\*(.*?)\*\*\*___', 'bold_italic_underline'),  # ___***text***___
+            (r'\*\*\*(.*?)\*\*\*', 'bold_italic'),                  # ***text***
+            (r'___(.*?)___', 'underline'),                          # ___text___
+            (r'\*\*(.*?)\*\*', 'bold'),                            # **text**
+            (r'\*(.*?)\*', 'italic')                               # *text*
+        ]
+        
+        # Find all matches and their positions
+        all_matches = []
+        for pattern, style in patterns:
+            for match in re.finditer(pattern, text):
+                all_matches.append((match.start(), match.end(), match.group(1), style))
+        
+        # Sort matches by position
+        all_matches.sort(key=lambda x: x[0])
+        
+        # Remove overlapping matches (keep the first one found)
+        filtered_matches = []
+        last_end = 0
+        for start, end, content, style in all_matches:
+            if start >= last_end:
+                filtered_matches.append((start, end, content, style))
+                last_end = end
+        
+        # Build the paragraph with formatting
+        last_pos = 0
+        for start, end, content, style in filtered_matches:
+            # Add plain text before the formatted text
+            if start > last_pos:
+                plain_text = text[last_pos:start]
+                if plain_text:
+                    run = paragraph.add_run()
+                    run.text = plain_text
+            
+            # Add formatted text
+            formatted_run = paragraph.add_run()
+            formatted_run.text = content
+            
+            # Apply formatting based on style
+            if 'bold' in style:
+                formatted_run.font.bold = True
+            if 'italic' in style:
+                formatted_run.font.italic = True
+            if 'underline' in style:
+                formatted_run.font.underline = True
+            
+            last_pos = end
+        
+        # Add any remaining plain text
+        if last_pos < len(text):
+            remaining_text = text[last_pos:]
+            if remaining_text:
+                run = paragraph.add_run()
+                run.text = remaining_text
 
     def _add_rich_content_to_slide(self, slide, rich_content: list):
         """Add rich content blocks to a slide with improved formatting"""
@@ -229,8 +293,10 @@ class Deckbuilder:
                     p = text_frame.paragraphs[0]  # Use existing first paragraph
                 else:
                     p = text_frame.add_paragraph()
-                p.text = block["heading"]
-                p.font.bold = True
+                self._apply_inline_formatting(block["heading"], p)
+                # Apply bold to all runs in the heading paragraph
+                for run in p.runs:
+                    run.font.bold = True
                 p.space_after = Pt(6)
                 p.space_before = Pt(12) if not first_content else Pt(0)
                 
@@ -239,7 +305,7 @@ class Deckbuilder:
                     p = text_frame.paragraphs[0]  # Use existing first paragraph
                 else:
                     p = text_frame.add_paragraph()
-                p.text = block["paragraph"]
+                self._apply_inline_formatting(block["paragraph"], p)
                 p.space_after = Pt(6)
                 p.space_before = Pt(3)
                 
@@ -252,7 +318,7 @@ class Deckbuilder:
                         p = text_frame.paragraphs[0]  # Use existing first paragraph for first bullet
                     else:
                         p = text_frame.add_paragraph()
-                    p.text = bullet
+                    self._apply_inline_formatting(bullet, p)
                     
                     # Use the parsed bullet level
                     bullet_level = bullet_levels[bullet_idx] if bullet_idx < len(bullet_levels) else 1
@@ -267,13 +333,22 @@ class Deckbuilder:
             first_content = False
 
     def _add_simple_content_to_slide(self, slide, content):
-        """Add simple content to slide (backwards compatibility)"""
+        """Add simple content to slide with inline formatting support (backwards compatibility)"""
         for shape in slide.placeholders:
             if shape.placeholder_format.idx == 1:  # Content placeholder
+                text_frame = shape.text_frame
+                text_frame.clear()
+                
                 if isinstance(content, str):
-                    shape.text = content
+                    p = text_frame.paragraphs[0]
+                    self._apply_inline_formatting(content, p)
                 elif isinstance(content, list):
-                    shape.text = "\n".join(content)
+                    for i, line in enumerate(content):
+                        if i == 0:
+                            p = text_frame.paragraphs[0]  # Use existing first paragraph
+                        else:
+                            p = text_frame.add_paragraph()
+                        self._apply_inline_formatting(line, p)
                 break
 
     def _add_table_to_slide(self, slide, table_data):
