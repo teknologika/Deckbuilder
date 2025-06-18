@@ -204,7 +204,7 @@ async def add_table_slide(ctx: Context, json_data) -> str:
         return f"Error adding table slide from JSON: {str(e)}"
 
 @mcp.tool()
-async def create_presentation_from_markdown(ctx: Context, markdown_content: str, fileName: str = "Sample_Presentation") -> str:
+async def create_presentation_from_markdown(ctx: Context, markdown_content: str, fileName: str = "Sample_Presentation", templateName: str = "default") -> str:
     """Create presentation from formatted markdown with frontmatter
     
     This tool accepts markdown content with frontmatter slide definitions and creates a complete presentation.
@@ -215,6 +215,7 @@ async def create_presentation_from_markdown(ctx: Context, markdown_content: str,
         ctx: MCP context
         markdown_content: Markdown string with frontmatter slide definitions
         fileName: Output filename (default: Sample_Presentation)
+        templateName: Template/theme to use (default: default)
         
     Example markdown format:
         ---
@@ -261,7 +262,7 @@ async def create_presentation_from_markdown(ctx: Context, markdown_content: str,
         slides = deck.parse_markdown_with_frontmatter(markdown_content)
         
         # Create presentation
-        deck.create_presentation("default", fileName)
+        deck.create_presentation(templateName, fileName)
         
         # Add all slides
         for slide_data in slides:
