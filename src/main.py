@@ -209,7 +209,7 @@ async def create_presentation_from_markdown(ctx: Context, markdown_content: str,
     
     This tool accepts markdown content with frontmatter slide definitions and creates a complete presentation.
     Each slide is defined using YAML frontmatter followed by markdown content.
-    This tool does not save the presentation. After you call this tool call write_presentation
+    This tool automatically saves the presentation to disk after creation.
     
     Args:
         ctx: MCP context
@@ -264,11 +264,14 @@ async def create_presentation_from_markdown(ctx: Context, markdown_content: str,
         # Create presentation
         deck.create_presentation(templateName, fileName)
         
-        # Add all slides
+        # Add all slides to the presentation
         for slide_data in slides:
             deck._add_slide(slide_data)
+        
+        # Automatically save the presentation to disk after creation
+        write_result = deck.write_presentation(fileName)
             
-        return f"Successfully created presentation with {len(slides)} slides from markdown"
+        return f"Successfully created presentation with {len(slides)} slides from markdown. {write_result}"
     except Exception as e:
         return f"Error creating presentation from markdown: {str(e)}"
     
