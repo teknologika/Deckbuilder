@@ -199,6 +199,9 @@ cython_debug/
 # Claude Code configuration
 .claude/
 
+# macOS system files
+.DS_Store
+
 # Screenshots and images
 Screenshot*.png
 Screenshot*.jpg
