@@ -117,6 +117,9 @@ async def create_presentation(ctx: Context, json_data: str, fileName: str = "Sam
         - row_style: alternating_light_gray, solid_white, etc.
         - border_style: thin_gray, thick_gray, no_borders, etc.
         - custom_colors: Custom hex color overrides
+        
+    IMPORTANT: Do NOT include markdown table separator lines (|---|---|---|) in table data.
+    Only include actual table rows with content.
     """
     try:
         # Create presentation
