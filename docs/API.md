@@ -2,92 +2,124 @@
 
 ## Overview
 
-The deck-builder-mcp server exposes MCP (Model Context Protocol) tools for programmatic PowerPoint presentation creation. All tools are accessed through MCP clients and support both simple and advanced template-based slide generation.
+The deck-builder-mcp server provides a streamlined MCP (Model Context Protocol) interface for programmatic PowerPoint presentation creation. The server exposes two comprehensive tools that handle complete presentation workflows with automatic saving.
 
 ## MCP Tools
 
-### Presentation Management
-
-#### `create_presentation`
-Creates a new empty presentation from a specified template.
+### `create_presentation`
+Creates a complete PowerPoint presentation from JSON data with automatic saving.
 
 **Parameters:**
-- `templateName` (string): Name of template to use (default: "default")  
-- `fileName` (string): Output filename (default: "Sample_Presentation")
+- `json_data` (string): JSON string containing complete presentation data with all slides
+- `fileName` (string): Output filename (default: "Sample_Presentation")  
+- `templateName` (string): Template to use (default: "default")
 
-**Returns:** Success message with presentation name
+**Returns:** Success message with filename and save confirmation
 
-**Example:**
-```python
-create_presentation(templateName="corporate", fileName="Q4_Report")
+**JSON Schema:**
+```json
+{
+  "presentation": {
+    "slides": [
+      {
+        "type": "title",
+        "title": "**Main Title** with *formatting*",
+        "subtitle": "Subtitle with ___underline___"
+      },
+      {
+        "type": "content",
+        "title": "Content Slide",
+        "content": [
+          "**Bold** bullet point",
+          "*Italic* text with ___underline___", 
+          "***Bold italic*** combination"
+        ]
+      },
+      {
+        "type": "table",
+        "title": "Table Example",
+        "table": {
+          "header_style": "dark_blue_white_text",
+          "row_style": "alternating_light_gray",
+          "data": [
+            ["**Header 1**", "*Header 2*", "___Header 3___"],
+            ["Data 1", "Data 2", "Data 3"]
+          ]
+        }
+      }
+    ]
+  }
+}
 ```
-
-#### `write_presentation`  
-Saves the current presentation to disk with timestamp.
-
-**Parameters:**
-- `fileName` (string): Base filename (default: "Sample_Presentation")
-
-**Returns:** Success message with generated filename
-
-**Example:**
-```python
-write_presentation(fileName="Marketing_Deck")
-# Creates: Marketing_Deck.2024-06-20_1430.g.pptx
-```
-
-### Slide Creation
-
-#### `add_slide`
-Adds slides to the presentation using JSON data.
-
-**Parameters:**
-- `json_data` (string): JSON string containing slide information
 
 **Supported Slide Types:**
 - `title`: Title slide with title and subtitle
-- `content`: Content slide with title and bullet points  
-- `table`: Table slide with styling options
-- Custom layout names from template JSON mappings
+- `content`: Content slide with rich text, bullets, headings
+- `table`: Table slide with full styling support  
+- All PowerPoint layout types supported via template mapping
 
-**Example:**
-```python
-slide_data = {
-    "type": "title",
-    "title": "Project Overview", 
-    "subtitle": "Q4 2024 Results"
-}
-add_slide(json.dumps(slide_data))
-```
+**Inline Formatting Support:**
+- `**bold**` - Bold text
+- `*italic*` - Italic text
+- `___underline___` - Underlined text
+- `***bold italic***` - Combined bold and italic
+- `***___all three___***` - Bold, italic, and underlined
 
-#### `add_title_slide` / `add_content_slide` / `add_table_slide`
-Specialized slide creation tools with specific JSON schemas.
-
-### Advanced Features
-
-#### `create_presentation_from_markdown`
-Creates complete presentations from markdown with frontmatter.
+### `create_presentation_from_markdown`
+Creates complete presentations from markdown with frontmatter and automatic saving.
 
 **Parameters:**
 - `markdown_content` (string): Markdown with YAML frontmatter slide definitions
-- `fileName` (string): Output filename  
-- `templateName` (string): Template to use
+- `fileName` (string): Output filename (default: "Sample_Presentation")
+- `templateName` (string): Template to use (default: "default")
 
-**Example:**
+**Returns:** Success message with slide count and save confirmation
+
+**Markdown Format:**
 ```markdown
 ---
 layout: title
 ---
-# Main Title
-## Subtitle
+# **Main Title** with *Formatting*
+## Subtitle with ___underline___
 
 ---
-layout: content  
+layout: content
 ---
-# Key Points
-- Point one
-- Point two
+# Content Slide Title
+
+## Section Heading
+This section demonstrates rich content with formatting.
+
+- **Bold** bullet point
+- *Italic* text with ___underline___
+- ***Bold italic*** combination
+
+Additional paragraph with **mixed** *formatting*.
+
+---
+layout: table
+style: dark_blue_white_text
+row_style: alternating_light_gray
+---
+# Table Slide Title
+
+| **Header 1** | *Header 2* | ___Header 3___ |
+| Data 1 | Data 2 | Data 3 |
+| More data | More data | More data |
 ```
+
+**Supported Layouts:**
+- `title`: Title slide with title and subtitle
+- `content`: Content slide with rich text support (headings, paragraphs, bullets)
+- `table`: Table slide with styling options
+- All template-specific layout names
+
+**Table Styling Options:**
+- `style`: Header style (dark_blue_white_text, light_blue_dark_text, etc.)
+- `row_style`: Row style (alternating_light_gray, solid_white, etc.)
+- `border_style`: Border style (thin_gray, thick_gray, no_borders, etc.)
+- `custom_colors`: Custom color overrides (header_bg, header_text, alt_row, border_color)
 
 ## Template System
 

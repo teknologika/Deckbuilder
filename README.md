@@ -153,12 +153,10 @@ Add this configuration to your Claude Desktop config file:
 
 ### Available MCP Tools
 
-1. **`create_presentation`** - Initialize a new presentation from template
-2. **`create_presentation_from_markdown`** - Create complete presentations from markdown with frontmatter
-3. **`add_title_slide`** - Add title slides with heading and subtitle
-4. **`add_content_slide`** - Add content slides with bullet points
-5. **`add_table_slide`** - Add data tables with custom styling
-6. **`write_presentation`** - Save presentation to disk with versioning
+1. **`create_presentation`** - Create complete PowerPoint presentations from JSON data with automatic saving
+2. **`create_presentation_from_markdown`** - Create complete presentations from markdown with frontmatter and automatic saving
+
+The server provides a streamlined interface with just two comprehensive tools that handle complete presentation workflows, eliminating the need for multiple tool calls.
 
 ### Configuration Files
 
@@ -231,60 +229,50 @@ row_style: alternating_light_gray
 
 ### JSON Configuration (Advanced)
 
-For precise control or programmatic generation:
-
-### Basic Presentation Creation
+For precise control or programmatic generation, use the comprehensive JSON format:
 
 ```json
 {
-  "action": "create_presentation",
-  "templateName": "default",
-  "title": "Quarterly Report",
-  "author": "Your Name"
-}
-```
-
-### Adding Slides
-
-**Title Slide:**
-```json
-{
-  "type": "title",
-  "title": "Q4 2024 Results",
-  "subtitle": "Financial Performance Overview"
-}
-```
-
-**Content Slide:**
-```json
-{
-  "type": "content",
-  "title": "Key Achievements",
-  "content": [
-    "Revenue increased by 15% year-over-year",
-    "Customer satisfaction improved to 94%",
-    "Successfully launched 3 new products",
-    "Expanded to 2 new markets"
-  ]
-}
-```
-
-**Table Slide:**
-```json
-{
-  "type": "table",
-  "title": "Financial Summary",
-  "table": {
-    "header_style": "dark_blue_white_text",
-    "row_style": "alternating_light_gray",
-    "data": [
-      ["Metric", "Q4 2024", "Q3 2024", "Change"],
-      ["Revenue", "$12.5M", "$11.2M", "+11.6%"],
-      ["Profit", "$3.2M", "$2.8M", "+14.3%"]
+  "presentation": {
+    "slides": [
+      {
+        "type": "title",
+        "title": "**Q4 2024 Results** with *Emphasis*",
+        "subtitle": "Financial Performance ___Overview___"
+      },
+      {
+        "type": "content",
+        "title": "Key Achievements",
+        "content": [
+          "**Revenue increased** by 15% year-over-year",
+          "*Customer satisfaction* improved to 94%",
+          "Successfully launched ***3 new products***",
+          "Expanded to ___2 new markets___"
+        ]
+      },
+      {
+        "type": "table",
+        "title": "Financial Summary",
+        "table": {
+          "header_style": "dark_blue_white_text",
+          "row_style": "alternating_light_gray",
+          "data": [
+            ["**Metric**", "*Q4 2024*", "___Q3 2024___", "Change"],
+            ["Revenue", "$12.5M", "$11.2M", "+11.6%"],
+            ["Profit", "$3.2M", "$2.8M", "+14.3%"]
+          ]
+        }
+      }
     ]
   }
 }
 ```
+
+**Key Features:**
+- **Complete Workflow:** Single tool call creates and saves entire presentation
+- **Inline Formatting:** Full support for `**bold**`, `*italic*`, and `___underline___`
+- **Multiple Slide Types:** Title, content, and table slides in one JSON structure
+- **Automatic Saving:** No separate save step required
 
 ## Next Steps
 

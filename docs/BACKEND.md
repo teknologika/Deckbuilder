@@ -48,7 +48,8 @@ src/
 
 ### FastMCP Server (`main.py`)
 - **MCP Protocol Handler**: Implements Model Context Protocol for AI assistant integration
-- **Tool Registration**: Exposes presentation creation tools to MCP clients
+- **Streamlined API**: Exposes two comprehensive tools: `create_presentation` and `create_presentation_from_markdown`
+- **Complete Workflows**: Each tool handles creation, population, and saving in a single call
 - **Environment Management**: Handles template and output folder configuration
 - **Async Operations**: Supports concurrent presentation generation
 
@@ -76,3 +77,24 @@ src/
 - **Theme Support**: Predefined color schemes and formatting options
 - **Custom Colors**: Support for hex color overrides
 - **Style Inheritance**: Consistent formatting across presentation elements
+
+## MCP Tool Architecture
+
+### Tool Design Philosophy
+The server implements a **streamlined two-tool approach** that prioritizes simplicity and completeness:
+
+- **`create_presentation`**: Accepts comprehensive JSON with all slides and automatically saves
+- **`create_presentation_from_markdown`**: Processes markdown with frontmatter and automatically saves
+
+### Benefits of Simplified Architecture
+- **Reduced Complexity**: Users need only one tool call instead of multiple sequential calls
+- **Atomic Operations**: Each tool provides complete functionality (create + populate + save)
+- **Error Reduction**: Eliminates state management issues between multiple tool calls
+- **Better UX**: Cleaner API surface with comprehensive examples and documentation
+
+### Tool Workflow
+1. **Input Processing**: Parse JSON or markdown content
+2. **Template Loading**: Load specified PowerPoint template and JSON mapping
+3. **Presentation Creation**: Initialize empty presentation with template
+4. **Content Population**: Add all slides with formatting and layout mapping
+5. **Automatic Saving**: Save to disk with timestamp and return confirmation
