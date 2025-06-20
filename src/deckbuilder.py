@@ -238,22 +238,8 @@ class Deckbuilder:
         slide_layout = self.prs.slide_layouts[layout_index]
         slide = self.prs.slides.add_slide(slide_layout)
         
-        # Add title if provided
-        if "title" in slide_data and slide.shapes.title:
-            if "title_formatted" in slide_data:
-                self._apply_formatted_segments_to_shape(slide.shapes.title, slide_data["title_formatted"])
-            else:
-                slide.shapes.title.text = slide_data["title"]
-        
-        # Add subtitle for title slides
-        if "subtitle" in slide_data and slide_type == "title":
-            for shape in slide.placeholders:
-                if shape.placeholder_format.idx == 1:  # Subtitle placeholder
-                    if "subtitle_formatted" in slide_data:
-                        self._apply_formatted_segments_to_shape(shape, slide_data["subtitle_formatted"])
-                    else:
-                        shape.text = slide_data["subtitle"]
-                    break
+        # Add content to placeholders using semantic detection
+        self._add_content_to_placeholders(slide, slide_data)
         
         # Handle rich content
         if "rich_content" in slide_data:
@@ -265,6 +251,59 @@ class Deckbuilder:
         # Add table if provided
         if "table" in slide_data:
             self._add_table_to_slide(slide, slide_data["table"])
+
+    def _add_content_to_placeholders(self, slide, slide_data):
+        """
+        Add content to slide placeholders using semantic placeholder detection.
+        
+        This method uses PowerPoint's native placeholder types to determine where
+        to place content, making it work with any template layout.
+        
+        Args:
+            slide: PowerPoint slide object
+            slide_data: Dictionary containing slide content
+        """
+        for shape in slide.placeholders:
+            placeholder_type = shape.placeholder_format.type
+            
+            # Handle title placeholders
+            if "title" in slide_data and is_title_placeholder(placeholder_type):
+                if "title_formatted" in slide_data:
+                    self._apply_formatted_segments_to_shape(shape, slide_data["title_formatted"])
+                else:
+                    shape.text = slide_data["title"]
+            
+            # Handle subtitle placeholders
+            elif "subtitle" in slide_data and is_subtitle_placeholder(placeholder_type):
+                if "subtitle_formatted" in slide_data:
+                    self._apply_formatted_segments_to_shape(shape, slide_data["subtitle_formatted"])
+                else:
+                    shape.text = slide_data["subtitle"]
+            
+            # Handle main content placeholders (for simple content)
+            elif "content" in slide_data and is_content_placeholder(placeholder_type):
+                # Only use simple content if rich_content is not available
+                if "rich_content" not in slide_data:
+                    self._add_simple_content_to_placeholder(shape, slide_data["content"])
+
+    def _add_simple_content_to_placeholder(self, placeholder, content):
+        """Add simple content to a content placeholder with inline formatting support."""
+        if not hasattr(placeholder, 'text_frame'):
+            return
+            
+        text_frame = placeholder.text_frame
+        text_frame.clear()
+        
+        if isinstance(content, str):
+            p = text_frame.paragraphs[0]
+            self._apply_inline_formatting(content, p)
+        elif isinstance(content, list):
+            for i, line in enumerate(content):
+                if i == 0:
+                    p = text_frame.paragraphs[0]  # Use existing first paragraph
+                else:
+                    p = text_frame.add_paragraph()
+                self._apply_inline_formatting(line, p)
 
     def _parse_inline_formatting(self, text):
         """Parse inline formatting and return structured formatting data"""
