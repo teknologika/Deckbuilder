@@ -71,8 +71,14 @@ class TemplateAnalyzer:
         for idx, layout in enumerate(presentation.slide_layouts):
             layout_info = self._extract_single_layout(layout, idx)
             if layout_info:
-                # Use generic layout names based on index
-                layout_name = f"layout_{idx}"
+                # Use actual PowerPoint layout name
+                layout_name = f"layout_{idx}"  # fallback
+                try:
+                    if hasattr(layout, 'name') and layout.name:
+                        layout_name = layout.name
+                except:
+                    pass  # Keep fallback name
+                
                 layouts[layout_name] = layout_info
         
         return layouts
@@ -91,11 +97,24 @@ class TemplateAnalyzer:
         try:
             placeholders = {}
             
-            # Extract each placeholder's index
+            # Extract each placeholder's index and available properties
             for shape in layout.placeholders:
                 placeholder_idx = shape.placeholder_format.idx
-                # Leave placeholder value empty for user to fill in
-                placeholders[str(placeholder_idx)] = f"placeholder_{placeholder_idx}"
+                
+                # Try to get more information about the placeholder
+                placeholder_info = f"placeholder_{placeholder_idx}"
+                
+                # Check if placeholder has a name or type information
+                try:
+                    if hasattr(shape, 'name') and shape.name:
+                        placeholder_info = shape.name
+                    elif hasattr(shape.placeholder_format, 'type'):
+                        placeholder_type = shape.placeholder_format.type
+                        placeholder_info = f"type_{placeholder_type}"
+                except:
+                    pass  # Keep default name if we can't get more info
+                
+                placeholders[str(placeholder_idx)] = placeholder_info
             
             return {
                 "index": index,
@@ -107,10 +126,12 @@ class TemplateAnalyzer:
             return None
     
     def _generate_aliases_template(self) -> Dict:
-        """Generate empty aliases template for user configuration."""
+        """Generate basic aliases template for user configuration."""
         return {
-            "table": "layout_0",
-            "bullets": "layout_0"
+            "table": "Title and Content",
+            "bullets": "Title and Content",
+            "content": "Title and Content",
+            "title": "Title Slide"
         }
     
     def _save_json_mapping(self, template_name: str, data: Dict) -> None:
