@@ -10,10 +10,13 @@
         "type": "Title and Content",
         "title": "Content Slide with **Bold** and *Italic*",
         "content": [
-          "First bullet point with **bold text**",
-          "Second point with *italic text*", 
-          "Third point with ***bold and italic***",
-          "Fourth point with ___underlined text___"
+          "***Overview***",
+          "This section demonstrates content slides with various formatting options.",
+          "- First bullet point with **bold text**",
+          "- Second point with *italic text*", 
+          "• Third point with ***bold and italic***",
+          "• Fourth point with ___underlined text___",
+          "Additional paragraph with **mixed** *formatting* and ___underlines___."
         ]
       },
       {
@@ -33,14 +36,15 @@
       {
         "type": "Four Columns",
         "title": "Four Column Layout **Comprehensive** Test",
-        "col_1_title": "**Column 1**",
-        "col_1_content": "First column content with *emphasis*",
-        "col_2_title": "*Column 2*", 
-        "col_2_content": "Second column with ***bold italic***",
-        "col_3_title": "___Column 3___",
-        "col_3_content": "Third column with ___underline___",
-        "col_4_title": "**_Column 4_**",
-        "col_4_content": "Fourth column with **mixed** *formatting*"
+        "Col 1 Title Placeholder 2": "**Column 1**",
+        "Col 1 Text Placeholder 3": "First column content with *emphasis*",
+        "Col 2 Title Placeholder 4": "*Column 2*", 
+        "Col 2 Text Placeholder 5": "Second column with ***bold italic***",
+        "Col 3 Title Placeholder 6": "___Column 3___",
+        "Col 3 Text Placeholder 7": "Third column with ___underline___",
+        "Col 4 Title Placeholder 8": "**_Column 4_**",
+        "Col 4 Text Placeholder 9": "Fourth column with **mixed** *formatting*",
+        "Date Placeholder 10":"© 2025"
       },
       {
         "type": "table",
@@ -76,11 +80,10 @@
       {
         "type": "Comparison",
         "title": "Comparison Layout **Full** Test",
-        "left_title": "**Option A**",
-        "left_content": "Benefits of option A with *emphasis*",
-        "right_title": "*Option B*",
-        "right_content": "Benefits of option B with ***strong emphasis***",
-        "comparison_notes": "Additional notes with ___underlined___ text"
+        "Text Placeholder 2": "**Option A**",
+        "Content Placeholder 3": "Benefits of option A with *emphasis*",
+        "Text Placeholder 4": "*Option B*",
+        "Content Placeholder 5": "Benefits of option B with ***strong emphasis***"
       }
     ]
   }

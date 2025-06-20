@@ -2,42 +2,49 @@
 
 ## Overview
 
-The placeholder matching system enables dynamic content mapping to PowerPoint template layouts using JSON configuration files. This system automatically analyzes PowerPoint templates and generates mapping configurations that can be customized for precise content placement.
+The placeholder matching system enables reliable content mapping to PowerPoint template layouts using a combination of semantic detection and JSON configuration files. This hybrid approach ensures that basic slide content (titles, subtitles, content) works reliably with any PowerPoint template, while still supporting advanced customization through JSON mappings for complex layouts.
+
+**Key Features:**
+- **Semantic Detection**: Automatically finds title, subtitle, and content placeholders using PowerPoint's built-in types
+- **Template Independence**: Basic slide creation works with any PowerPoint template without configuration
+- **JSON Mapping**: Advanced layouts can be customized using template-specific mapping files
+- **Reliable Content Placement**: Combines the best of both approaches for robust slide generation
 
 ## Architecture Overview
 
 ### Core Components
 
 - **Template Analyzer** (`tools.py`): Extracts layout and placeholder information from PPTX files
+- **Semantic Detection** (`placeholder_types.py`): Identifies placeholder types using PowerPoint's built-in semantic types
 - **JSON Mapping System**: Dynamic layout configuration using template-specific JSON files  
-- **Layout Manager**: Loads and applies JSON mappings at runtime
+- **Unified Mapping Logic** (`deckbuilder.py`): Combines semantic detection with JSON mappings for reliable content placement
 - **Template Packages**: PPTX file + JSON configuration file pairs
 - **Backward Compatibility**: Maintains existing API while adding flexibility
 
 ### File Structure
 
-templates/
-├── default.pptx               # PowerPoint template file
-├── default.json               # Layout configuration for default.pptx
-├── corporate.pptx             # Corporate template
-├── corporate.json             # Layout configuration for corporate.pptx
-└── custom.pptx                # Custom template
-└── custom.json                # Layout configuration for custom.pptx
+        templates
+
+        ├── default.pptx     # PowerPoint template file
+        ├── default.json     # Layout configuration for default.pptx
+        ├── corporate.pptx   # Corporate template
+        ├── corporate.json   # Layout configuration for corporate.pptx
+        └── custom.pptx      # Custom template
+        └── custom.json      # Layout configuration for custom.pptx
 
 ### Template Generation Workflow
 
 1. **Extract Template Structure**: Run `python tests/test_tools.py` to analyze a PowerPoint template
 2. **Generate Raw Mapping**: Creates `templateName.g.json` with extracted layout and placeholder information
-3. **Customize Mapping**: Edit the `.g.json` file to map placeholder indices to meaningful names
-4. **Activate Mapping**: Rename `templateName.g.json` to `templateName.json` when ready to use
+3. **Activate Mapping**: Rename `templateName.g.json` to `templateName.json` when ready to use
 
 ### Template Loading Logic
 
 - Template name: `default` → Load `default.pptx` + `default.json`
 - Template name: `corporate` → Load `corporate.pptx` + `corporate.json`
-- **Automatic Copying**: Template and JSON files are automatically copied from `src/` to template folder on first use
+- **Automatic Default Copying**: The default Template and JSON files are automatically copied from `src/` to template folder on first use
 - **Fallback Strategy**: If JSON file doesn't exist, falls back gracefully with basic layout support
-- **File Pairing**: JSON filename always matches PPTX filename (just different extension)
+- **File Pairing**: JSON filename always must match the PPTX filename (just different extension)
 
 ## Implementation
 
@@ -54,8 +61,7 @@ The `TemplateAnalyzer` class provides:
 - **Human & LLM Readable**: JSON format with clear layout and placeholder descriptions
 - **Automatic Discovery**: Extracts actual names from PowerPoint templates instead of using generic placeholders
 - **Flexible Mapping**: Support for any layout structure with customizable placeholder assignments
-- **Template Portability**: Each template comes with its own configuration file
-- **Backward Compatibility**: Existing slide creation code continues to work unchanged
+- **Template Portability**: Each template comes with its own configuration file.
 - **Extensible**: Easy to add new layout types and templates without code changes
 
 ## Usage Examples
@@ -69,22 +75,60 @@ python tests/test_tools.py
 # This creates templateName.g.json with extracted structure
 ```
 
-### Current API (still works)
+### Basic Content (Semantic Detection)
+These fields work reliably with any PowerPoint template using semantic detection:
+
 ```python
-slide_data = {"type": "content", "title": "My Slide", "content": "..."}
+# Title slide using semantic detection
+slide_data = {
+    "type": "Title Slide",
+    "title": "My Presentation Title",    # Automatically finds title placeholder
+    "subtitle": "Subtitle Text"          # Automatically finds subtitle placeholder
+}
+
+# Content slide using semantic detection  
+slide_data = {
+    "type": "Title and Content", 
+    "title": "Content Slide Title",      # Automatically finds title placeholder
+    "content": [                         # Automatically finds content placeholder
+        "First bullet point",
+        "Second bullet point"
+    ]
+}
 ```
 
-### Advanced Layout Usage
+### Advanced Layout Usage (JSON Mapping)
+For custom layout fields, use the JSON mapping system:
+
 ```python
 slide_data = {
-    "type": "Four Columns",  # Uses actual PowerPoint layout name
-    "title": "Comparison Matrix",
-    "col_1_title": "Feature A",
-    "col_1_content": "Details about A",
-    "col_2_title": "Feature B", 
-    "col_2_content": "Details about B",
+    "type": "Four Columns",                         # Uses actual PowerPoint layout name
+    "title": "Comparison Matrix",                   # Uses semantic detection
+    "Col 1 Title Placeholder 2" : "Feature A",      # Uses JSON mapping to placeholder 13
+    "Col 1 Text Placeholder 3" : "Details about A", # Uses JSON mapping to placeholder 14
+    "Col 2 Title Placeholder 4": "Feature B",       # Uses JSON mapping to placeholder 15
+    "Col 2 Text Placeholder 5": "Details about B",  # Uses JSON mapping to placeholder 16
     # ... etc
 }
+```
+
+### How It Works Behind the Scenes
+```python
+# For "title" field - uses semantic detection
+if field_name == "title":
+    for placeholder in slide.placeholders:
+        if is_title_placeholder(placeholder.placeholder_format.type):
+            # Found! Apply content to this placeholder
+            break
+
+# For "col_1_title" field - uses JSON mapping
+else:
+    if field_name in field_to_index:  # "col_1_title" maps to index 13
+        placeholder_idx = field_to_index[field_name]  # Get index 13
+        for placeholder in slide.placeholders:
+            if placeholder.placeholder_format.idx == placeholder_idx:
+                # Found! Apply content to placeholder at index 13
+                break
 ```
 
 ### Template Creation Workflow
@@ -120,18 +164,21 @@ The system uses the following JSON structure for template mappings:
         "1": "content"
       }
     },
-    "Four Columns": {
+        "Four Columns": {
       "index": 11,
       "placeholders": {
-        "0": "title",
-        "13": "col_1_title",
-        "14": "col_1_content",
-        "15": "col_2_title",
-        "16": "col_2_content",
-        "17": "col_3_title",
-        "18": "col_3_content",
-        "19": "col_4_title",
-        "20": "col_4_content"
+        "0": "Title 1",
+        "13": "Col 1 Title Placeholder 2",
+        "14": "Col 1 Text Placeholder 3",
+        "15": "Col 2 Title Placeholder 4",
+        "16": "Col 2 Text Placeholder 5",
+        "17": "Col 3 Title Placeholder 6",
+        "18": "Col 3 Text Placeholder 7",
+        "19": "Col 4 Title Placeholder 8",
+        "20": "Col 4 Text Placeholder 9",
+        "10": "Date Placeholder 10",
+        "11": "Footer Placeholder 11",
+        "12": "Slide Number Placeholder 12"
       }
     }
   },
@@ -156,8 +203,9 @@ The system uses the following JSON structure for template mappings:
 
 ### Current Implementation in `deckbuilder.py`
 
-The system is fully implemented and working:
+The system combines semantic detection with JSON mappings for reliable content placement:
 
+#### Layout Selection
 ```python
 def _add_slide(self, slide_data):
     # Get slide type and determine layout using JSON mapping
@@ -182,12 +230,96 @@ def _add_slide(self, slide_data):
     slide = self.prs.slides.add_slide(slide_layout)
 ```
 
-### Placeholder Mapping
+#### Content Placement with Semantic Detection
+```python
+def _apply_content_to_mapped_placeholders(self, slide, slide_data, layout_name):
+    # Process each field in slide_data using semantic detection
+    for field_name, field_value in slide_data.items():
+        target_placeholder = None
+        
+        # Handle title placeholders using semantic detection
+        if field_name == "title":
+            for placeholder in slide.placeholders:
+                if is_title_placeholder(placeholder.placeholder_format.type):
+                    target_placeholder = placeholder
+                    break
+        
+        # Handle subtitle placeholders using semantic detection
+        elif field_name == "subtitle":
+            for placeholder in slide.placeholders:
+                if is_subtitle_placeholder(placeholder.placeholder_format.type):
+                    target_placeholder = placeholder
+                    break
+        
+        # Handle content placeholders using semantic detection
+        elif field_name == "content":
+            for placeholder in slide.placeholders:
+                if is_content_placeholder(placeholder.placeholder_format.type):
+                    target_placeholder = placeholder
+                    break
+        
+        # Handle other fields using JSON mapping
+        else:
+            # Try to find by exact field name match in JSON mapping
+            if field_name in field_to_index:
+                placeholder_idx = field_to_index[field_name]
+                for placeholder in slide.placeholders:
+                    if placeholder.placeholder_format.idx == placeholder_idx:
+                        target_placeholder = placeholder
+                        break
+        
+        if target_placeholder:
+            # Apply content based on placeholder's semantic type
+            self._apply_content_by_semantic_type(target_placeholder, field_name, field_value, slide_data)
+```
 
-Direct mapping from placeholder index to field name:
-- `"0": "title"` = placeholder index 0 maps to `slide_data["title"]`
-- `"1": "content"` = placeholder index 1 maps to `slide_data["content"]`
-- `"13": "col_1_title"` = placeholder index 13 maps to `slide_data["col_1_title"]`
+### How Content Placement Works
+
+The system uses a two-tier approach for reliable content placement:
+
+#### 1. Semantic Detection (Primary)
+For common slide fields (`title`, `subtitle`, `content`), the system uses PowerPoint's built-in semantic placeholder types:
+
+```python
+# From placeholder_types.py
+TITLE_PLACEHOLDERS = {
+    PP_PLACEHOLDER_TYPE.TITLE,         # Standard slide title
+    PP_PLACEHOLDER_TYPE.CENTER_TITLE,  # Centered title (title slides) 
+    PP_PLACEHOLDER_TYPE.VERTICAL_TITLE # Vertical orientation title
+}
+
+SUBTITLE_PLACEHOLDERS = {
+    PP_PLACEHOLDER_TYPE.SUBTITLE       # Subtitle text
+}
+
+CONTENT_PLACEHOLDERS = {
+    PP_PLACEHOLDER_TYPE.BODY,          # Main content area
+    PP_PLACEHOLDER_TYPE.VERTICAL_BODY  # Vertical text content
+}
+```
+
+**Benefits:**
+- **Template Independent**: Works with any PowerPoint template
+- **Reliable**: Uses PowerPoint's built-in semantic types
+- **Automatic**: No manual mapping required for basic content
+
+#### 2. JSON Mapping (Secondary)
+For custom layout fields (like column content), the system falls back to JSON mappings:
+
+- `"0": "Title 1"` = placeholder index 0 contains PowerPoint's actual name
+- `"13": "Col 1 Title Placeholder 2"` = placeholder index 13 maps to first column title
+- `"14": "Col 1 Text Placeholder 3"` = placeholder index 14 maps to first column content
+
+**Usage:**
+```python
+slide_data = {
+    "type": "Four Columns",
+    "title": "Comparison Matrix",           # Uses semantic detection
+    "col_1_title": "Feature A",            # Uses JSON mapping to index 13
+    "col_1_content": "Details about A",    # Uses JSON mapping to index 14
+    # ... etc
+}
+```
 
 ### Generated vs. Customized Names
 
@@ -218,3 +350,49 @@ Direct mapping from placeholder index to field name:
   }
 }
 ```
+
+## Troubleshooting
+
+### Common Issues
+
+#### 1. Titles Not Appearing
+**Problem**: Title content isn't showing up in slides
+**Solution**: The system now uses semantic detection - ensure your slide_data uses the field name `"title"`:
+
+```python
+# ✅ Correct - uses semantic detection
+slide_data = {"type": "Title and Content", "title": "My Title"}
+
+# ❌ Wrong - won't be recognized
+slide_data = {"type": "Title and Content", "slide_title": "My Title"}
+```
+
+#### 2. Custom Fields Not Working  
+**Problem**: Custom layout fields (like column content) aren't appearing
+**Solution**: Check that your JSON mapping includes the correct field names:
+
+```json
+{
+  "Four Columns": {
+    "placeholders": {
+      "13": "col_1_title",    // Must match slide_data field name exactly
+      "14": "col_1_content"   // Must match slide_data field name exactly
+    }
+  }
+}
+```
+
+#### 3. Wrong Placeholder Selected
+**Problem**: Content appears in unexpected placeholders
+**Solution**: The system prioritizes semantic detection. For troubleshooting:
+
+1. Check if you're using reserved field names (`title`, `subtitle`, `content`)
+2. Use `python tests/test_tools.py` to regenerate template mappings
+3. Verify placeholder indices in the generated `.g.json` file
+
+### Debugging Tips
+
+1. **Check Template Structure**: Run `python tests/test_tools.py` to see actual placeholder indices and names
+2. **Semantic vs JSON**: Remember that `title`, `subtitle`, and `content` use semantic detection, other fields use JSON mapping
+3. **Field Name Matching**: Custom field names must exactly match the JSON mapping keys
+4. **Template Loading**: Ensure both `.pptx` and `.json` files exist in the template folder

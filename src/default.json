@@ -121,17 +121,17 @@
       "index": 11,
       "placeholders": {
         "0": "Title 1",
-        "10": "Date Placeholder 2",
-        "11": "Footer Placeholder 3",
-        "12": "Slide Number Placeholder 4",
-        "13": "col_1_title",
-        "14": "col_1_content",
-        "15": "col_2_title",
-        "16": "col_2_content",
-        "17": "col_3_title",
-        "18": "col_3_content",
-        "19": "col_4_title",
-        "20": "col_4_content"
+        "13": "Col 1 Title Placeholder 2",
+        "14": "Col 1 Text Placeholder 3",
+        "15": "Col 2 Title Placeholder 4",
+        "16": "Col 2 Text Placeholder 5",
+        "17": "Col 3 Title Placeholder 6",
+        "18": "Col 3 Text Placeholder 7",
+        "19": "Col 4 Title Placeholder 8",
+        "20": "Col 4 Text Placeholder 9",
+        "10": "Date Placeholder 10",
+        "11": "Footer Placeholder 11",
+        "12": "Slide Number Placeholder 12"
       }
     }
   },
