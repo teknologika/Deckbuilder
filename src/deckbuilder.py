@@ -874,8 +874,12 @@ class Deckbuilder:
                     frontmatter_raw = slide_blocks[i].strip()
                     content_raw = slide_blocks[i + 1].strip() if i + 1 < len(slide_blocks) else ""
                     
-                    # Parse frontmatter
-                    slide_config = yaml.safe_load(frontmatter_raw) or {}
+                    # Parse frontmatter with error handling for special characters
+                    try:
+                        slide_config = yaml.safe_load(frontmatter_raw) or {}
+                    except yaml.YAMLError:
+                        # If YAML parsing fails due to special characters, try pre-processing
+                        slide_config = self._parse_frontmatter_safe(frontmatter_raw)
                     
                     # Parse markdown content into slide data
                     slide_data = self._parse_slide_content(content_raw, slide_config)
@@ -896,6 +900,34 @@ class Deckbuilder:
                 i += 1
         
         return slides
+
+    def _parse_frontmatter_safe(self, frontmatter_raw: str) -> dict:
+        """
+        Parse frontmatter safely by handling special characters that break YAML.
+        
+        This method processes frontmatter line by line to handle values with
+        markdown formatting characters (*, _, etc.) that would break YAML parsing.
+        """
+        config = {}
+        for line in frontmatter_raw.split('\n'):
+            line = line.strip()
+            if not line or line.startswith('#'):
+                continue
+                
+            if ':' in line:
+                key, value = line.split(':', 1)
+                key = key.strip()
+                value = value.strip()
+                
+                # Remove quotes if present
+                if value.startswith('"') and value.endswith('"'):
+                    value = value[1:-1]
+                elif value.startswith("'") and value.endswith("'"):
+                    value = value[1:-1]
+                
+                config[key] = value
+        
+        return config
 
     def _parse_slide_content(self, content: str, config: dict) -> dict:
         """Convert markdown content + config into slide data dict with mixed content support"""
