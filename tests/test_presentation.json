@@ -1,0 +1,87 @@
+{
+  "presentation": {
+    "slides": [
+      {
+        "type": "Title Slide",
+        "title": "**Test Presentation** with *Inline* Formatting",
+        "subtitle": "Testing all ___placeholders___ and **formatting** capabilities"
+      },
+      {
+        "type": "Title and Content",
+        "title": "Content Slide with **Bold** and *Italic*",
+        "content": [
+          "First bullet point with **bold text**",
+          "Second point with *italic text*", 
+          "Third point with ***bold and italic***",
+          "Fourth point with ___underlined text___"
+        ]
+      },
+      {
+        "type": "Two Content",
+        "title": "Two Content Layout Test",
+        "content": [
+          "Left side content:",
+          "• **Feature A** details",
+          "• *Feature B* information"
+        ],
+        "content_2": [
+          "Right side content:",
+          "• ***Important*** updates",
+          "• ___Critical___ information"
+        ]
+      },
+      {
+        "type": "Four Columns",
+        "title": "Four Column Layout **Comprehensive** Test",
+        "col_1_title": "**Column 1**",
+        "col_1_content": "First column content with *emphasis*",
+        "col_2_title": "*Column 2*", 
+        "col_2_content": "Second column with ***bold italic***",
+        "col_3_title": "___Column 3___",
+        "col_3_content": "Third column with ___underline___",
+        "col_4_title": "**_Column 4_**",
+        "col_4_content": "Fourth column with **mixed** *formatting*"
+      },
+      {
+        "type": "table",
+        "title": "Table Slide with **Formatted** Content",
+        "table": {
+          "header_style": "dark_blue_white_text",
+          "row_style": "alternating_light_gray",
+          "border_style": "thin_gray",
+          "data": [
+            ["**Feature**", "*Status*", "___Priority___"],
+            ["Authentication", "**Complete**", "*High*"],
+            ["User Management", "***In Progress***", "___Medium___"],
+            ["Reporting", "*Planned*", "**Low**"],
+            ["API Integration", "___Blocked___", "***Critical***"]
+          ]
+        }
+      },
+      {
+        "type": "Section Header",
+        "title": "Section Break: **Testing** *Complete*",
+        "content": "This section demonstrates ___section header___ layout with **formatting**"
+      },
+      {
+        "type": "Title Only",
+        "title": "Title Only Layout: **Bold** *Italic* ___Underline___"
+      },
+      {
+        "type": "Picture with Caption",
+        "title": "Picture Layout **Test**",
+        "content": "Picture placeholder content with *formatting*",
+        "caption": "Caption text with ***bold italic*** and ___underline___"
+      },
+      {
+        "type": "Comparison",
+        "title": "Comparison Layout **Full** Test",
+        "left_title": "**Option A**",
+        "left_content": "Benefits of option A with *emphasis*",
+        "right_title": "*Option B*",
+        "right_content": "Benefits of option B with ***strong emphasis***",
+        "comparison_notes": "Additional notes with ___underlined___ text"
+      }
+    ]
+  }
+}

@@ -130,7 +130,6 @@ class Deckbuilder:
 
         return f"Creating presentation: {fileName}"
 
-
     def write_presentation(self, fileName: str = "Sample_Presentation") -> str:
         """Writes the generated presentation to disk with ISO timestamp."""
         from datetime import datetime
@@ -209,6 +208,9 @@ class Deckbuilder:
         Args:
             slide_data: Dictionary containing slide information
         """
+        # Auto-parse JSON formatting for inline formatting support
+        slide_data = self._auto_parse_json_formatting(slide_data)
+        
         # Get slide type and determine layout using JSON mapping
         slide_type = slide_data.get("type", "content")
         
@@ -956,6 +958,25 @@ class Deckbuilder:
                 processed_data["table"]["data"] = formatted_data
         
         return processed_data
+
+    def create_presentation_from_markdown(self, markdown_content: str, fileName: str = "Sample_Presentation", templateName: str = "default") -> str:
+        """Create presentation from formatted markdown with frontmatter"""
+        try:
+            slides = self.parse_markdown_with_frontmatter(markdown_content)
+            
+            # Create presentation
+            self.create_presentation(templateName, fileName)
+            
+            # Add all slides to the presentation
+            for slide_data in slides:
+                self._add_slide(slide_data)
+            
+            # Automatically save the presentation to disk after creation
+            write_result = self.write_presentation(fileName)
+                
+            return f"Successfully created presentation with {len(slides)} slides from markdown. {write_result}"
+        except Exception as e:
+            return f"Error creating presentation from markdown: {str(e)}"
 
 def get_deckbuilder_client():
     # Return singleton instance of Deckbuilder
