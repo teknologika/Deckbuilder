@@ -115,6 +115,12 @@ class Deckbuilder:
             "aliases": {"content": "Title and Content", "title": "Title Slide"}
         }
     
+    def _ensure_layout_mapping(self):
+        """Ensure layout mapping is loaded, using default template if not already loaded"""
+        if self.layout_mapping is None:
+            template_name = self.template_name or 'default'
+            self._load_layout_mapping(template_name)
+    
     def create_presentation(self, templateName: str = "default", fileName: str = "Sample_Presentation") -> str:
         # Check template exists
         self._check_template_exists(templateName)
@@ -126,9 +132,20 @@ class Deckbuilder:
         # Create deck with template
         if not templateName.endswith('.pptx'):
             templateName += '.pptx'
+        
+        template_path = None
         if self.template_path:
             template_path = os.path.join(self.template_path, templateName)
-            self.prs = Presentation(template_path) if os.path.exists(template_path) else Presentation()
+        
+        # Fallback to src folder if template not found in template_path
+        if not template_path or not os.path.exists(template_path):
+            src_template_path = os.path.join(os.path.dirname(__file__), templateName)
+            if os.path.exists(src_template_path):
+                template_path = src_template_path
+        
+        # Load template or create empty presentation
+        if template_path and os.path.exists(template_path):
+            self.prs = Presentation(template_path)
         else:
             self.prs = Presentation()
         
@@ -879,6 +896,9 @@ class Deckbuilder:
         Returns:
             List of slide dictionaries ready for _add_slide()
         """
+        # Ensure layout mapping is loaded
+        self._ensure_layout_mapping()
+        
         slides = []
         
         # Split content by frontmatter boundaries
@@ -897,12 +917,8 @@ class Deckbuilder:
                     frontmatter_raw = slide_blocks[i].strip()
                     content_raw = slide_blocks[i + 1].strip() if i + 1 < len(slide_blocks) else ""
                     
-                    # Parse frontmatter with error handling for special characters
-                    try:
-                        slide_config = yaml.safe_load(frontmatter_raw) or {}
-                    except yaml.YAMLError:
-                        # If YAML parsing fails due to special characters, try pre-processing
-                        slide_config = self._parse_frontmatter_safe(frontmatter_raw)
+                    # Parse frontmatter with structured frontmatter support
+                    slide_config = self._parse_structured_frontmatter(frontmatter_raw)
                     
                     # Parse markdown content into slide data
                     slide_data = self._parse_slide_content(content_raw, slide_config)
@@ -923,6 +939,46 @@ class Deckbuilder:
                 i += 1
         
         return slides
+
+    def _parse_structured_frontmatter(self, frontmatter_content: str) -> dict:
+        """Parse structured frontmatter and convert to placeholder mappings"""
+        from structured_frontmatter import StructuredFrontmatterConverter, StructuredFrontmatterValidator
+        
+        try:
+            parsed = yaml.safe_load(frontmatter_content)
+        except yaml.YAMLError:
+            # Fallback to safe parsing for special characters
+            return self._parse_frontmatter_safe(frontmatter_content)
+        
+        # Handle case where YAML parsing returns a string (malformed YAML)
+        if not isinstance(parsed, dict):
+            return self._parse_frontmatter_safe(frontmatter_content)
+        
+        layout_name = parsed.get("layout")
+        if not layout_name:
+            return parsed
+        
+        # Check if this is structured frontmatter
+        converter = StructuredFrontmatterConverter(self.layout_mapping)
+        
+        if converter.registry.supports_structured_frontmatter(layout_name):
+            
+            # Validate structured frontmatter
+            validator = StructuredFrontmatterValidator()
+            validation_result = validator.validate_structured_frontmatter(parsed, layout_name)
+            if not validation_result["valid"]:
+                # Log warnings but continue processing
+                for error in validation_result["errors"]:
+                    print(f"Error in structured frontmatter: {error}")
+                for warning in validation_result["warnings"]:
+                    print(f"Warning in structured frontmatter: {warning}")
+            
+            # Convert to placeholder mappings
+            converted = converter.convert_structured_to_placeholders(parsed)
+            return converted
+        
+        # Regular frontmatter processing
+        return parsed
 
     def _parse_frontmatter_safe(self, frontmatter_raw: str) -> dict:
         """

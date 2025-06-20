@@ -21,25 +21,37 @@ Additional paragraph with **mixed** *formatting* and ___underlines___.
 
 ---
 layout: Two Content
+title: Two Content Layout Test
+sections:
+  - title: Left Side Content
+    content:
+      - "**Feature A** details"
+      - "*Feature B* information"
+      - "***Critical*** updates"
+  - title: Right Side Content
+    content:
+      - "___Important___ notices"
+      - "**Security** measures"
+      - "*Performance* metrics"
 ---
-# Two Content Layout Test
 
-## Left Side Content
-- **Feature A** details
-- *Feature B* information
-- ***Critical*** updates
-
-## Right Side Content  
-- ___Important___ notices
-- **Security** measures
-- *Performance* metrics
+Content from Two Content structured frontmatter above.
 
 ---
 layout: Four Columns
+title: Four Column Layout **Comprehensive** Test
+columns:
+  - title: Performance
+    content: "**Fast processing** with optimized algorithms and *sub-millisecond* response times"
+  - title: Security
+    content: "***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance"
+  - title: Usability
+    content: "*Intuitive* interface with **minimal** learning curve and comprehensive docs"
+  - title: Cost
+    content: "___Transparent___ pricing with **flexible** plans and *proven* ROI"
 ---
-# Four Column Layout **Comprehensive** Test
 
-This layout tests the four-column structure with formatted content in each column.
+Content from Four Columns structured frontmatter above.
 
 ---
 layout: table
@@ -69,29 +81,27 @@ layout: Title Only
 
 ---
 layout: Picture with Caption
+title: Picture Layout **Test**
+media:
+  caption: "Picture placeholder with ***formatted*** captions"
+  description: "This slide demonstrates picture functionality with *formatting* capabilities and ___enhanced___ presentation features"
 ---
-# Picture Layout **Test**
 
-This slide demonstrates picture placeholder functionality with formatted captions.
-
-Picture content would go here with *formatting* capabilities.
+Content from Picture with Caption structured frontmatter above.
 
 ---
 layout: Comparison
+title: Comparison Layout **Full** Test
+comparison:
+  left:
+    title: Option A Benefits
+    content: "**Cost effective** solution with *rapid* deployment and ***proven*** technology"
+  right:
+    title: Option B Benefits
+    content: "___Advanced___ features with **future-proof** architecture and *scalable* design"
 ---
-# Comparison Layout **Full** Test
 
-## Option A Benefits
-- **Cost effective** solution
-- *Rapid* deployment
-- ***Proven*** technology
-
-## Option B Benefits
-- ___Advanced___ features
-- **Future-proof** architecture
-- *Scalable* design
-
-Both options provide significant value with different **trade-offs** and *considerations*.
+Content from Comparison structured frontmatter above.
 
 ---
 layout: Content with Caption
