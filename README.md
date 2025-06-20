@@ -207,10 +207,63 @@ This project follows a **content-first design philosophy** that prioritizes user
 
 ### Available MCP Tools
 
-1. **`create_presentation`** - Create complete PowerPoint presentations from JSON data with automatic saving
-2. **`create_presentation_from_markdown`** - Create complete presentations from markdown with frontmatter and automatic saving
+The server provides two comprehensive tools for complete "one-shot" presentation creation:
 
-The server provides a streamlined interface with just two comprehensive tools that handle complete presentation workflows, eliminating the need for multiple tool calls.
+#### 1. `create_presentation` - JSON-Based Presentation Creation
+**Purpose**: Create complete PowerPoint presentations from structured JSON data
+**Usage**: One-shot creation with automatic saving
+
+**Parameters**:
+- `json_data` (required): JSON string containing presentation structure
+- `fileName` (optional): Output filename (default: "Sample_Presentation")  
+- `templateName` (optional): Template to use (default: "default")
+
+**Supported Features**:
+- **All PowerPoint layouts**: Title Slide, Title and Content, Two Content, Four Columns, Comparison, Section Header, Title Only, Picture with Caption, Content with Caption, Blank, Table
+- **Structured frontmatter layouts**: Clean YAML syntax automatically converted to PowerPoint placeholders
+- **Rich content support**: Headings, paragraphs, bullet points with automatic formatting
+- **Inline formatting**: `**bold**`, `*italic*`, `___underline___`, `***bold italic***`
+- **Table styling**: Multiple header, row, and border styles with custom color support
+- **Template compatibility**: Works with any PowerPoint template via semantic detection + JSON mapping
+
+#### 2. `create_presentation_from_markdown` - Markdown-Based Presentation Creation  
+**Purpose**: Create presentations using familiar markdown syntax with YAML frontmatter
+**Usage**: One-shot creation from markdown content with automatic saving
+
+**Parameters**:
+- `markdown_content` (required): Markdown string with frontmatter slide definitions
+- `fileName` (optional): Output filename (default: "Sample_Presentation")
+- `templateName` (optional): Template to use (default: "default")
+
+**Supported Features**:
+- **YAML frontmatter**: Clean slide definitions with `layout:` specification
+- **Structured frontmatter**: Advanced layouts like Four Columns, Two Content, Comparison with semantic field mapping
+- **Markdown content**: Standard markdown syntax for content areas
+- **Mixed content**: Headings (`## Title`), paragraphs, and bullets (`- item`) in single slides
+- **Inline formatting**: Full support for bold, italic, underline combinations
+- **Table slides**: Markdown tables with styling options via frontmatter
+
+**Example Frontmatter Layouts**:
+```yaml
+---
+layout: Four Columns
+title: Feature Comparison
+columns:
+  - title: Performance
+    content: "Fast processing with **optimized** algorithms"
+  - title: Security  
+    content: "***Enterprise-grade*** encryption"
+---
+```
+
+**One-Shot Workflow**: Both tools handle the complete presentation lifecycle:
+1. **Parse** input (JSON or Markdown)
+2. **Create** presentation with specified template
+3. **Add** all slides with proper layout selection and content placement
+4. **Save** presentation to disk automatically
+5. **Return** success confirmation with file details
+
+This eliminates the need for multiple tool calls and provides immediate, ready-to-use PowerPoint files.
 
 ### Configuration Files
 
@@ -226,48 +279,68 @@ Create presentations using familiar markdown syntax with YAML frontmatter for la
 
 ```markdown
 ---
-layout: title
+layout: Title Slide
 ---
-# AI-Powered Business Solutions
-## Transforming Your Workflow in 2024
+# **Test Presentation** with *Inline* Formatting
+## Testing all ___placeholders___ and **formatting** capabilities
 
 ---
-layout: content
+layout: Four Columns
+title: Four Column Layout **Comprehensive** Test
+columns:
+  - title: Performance
+    content: "**Fast processing** with optimized algorithms and *sub-millisecond* response times"
+  - title: Security
+    content: "***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance"
+  - title: Usability
+    content: "*Intuitive* interface with **minimal** learning curve and comprehensive docs"
+  - title: Cost
+    content: "___Transparent___ pricing with **flexible** plans and *proven* ROI"
 ---
-# Key Benefits
 
-## Performance Improvements
-Our platform delivers ***significant improvements*** across all key metrics with **proven results**.
-
-- ***Efficiency Gains:*** **40% reduction** in routine task completion time
-- ***Quality Improvement:*** **68% fewer errors** through AI-assisted workflows  
-- ***Cost Savings:*** Average **25% reduction** in ___operational expenses___
-- ***Scalability:*** Solutions that ***automatically scale*** based on demand
-
-The system provides *real-time monitoring* and **24/7 support** to ensure ___optimal performance___ at all times.
-
-## Implementation Timeline
-We can have your system up and running in just 2 weeks.
-
-- Week 1: Setup and configuration
-- Week 2: Training and go-live support
+---
+layout: Comparison
+title: Comparison Layout **Full** Test
+comparison:
+  left:
+    title: Option A Benefits
+    content: "**Cost effective** solution with *rapid* deployment and ***proven*** technology"
+  right:
+    title: Option B Benefits
+    content: "___Advanced___ features with **future-proof** architecture and *scalable* design"
+---
 
 ---
 layout: table
 style: dark_blue_white_text
 row_style: alternating_light_gray
+border_style: thin_gray
 ---
-# Performance Metrics
-| Metric | Before | After | Improvement |
-| Response Time | 2.5s | 0.8s | 68% faster |
-| Error Rate | 5.2% | 1.1% | 79% reduction |
-| Uptime | 95.5% | 99.9% | 4.4% increase |
+# Table Slide with **Formatted** Content
+
+| **Feature** | *Status* | ___Priority___ |
+| Authentication | **Complete** | *High* |
+| User Management | ***In Progress*** | ___Medium___ |
+| Reporting | *Planned* | **Low** |
+| API Integration | ___Blocked___ | ***Critical*** |
 ```
 
 **Supported Layouts:**
-- `title` - Title slide with title and subtitle
-- `content` - Rich content slide with mixed headings, paragraphs, and bullets
+- `Title Slide` - Title slide with title and subtitle
+- `Title and Content` - Rich content slide with mixed headings, paragraphs, and bullets
+- `Four Columns` - Structured frontmatter with 4 content areas
+- `Two Content` - Side-by-side content areas  
+- `Comparison` - Left vs right comparison layout
+- `Section Header` - Divider slides between topics
+- `Picture with Caption` - Image-focused slide with caption
 - `table` - Data table with full styling support
+- `Blank` - Minimal structure for custom content
+
+**Structured Frontmatter Features:**
+- **Four Columns:** Clean YAML with `columns:` array
+- **Two Content:** `sections:` with title and content pairs
+- **Comparison:** `comparison:` with left/right structure
+- **Picture with Caption:** `media:` with caption and description
 
 **Content Features:**
 - **Headings:** Use `## Heading` for bold section headers
