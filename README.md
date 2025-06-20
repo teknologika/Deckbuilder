@@ -356,37 +356,37 @@ border_style: thin_gray
 
 ### JSON Configuration (Advanced)
 
-For precise control or programmatic generation, use the comprehensive JSON format:
+For precise control or programmatic generation, use the comprehensive JSON format. **Important**: When calling the MCP tool, the JSON must be passed as a properly escaped string.
 
+#### Simple JSON Example (Recommended for MCP calls):
 ```json
 {
   "presentation": {
     "slides": [
       {
-        "type": "title",
-        "title": "**Q4 2024 Results** with *Emphasis*",
-        "subtitle": "Financial Performance ___Overview___"
+        "type": "Title Slide",
+        "title": "**My Presentation** with *Formatting*",
+        "subtitle": "Testing ___all___ capabilities"
       },
       {
-        "type": "content",
-        "title": "Key Achievements",
+        "type": "Title and Content",
+        "title": "Key Points",
         "content": [
-          "**Revenue increased** by 15% year-over-year",
-          "*Customer satisfaction* improved to 94%",
-          "Successfully launched ***3 new products***",
-          "Expanded to ___2 new markets___"
+          "**First** important point",
+          "*Second* key insight",
+          "***Critical*** information"
         ]
       },
       {
         "type": "table",
-        "title": "Financial Summary",
+        "title": "Summary Table",
         "table": {
           "header_style": "dark_blue_white_text",
           "row_style": "alternating_light_gray",
           "data": [
-            ["**Metric**", "*Q4 2024*", "___Q3 2024___", "Change"],
-            ["Revenue", "$12.5M", "$11.2M", "+11.6%"],
-            ["Profit", "$3.2M", "$2.8M", "+14.3%"]
+            ["**Item**", "*Status*", "___Priority___"],
+            ["Task 1", "**Complete**", "*High*"],
+            ["Task 2", "***In Progress***", "___Medium___"]
           ]
         }
       }
@@ -395,11 +395,45 @@ For precise control or programmatic generation, use the comprehensive JSON forma
 }
 ```
 
+#### For MCP Tool Usage:
+When calling `create_presentation`, pass the JSON as a string parameter:
+
+**✅ Correct Usage:**
+```
+Tool: create_presentation
+Parameters:
+- json_data: "{\"presentation\":{\"slides\":[{\"type\":\"Title Slide\",\"title\":\"**My Presentation**\",\"subtitle\":\"Test\"}]}}"
+- fileName: "MyPresentation"
+```
+
+**❌ Incorrect Usage:**
+```
+Tool: create_presentation  
+Parameters:
+- json_data: {raw JSON object} // This will cause errors
+```
+
+#### Structured Frontmatter Alternative (Easier):
+For complex layouts, consider using the markdown tool with structured frontmatter instead:
+
+```yaml
+---
+layout: Four Columns
+title: Feature Comparison
+columns:
+  - title: Performance
+    content: "**Fast** processing"
+  - title: Security
+    content: "***Enterprise*** grade"
+---
+```
+
 **Key Features:**
 - **Complete Workflow:** Single tool call creates and saves entire presentation
 - **Inline Formatting:** Full support for `**bold**`, `*italic*`, and `___underline___`
-- **Multiple Slide Types:** Title, content, and table slides in one JSON structure
+- **Multiple Slide Types:** All PowerPoint layouts supported
 - **Automatic Saving:** No separate save step required
+- **String Parameter:** JSON must be properly escaped when calling MCP tools
 
 ## Next Steps
 
