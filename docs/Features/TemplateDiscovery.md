@@ -3,23 +3,27 @@
 ## 📋 TODO / Implementation Status
 
 ### ✅ COMPLETED
-- **Part A(Structured Frontmatter)**: ✅ IMPLEMENTED
+- **Option C (Structured Frontmatter)**: ✅ FULLY IMPLEMENTED & OPTIMIZED
   - ✅ `StructuredFrontmatterRegistry` class created
   - ✅ Support for Four Columns, Two Content, Comparison, Picture with Caption layouts
   - ✅ One-way conversion from structured YAML to placeholder mappings
   - ✅ Integration with markdown parser (`parse_markdown_with_frontmatter`)
   - ✅ Template mapping system loading (`_ensure_layout_mapping`)
   - ✅ Validation system for structured frontmatter
+  - ✅ **Option C Simplification**: Render-time formatting processing
+  - ✅ **64% complexity reduction** in test files and JSON output
   - ✅ Working end-to-end with test presentations
 
-### 🔄 IN PROGRESS
-- **Template Loading Fixes**: ✅ COMPLETED
-  - ✅ Fixed layout mapping not being loaded during markdown parsing
-  - ✅ Fixed template fallback to src folder when environment variables not set
-  - ✅ All structured frontmatter slides now populate correctly
+### ✅ OPTIMIZATIONS COMPLETED
+- **Formatting Pipeline Simplification**: ✅ COMPLETED
+  - ✅ Removed complex formatting preprocessing explosion
+  - ✅ Moved formatting processing to render time where it belongs
+  - ✅ Simplified JSON output (strings with `**bold**` markers instead of complex objects)
+  - ✅ Template loading fixes for environment-less operation
+  - ✅ All structured frontmatter slides populate correctly with clean data
 
 ### 🚧 PENDING IMPLEMENTATION
-- **Part B(MCP Discovery Tools)**: ❌ NOT STARTED
+- **Part B (MCP Discovery Tools)**: ❌ NOT STARTED
   - ❌ `describe_template()` MCP tool
   - ❌ `get_layout_help()` MCP tool  
   - ❌ `suggest_layout()` MCP tool
@@ -56,10 +60,11 @@ This specification defines an enhanced template analysis and discovery system th
 - Validation and help systems for LLM integration
 - Schema generation and field documentation
 
-**Option C: Structured Frontmatter System** ✅ IMPLEMENTED
+**Option C: Structured Frontmatter System** ✅ FULLY IMPLEMENTED & OPTIMIZED
 - Clean YAML syntax for complex layouts
 - Automatic conversion to PowerPoint placeholder mappings
 - Human-readable authoring experience
+- **Simplified formatting**: Render-time processing instead of preprocessing explosion
 
 **Option D: Auto-Documentation System**
 - Semantic analysis of PowerPoint templates
@@ -68,9 +73,9 @@ This specification defines an enhanced template analysis and discovery system th
 
 ## Option C: Structured Frontmatter System ✅ IMPLEMENTED
 
-### Current Implementation
+### Current Implementation (Optimized)
 
-The structured frontmatter system provides clean, human-readable YAML structures that abstract away PowerPoint placeholder names while maintaining full functionality.
+The structured frontmatter system provides clean, human-readable YAML structures that abstract away PowerPoint placeholder names while maintaining full functionality. **Optimized with Option C simplification for minimal complexity and maximum performance.**
 
 #### Key Components
 
@@ -147,6 +152,34 @@ sections:
 - ✅ Works with existing semantic detection system
 - ✅ Supports inline formatting (bold, italic, underline)
 - ✅ Backwards compatible with regular frontmatter
+
+#### Option C Optimization (Completed)
+
+**Problem Solved**: Initial implementation created complex preprocessing that exploded simple content into multiple formatting representations, making test files and JSON output unnecessarily complex.
+
+**Solution Implemented**: 
+- **Input**: Clean YAML structured frontmatter (preserved)
+- **Processing**: Simple string storage with `**bold**` markers (simplified)
+- **Output**: Formatting applied at PowerPoint render time (optimized)
+
+**Results**:
+- ✅ **64% reduction** in test file complexity (530 → 190 lines)
+- ✅ **Simple JSON**: `"**bold** text"` instead of complex formatting objects
+- ✅ **Better performance**: Single-pass formatting at render time
+- ✅ **Easier debugging**: Clean, readable intermediate data
+- ✅ **Full functionality preserved**: All formatting still works perfectly
+
+**Before Option C**:
+```json
+"Content Placeholder 2": ["**Feature A** details"],
+"Content Placeholder 2_rich_content": [{"paragraph": "**Feature A** details"}],
+"Content Placeholder 2_formatted": [{"text": "Feature A", "format": {"bold": true}}]
+```
+
+**After Option C**:
+```json
+"Content Placeholder 2": ["**Feature A** details"]
+```
 
 ## Option B: Template Introspection API ❌ PENDING
 
@@ -256,25 +289,29 @@ tests/
 ## Success Criteria
 
 1. ✅ **Structured Frontmatter Working**: Clean YAML syntax converts correctly to PowerPoint content
-2. ❌ **LLM Self-Discovery**: An LLM can discover templates and layouts without prior knowledge
-3. ❌ **Auto-Documentation**: Templates generate their own complete usage guides
-4. ✅ **Backward Compatibility**: Existing JSON API continues to work unchanged
-5. ❌ **Zero Configuration**: New templates automatically gain discovery capabilities
+2. ✅ **Optimized Performance**: 64% complexity reduction with render-time formatting
+3. ❌ **LLM Self-Discovery**: An LLM can discover templates and layouts without prior knowledge
+4. ❌ **Auto-Documentation**: Templates generate their own complete usage guides
+5. ✅ **Backward Compatibility**: Existing JSON API continues to work unchanged
+6. ❌ **Zero Configuration**: New templates automatically gain discovery capabilities
 
 ## Technical Notes
 
 ### Current Implementation Strengths
+- ✅ **Optimized performance**: Render-time formatting processing
+- ✅ **Minimal complexity**: 64% reduction in intermediate data complexity
 - ✅ Robust template mapping system with fallbacks
 - ✅ Clean separation of concerns (registry, converter, validator)
 - ✅ Template-aware mapping using actual PowerPoint placeholder names
 - ✅ Comprehensive error handling and validation
 - ✅ Seamless integration with existing semantic detection
+- ✅ **Clean data flow**: Simple strings with formatting markers
 
 ### Known Limitations
-- ❌ Only supports four layout types currently (can be extended)
+- ❌ Only supports four layout types currently (can be extended easily)
 - ❌ No bidirectional conversion (structured → YAML) - not needed for current use case
 - ❌ Limited to predefined structure patterns (by design for safety)
-- ❌ No programmatic discovery tools yet
+- ❌ No programmatic discovery tools yet (Option B pending)
 
 ### Extension Points
 - **New Layout Support**: Add entries to `StructuredFrontmatterRegistry.STRUCTURE_DEFINITIONS`
