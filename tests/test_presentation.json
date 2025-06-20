@@ -5,28 +5,6 @@
         "type": "Title Slide",
         "layout": "Title Slide",
         "title": "**Test Presentation** with *Inline* Formatting",
-        "title_formatted": [
-          {
-            "text": "Test Presentation",
-            "format": {
-              "bold": true
-            }
-          },
-          {
-            "text": " with ",
-            "format": {}
-          },
-          {
-            "text": "Inline",
-            "format": {
-              "italic": true
-            }
-          },
-          {
-            "text": " Formatting",
-            "format": {}
-          }
-        ],
         "rich_content": [
           {
             "heading": "Testing all ___placeholders___ and **formatting** capabilities",
@@ -38,28 +16,6 @@
         "type": "Title and Content",
         "layout": "Title and Content",
         "title": "Content Slide with **Bold** and *Italic*",
-        "title_formatted": [
-          {
-            "text": "Content Slide with ",
-            "format": {}
-          },
-          {
-            "text": "Bold",
-            "format": {
-              "bold": true
-            }
-          },
-          {
-            "text": " and ",
-            "format": {}
-          },
-          {
-            "text": "Italic",
-            "format": {
-              "italic": true
-            }
-          }
-        ],
         "rich_content": [
           {
             "heading": "Overview",
@@ -130,193 +86,13 @@
         "row_style": "alternating_light_gray",
         "border_style": "thin_gray",
         "title": "Table Slide with **Formatted** Content",
-        "title_formatted": [
-          {
-            "text": "Table Slide with ",
-            "format": {}
-          },
-          {
-            "text": "Formatted",
-            "format": {
-              "bold": true
-            }
-          },
-          {
-            "text": " Content",
-            "format": {}
-          }
-        ],
         "table": {
           "data": [
-            [
-              {
-                "text": "**Feature**",
-                "formatted": [
-                  {
-                    "text": "Feature",
-                    "format": {
-                      "bold": true
-                    }
-                  }
-                ]
-              },
-              {
-                "text": "*Status*",
-                "formatted": [
-                  {
-                    "text": "Status",
-                    "format": {
-                      "italic": true
-                    }
-                  }
-                ]
-              },
-              {
-                "text": "___Priority___",
-                "formatted": [
-                  {
-                    "text": "Priority",
-                    "format": {
-                      "underline": true
-                    }
-                  }
-                ]
-              }
-            ],
-            [
-              {
-                "text": "Authentication",
-                "formatted": [
-                  {
-                    "text": "Authentication",
-                    "format": {}
-                  }
-                ]
-              },
-              {
-                "text": "**Complete**",
-                "formatted": [
-                  {
-                    "text": "Complete",
-                    "format": {
-                      "bold": true
-                    }
-                  }
-                ]
-              },
-              {
-                "text": "*High*",
-                "formatted": [
-                  {
-                    "text": "High",
-                    "format": {
-                      "italic": true
-                    }
-                  }
-                ]
-              }
-            ],
-            [
-              {
-                "text": "User Management",
-                "formatted": [
-                  {
-                    "text": "User Management",
-                    "format": {}
-                  }
-                ]
-              },
-              {
-                "text": "***In Progress***",
-                "formatted": [
-                  {
-                    "text": "In Progress",
-                    "format": {
-                      "bold": true,
-                      "italic": true
-                    }
-                  }
-                ]
-              },
-              {
-                "text": "___Medium___",
-                "formatted": [
-                  {
-                    "text": "Medium",
-                    "format": {
-                      "underline": true
-                    }
-                  }
-                ]
-              }
-            ],
-            [
-              {
-                "text": "Reporting",
-                "formatted": [
-                  {
-                    "text": "Reporting",
-                    "format": {}
-                  }
-                ]
-              },
-              {
-                "text": "*Planned*",
-                "formatted": [
-                  {
-                    "text": "Planned",
-                    "format": {
-                      "italic": true
-                    }
-                  }
-                ]
-              },
-              {
-                "text": "**Low**",
-                "formatted": [
-                  {
-                    "text": "Low",
-                    "format": {
-                      "bold": true
-                    }
-                  }
-                ]
-              }
-            ],
-            [
-              {
-                "text": "API Integration",
-                "formatted": [
-                  {
-                    "text": "API Integration",
-                    "format": {}
-                  }
-                ]
-              },
-              {
-                "text": "___Blocked___",
-                "formatted": [
-                  {
-                    "text": "Blocked",
-                    "format": {
-                      "underline": true
-                    }
-                  }
-                ]
-              },
-              {
-                "text": "***Critical***",
-                "formatted": [
-                  {
-                    "text": "Critical",
-                    "format": {
-                      "bold": true,
-                      "italic": true
-                    }
-                  }
-                ]
-              }
-            ]
+            ["**Feature**", "*Status*", "___Priority___"],
+            ["Authentication", "**Complete**", "*High*"],
+            ["User Management", "***In Progress***", "___Medium___"],
+            ["Reporting", "*Planned*", "**Low**"],
+            ["API Integration", "___Blocked___", "***Critical***"]
           ],
           "header_style": "dark_blue_white_text",
           "row_style": "alternating_light_gray",
@@ -328,28 +104,6 @@
         "type": "Section Header",
         "layout": "Section Header",
         "title": "Section Break: **Testing** *Complete*",
-        "title_formatted": [
-          {
-            "text": "Section Break: ",
-            "format": {}
-          },
-          {
-            "text": "Testing",
-            "format": {
-              "bold": true
-            }
-          },
-          {
-            "text": " ",
-            "format": {}
-          },
-          {
-            "text": "Complete",
-            "format": {
-              "italic": true
-            }
-          }
-        ],
         "rich_content": [
           {
             "paragraph": "This section demonstrates ___section header___ layout with **formatting** and serves as a divider between major topics."
@@ -359,39 +113,7 @@
       {
         "type": "Title Only",
         "layout": "Title Only",
-        "title": "Title Only Layout: **Bold** *Italic* ___Underline___",
-        "title_formatted": [
-          {
-            "text": "Title Only Layout: ",
-            "format": {}
-          },
-          {
-            "text": "Bold",
-            "format": {
-              "bold": true
-            }
-          },
-          {
-            "text": " ",
-            "format": {}
-          },
-          {
-            "text": "Italic",
-            "format": {
-              "italic": true
-            }
-          },
-          {
-            "text": " ",
-            "format": {}
-          },
-          {
-            "text": "Underline",
-            "format": {
-              "underline": true
-            }
-          }
-        ]
+        "title": "Title Only Layout: **Bold** *Italic* ___Underline___"
       },
       {
         "type": "Picture with Caption",
@@ -421,12 +143,6 @@
         "type": "Content with Caption",
         "layout": "Content with Caption",
         "title": "Content with Caption Test",
-        "title_formatted": [
-          {
-            "text": "Content with Caption Test",
-            "format": {}
-          }
-        ],
         "rich_content": [
           {
             "heading": "Main Content",
@@ -456,12 +172,6 @@
         "type": "Blank",
         "layout": "Blank",
         "title": "Blank Layout Test",
-        "title_formatted": [
-          {
-            "text": "Blank Layout Test",
-            "format": {}
-          }
-        ],
         "rich_content": [
           {
             "paragraph": "This tests the blank layout with minimal structure and **formatted** content."

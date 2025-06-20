@@ -302,11 +302,7 @@ class Deckbuilder:
         # Process each field in slide_data using semantic detection
         for field_name, field_value in slide_data.items():
             # Skip non-content fields
-            if field_name in ['type', 'rich_content', 'table']:
-                continue
-                
-            # Skip formatted variants (handled automatically)
-            if field_name.endswith('_formatted'):
+            if field_name in ['type', 'rich_content', 'table', 'layout']:
                 continue
             
             # Find placeholder using semantic detection
@@ -350,21 +346,28 @@ class Deckbuilder:
     def _add_content_to_placeholders_fallback(self, slide, slide_data):
         """
         Fallback method for basic semantic placeholder detection when no JSON mapping available.
+        Uses inline formatting (**bold**, *italic*, ___underline___) processed at render time.
         """
         for shape in slide.placeholders:
             placeholder_type = shape.placeholder_format.type
             
             # Handle title placeholders
             if "title" in slide_data and is_title_placeholder(placeholder_type):
-                if "title_formatted" in slide_data:
-                    self._apply_formatted_segments_to_shape(shape, slide_data["title_formatted"])
+                if hasattr(shape, 'text_frame') and shape.text_frame:
+                    text_frame = shape.text_frame
+                    text_frame.clear()
+                    p = text_frame.paragraphs[0] if text_frame.paragraphs else text_frame.add_paragraph()
+                    self._apply_inline_formatting(slide_data["title"], p)
                 else:
                     shape.text = slide_data["title"]
             
             # Handle subtitle placeholders
             elif "subtitle" in slide_data and is_subtitle_placeholder(placeholder_type):
-                if "subtitle_formatted" in slide_data:
-                    self._apply_formatted_segments_to_shape(shape, slide_data["subtitle_formatted"])
+                if hasattr(shape, 'text_frame') and shape.text_frame:
+                    text_frame = shape.text_frame
+                    text_frame.clear()
+                    p = text_frame.paragraphs[0] if text_frame.paragraphs else text_frame.add_paragraph()
+                    self._apply_inline_formatting(slide_data["subtitle"], p)
                 else:
                     shape.text = slide_data["subtitle"]
             
@@ -377,34 +380,34 @@ class Deckbuilder:
     def _apply_content_by_semantic_type(self, placeholder, field_name, field_value, slide_data):
         """
         Apply content to a placeholder based on its semantic type and the content type.
+        Uses inline formatting (**bold**, *italic*, ___underline___) processed at render time.
         """
         placeholder_type = placeholder.placeholder_format.type
         
-        # Check for formatted version of the field
-        formatted_field = field_name + '_formatted'
-        has_formatted = formatted_field in slide_data
-        
         # Apply content based on placeholder semantic type
         if is_title_placeholder(placeholder_type) or is_subtitle_placeholder(placeholder_type):
-            # Title/subtitle placeholders - simple text with formatting
-            if has_formatted:
-                self._apply_formatted_segments_to_shape(placeholder, slide_data[formatted_field])
+            # Title/subtitle placeholders - apply inline formatting directly
+            if hasattr(placeholder, 'text_frame') and placeholder.text_frame:
+                # Use text frame for formatting support
+                text_frame = placeholder.text_frame
+                text_frame.clear()
+                p = text_frame.paragraphs[0] if text_frame.paragraphs else text_frame.add_paragraph()
+                self._apply_inline_formatting(str(field_value), p)
             else:
+                # Fallback to simple text
                 placeholder.text = str(field_value)
                 
         elif is_content_placeholder(placeholder_type):
-            # Content placeholders - can handle text, lists, etc.
-            if has_formatted:
-                self._apply_formatted_segments_to_shape(placeholder, slide_data[formatted_field])
-            elif isinstance(field_value, (list, tuple)):
-                self._add_simple_content_to_placeholder(placeholder, field_value)
-            else:
-                self._add_simple_content_to_placeholder(placeholder, str(field_value))
+            # Content placeholders - handle text, lists, etc. with inline formatting
+            self._add_simple_content_to_placeholder(placeholder, field_value)
                 
         else:
-            # Other placeholder types - simple text for now
-            if has_formatted:
-                self._apply_formatted_segments_to_shape(placeholder, slide_data[formatted_field])
+            # Other placeholder types - apply inline formatting where possible
+            if hasattr(placeholder, 'text_frame') and placeholder.text_frame:
+                text_frame = placeholder.text_frame
+                text_frame.clear()
+                p = text_frame.paragraphs[0] if text_frame.paragraphs else text_frame.add_paragraph()
+                self._apply_inline_formatting(str(field_value), p)
             else:
                 placeholder.text = str(field_value)
 
@@ -1195,6 +1198,7 @@ class Deckbuilder:
                         formatted_data.append(row)
                 processed_data["table"]["data"] = formatted_data
         
+        # Note: Removed complex formatting preprocessing - formatting now handled at render time
         return processed_data
 
     def create_presentation_from_markdown(self, markdown_content: str, fileName: str = "Sample_Presentation", templateName: str = "default") -> str:
