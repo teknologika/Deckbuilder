@@ -238,8 +238,8 @@ class Deckbuilder:
         slide_layout = self.prs.slide_layouts[layout_index]
         slide = self.prs.slides.add_slide(slide_layout)
         
-        # Add content to placeholders using semantic detection
-        self._add_content_to_placeholders(slide, slide_data)
+        # Add content to placeholders using template mapping + semantic detection
+        self._apply_content_to_mapped_placeholders(slide, slide_data, layout_name)
         
         # Handle rich content
         if "rich_content" in slide_data:
@@ -252,16 +252,64 @@ class Deckbuilder:
         if "table" in slide_data:
             self._add_table_to_slide(slide, slide_data["table"])
 
-    def _add_content_to_placeholders(self, slide, slide_data):
+    def _apply_content_to_mapped_placeholders(self, slide, slide_data, layout_name):
         """
-        Add content to slide placeholders using semantic placeholder detection.
+        Apply content to placeholders using template JSON mappings + semantic detection.
         
-        This method uses PowerPoint's native placeholder types to determine where
-        to place content, making it work with any template layout.
+        This unified method works with both JSON input and markdown frontmatter input:
+        1. Looks up layout in template JSON mappings
+        2. For each field in slide_data, finds corresponding placeholder index
+        3. Gets actual placeholder and determines its semantic type
+        4. Applies content using appropriate semantic handler
         
         Args:
             slide: PowerPoint slide object
-            slide_data: Dictionary containing slide content
+            slide_data: Dictionary containing slide content (from JSON or markdown)
+            layout_name: Name of the PowerPoint layout
+        """
+        if not self.layout_mapping:
+            # Fallback to basic semantic detection if no mapping available
+            self._add_content_to_placeholders_fallback(slide, slide_data)
+            return
+        
+        # Get layout info from template mapping
+        layouts = self.layout_mapping.get("layouts", {})
+        layout_info = layouts.get(layout_name, {})
+        placeholder_mappings = layout_info.get("placeholders", {})
+        
+        # Create reverse mapping: field_name -> placeholder_index
+        field_to_index = {}
+        for placeholder_idx, field_name in placeholder_mappings.items():
+            field_to_index[field_name] = int(placeholder_idx)
+        
+        # Process each field in slide_data
+        for field_name, field_value in slide_data.items():
+            # Skip non-content fields
+            if field_name in ['type', 'rich_content', 'table']:
+                continue
+                
+            # Skip formatted variants (handled automatically)
+            if field_name.endswith('_formatted'):
+                continue
+            
+            # Check if this field maps to a placeholder
+            if field_name in field_to_index:
+                placeholder_idx = field_to_index[field_name]
+                
+                # Find the placeholder with this index
+                target_placeholder = None
+                for placeholder in slide.placeholders:
+                    if placeholder.placeholder_format.idx == placeholder_idx:
+                        target_placeholder = placeholder
+                        break
+                
+                if target_placeholder:
+                    # Apply content based on placeholder's semantic type
+                    self._apply_content_by_semantic_type(target_placeholder, field_name, field_value, slide_data)
+
+    def _add_content_to_placeholders_fallback(self, slide, slide_data):
+        """
+        Fallback method for basic semantic placeholder detection when no JSON mapping available.
         """
         for shape in slide.placeholders:
             placeholder_type = shape.placeholder_format.type
@@ -285,6 +333,40 @@ class Deckbuilder:
                 # Only use simple content if rich_content is not available
                 if "rich_content" not in slide_data:
                     self._add_simple_content_to_placeholder(shape, slide_data["content"])
+
+    def _apply_content_by_semantic_type(self, placeholder, field_name, field_value, slide_data):
+        """
+        Apply content to a placeholder based on its semantic type and the content type.
+        """
+        placeholder_type = placeholder.placeholder_format.type
+        
+        # Check for formatted version of the field
+        formatted_field = field_name + '_formatted'
+        has_formatted = formatted_field in slide_data
+        
+        # Apply content based on placeholder semantic type
+        if is_title_placeholder(placeholder_type) or is_subtitle_placeholder(placeholder_type):
+            # Title/subtitle placeholders - simple text with formatting
+            if has_formatted:
+                self._apply_formatted_segments_to_shape(placeholder, slide_data[formatted_field])
+            else:
+                placeholder.text = str(field_value)
+                
+        elif is_content_placeholder(placeholder_type):
+            # Content placeholders - can handle text, lists, etc.
+            if has_formatted:
+                self._apply_formatted_segments_to_shape(placeholder, slide_data[formatted_field])
+            elif isinstance(field_value, (list, tuple)):
+                self._add_simple_content_to_placeholder(placeholder, field_value)
+            else:
+                self._add_simple_content_to_placeholder(placeholder, str(field_value))
+                
+        else:
+            # Other placeholder types - simple text for now
+            if has_formatted:
+                self._apply_formatted_segments_to_shape(placeholder, slide_data[formatted_field])
+            else:
+                placeholder.text = str(field_value)
 
     def _add_simple_content_to_placeholder(self, placeholder, content):
         """Add simple content to a content placeholder with inline formatting support."""
