@@ -282,7 +282,7 @@ class Deckbuilder:
         for placeholder_idx, field_name in placeholder_mappings.items():
             field_to_index[field_name] = int(placeholder_idx)
         
-        # Process each field in slide_data
+        # Process each field in slide_data using semantic detection
         for field_name, field_value in slide_data.items():
             # Skip non-content fields
             if field_name in ['type', 'rich_content', 'table']:
@@ -292,20 +292,43 @@ class Deckbuilder:
             if field_name.endswith('_formatted'):
                 continue
             
-            # Check if this field maps to a placeholder
-            if field_name in field_to_index:
-                placeholder_idx = field_to_index[field_name]
-                
-                # Find the placeholder with this index
-                target_placeholder = None
+            # Find placeholder using semantic detection
+            target_placeholder = None
+            
+            # Handle title placeholders
+            if field_name == "title":
                 for placeholder in slide.placeholders:
-                    if placeholder.placeholder_format.idx == placeholder_idx:
+                    if is_title_placeholder(placeholder.placeholder_format.type):
                         target_placeholder = placeholder
                         break
-                
-                if target_placeholder:
-                    # Apply content based on placeholder's semantic type
-                    self._apply_content_by_semantic_type(target_placeholder, field_name, field_value, slide_data)
+            
+            # Handle subtitle placeholders
+            elif field_name == "subtitle":
+                for placeholder in slide.placeholders:
+                    if is_subtitle_placeholder(placeholder.placeholder_format.type):
+                        target_placeholder = placeholder
+                        break
+            
+            # Handle content placeholders
+            elif field_name == "content":
+                for placeholder in slide.placeholders:
+                    if is_content_placeholder(placeholder.placeholder_format.type):
+                        target_placeholder = placeholder
+                        break
+            
+            # Handle other fields by checking if they match placeholder names in JSON mapping
+            else:
+                # Try to find by exact field name match in JSON mapping
+                if field_name in field_to_index:
+                    placeholder_idx = field_to_index[field_name]
+                    for placeholder in slide.placeholders:
+                        if placeholder.placeholder_format.idx == placeholder_idx:
+                            target_placeholder = placeholder
+                            break
+            
+            if target_placeholder:
+                # Apply content based on placeholder's semantic type
+                self._apply_content_by_semantic_type(target_placeholder, field_name, field_value, slide_data)
 
     def _add_content_to_placeholders_fallback(self, slide, slide_data):
         """
