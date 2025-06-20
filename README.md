@@ -100,26 +100,80 @@ Add this configuration to your Claude Desktop config file:
 }
 ```
 
+## Design Approach
+
+This project follows a **content-first design philosophy** that prioritizes user communication goals over template constraints. The architecture consists of three key design patterns:
+
+### Feature Documentation
+- **[Placeholder Matching](docs/Features/PlaceholderMatching.md)**: Hybrid semantic detection and JSON mapping system for reliable content placement
+- **[Template Discovery](docs/Features/TemplateDiscovery.md)**: Content-first MCP tools for intelligent presentation consulting  
+- **[Supported Templates](docs/Features/SupportedTemplates.md)**: Progressive implementation roadmap for 50+ business presentation layouts
+
+### Design Philosophy
+
+**Content-First Intelligence**: Instead of asking "what layouts exist?", the system asks "what does the user want to communicate?" This approach transforms the LLM from a layout picker into an intelligent presentation consultant.
+
+**Separation of Concerns**: Technical template structure (`default.json`) remains separate from semantic content intelligence (`layout_intelligence.json`), enabling independent evolution of both systems.
+
+**Progressive Enhancement**: Start with user content analysis, recommend optimal presentation structure, then provide layout-specific optimization - ensuring every step adds value to the communication goal.
+
 ## Architecture Diagram
 
 ```
-┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│   MCP Client    │    │  Deck Builder    │    │   PowerPoint    │
-│  (Claude, etc.) │◄──►│   MCP Server     │◄──►│     Files       │
-└─────────────────┘    └──────────────────┘    └─────────────────┘
-                                │
-                                ▼
-                       ┌──────────────────┐
-                       │   Template       │
-                       │   Management     │
-                       └──────────────────┘
+┌─────────────────┐    ┌──────────────────────────────────────┐    ┌─────────────────┐
+│   MCP Client    │    │           Deck Builder               │    │   PowerPoint    │
+│  (Claude, etc.) │◄──►│          MCP Server                  │◄──►│     Files       │
+└─────────────────┘    └──────────────────────────────────────┘    └─────────────────┘
+                                           │
+                       ┌───────────────────┼───────────────────┐
+                       ▼                   ▼                   ▼
+              ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
+              │  Content-First  │ │   Template      │ │   Structured    │
+              │   MCP Tools     │ │   Management    │ │   Frontmatter   │
+              │                 │ │                 │ │                 │
+              │ • analyze_      │ │ • Semantic      │ │ • YAML Parser   │
+              │   presentation_ │ │   Detection     │ │ • Layout        │
+              │   needs()       │ │ • JSON Mapping  │ │   Mapping       │
+              │ • recommend_    │ │ • Template      │ │ • Content       │
+              │   slide_        │ │   Loading       │ │   Optimization  │
+              │   approach()    │ │                 │ │                 │
+              │ • optimize_     │ │                 │ │                 │
+              │   content_for_  │ │                 │ │                 │
+              │   layout()      │ │                 │ │                 │
+              └─────────────────┘ └─────────────────┘ └─────────────────┘
+                       │                   │                   │
+                       └───────────────────┼───────────────────┘
+                                           ▼
+                              ┌─────────────────────┐
+                              │ Layout Intelligence │
+                              │                     │
+                              │ • Content Triggers  │
+                              │ • Semantic Tags     │
+                              │ • Audience Analysis │
+                              │ • Use Case Examples │
+                              └─────────────────────┘
 ```
 
 **Key Components:**
-- **FastMCP Server:** Handles MCP protocol communication
-- **Deckbuilder Class:** Core presentation management (singleton pattern)
-- **Template System:** PowerPoint template loading and management
-- **JSON Parser:** Converts structured data to presentation elements
+
+**Core Engine:**
+- **FastMCP Server:** Handles MCP protocol communication and tool orchestration
+- **Deckbuilder Class:** Core presentation management with singleton pattern
+
+**Content Intelligence Layer:**
+- **Content-First MCP Tools:** Analyze user needs and recommend optimal layouts (🚧 In Design)
+- **Layout Intelligence:** Semantic content matching with `layout_intelligence.json` (🚧 Planned)
+- **Structured Frontmatter:** Clean YAML syntax with automatic PowerPoint mapping (✅ Implemented)
+
+**Template System:**
+- **Semantic Detection:** Automatic placeholder identification using PowerPoint types
+- **JSON Mapping:** Custom layout configuration for advanced templates
+- **Template Loading:** Dynamic template and configuration management
+
+**Content Processing:**
+- **Hybrid Placement:** Semantic detection + JSON mapping for reliable content placement
+- **YAML Parser:** Converts structured frontmatter to presentation elements
+- **Content Optimization:** 64% complexity reduction through render-time formatting
 
 ## Project Components
 

@@ -396,3 +396,100 @@ slide_data = {"type": "Title and Content", "slide_title": "My Title"}
 2. **Semantic vs JSON**: Remember that `title`, `subtitle`, and `content` use semantic detection, other fields use JSON mapping
 3. **Field Name Matching**: Custom field names must exactly match the JSON mapping keys
 4. **Template Loading**: Ensure both `.pptx` and `.json` files exist in the template folder
+
+## Content Intelligence Storage Design
+
+### Design Decision: Separate Layout Intelligence System
+
+**Options Considered:**
+1. **Enhanced Template JSON**: Extend existing `default.json` with semantic metadata
+2. **Separate Content Intelligence JSON**: New `layout_intelligence.json` file ✅ **SELECTED**
+3. **Embedded Content Patterns**: YAML-based content matching rules
+4. **Database/Vector Store**: Advanced semantic matching with embeddings
+
+**Decision: Option 2 - Separate Content Intelligence JSON**
+
+**Rationale:**
+- **Separation of Concerns**: Technical template data vs semantic intelligence remain distinct
+- **Easy to Extend**: Add new layouts without touching core template structure  
+- **LLM-Friendly**: Rich descriptive content optimized for content analysis
+- **Maintainable**: Content experts can edit without touching placeholder mappings
+- **Backwards Compatible**: Existing template system unchanged
+
+### Layout Intelligence Architecture
+
+The content-first MCP tools will use a separate `src/layout_intelligence.json` file containing semantic information about each layout:
+
+```json
+{
+  "Comparison": {
+    "semantic_tags": ["contrast", "versus", "choice", "alternative", "decision"],
+    "content_triggers": ["vs", "versus", "compared to", "old way", "new approach", "before", "after"],
+    "ideal_for": {
+      "content_types": ["decision making", "feature comparison", "method analysis"],
+      "audience": ["stakeholders", "decision makers", "executives"],  
+      "presentation_goals": ["persuade", "inform", "evaluate options"]
+    },
+    "use_cases": [
+      "Traditional vs Modern Architecture",
+      "Our Solution vs Competitors", 
+      "Before vs After Implementation"
+    ],
+    "strengths": ["clear contrast", "easy comparison", "decision support"],
+    "limitations": ["only two options", "not suitable for complex data"],
+    "recommendation_confidence": {
+      "high": "when content contains comparative language",
+      "medium": "when presenting two distinct concepts",
+      "low": "when more than two options need comparison"
+    }
+  },
+  "Four Columns": {
+    "semantic_tags": ["features", "matrix", "categories", "breakdown"],
+    "content_triggers": ["features", "aspects", "categories", "components", "pillars"],
+    "ideal_for": {
+      "content_types": ["feature showcase", "categorical breakdown", "comparison matrix"],
+      "audience": ["technical teams", "product managers", "general audience"],
+      "presentation_goals": ["inform", "educate", "showcase capabilities"]
+    },
+    "use_cases": [
+      "Product Feature Comparison",
+      "Service Offering Breakdown",
+      "Strategic Pillar Overview"
+    ],
+    "strengths": ["organized information", "easy scanning", "comprehensive overview"],
+    "limitations": ["limited detail per section", "requires even content distribution"],
+    "recommendation_confidence": {
+      "high": "when content has 4 distinct categories or features",
+      "medium": "when content can be logically grouped into 4 sections", 
+      "low": "when content doesn't naturally divide into 4 parts"
+    }
+  }
+}
+```
+
+### Integration with Content-First MCP Tools
+
+The layout intelligence system will support the content-first workflow:
+
+1. **`analyze_presentation_needs()`**: Uses semantic tags to understand content themes
+2. **`recommend_slide_approach()`**: Matches content triggers to suggest optimal layouts
+3. **`optimize_content_for_layout()`**: Uses use cases and examples to structure content
+
+### Content Matching Strategy
+
+**Multi-Level Matching:**
+1. **Keyword Triggers**: Direct phrase matching (`"vs"` → Comparison layout)
+2. **Semantic Tags**: Content theme analysis (`"decision making"` → Comparison layout)
+3. **Audience Consideration**: Stakeholder-appropriate recommendations
+4. **Goal Alignment**: Presentation objective matching (persuade vs inform)
+5. **Content Structure**: Natural content organization patterns
+
+### Extensibility
+
+**Adding New Layouts:**
+1. Add layout to `default.json` (technical structure)
+2. Add layout to `layout_intelligence.json` (semantic information)
+3. Update `SupportedTemplates.md` (documentation)
+4. Content-first tools automatically gain new layout awareness
+
+This design enables intelligent content-to-layout matching while maintaining clean separation between technical template structure and semantic content intelligence.

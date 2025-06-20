@@ -22,14 +22,24 @@
   - ✅ Template loading fixes for environment-less operation
   - ✅ All structured frontmatter slides populate correctly with clean data
 
+### 🔄 DESIGN EVOLUTION
+- **Option B (MCP Discovery Tools)**: 🔄 REDESIGNED
+  - ❌ Original 6-tool academic approach abandoned
+  - ✅ **Content-First Design Strategy**: New approach based on actual user workflow
+  - ✅ **3-Tool Practical Set**: Focused on presentation consulting, not layout discovery
+  - ✅ **End-to-End Scenario Mapping**: Complete user journey from content to presentation
+
 ### 🚧 PENDING IMPLEMENTATION
-- **Part B (MCP Discovery Tools)**: ❌ NOT STARTED
-  - ❌ `describe_template()` MCP tool
-  - ❌ `get_layout_help()` MCP tool  
-  - ❌ `suggest_layout()` MCP tool
-  - ❌ `validate_slide_data()` MCP tool
-  - ❌ `list_available_templates()` MCP tool
-  - ❌ `get_template_schema()` MCP tool
+- **Part B (Content-First MCP Tools)**: ❌ NOT STARTED
+  - ❌ `analyze_presentation_needs()` MCP tool
+  - ❌ `recommend_slide_approach()` MCP tool  
+  - ❌ `optimize_content_for_layout()` MCP tool
+
+- **Part B.1 (Direct Integration Support)**: ❌ NOT STARTED
+  - ❌ **One-Shot Tool Integration**: Support for external tools to directly call existing MCP tools
+  - ❌ **JSON/Markdown Input Support**: Accept presentation requests in structured formats
+  - ❌ **Bypass Content-First Flow**: Allow direct creation when content is pre-structured
+  - ❌ **Backwards Compatibility**: Ensure existing `create_presentation()` workflow unchanged
 
 - **Part C (Auto-Documentation)**: ❌ NOT STARTED
   - ❌ Enhanced template analyzer with semantic analysis
@@ -55,10 +65,10 @@ This specification defines an enhanced template analysis and discovery system th
 
 ### Three-Pronged Approach
 
-**Option B: Template Introspection API** (MCP Tools)
-- Programmatic discovery of available templates and layouts
-- Validation and help systems for LLM integration
-- Schema generation and field documentation
+**Option B: Content-First Presentation Intelligence** (MCP Tools)
+- Analyze user content and communication goals first
+- Recommend presentation structure based on message intent
+- Content-aware layout suggestions with audience consideration
 
 **Option C: Structured Frontmatter System** ✅ FULLY IMPLEMENTED & OPTIMIZED
 - Clean YAML syntax for complex layouts
@@ -181,47 +191,167 @@ sections:
 "Content Placeholder 2": ["**Feature A** details"]
 ```
 
-## Option B: Template Introspection API ❌ PENDING
+## Option B: Content-First Presentation Intelligence ❌ PENDING
 
-### Planned MCP Tools
+### Design Philosophy: Content-First Approach
 
-#### Core Discovery Tools
+**Problem with Original Design**: The initial 6-tool approach was layout-centric, asking "what layouts exist?" instead of "what does the user want to communicate?"
+
+**New Strategy**: Start with user content and communication goals, then recommend optimal presentation structure.
+
+### Content-First MCP Tools
+
+#### Tool 1: Presentation Needs Analysis
 ```python
 @server.tool()
-def describe_template(template_name: str = "default") -> dict:
-    """Get complete template documentation with examples and usage guidance"""
-    
-@server.tool()
-def get_layout_help(layout_name: str, template_name: str = "default") -> dict:
-    """Get specific help and examples for a layout"""
-    
-@server.tool()
-def suggest_layout(content_description: str, template_name: str = "default") -> list:
-    """Suggest best layouts based on content description"""
+def analyze_presentation_needs(
+    user_input: str,                 # Raw description of what they want to present
+    audience: str = None,            # "board", "team", "customers", "technical"
+    constraints: str = None,         # "10 minutes", "5 slides max", "data-heavy"
+    presentation_goal: str = None    # "persuade", "inform", "report", "train"
+) -> dict:
+    """Analyze user needs and recommend presentation structure"""
 ```
 
-#### Validation & Schema Tools
+**Returns**: Content analysis + narrative arc + structural recommendations
+
+#### Tool 2: Content-Aware Layout Recommendations
 ```python
 @server.tool()
-def validate_slide_data(slide_data: dict, layout_name: str = None, template_name: str = "default") -> dict:
-    """Validate slide data against layout requirements"""
-    
-@server.tool()
-def get_template_schema(template_name: str = "default") -> dict:
-    """Get complete programmatic schema for template usage"""
-    
-@server.tool()
-def list_available_templates() -> dict:
-    """Get all templates available in the system"""
+def recommend_slide_approach(
+    content_piece: str,              # Specific content to present
+    message_intent: str,             # What they want this content to communicate
+    presentation_context: dict = None # From analyze_presentation_needs()
+) -> dict:
+    """Get specific layout and content organization recommendations"""
 ```
 
-### Planned Integration with Structured Frontmatter
+**Returns**: Layout suggestions + content structuring + examples
 
-The MCP tools will provide:
-1. **Discovery** → LLM learns about structured frontmatter layouts
-2. **Examples** → Clean YAML examples for each layout
-3. **Validation** → Verify structured frontmatter before processing
-4. **Help** → Field-specific guidance and tips
+#### Tool 3: Content Optimization & Validation
+```python
+@server.tool() 
+def optimize_content_for_layout(
+    content: str,
+    chosen_layout: str,
+    slide_context: dict = None
+) -> dict:
+    """Optimize content structure and validate fit with layout"""
+```
+
+**Returns**: Formatted content + gap analysis + ready-to-use YAML
+
+### End-to-End Content-First Workflow
+
+#### Real User Scenario:
+*"I need to present our Q3 results to the board. We had 23% revenue growth, expanded to 3 new markets, but customer churn increased to 8%. I want to show we're growing but acknowledge the churn issue and present our retention strategy."*
+
+#### Step 1: Content & Goals Analysis
+```python
+analyze_presentation_needs(
+    user_input="Q3 results: 23% growth, 3 new markets, 8% churn, retention strategy",
+    audience="board", 
+    presentation_goal="balanced report"
+)
+
+Returns: {
+    "content_analysis": {
+        "key_messages": ["strong growth", "expansion success", "churn challenge", "solution"],
+        "narrative_arc": "success-challenge-solution",
+        "complexity_level": "executive summary"
+    },
+    "recommended_structure": [
+        {"position": 1, "purpose": "lead with strength", "content_focus": "revenue growth"},
+        {"position": 2, "purpose": "show momentum", "content_focus": "market expansion"},  
+        {"position": 3, "purpose": "acknowledge challenge", "content_focus": "churn increase"},
+        {"position": 4, "purpose": "present solution", "content_focus": "retention strategy"}
+    ]
+}
+```
+
+#### Step 2: Slide-Specific Recommendations
+```python
+# For the growth metric
+recommend_slide_approach(
+    content_piece="23% revenue growth in Q3",
+    message_intent="lead with strength"
+)
+
+Returns: {
+    "recommended_layouts": [
+        {"layout": "Big Number", "reason": "metrics deserve prominence", "confidence": 0.9}
+    ],
+    "content_suggestions": {
+        "primary_message": "Q3 Revenue Growth",
+        "supporting_data": ["vs Q2", "key drivers"],
+        "visual_approach": "large number with context"
+    }
+}
+
+# For the churn challenge
+recommend_slide_approach(
+    content_piece="customer churn increased to 8%",
+    message_intent="acknowledge challenge transparently"
+)
+
+Returns: {
+    "recommended_layouts": [
+        {"layout": "Problem-Solution", "reason": "pairs challenge with solution", "confidence": 0.95}
+    ],
+    "content_suggestions": {
+        "framing": "acknowledge but contextualize",
+        "supporting_data": ["industry benchmark", "root cause"],
+        "transition": "leads to solution discussion"
+    }
+}
+```
+
+#### Step 3: Content Optimization
+```python
+optimize_content_for_layout(
+    content="customer churn 8%, industry average 12%, onboarding friction",
+    chosen_layout="Problem-Solution"
+)
+
+Returns: {
+    "optimized_content": {
+        "yaml_structure": """
+layout: Problem Solution
+title: Addressing Customer Churn Challenge
+problem:
+  title: Q3 Churn Rate
+  content: 
+    - "**8% churn rate** (vs 12% industry average)"
+    - "Primary cause: **onboarding friction**"
+solution:
+  title: Retention Strategy
+  content:
+    - "**Redesigned onboarding** (30% faster)"
+    - "**Expected impact**: 5% churn by Q4"
+"""
+    },
+    "presentation_tips": {
+        "delivery": "acknowledge quickly, focus on solution"
+    }
+}
+```
+
+### Key Benefits of Content-First Approach
+
+1. **User-Centric**: Starts with what user wants to communicate, not system capabilities
+2. **Audience-Aware**: Board vs team presentation = different approaches
+3. **Message-Driven**: Focuses on communication effectiveness
+4. **Context-Sensitive**: Each slide considers the whole presentation narrative
+5. **Practical**: Provides ready-to-use optimized content
+6. **Intelligent**: Acts as presentation consultant, not just layout picker
+
+### Integration with Structured Frontmatter
+
+The content-first tools will:
+1. **Analyze** → Understand user's communication goals
+2. **Recommend** → Suggest structured frontmatter layouts based on content
+3. **Optimize** → Generate ready-to-use YAML with proper content structure
+4. **Validate** → Ensure content fits layout and communication goals
 
 ## Option D: Auto-Documentation System ❌ PENDING
 
@@ -268,11 +398,11 @@ tests/
 
 ## Implementation Roadmap
 
-### Phase 1: Option B - MCP Discovery Tools (1-2 weeks)
-1. Implement core MCP tools for template discovery
-2. Add validation and schema generation
-3. Create help and suggestion systems
-4. Test with LLM clients
+### Phase 1: Option B - Content-First MCP Tools (1-2 weeks)
+1. Implement `analyze_presentation_needs()` with content analysis
+2. Build `recommend_slide_approach()` with layout intelligence  
+3. Create `optimize_content_for_layout()` with YAML generation
+4. Test complete content-first workflow with real scenarios
 
 ### Phase 2: Option D - Auto-Documentation (1-2 weeks)
 1. Enhance template analyzer with semantic analysis
@@ -290,10 +420,10 @@ tests/
 
 1. ✅ **Structured Frontmatter Working**: Clean YAML syntax converts correctly to PowerPoint content
 2. ✅ **Optimized Performance**: 64% complexity reduction with render-time formatting
-3. ❌ **LLM Self-Discovery**: An LLM can discover templates and layouts without prior knowledge
-4. ❌ **Auto-Documentation**: Templates generate their own complete usage guides
+3. ❌ **Content-First Intelligence**: LLM analyzes user content before suggesting layouts
+4. ❌ **Presentation Consulting**: LLM acts as intelligent presentation advisor
 5. ✅ **Backward Compatibility**: Existing JSON API continues to work unchanged
-6. ❌ **Zero Configuration**: New templates automatically gain discovery capabilities
+6. ❌ **End-to-End Workflow**: Complete user journey from content to presentation
 
 ## Technical Notes
 
@@ -311,12 +441,16 @@ tests/
 - ❌ Only supports four layout types currently (can be extended easily)
 - ❌ No bidirectional conversion (structured → YAML) - not needed for current use case
 - ❌ Limited to predefined structure patterns (by design for safety)
-- ❌ No programmatic discovery tools yet (Option B pending)
+- ❌ No content-first intelligence tools yet (Option B redesigned and pending)
+- ❌ Missing audience-aware recommendations
+- ❌ No narrative arc analysis capabilities
 
 ### Extension Points
 - **New Layout Support**: Add entries to `StructuredFrontmatterRegistry.STRUCTURE_DEFINITIONS`
 - **Custom Structures**: Extend registry with new `structure_type` patterns
 - **Advanced Validation**: Enhance `StructuredFrontmatterValidator` with layout-specific rules
+- **Content Intelligence**: Implement content analysis and narrative understanding
+- **Audience Analysis**: Add audience-specific presentation recommendations
 - **Template Integration**: Connect with auto-documentation system when implemented
 
 This specification serves as both documentation and implementation guide for the complete template discovery system, with clear status tracking and next steps.
