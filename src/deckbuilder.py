@@ -6,6 +6,12 @@ import re
 from pptx import Presentation
 from pptx.util import Cm, Pt
 from pptx.dml.color import RGBColor
+from placeholder_types import (
+    is_title_placeholder, 
+    is_subtitle_placeholder, 
+    is_content_placeholder,
+    is_media_placeholder
+)
 try:
     from table_styles import TABLE_HEADER_STYLES, TABLE_ROW_STYLES, TABLE_BORDER_STYLES
 except ImportError:
