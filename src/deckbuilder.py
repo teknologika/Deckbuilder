@@ -8,7 +8,6 @@ from pptx.util import Cm, Pt
 from pptx.dml.color import RGBColor
 try:
     from table_styles import TABLE_HEADER_STYLES, TABLE_ROW_STYLES, TABLE_BORDER_STYLES
-    from slide_layouts import DEFAULT_LAYOUTS, DEFAULT_PPT_LAYOUTS
 except ImportError:
     # Fallback values if modules don't exist
     TABLE_HEADER_STYLES = {
@@ -20,8 +19,6 @@ except ImportError:
     TABLE_BORDER_STYLES = {
         "thin_gray": {"width": Pt(1), "color": RGBColor(128, 128, 128), "style": "all"}
     }
-    DEFAULT_LAYOUTS = {"content": "titleandcontent", "title": "titleslide"}
-    DEFAULT_PPT_LAYOUTS = {"titleandcontent": 1, "titleslide": 0}
 
 def singleton(cls):
     instances = {}
@@ -39,6 +36,7 @@ class Deckbuilder:
         self.template_name = os.getenv('DECK_TEMPLATE_NAME')
         self.output_folder = os.getenv('DECK_OUTPUT_FOLDER')
         self.prs = Presentation()
+        self.layout_mapping = None
         
         # Ensure default template exists in templates folder
         self._check_template_exists(self.template_name or 'default')
@@ -66,14 +64,58 @@ class Deckbuilder:
                     src_template = os.path.join(os.path.dirname(__file__), 'default.pptx')
                     if os.path.exists(src_template):
                         shutil.copy2(src_template, default_template)
+                
+                # Also copy the corresponding JSON mapping file
+                base_name = templateName.replace('.pptx', '')
+                json_template = os.path.join(self.template_path, base_name + '.json')
+                if not os.path.exists(json_template):
+                    # Copy from src/default.json
+                    src_json = os.path.join(os.path.dirname(__file__), base_name + '.json')
+                    if os.path.exists(src_json):
+                        shutil.copy2(src_json, json_template)
             except (OSError, IOError):
                 # Handle file operation errors silently
                 pass
     
+    def _load_layout_mapping(self, templateName: str):
+        """Load layout mapping from JSON file."""
+        if not templateName.endswith('.json'):
+            templateName += '.json'
+        
+        # Try to load from template folder first
+        if self.template_path:
+            mapping_path = os.path.join(self.template_path, templateName)
+            if os.path.exists(mapping_path):
+                try:
+                    with open(mapping_path, 'r', encoding='utf-8') as f:
+                        self.layout_mapping = json.load(f)
+                        return
+                except:
+                    pass
+        
+        # Fallback to src folder
+        src_mapping_path = os.path.join(os.path.dirname(__file__), templateName)
+        if os.path.exists(src_mapping_path):
+            try:
+                with open(src_mapping_path, 'r', encoding='utf-8') as f:
+                    self.layout_mapping = json.load(f)
+                    return
+            except:
+                pass
+        
+        # Use fallback mapping if JSON not found
+        self.layout_mapping = {
+            "layouts": {"Title and Content": {"index": 1}},
+            "aliases": {"content": "Title and Content", "title": "Title Slide"}
+        }
     
     def create_presentation(self, templateName: str = "default", fileName: str = "Sample_Presentation") -> str:
         # Check template exists
         self._check_template_exists(templateName)
+        
+        # Load layout mapping
+        base_name = templateName.replace('.pptx', '') if templateName.endswith('.pptx') else templateName
+        self._load_layout_mapping(base_name)
         
         # Create deck with template
         if not templateName.endswith('.pptx'):
@@ -167,10 +209,23 @@ class Deckbuilder:
         Args:
             slide_data: Dictionary containing slide information
         """
-        # Get slide type and determine layout
+        # Get slide type and determine layout using JSON mapping
         slide_type = slide_data.get("type", "content")
-        layout_name = DEFAULT_LAYOUTS.get(slide_type, "titleandcontent")
-        layout_index = DEFAULT_PPT_LAYOUTS.get(layout_name, 1)
+        
+        # Use layout mapping if available
+        if self.layout_mapping:
+            aliases = self.layout_mapping.get("aliases", {})
+            layouts = self.layout_mapping.get("layouts", {})
+            
+            # Get layout name from aliases
+            layout_name = aliases.get(slide_type, slide_type)
+            
+            # Get layout index
+            layout_info = layouts.get(layout_name, {})
+            layout_index = layout_info.get("index", 1)
+        else:
+            # Fallback
+            layout_index = 1
         
         slide_layout = self.prs.slide_layouts[layout_index]
         slide = self.prs.slides.add_slide(slide_layout)

@@ -1,13 +1,18 @@
-#  This is a early desing for pushing content into placehodlers in deckbuilder
+# Placeholder Matching System
+
+## Overview
+
+The placeholder matching system enables dynamic content mapping to PowerPoint template layouts using JSON configuration files. This system automatically analyzes PowerPoint templates and generates mapping configurations that can be customized for precise content placement.
 
 ## Architecture Overview
 
 ### Core Components
 
-- Template Packages: PPTX file + JSON configuration file
-- Layout Configuration: JSON schema describing available layouts
-- Layout Manager: Dynamic layout loading and validation
-- Backward Compatibility: Maintains existing API while adding flexibility
+- **Template Analyzer** (`tools.py`): Extracts layout and placeholder information from PPTX files
+- **JSON Mapping System**: Dynamic layout configuration using template-specific JSON files  
+- **Layout Manager**: Loads and applies JSON mappings at runtime
+- **Template Packages**: PPTX file + JSON configuration file pairs
+- **Backward Compatibility**: Maintains existing API while adding flexibility
 
 ### File Structure
 
@@ -19,159 +24,197 @@ templates/
 └── custom.pptx                # Custom template
 └── custom.json                # Layout configuration for custom.pptx
 
+### Template Generation Workflow
+
+1. **Extract Template Structure**: Run `python tests/test_tools.py` to analyze a PowerPoint template
+2. **Generate Raw Mapping**: Creates `templateName.g.json` with extracted layout and placeholder information
+3. **Customize Mapping**: Edit the `.g.json` file to map placeholder indices to meaningful names
+4. **Activate Mapping**: Rename `templateName.g.json` to `templateName.json` when ready to use
+
 ### Template Loading Logic
 
-- Template name: default → Load default.pptx + default.json
-- Template name: corporate → Load corporate.pptx + corporate.json
+- Template name: `default` → Load `default.pptx` + `default.json`
+- Template name: `corporate` → Load `corporate.pptx` + `corporate.json`
+- **Automatic Copying**: Template and JSON files are automatically copied from `src/` to template folder on first use
+- **Fallback Strategy**: If JSON file doesn't exist, falls back gracefully with basic layout support
+- **File Pairing**: JSON filename always matches PPTX filename (just different extension)
 
-If JSON file doesn't exist, fall back to current hardcoded layouts
-JSON filename always matches PPTX filename (just different extension)
-This approach is much cleaner and easier to manage. Each template is a pair of files with matching names, making it obvious which configuration goes with which template.
+## Implementation
 
-The rest of the design remains the same - same JSON schema, same API, same backward compatibility. Does this simplified file structure work better for your needs?
+### Template Analyzer (`tools.py`)
 
-## Implementation Strategy
+The `TemplateAnalyzer` class provides:
+- **Layout Discovery**: Extracts actual PowerPoint layout names (e.g., "Title Slide", "Title and Content")
+- **Placeholder Detection**: Identifies placeholder indices and names from PowerPoint templates
+- **JSON Generation**: Creates structured mapping files ready for customization
+- **Environment Integration**: Uses `DECK_TEMPLATE_FOLDER` and `DECK_OUTPUT_FOLDER` environment variables
 
-# New Classes
+### Key Features
 
-- TemplateManager: Handles template loading and validation
-- LayoutConfig: Parses and validates layout configurations
-- DynamicLayoutHandler: Maps content to layout placeholders
+- **Human & LLM Readable**: JSON format with clear layout and placeholder descriptions
+- **Automatic Discovery**: Extracts actual names from PowerPoint templates instead of using generic placeholders
+- **Flexible Mapping**: Support for any layout structure with customizable placeholder assignments
+- **Template Portability**: Each template comes with its own configuration file
+- **Backward Compatibility**: Existing slide creation code continues to work unchanged
+- **Extensible**: Easy to add new layout types and templates without code changes
 
-# Key Features
+## Usage Examples
 
-- Human & LLM Readable: JSON format with clear descriptions
-- Flexible Placeholders: Support for different content types (text, content, images)
-- Validation: Ensures template and config compatibility
-- Backward Compatibility: Existing code continues to work, with content in both Markdown and json 
-- Extensible: Easy to add new layout types and templates
+### Template Analysis
 
-# API Usage Examples
+```bash
+# Generate mapping for a PowerPoint template
+python tests/test_tools.py
 
-# Current usage (still works)
+# This creates templateName.g.json with extracted structure
+```
+
+### Current API (still works)
+```python
 slide_data = {"type": "content", "title": "My Slide", "content": "..."}
+```
 
-# New advanced usage
+### Advanced Layout Usage
+```python
 slide_data = {
-    "type": "five_column",
+    "type": "Four Columns",  # Uses actual PowerPoint layout name
     "title": "Comparison Matrix",
-    "col1_header": "Feature A",
-    "col1_content": "Details about A",
-    "col2_header": "Feature B", 
-    "col2_content": "Details about B",
+    "col_1_title": "Feature A",
+    "col_1_content": "Details about A",
+    "col_2_title": "Feature B", 
+    "col_2_content": "Details about B",
     # ... etc
 }
+```
 
-# Benefits
+### Template Creation Workflow
 
-- Template Flexibility: Each template can define its own layouts
-- Rich Descriptions: Self-documenting for humans and LLMs
-- Type Safety: Validates content against expected placeholders
-- Easy Extension: Add new layouts without code changes
-- Template Portability: Share templates with their configurations
+1. **Create PowerPoint Template**: Design your template with named placeholders
+2. **Generate Mapping**: `python tests/test_tools.py` to create `.g.json` file  
+3. **Customize Mapping**: Edit placeholder assignments in the `.g.json` file
+4. **Activate Template**: Rename `.g.json` to `.json` and place with `.pptx` file
+5. **Use Template**: Reference by name in `create_presentation(templateName)`
 
-# Template Loading Logic
+## JSON Schema
 
-- Template name: default → Load default.pptx + default.json
-- Template name: corporate → Load corporate.pptx + corporate.json
-- If JSON file doesn't exist, fall back to defailt.json then if that fails current hardcoded layouts
-- JSON filename always matches PPTX filename (just different extension)
+The system uses the following JSON structure for template mappings:
 
-# Proposed Json Schema
-
+```json
 {
   "template_info": {
     "name": "Default Template",
     "version": "1.0"
   },
   "layouts": {
-    "title": {
+    "Title Slide": {
       "index": 0,
       "placeholders": {
         "0": "title",
         "1": "subtitle"
       }
     },
-    "content": {
+    "Title and Content": {
       "index": 1,
       "placeholders": {
         "0": "title",
         "1": "content"
       }
     },
-    "five_column": {
-      "index": 8,
+    "Four Columns": {
+      "index": 11,
       "placeholders": {
         "0": "title",
-        "1": "col1_header",
-        "2": "col1_content",
-        "3": "col2_header",
-        "4": "col2_content",
-        "5": "col3_header",
-        "6": "col3_content",
-        "7": "col4_header",
-        "8": "col4_content",
-        "9": "col5_header",
-        "10": "col5_content"
+        "13": "col_1_title",
+        "14": "col_1_content",
+        "15": "col_2_title",
+        "16": "col_2_content",
+        "17": "col_3_title",
+        "18": "col_3_content",
+        "19": "col_4_title",
+        "20": "col_4_content"
       }
     }
   },
   "aliases": {
-    "table": "content",
-    "bullets": "content"
+    "content": "Title and Content",
+    "title": "Title Slide",
+    "table": "Title and Content",
+    "bullets": "Title and Content"
   }
 }
+```
 
-# proposed Implementation
+### Schema Elements
 
-# Direct mapping: placeholder index -> field name
-placeholder_idx = int(placeholder_key)  # "0" -> 0
-field_name = placeholder_config[placeholder_key]  # "title"
+- **template_info**: Metadata about the template
+- **layouts**: Maps PowerPoint layout names to their configuration
+  - **index**: PowerPoint layout index in the template
+  - **placeholders**: Maps placeholder indices to field names
+- **aliases**: Maps user-friendly names to actual layout names
 
-if field_name in slide_data:
-    placeholder = slide.placeholders[placeholder_idx]
-    self._fill_placeholder(placeholder, slide_data[field_name])
-Much cleaner! The format is now:
+## Implementation Details
 
-"0": "title" = placeholder index 0 maps to slide_data field "title"
-"1": "content" = placeholder index 1 maps to slide_data field "content"
+### Current Implementation in `deckbuilder.py`
 
-Here's how the code would use "9": "col5_header":
+The system is fully implemented and working:
 
-# Code Implementation
-
+```python
 def _add_slide(self, slide_data):
+    # Get slide type and determine layout using JSON mapping
     slide_type = slide_data.get("type", "content")
-    layout_config = self.template_manager.get_layout_config(slide_type)
     
-    # Create slide
-    slide_layout = self.prs.slide_layouts[layout_config["index"]]
-    slide = self.prs.slides.add_slide(slide_layout)
-    
-    # Fill placeholders
-    for placeholder_idx_str, field_name in layout_config["placeholders"].items():
-        placeholder_idx = int(placeholder_idx_str)  # "9" -> 9
+    # Use layout mapping if available
+    if self.layout_mapping:
+        aliases = self.layout_mapping.get("aliases", {})
+        layouts = self.layout_mapping.get("layouts", {})
         
-        if field_name in slide_data:  # Check if "col5_header" exists in slide_data
-            try:
-                placeholder = slide.placeholders[placeholder_idx]  # Get placeholder 9
-                field_value = slide_data[field_name]  # Get value for "col5_header"
-                self._fill_placeholder(placeholder, field_value)
-            except (IndexError, KeyError):
-                # Handle missing placeholder gracefully
-                print(f"Warning: Placeholder {placeholder_idx} not found in layout")
-# Usage Example
+        # Get layout name from aliases
+        layout_name = aliases.get(slide_type, slide_type)
+        
+        # Get layout index
+        layout_info = layouts.get(layout_name, {})
+        layout_index = layout_info.get("index", 1)
+    else:
+        # Fallback
+        layout_index = 1
+    
+    slide_layout = self.prs.slide_layouts[layout_index]
+    slide = self.prs.slides.add_slide(slide_layout)
+```
 
-Simplified JSON with Custom Names
+### Placeholder Mapping
 
+Direct mapping from placeholder index to field name:
+- `"0": "title"` = placeholder index 0 maps to `slide_data["title"]`
+- `"1": "content"` = placeholder index 1 maps to `slide_data["content"]`
+- `"13": "col_1_title"` = placeholder index 13 maps to `slide_data["col_1_title"]`
+
+### Generated vs. Customized Names
+
+**Generated Output** (from `tools.py`):
+```json
 {
-  "five_column": {
-    "index": 8,
+  "Four Columns": {
+    "index": 11,
     "placeholders": {
-      "0": "title",
-      "1": "col1_header",    # This matches what you named in PowerPoint
-      "2": "col1_content",   # This matches what you named in PowerPoint
-      "9": "col5_header"     # This matches what you named in PowerPoint
+      "0": "Title 1",                    // PowerPoint's actual name
+      "13": "col_1_title",               // PowerPoint's actual name  
+      "14": "col_1_content"              // PowerPoint's actual name
     }
   }
 }
+```
+
+**Customized Mapping** (user edited):
+```json
+{
+  "Four Columns": {
+    "index": 11,
+    "placeholders": {
+      "0": "title",                      // Simplified for slide_data
+      "13": "feature_name",              // Semantic field name
+      "14": "feature_description"        // Semantic field name  
+    }
+  }
+}
+```

@@ -1,0 +1,144 @@
+{
+  "template_info": {
+    "name": "Default",
+    "version": "1.0"
+  },
+  "layouts": {
+    "Title Slide": {
+      "index": 0,
+      "placeholders": {
+        "0": "Title 1",
+        "1": "Subtitle 2",
+        "10": "Date Placeholder 3",
+        "11": "Footer Placeholder 4",
+        "12": "Slide Number Placeholder 5"
+      }
+    },
+    "Title and Content": {
+      "index": 1,
+      "placeholders": {
+        "0": "Title 1",
+        "1": "Content Placeholder 2",
+        "10": "Date Placeholder 3",
+        "11": "Footer Placeholder 4",
+        "12": "Slide Number Placeholder 5"
+      }
+    },
+    "Section Header": {
+      "index": 2,
+      "placeholders": {
+        "0": "Title 1",
+        "1": "Text Placeholder 2",
+        "10": "Date Placeholder 3",
+        "11": "Footer Placeholder 4",
+        "12": "Slide Number Placeholder 5"
+      }
+    },
+    "Two Content": {
+      "index": 3,
+      "placeholders": {
+        "0": "Title 1",
+        "1": "Content Placeholder 2",
+        "2": "Content Placeholder 3",
+        "10": "Date Placeholder 4",
+        "11": "Footer Placeholder 5",
+        "12": "Slide Number Placeholder 6"
+      }
+    },
+    "Comparison": {
+      "index": 4,
+      "placeholders": {
+        "0": "Title 1",
+        "1": "Text Placeholder 2",
+        "2": "Content Placeholder 3",
+        "3": "Text Placeholder 4",
+        "4": "Content Placeholder 5",
+        "10": "Date Placeholder 6",
+        "11": "Footer Placeholder 7",
+        "12": "Slide Number Placeholder 8"
+      }
+    },
+    "Title Only": {
+      "index": 5,
+      "placeholders": {
+        "0": "Title 1",
+        "10": "Date Placeholder 2",
+        "11": "Footer Placeholder 3",
+        "12": "Slide Number Placeholder 4"
+      }
+    },
+    "Blank": {
+      "index": 6,
+      "placeholders": {
+        "10": "Date Placeholder 1",
+        "11": "Footer Placeholder 2",
+        "12": "Slide Number Placeholder 3"
+      }
+    },
+    "Content with Caption": {
+      "index": 7,
+      "placeholders": {
+        "0": "Title 1",
+        "1": "Content Placeholder 2",
+        "2": "Text Placeholder 3",
+        "10": "Date Placeholder 4",
+        "11": "Footer Placeholder 5",
+        "12": "Slide Number Placeholder 6"
+      }
+    },
+    "Picture with Caption": {
+      "index": 8,
+      "placeholders": {
+        "0": "Title 1",
+        "1": "Picture Placeholder 2",
+        "2": "Text Placeholder 3",
+        "10": "Date Placeholder 4",
+        "11": "Footer Placeholder 5",
+        "12": "Slide Number Placeholder 6"
+      }
+    },
+    "Title and Vertical Text": {
+      "index": 9,
+      "placeholders": {
+        "0": "Title 1",
+        "1": "Vertical Text Placeholder 2",
+        "10": "Date Placeholder 3",
+        "11": "Footer Placeholder 4",
+        "12": "Slide Number Placeholder 5"
+      }
+    },
+    "Vertical Title and Text": {
+      "index": 10,
+      "placeholders": {
+        "0": "Vertical Title 1",
+        "1": "Vertical Text Placeholder 2",
+        "10": "Date Placeholder 3",
+        "11": "Footer Placeholder 4",
+        "12": "Slide Number Placeholder 5"
+      }
+    },
+    "Four Columns": {
+      "index": 11,
+      "placeholders": {
+        "0": "Title 1",
+        "10": "Date Placeholder 2",
+        "11": "Footer Placeholder 3",
+        "12": "Slide Number Placeholder 4",
+        "13": "col_1_title",
+        "14": "col_1_content",
+        "15": "col_2_title",
+        "16": "col_2_content",
+        "17": "col_3_title",
+        "18": "col_3_content",
+        "19": "col_4_title",
+        "20": "col_4_content"
+      }
+    }
+  },
+  "aliases": {
+    "table": "Title and Content",
+    "bullets": "Title and Content",
+    "content": "Title and Content",
+    "title": "Title Slide"
+  }
+}
