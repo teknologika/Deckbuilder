@@ -209,3 +209,7 @@ Screenshot*.jpeg
 *.screenshot.png
 *.screenshot.jpg
 *.screenshot.jpeg
+
+# Test output folders
+tests/templates/
+tests/output/
