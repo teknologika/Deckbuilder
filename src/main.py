@@ -10,6 +10,7 @@ import os
 from deckbuilder import Deckbuilder
 from deckbuilder import get_deckbuilder_client
 from content_analysis import analyze_presentation_needs
+from layout_recommendations import recommend_slide_approach
 deck = get_deckbuilder_client()
 
 
@@ -172,6 +173,54 @@ async def analyze_presentation_needs_tool(ctx: Context, user_input: str, audienc
         return json.dumps(analysis_result, indent=2)
     except Exception as e:
         return f"Error analyzing presentation needs: {str(e)}"
+
+@mcp.tool()
+async def recommend_slide_approach_tool(ctx: Context, content_piece: str, message_intent: str, presentation_context: str = None) -> str:
+    """
+    Recommend optimal slide layouts based on specific content and communication intent.
+    
+    Content-first approach: Analyzes what you want to communicate with this specific 
+    content piece and recommends the most effective slide layouts.
+    
+    Args:
+        ctx: MCP context
+        content_piece: Specific content to present (e.g., "We increased revenue 25%, expanded to 3 markets, but churn rose to 8%")
+        message_intent: What you want this content to communicate (e.g., "show growth while acknowledging challenges")
+        presentation_context: Optional JSON string from analyze_presentation_needs_tool output
+    
+    Returns:
+        JSON string with layout recommendations, confidence scores, and content suggestions
+        
+    Example:
+        content_piece: "Our mobile app has these key features: real-time notifications, 
+                       offline mode, cloud sync, and advanced analytics dashboard"
+        message_intent: "showcase the comprehensive feature set to potential customers"
+        
+        Returns recommendations like:
+        - Four Columns layout (confidence: 0.90) for feature comparison grid
+        - Title and Content layout (confidence: 0.75) for traditional feature list
+        - Content structuring suggestions and YAML preview
+    
+    This tool bridges the gap between content analysis (Tool #1) and content optimization (Tool #3)
+    by providing specific layout guidance for individual content pieces.
+    """
+    try:
+        # Parse presentation context if provided
+        context_dict = None
+        if presentation_context:
+            try:
+                context_dict = json.loads(presentation_context)
+            except json.JSONDecodeError:
+                # If parsing fails, continue without context
+                pass
+        
+        # Get layout recommendations
+        recommendations = recommend_slide_approach(content_piece, message_intent, context_dict)
+        
+        return json.dumps(recommendations, indent=2)
+        
+    except Exception as e:
+        return f"Error recommending slide approach: {str(e)}"
 
 @mcp.tool()
 async def create_presentation_from_markdown(ctx: Context, markdown_content: str, fileName: str = "Sample_Presentation", templateName: str = "default") -> str:
