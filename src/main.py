@@ -9,6 +9,7 @@ import os
 
 from deckbuilder import Deckbuilder
 from deckbuilder import get_deckbuilder_client
+from content_analysis import analyze_presentation_needs
 deck = get_deckbuilder_client()
 
 
@@ -134,6 +135,43 @@ async def create_presentation(ctx: Context, json_data: str, fileName: str = "Sam
         return f"Successfully created presentation: {fileName}. {write_result}"
     except Exception as e:
         return f"Error creating presentation: {str(e)}"
+
+@mcp.tool()
+async def analyze_presentation_needs_tool(ctx: Context, user_input: str, audience: str = "general", constraints: str = None, presentation_goal: str = "inform") -> str:
+    """
+    Analyze user's presentation needs and recommend structure.
+    
+    Content-first approach: Understand communication goals before suggesting layouts.
+    Acts as intelligent presentation consultant, not layout picker.
+    
+    Args:
+        ctx: MCP context
+        user_input: Raw description of what they want to present
+        audience: Target audience ("board", "team", "customers", "technical", "general")
+        constraints: Time/slide constraints ("10 minutes", "5 slides max", "data-heavy")
+        presentation_goal: Primary goal ("persuade", "inform", "report", "update", "train")
+    
+    Returns:
+        JSON string with content analysis and structural recommendations
+        
+    Example:
+        user_input: "I need to present our Q3 results to the board. We had 23% revenue growth, 
+                    expanded to 3 new markets, but customer churn increased to 8%. I want to show 
+                    we're growing but acknowledge the churn issue and present our retention strategy."
+        audience: "board"
+        presentation_goal: "report"
+        
+        Returns analysis with:
+        - Content analysis (key messages, narrative arc, complexity level)
+        - Audience considerations (expertise level, attention span, preferred format)
+        - Recommended structure (slide sequence with purpose and timing)
+        - Presentation strategy (opening/closing approach, engagement tactics)
+    """
+    try:
+        analysis_result = analyze_presentation_needs(user_input, audience, constraints, presentation_goal)
+        return json.dumps(analysis_result, indent=2)
+    except Exception as e:
+        return f"Error analyzing presentation needs: {str(e)}"
 
 @mcp.tool()
 async def create_presentation_from_markdown(ctx: Context, markdown_content: str, fileName: str = "Sample_Presentation", templateName: str = "default") -> str:
