@@ -11,6 +11,7 @@ from deckbuilder import Deckbuilder
 from deckbuilder import get_deckbuilder_client
 from content_analysis import analyze_presentation_needs
 from layout_recommendations import recommend_slide_approach
+from content_optimization import optimize_content_for_layout
 deck = get_deckbuilder_client()
 
 
@@ -221,6 +222,57 @@ async def recommend_slide_approach_tool(ctx: Context, content_piece: str, messag
         
     except Exception as e:
         return f"Error recommending slide approach: {str(e)}"
+
+@mcp.tool()
+async def optimize_content_for_layout_tool(ctx: Context, content: str, chosen_layout: str, slide_context: str = None) -> str:
+    """
+    Optimize content structure and generate ready-to-use YAML for immediate presentation creation.
+    
+    Final step in content-first workflow: Takes raw content and chosen layout, then optimizes 
+    the content structure and generates production-ready YAML that can be used directly 
+    with create_presentation_from_markdown.
+    
+    Args:
+        ctx: MCP context
+        content: Raw content to optimize (e.g., "Our platform offers real-time analytics, automated reporting, custom dashboards, and API integration")
+        chosen_layout: Layout to optimize for (e.g., "Four Columns" from recommend_slide_approach_tool)
+        slide_context: Optional JSON string with context from previous tools (analyze_presentation_needs, recommend_slide_approach)
+    
+    Returns:
+        JSON string with optimized YAML structure, gap analysis, and presentation tips
+        
+    Example:
+        content: "Traditional approach costs $50K annually with 2-week deployment vs our solution at $30K with same-day setup"
+        chosen_layout: "Comparison"
+        
+        Returns:
+        - optimized_content.yaml_structure: Ready-to-use YAML for create_presentation_from_markdown
+        - gap_analysis: Content fit assessment and recommendations
+        - presentation_tips: Delivery guidance and timing estimates
+    
+    Complete Content-First Workflow:
+    1. analyze_presentation_needs_tool() -> overall structure
+    2. recommend_slide_approach_tool() -> layout recommendations  
+    3. optimize_content_for_layout_tool() -> production-ready YAML ✅ THIS TOOL
+    4. create_presentation_from_markdown() -> final PowerPoint
+    """
+    try:
+        # Parse slide context if provided
+        context_dict = None
+        if slide_context:
+            try:
+                context_dict = json.loads(slide_context)
+            except json.JSONDecodeError:
+                # If parsing fails, continue without context
+                pass
+        
+        # Optimize content for the chosen layout
+        optimization_result = optimize_content_for_layout(content, chosen_layout, context_dict)
+        
+        return json.dumps(optimization_result, indent=2)
+        
+    except Exception as e:
+        return f"Error optimizing content for layout: {str(e)}"
 
 @mcp.tool()
 async def create_presentation_from_markdown(ctx: Context, markdown_content: str, fileName: str = "Sample_Presentation", templateName: str = "default") -> str:
