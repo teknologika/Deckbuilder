@@ -136,20 +136,34 @@ class ContentAnalyzer:
     
     def _determine_narrative_arc(self, user_input: str, _key_messages: List[str]) -> str:
         """Determine the narrative structure from content."""
+        import re
+        
         input_lower = user_input.lower()
         
-        # Check for success-challenge-solution pattern
-        has_success = any(word in input_lower for word in ['growth', 'success', 'increase', 'expand', 'win'])
-        has_challenge = any(word in input_lower for word in ['but', 'however', 'problem', 'issue', 'churn', 'decrease'])
-        has_solution = any(word in input_lower for word in ['strategy', 'plan', 'solution', 'address', 'fix'])
+        # Use word boundary matching to avoid false positives
+        def has_word_pattern(patterns, text):
+            """Check if any pattern exists as whole words in text."""
+            for pattern in patterns:
+                if re.search(r'\b' + re.escape(pattern) + r'\b', text):
+                    return True
+            return False
+        
+        # Check for success-challenge-solution pattern with word boundaries
+        success_patterns = ['growth', 'success', 'increase', 'expand', 'win', 'achievement', 'improvement', 'grew', 'expanded', 'gains', 'positive', 'up']
+        challenge_patterns = ['but', 'however', 'problem', 'issue', 'churn', 'decrease', 'challenge', 'concern', 'difficulty', 'bottleneck', 'drops', 'causing']
+        solution_patterns = ['strategy', 'plan', 'solution', 'address', 'fix', 'propose', 'recommend', 'implement', 'adding', 'need']
+        
+        has_success = has_word_pattern(success_patterns, input_lower)
+        has_challenge = has_word_pattern(challenge_patterns, input_lower)
+        has_solution = has_word_pattern(solution_patterns, input_lower)
         
         if has_success and has_challenge and has_solution:
             return "success-challenge-solution"
         elif has_challenge and has_solution:
             return "problem-solution"
-        elif any(word in input_lower for word in ['compare', 'vs', 'versus', 'option', 'alternative']):
+        elif has_word_pattern(['compare', 'vs', 'versus', 'option', 'alternative'], input_lower):
             return "compare-contrast"
-        elif any(word in input_lower for word in ['convince', 'persuade', 'recommend', 'should']):
+        elif has_word_pattern(['convince', 'persuade', 'recommend', 'should'], input_lower):
             return "persuasive"
         else:
             return "informational"
