@@ -345,6 +345,81 @@ solution:
 5. **Practical**: Provides ready-to-use optimized content
 6. **Intelligent**: Acts as presentation consultant, not just layout picker
 
+### Real-World Example: Content-First Analysis in Action
+
+#### Scenario: Mobile App Redesign Executive Presentation
+
+**User Input:**
+```
+"I need to present our mobile app redesign project to the executive team. 
+We completed user research with 500 customers, redesigned the checkout flow, 
+and saw a 35% increase in conversion rates during beta testing. However, 
+development took 3 months longer than planned and cost 40% more than budgeted. 
+I want to show the business impact while being transparent about the overruns 
+and propose how to prevent this in future projects."
+
+Audience: "board"
+Constraints: "15 minutes" 
+Goal: "report"
+```
+
+**Content-First Analysis Output:**
+
+```json
+{
+  "content_analysis": {
+    "key_messages": ["metric: 500 customers", "metric: 35%", "metric: 40%", 
+                     "growth/expansion", "solutions/strategy"],
+    "narrative_arc": "success-challenge-solution",
+    "complexity_level": "executive", 
+    "data_density": "balanced",
+    "emotional_tone": "neutral"
+  },
+  "audience_considerations": {
+    "expertise_level": "expert",
+    "attention_span": "short",
+    "preferred_format": "high-level"
+  },
+  "recommended_structure": [
+    {
+      "position": 1, "purpose": "lead with strength",
+      "content_focus": "35% conversion increase", 
+      "slide_intent": "establish credibility", "estimated_time": "1-2 minutes"
+    },
+    {
+      "position": 2, "purpose": "show momentum", 
+      "content_focus": "user research and improvements",
+      "slide_intent": "build on success", "estimated_time": "1-2 minutes"
+    },
+    {
+      "position": 3, "purpose": "acknowledge challenge",
+      "content_focus": "budget and timeline overruns", 
+      "slide_intent": "transparent communication", "estimated_time": "2-3 minutes"
+    },
+    {
+      "position": 4, "purpose": "present solution",
+      "content_focus": "prevention strategy for future projects",
+      "slide_intent": "show path forward", "estimated_time": "2-3 minutes"
+    }
+  ],
+  "presentation_strategy": {
+    "opening_approach": "data-driven",
+    "closing_approach": "call-to-action", 
+    "flow_pattern": "problem-solution",
+    "engagement_tactics": ["visual", "interactive"]
+  }
+}
+```
+
+**Key Insights:**
+- **Narrative Arc**: Success-challenge-solution pattern detected automatically
+- **Board Optimization**: High-level content, short attention span considerations
+- **Strategic Flow**: Lead with wins → acknowledge issues → present solutions
+- **Timing**: Optimized 4-slide structure for 15-minute constraint
+
+**Value Delivered:**
+Instead of asking "What PowerPoint layouts exist?", the system understands "What story are you trying to tell?" and provides strategic guidance on content sequencing, audience adaptation, and communication effectiveness.
+
 ### Integration with Structured Frontmatter
 
 The content-first tools will:
