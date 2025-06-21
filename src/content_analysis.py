@@ -149,7 +149,7 @@ class ContentAnalyzer:
             return False
         
         # Check for success-challenge-solution pattern with word boundaries
-        success_patterns = ['growth', 'success', 'increase', 'expand', 'win', 'achievement', 'improvement', 'grew', 'expanded', 'gains', 'positive', 'up']
+        success_patterns = ['growth', 'success', 'increase', 'expand', 'win', 'achievement', 'improvement', 'grew', 'expanded', 'gains', 'positive']
         challenge_patterns = ['but', 'however', 'problem', 'issue', 'churn', 'decrease', 'challenge', 'concern', 'difficulty', 'bottleneck', 'drops', 'causing']
         solution_patterns = ['strategy', 'plan', 'solution', 'address', 'fix', 'propose', 'recommend', 'implement', 'adding', 'need']
         
