@@ -231,22 +231,18 @@
         "type": "Title and Content",
         "layout": "Title and Content",
         "title": "Table Slide with **Formatted** Content",
-        "rich_content": [
-          {
-            "table": {
-              "headers": ["**Feature**", "*Status*", "___Priority___"],
-              "rows": [
-                ["Authentication", "**Complete**", "*High*"],
-                ["User Management", "***In Progress***", "___Medium___"],
-                ["Reporting", "*Planned*", "**Low**"],
-                ["API Integration", "___Blocked___", "***Critical***"]
-              ],
-              "style": "dark_blue_white_text",
-              "row_style": "alternating_light_gray", 
-              "border_style": "thin_gray"
-            }
-          }
-        ]
+        "table": {
+          "data": [
+            ["**Feature**", "*Status*", "___Priority___"],
+            ["Authentication", "**Complete**", "*High*"],
+            ["User Management", "***In Progress***", "___Medium___"],
+            ["Reporting", "*Planned*", "**Low**"],
+            ["API Integration", "___Blocked___", "***Critical***"]
+          ],
+          "header_style": "dark_blue_white_text",
+          "row_style": "alternating_light_gray", 
+          "border_style": "thin_gray"
+        }
       }
     ]
   }
