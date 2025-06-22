@@ -55,6 +55,85 @@ columns:
     content: Competitive pricing with flexible plans
 ---"""
             },
+            
+        "Three Columns With Titles": {
+            "structure_type": "columns",
+            "description": "Three-column layout with individual titles and content",
+            "yaml_pattern": {
+                "layout": "Three Columns With Titles",
+                "title": str,
+                "columns": [
+                    {"title": str, "content": str}
+                ]
+            },
+            "validation": {
+                "min_columns": 1,
+                "max_columns": 3,
+                "required_fields": ["title", "columns"]
+            },
+            "example": """---
+layout: Three Columns With Titles
+title: Key Features
+columns:
+  - title: Performance
+    content: Fast processing with optimized algorithms
+  - title: Security
+    content: Enterprise-grade encryption and compliance
+  - title: Usability
+    content: Intuitive interface with minimal learning curve
+---"""
+        },
+        
+        "Three Columns": {
+            "structure_type": "columns",
+            "description": "Three-column layout with content only (no titles)",
+            "yaml_pattern": {
+                "layout": "Three Columns",
+                "title": str,
+                "columns": [
+                    {"content": str}
+                ]
+            },
+            "validation": {
+                "min_columns": 1,
+                "max_columns": 3,
+                "required_fields": ["title", "columns"]
+            },
+            "example": """---
+layout: Three Columns
+title: Benefits Overview
+columns:
+  - content: Fast processing with optimized algorithms and sub-millisecond response times
+  - content: Enterprise-grade encryption with SOC2 and GDPR compliance
+  - content: Intuitive interface with minimal learning curve and comprehensive docs
+---"""
+        },
+        
+        "Four Columns": {
+            "structure_type": "columns",
+            "description": "Four-column layout with content only (no titles)",
+            "yaml_pattern": {
+                "layout": "Four Columns",
+                "title": str,
+                "columns": [
+                    {"content": str}
+                ]
+            },
+            "validation": {
+                "min_columns": 1,
+                "max_columns": 4,
+                "required_fields": ["title", "columns"]
+            },
+            "example": """---
+layout: Four Columns
+title: Complete Feature Set
+columns:
+  - content: Fast processing with optimized algorithms and sub-millisecond response times
+  - content: Enterprise-grade encryption with SOC2 and GDPR compliance
+  - content: Intuitive interface with minimal learning curve and comprehensive docs
+  - content: Transparent pricing with flexible plans and proven ROI
+---"""
+        },
         
         "Comparison": {
             "structure_type": "comparison",
@@ -187,7 +266,7 @@ media:
         
         mapping_rules = {"title": "semantic:title"}  # Always use semantic for title
         
-        if layout_name == "Four Columns":
+        if layout_name == "Four Columns With Titles":
             # Find column placeholders by looking for patterns in placeholder names
             col_title_placeholders = []
             col_content_placeholders = []
@@ -249,6 +328,61 @@ media:
             # Map to sections
             for i, (idx, placeholder_name) in enumerate(content_placeholders[:2]):
                 mapping_rules[f"sections[{i}].content"] = placeholder_name
+                
+        elif layout_name == "Three Columns With Titles":
+            # Find column placeholders by looking for patterns in placeholder names
+            col_title_placeholders = []
+            col_content_placeholders = []
+            
+            for idx, placeholder_name in placeholders.items():
+                name_lower = placeholder_name.lower()
+                if "col" in name_lower and "title" in name_lower:
+                    col_title_placeholders.append((idx, placeholder_name))
+                elif "col" in name_lower and ("text" in name_lower or "content" in name_lower):
+                    col_content_placeholders.append((idx, placeholder_name))
+            
+            # Sort by placeholder index to get correct order
+            col_title_placeholders.sort(key=lambda x: int(x[0]))
+            col_content_placeholders.sort(key=lambda x: int(x[0]))
+            
+            # Build mapping rules for each column (max 3)
+            for i, (idx, placeholder_name) in enumerate(col_title_placeholders[:3]):
+                mapping_rules[f"columns[{i}].title"] = placeholder_name
+            
+            for i, (idx, placeholder_name) in enumerate(col_content_placeholders[:3]):
+                mapping_rules[f"columns[{i}].content"] = placeholder_name
+                
+        elif layout_name == "Three Columns":
+            # Find column content placeholders only (no titles)
+            col_content_placeholders = []
+            
+            for idx, placeholder_name in placeholders.items():
+                name_lower = placeholder_name.lower()
+                if "col" in name_lower and ("text" in name_lower or "content" in name_lower):
+                    col_content_placeholders.append((idx, placeholder_name))
+            
+            # Sort by placeholder index to get correct order
+            col_content_placeholders.sort(key=lambda x: int(x[0]))
+            
+            # Build mapping rules for each column content (max 3)
+            for i, (idx, placeholder_name) in enumerate(col_content_placeholders[:3]):
+                mapping_rules[f"columns[{i}].content"] = placeholder_name
+                
+        elif layout_name == "Four Columns":
+            # Find column content placeholders only (no titles) - different from "Four Columns With Titles"
+            col_content_placeholders = []
+            
+            for idx, placeholder_name in placeholders.items():
+                name_lower = placeholder_name.lower()
+                if "col" in name_lower and ("text" in name_lower or "content" in name_lower):
+                    col_content_placeholders.append((idx, placeholder_name))
+            
+            # Sort by placeholder index to get correct order
+            col_content_placeholders.sort(key=lambda x: int(x[0]))
+            
+            # Build mapping rules for each column content (max 4)
+            for i, (idx, placeholder_name) in enumerate(col_content_placeholders[:4]):
+                mapping_rules[f"columns[{i}].content"] = placeholder_name
                 
         elif layout_name == "Picture with Caption":
             # Find text and content placeholders

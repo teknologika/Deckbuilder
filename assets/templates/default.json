@@ -151,11 +151,11 @@
         "13": "Col 1 Title Placeholder 2",
         "14": "Col 1 Text Placeholder 3",
         "15": "Col 2 Title Placeholder 4",
-        "16": "Col 1 Text Placeholder 5",
+        "16": "Col 2 Text Placeholder 5",
         "17": "Col 3 Title Placeholder 6",
-        "18": "Col 1 Text Placeholder 7",
+        "18": "Col 3 Text Placeholder 7",
         "19": "Col 4 Title Placeholder 8",
-        "20": "Col 1 Text Placeholder 9",
+        "20": "Col 4 Text Placeholder 9",
         "10": "Date Placeholder 10",
         "11": "Footer Placeholder 11",
         "12": "Slide Number Placeholder 12"
@@ -165,10 +165,10 @@
       "index": 14,
       "placeholders": {
         "0": "Title 1",
-        "14": "Col 1 Text Placeholder 3",
-        "16": "Col 2 Text Placeholder 2",
+        "14": "Col 1 Text Placeholder 2",
+        "16": "Col 2 Text Placeholder 3",
         "18": "Col 3 Text Placeholder 4",
-        "20": "Col 4 Text Placeholder 4",
+        "20": "Col 4 Text Placeholder 5",
         "10": "Date Placeholder 10",
         "11": "Footer Placeholder 11",
         "12": "Slide Number Placeholder 12"
