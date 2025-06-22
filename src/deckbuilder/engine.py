@@ -947,7 +947,7 @@ class Deckbuilder:
 
     def _parse_structured_frontmatter(self, frontmatter_content: str) -> dict:
         """Parse structured frontmatter and convert to placeholder mappings"""
-        from structured_frontmatter import StructuredFrontmatterConverter, StructuredFrontmatterValidator
+        from .structured_frontmatter import StructuredFrontmatterConverter, StructuredFrontmatterValidator
         
         try:
             parsed = yaml.safe_load(frontmatter_content)
