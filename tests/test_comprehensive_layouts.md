@@ -165,12 +165,18 @@ Content from Four Columns structured frontmatter above.
 layout: Agenda, 6 Textboxes
 title: **Agenda** Layout Test
 agenda:
-  - item: "**Opening** remarks and introductions"
-  - item: "*Market* analysis and trends"  
-  - item: "***Product*** roadmap updates"
-  - item: "___Financial___ performance review"
-  - item: "**Strategic** initiatives overview"
-  - item: "*Q&A* session and next steps"
+  - number: "01"
+    item: "**Opening** remarks and introductions"
+  - number: "02"  
+    item: "*Market* analysis and trends"
+  - number: "03"
+    item: "***Product*** roadmap updates"
+  - number: "04"
+    item: "___Financial___ performance review"
+  - number: "05"
+    item: "**Strategic** initiatives overview"
+  - number: "06"
+    item: "*Q&A* session and next steps"
 ---
 
 Content from Agenda, 6 Textboxes structured frontmatter above.
@@ -179,16 +185,24 @@ Content from Agenda, 6 Textboxes structured frontmatter above.
 layout: Title and 6-item Lists
 title: **Six Item Lists** Layout Test
 lists:
-  - header: "**Features**"
-    items:
-      - "*Authentication*"
-      - "**Authorization**"
-      - "___Encryption___"
-  - header: "***Benefits***"
-    items:
-      - "**Security**"
-      - "*Performance*"
-      - "___Scalability___"
+  - number: "01"
+    title: "**Features**"
+    content: "*Authentication*"
+  - number: "02"
+    title: "**Authorization**" 
+    content: "___Encryption___"
+  - number: "03"
+    title: "***Benefits***"
+    content: "**Security**"
+  - number: "04"
+    title: "*Performance*"
+    content: "___Scalability___"
+  - number: "05"
+    title: "**Reliability**"
+    content: "*Monitoring*"
+  - number: "06"
+    title: "***Support***"
+    content: "**Documentation**"
 ---
 
 Content from Title and 6-item Lists structured frontmatter above.
@@ -212,10 +226,7 @@ swot:
 Content from SWOT Analysis structured frontmatter above.
 
 ---
-layout: table
-style: dark_blue_white_text
-row_style: alternating_light_gray
-border_style: thin_gray
+layout: Title and Content
 ---
 # Table Slide with **Formatted** Content
 

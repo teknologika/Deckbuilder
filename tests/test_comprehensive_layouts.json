@@ -139,17 +139,17 @@
         "Col 1 Title Placeholder 2": "Performance",
         "Col 1 Text Placeholder 3": "**Fast processing** with optimized algorithms",
         "Col 2 Title Placeholder 4": "Security",
-        "Col 1 Text Placeholder 5": "***Enterprise-grade*** encryption with ___SOC2___ compliance",
+        "Col 2 Text Placeholder 5": "***Enterprise-grade*** encryption with ___SOC2___ compliance",
         "Col 3 Title Placeholder 6": "Usability",
-        "Col 1 Text Placeholder 7": "*Intuitive* interface with **minimal** learning curve"
+        "Col 3 Text Placeholder 7": "*Intuitive* interface with **minimal** learning curve"
       },
       {
         "type": "Three Columns",
         "layout": "Three Columns",
         "title": "Three Column Layout **Without Titles** Test",
-        "Col 1 Text Placeholder 3": "**Fast processing** with optimized algorithms and *sub-millisecond* response times",
-        "Col 1 Text Placeholder 5": "***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance",
-        "Col 1 Text Placeholder 7": "*Intuitive* interface with **minimal** learning curve and comprehensive docs"
+        "Col 1 Text Placeholder 2": "**Fast processing** with optimized algorithms and *sub-millisecond* response times",
+        "Col 2 Text Placeholder 3": "***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance",
+        "Col 3 Text Placeholder 4": "*Intuitive* interface with **minimal** learning curve and comprehensive docs"
       },
       {
         "type": "Four Columns With Titles",
@@ -169,31 +169,49 @@
         "layout": "Four Columns",
         "title": "Four Column Layout **Without Titles** Test",
         "Col 1 Text Placeholder 3": "**Fast processing** with optimized algorithms and *sub-millisecond* response times",
-        "Col 1 Text Placeholder 5": "***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance",
-        "Col 1 Text Placeholder 7": "*Intuitive* interface with **minimal** learning curve and comprehensive docs",
-        "Col 1 Text Placeholder 9": "___Transparent___ pricing with **flexible** plans and *proven* ROI"
+        "Col 2 Text Placeholder 2": "***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance",
+        "Col 3 Text Placeholder 4": "*Intuitive* interface with **minimal** learning curve and comprehensive docs",
+        "Col 4 Text Placeholder 4": "___Transparent___ pricing with **flexible** plans and *proven* ROI"
       },
       {
         "type": "Agenda, 6 Textboxes",
         "layout": "Agenda, 6 Textboxes",
         "title": "**Agenda** Layout Test",
-        "Text Placeholder 3": "**Opening** remarks and introductions",
-        "Text Placeholder 7": "*Market* analysis and trends",
-        "Text Placeholder 3": "***Product*** roadmap updates",
-        "Text Placeholder 7": "___Financial___ performance review",
-        "Text Placeholder 3": "**Strategic** initiatives overview",
-        "Text Placeholder 7": "*Q&A* session and next steps"
+        "Text Placeholder Number 01": "01",
+        "Text Placeholder Content 1": "**Opening** remarks and introductions",
+        "Text Placeholder Number 02": "02",
+        "Text Placeholder Content 2": "*Market* analysis and trends",
+        "Text Placeholder Number 03": "03",
+        "Text Placeholder Content 3": "***Product*** roadmap updates",
+        "Text Placeholder Number 04": "04",
+        "Text Placeholder Content 4": "___Financial___ performance review",
+        "Text Placeholder Number 05": "05",
+        "Text Placeholder Content 5": "**Strategic** initiatives overview",
+        "Text Placeholder Number 06": "06",
+        "Text Placeholder Content 6": "*Q&A* session and next steps"
       },
       {
         "type": "Title and 6-item Lists",
         "layout": "Title and 6-item Lists",
         "title": "**Six Item Lists** Layout Test",
-        "Text Placeholder 6": "**Features**",
-        "Text Placeholder 10": "*Authentication*",
-        "Text Placeholder 10": "**Authorization**",
-        "Text Placeholder 6": "***Benefits***",
-        "Text Placeholder 10": "**Security**",
-        "Text Placeholder 10": "*Performance*"
+        "Text Placeholder Number 01": "01",
+        "Text Placeholder Title 1": "**Features**",
+        "Text Placeholder Content 1": "*Authentication*",
+        "Text Placeholder Number 02": "02",
+        "Text Placeholder Title 2": "**Authorization**",
+        "Text Placeholder Content 2": "___Encryption___",
+        "Text Placeholder Number 03": "03",
+        "Text Placeholder Title 3": "***Benefits***",
+        "Text Placeholder Content 3": "**Security**",
+        "Text Placeholder Number 04": "04",
+        "Text Placeholder Title 4": "*Performance*",
+        "Text Placeholder Content 4": "___Scalability___",
+        "Text Placeholder Number 05": "05",
+        "Text Placeholder Title 5": "**Reliability**",
+        "Text Placeholder Content 5": "*Monitoring*",
+        "Text Placeholder Number 06": "06",
+        "Text Placeholder Title 6": "***Support***",
+        "Text Placeholder 10": "**Documentation**"
       },
       {
         "type": "Big Number",
@@ -204,10 +222,10 @@
       {
         "type": "SWOT Analysis",
         "layout": "SWOT Analysis",
-        "Text Placeholder 21": "**Strong** market position with *proven* technology",
-        "Text Placeholder 21": "___Limited___ geographic presence and **high** costs",
-        "Text Placeholder 21": "*Emerging* markets and ***digital*** transformation", 
-        "Text Placeholder 21": "**Competition** and ___regulatory___ changes"
+        "Text Placeholder Top Left": "**Strong** market position with *proven* technology",
+        "Text Placeholder Top Right": "___Limited___ geographic presence and **high** costs",
+        "Text Placeholder Bottom Left": "*Emerging* markets and ***digital*** transformation", 
+        "Text Placeholder Bottom Right": "**Competition** and ___regulatory___ changes"
       },
       {
         "type": "Title and Content",
