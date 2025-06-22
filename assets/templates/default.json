@@ -165,10 +165,10 @@
       "index": 14,
       "placeholders": {
         "0": "Title 1",
-        "14": "Col 1 Text Placeholder 2",
-        "16": "Col 2 Text Placeholder 3",
+        "14": "Col 1 Text Placeholder 3",
+        "16": "Col 2 Text Placeholder 2",
         "18": "Col 3 Text Placeholder 4",
-        "20": "Col 4 Text Placeholder 5",
+        "20": "Col 4 Text Placeholder 4",
         "10": "Date Placeholder 10",
         "11": "Footer Placeholder 11",
         "12": "Slide Number Placeholder 12"
@@ -250,5 +250,12 @@
     "bullets": "Title and Content",
     "content": "Title and Content",
     "title": "Title Slide"
+  },
+  "validation": {
+    "warnings": [
+      "Multiple placeholder naming patterns detected: ['Col 1', 'Col 2', 'Col 3', 'Col 4', 'Content Placeholder', 'Date Placeholder', 'Footer Placeholder', 'Picture Placeholder', 'Slide Number', 'Text Placeholder', 'Vertical Text']"
+    ],
+    "errors": [],
+    "layout_analysis": {}
   }
 }
