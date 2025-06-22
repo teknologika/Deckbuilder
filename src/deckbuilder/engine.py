@@ -6,14 +6,14 @@ import re
 from pptx import Presentation
 from pptx.util import Cm, Pt
 from pptx.dml.color import RGBColor
-from placeholder_types import (
+from .placeholder_types import (
     is_title_placeholder, 
     is_subtitle_placeholder, 
     is_content_placeholder,
     is_media_placeholder
 )
 try:
-    from table_styles import TABLE_HEADER_STYLES, TABLE_ROW_STYLES, TABLE_BORDER_STYLES
+    from .table_styles import TABLE_HEADER_STYLES, TABLE_ROW_STYLES, TABLE_BORDER_STYLES
 except ImportError:
     # Fallback values if modules don't exist
     TABLE_HEADER_STYLES = {
@@ -66,8 +66,9 @@ class Deckbuilder:
                 # Check if template exists in templates folder
                 default_template = os.path.join(self.template_path, templateName)
                 if not os.path.exists(default_template):
-                    # Copy from src/default.pptx
-                    src_template = os.path.join(os.path.dirname(__file__), 'default.pptx')
+                    # Copy from assets/templates/default.pptx
+                    assets_path = os.path.join(os.path.dirname(__file__), '..', '..', 'assets', 'templates')
+                    src_template = os.path.join(assets_path, 'default.pptx')
                     if os.path.exists(src_template):
                         shutil.copy2(src_template, default_template)
                 
@@ -75,8 +76,9 @@ class Deckbuilder:
                 base_name = templateName.replace('.pptx', '')
                 json_template = os.path.join(self.template_path, base_name + '.json')
                 if not os.path.exists(json_template):
-                    # Copy from src/default.json
-                    src_json = os.path.join(os.path.dirname(__file__), base_name + '.json')
+                    # Copy from assets/templates/default.json
+                    assets_path = os.path.join(os.path.dirname(__file__), '..', '..', 'assets', 'templates')
+                    src_json = os.path.join(assets_path, base_name + '.json')
                     if os.path.exists(src_json):
                         shutil.copy2(src_json, json_template)
             except (OSError, IOError):

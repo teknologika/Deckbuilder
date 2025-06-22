@@ -11,17 +11,16 @@ import json
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
-from tools import analyze_pptx_template
-from deckbuilder import get_deckbuilder_client
+from mcp_server.tools import analyze_pptx_template
+from deckbuilder.engine import get_deckbuilder_client
 
 
 def setup_test_environment():
     """Set up test environment with folders and template."""
     test_dir = os.path.dirname(__file__)
-    src_dir = os.path.join(test_dir, '..', 'src')
     
     # Create test folders
-    templates_folder = src_dir
+    templates_folder = os.path.join(test_dir, '..', 'assets', 'templates')
     output_folder = os.path.join(test_dir, 'output')
     
     os.makedirs(output_folder, exist_ok=True)
@@ -129,7 +128,7 @@ def test_markdown_presentation(testInputFile: str):
         
         # Load test markdown file
         test_dir = os.path.dirname(__file__)
-        test_md_path = os.path.join(test_dir, "test_presentation.md")
+        test_md_path = os.path.join(test_dir, testInputFile)
         
         if not os.path.exists(test_md_path):
             print(f"✗ Test markdown file not found: {test_md_path}")
@@ -198,13 +197,13 @@ def run_all_tests():
     print("\n" + "─" * 30)
     print("TEST 2: JSON Presentation Creation")
     print("─" * 30)
-    test_presentation_creation()
+    test_presentation_creation("test_comprehensive_layouts.json")
     
-    # Test 3: Markdown Presentation Creation
+    # Test 3: Comprehensive Layouts Test (All 19 Layouts)
     print("\n" + "─" * 30)
-    print("TEST 3: Markdown Presentation Creation")
+    print("TEST 3: Comprehensive Layouts Test (All 19 Layouts)")
     print("─" * 30)
-    test_markdown_presentation()
+    test_markdown_presentation("test_comprehensive_layouts.md")
     
     print("\n" + "=" * 60)
     print("ALL TESTS COMPLETED")
@@ -215,14 +214,14 @@ if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "all":
         run_all_tests()
     elif len(sys.argv) > 1 and sys.argv[1] == "json":
-        test_presentation_creation("test_presentation.json")
+        test_presentation_creation("test_comprehensive_layouts.json")
     elif len(sys.argv) > 1 and sys.argv[1] == "markdown":
-        test_markdown_presentation("test_presentation.md")
+        test_markdown_presentation("test_comprehensive_layouts.md")
     elif len(sys.argv) > 1 and sys.argv[1] == "presentation":
         # For backward compatibility, run both presentation tests
         print("Running both JSON and Markdown presentation tests...\n")
-        test_presentation_creation()
+        test_presentation_creation("test_comprehensive_layouts.json")
         print("\n" + "─" * 50 + "\n")
-        test_markdown_presentation()
+        test_markdown_presentation("test_comprehensive_layouts.md")
     else:
         test_analyze_template()

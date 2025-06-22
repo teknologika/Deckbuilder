@@ -27,8 +27,10 @@ This document tracks the implementation status of PowerPoint templates and layou
 | ✅ | Section Header | Divider slides between topics | Title 1, Text Placeholder 2 |
 | ✅ | Title and Content | Traditional bulleted lists | Title 1, Content Placeholder 2 |
 | ✅ | Two Content | Side-by-side content areas | Title 1, Content Placeholder 2, Content Placeholder 3 |
-| ❌ | Three Column | Triple content areas | Title 1, Content Placeholder 2-4 |
-| ✅ | Four Columns | Quad content areas | Title 1, Col 1-4 Title/Text Placeholders |
+| ✅  | Three Column | Triple content areas | Col 1-3 Title/Text Placeholders |
+| ✅  | Three Column With Titles | Triple content areas | Title 1, Content Placeholder 2-4 |
+| ✅ | Four Columns With Titles | Quad content areas | Title 1, Col 1-4 Title/Text Placeholders |
+| ✅ | Four Columns| Quad content areas | Title 1, Col 1-4 Text Placeholders |
 | ✅ | Blank | Minimal structure for custom content | (none) |
 
 ## Comparison & Analysis
@@ -37,7 +39,7 @@ This document tracks the implementation status of PowerPoint templates and layou
 |-----------|------|-------------|----------------------|
 | ✅ | Comparison | Side-by-side contrasts (vs, before/after) | Title 1, Text Placeholder 2, Content Placeholder 3, Text Placeholder 4, Content Placeholder 5 |
 | ❌ | Pros & Cons | Advantages/disadvantages layout | Title 1, Pros Header, Pros Content, Cons Header, Cons Content |
-| ❌ | SWOT Analysis | Strengths/Weaknesses/Opportunities/Threats | Title 1, SWOT Quadrant Placeholders |
+| ✅ | SWOT Analysis | Strengths/Weaknesses/Opportunities/Threats | Title 1, 4 SWOT Quadrant Placeholders |
 | ❌ | Gap Analysis | Current state vs desired state | Title 1, Current State, Desired State, Gap Content |
 | ❌ | Feature Matrix | Comparison table format | Title 1, Table Placeholder |
 
@@ -45,7 +47,7 @@ This document tracks the implementation status of PowerPoint templates and layou
 
 | Supported | Name | Description | Required Placeholders |
 |-----------|------|-------------|----------------------|
-| ❌ | Big Number | Prominent metric display | Title 1, Big Number Placeholder, Context Text |
+| ✅  | Big Number | Prominent metric display | Title 1, Big Number Placeholder, Context Text |
 | ❌ | KPI Dashboard | Multiple metrics grid | Title 1, KPI Grid Placeholders |
 | ❌ | Chart Slide | Graph with supporting text | Title 1, Chart Placeholder, Supporting Text |
 | ❌ | Data Table | Structured data presentation | Title 1, Table Placeholder |
@@ -58,6 +60,7 @@ This document tracks the implementation status of PowerPoint templates and layou
 |-----------|------|-------------|----------------------|
 | ❌ | Timeline | Chronological events | Title 1, Timeline Content Placeholders |
 | ❌ | Process Flow | Sequential steps | Title 1, Step Placeholders |
+| ✅  | Title and 6-item Lists | 6 step process | Title 1, 1-6 Action Item Title and Conent Placeholders |
 | ❌ | Workflow | Decision trees/flowcharts | Title 1, Workflow Diagram Placeholder |
 | ❌ | Roadmap | Future planning timeline | Title 1, Roadmap Content Placeholders |
 | ❌ | Journey Map | User/customer experience flow | Title 1, Journey Stage Placeholders |
@@ -102,8 +105,11 @@ This document tracks the implementation status of PowerPoint templates and layou
 | Supported | Name | Description | Required Placeholders |
 |-----------|------|-------------|----------------------|
 | ❌ | Agenda | Meeting structure | Title 1, Agenda Items |
+| ✅ | Agenda, 6 Textboxes | Meeting structure | Title 1, 6 Agenda Item placeholders |
 | ❌ | Discussion Points | Topics for conversation | Title 1, Discussion Content |
 | ❌ | Action Items | Task assignments | Title 1, Action Item Placeholders |
+
+
 | ❌ | Decision Matrix | Options evaluation | Title 1, Decision Content |
 | ❌ | Parking Lot | Deferred items | Title 1, Parking Lot Content |
 | ❌ | Next Steps | Follow-up actions | Title 1, Next Steps Content |

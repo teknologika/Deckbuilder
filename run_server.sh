@@ -4,4 +4,4 @@
 source venv/bin/activate
 export PYTHONPATH="src:$PYTHONPATH"
 cd src
-python3 main.py
+python3 -m mcp_server.main

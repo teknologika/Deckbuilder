@@ -7,11 +7,10 @@ import asyncio
 import json
 import os
 
-from deckbuilder import Deckbuilder
-from deckbuilder import get_deckbuilder_client
-from content_analysis import analyze_presentation_needs
-from layout_recommendations import recommend_slide_approach
-from content_optimization import optimize_content_for_layout
+from deckbuilder.engine import Deckbuilder, get_deckbuilder_client
+from .content_analysis import analyze_presentation_needs
+from .layout_recommendations import recommend_slide_approach
+from .content_optimization import optimize_content_for_layout
 deck = get_deckbuilder_client()
 
 
