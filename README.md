@@ -88,7 +88,7 @@ Add this configuration to your Claude Desktop config file:
   "mcpServers": {
     "deckbuilder": {
       "command": "/path/to/deck-builder-mcp/venv/bin/python",
-      "args": ["/path/to/deck-builder-mcp/src/main.py"],
+      "args": ["/path/to/deck-builder-mcp/src/mcp_server/main.py"],
       "env": {
         "TRANSPORT": "stdio",
         "DECK_TEMPLATE_FOLDER": "/Users/username/Documents/Deckbuilder/Templates",
@@ -177,29 +177,25 @@ This project follows a **content-first design philosophy** that prioritizes user
 
 ## Project Components
 
-### Core Files
+### Core Components
 
-**`src/main.py`** - MCP Server Implementation
-- FastMCP server setup with lifecycle management
-- Tool definitions for presentation operations
-- Async context management for the Deckbuilder client
-- Transport configuration (stdio/SSE support)
+**`src/mcp_server/`** - MCP Server Implementation
+- **`main.py`** - FastMCP server setup with lifecycle management
+- **`tools.py`** - Tool definitions for presentation operations and template analysis
+- **`content_*.py`** - Content-first MCP tools (planned)
 
-**`src/deckbuilder.py`** - Presentation Engine
-- Singleton Deckbuilder class for presentation management
-- PowerPoint template handling and slide creation
-- JSON and markdown parsing with frontmatter support
-- Rich content rendering (headings, paragraphs, bullets)
-- File versioning and output management
-- Clean formatting without extra blank lines
+**`src/deckbuilder/`** - Presentation Engine
+- **`engine.py`** - Core Deckbuilder class for presentation management
+- **`structured_frontmatter.py`** - YAML frontmatter processing and layout mapping
+- **`placeholder_types.py`** - PowerPoint placeholder type definitions
 
-**`src/table_styles.py`** - Table styling definitions
-- Predefined header, row, and border styles for tables
-- Color schemes and formatting options
+**`src/placekitten/`** - Image Processing Library (Planned)
+- **`__init__.py`** - PlaceKitten library placeholder
+- Smart image cropping and computer vision features (not implemented)
 
-**`src/slide_layouts.py`** - Slide layout mappings
-- Default PowerPoint layout configurations
-- Layout type to template index mappings
+**`assets/templates/`** - Template System
+- **`default.json`** - PowerPoint layout to placeholder mappings
+- **`default.pptx`** - Default PowerPoint template file
 
 **`run_server.sh`** - Server startup script
 - Virtual environment activation and server launch

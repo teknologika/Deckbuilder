@@ -1,8 +1,14 @@
 # PlaceKitten Library
 
+## ⚠️ IMPLEMENTATION STATUS: NOT IMPLEMENTED
+
+**Current Status**: 📋 **PLANNED / DESIGN PHASE ONLY**
+
+This documentation describes the planned design for PlaceKitten library. **The actual implementation does not exist yet** - only placeholder files are present in `src/placekitten/`.
+
 ## Overview
 
-PlaceKitten is a comprehensive Python image processing library that provides intelligent image cropping, filtering, and placeholder generation capabilities. The library combines advanced computer vision processing with a simple Python API for creating presentation-ready images.
+PlaceKitten is a planned comprehensive Python image processing library that will provide intelligent image cropping, filtering, and placeholder generation capabilities. The library will combine advanced computer vision processing with a simple Python API for creating presentation-ready images.
 
 ## Architecture
 

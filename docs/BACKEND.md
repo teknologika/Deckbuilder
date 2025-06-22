@@ -8,16 +8,25 @@ The deck-builder-mcp backend is an MCP (Model Context Protocol) server built wit
 
 ```
 src/
-├── main.py                 # FastMCP server and MCP tools
-├── deckbuilder.py          # Core presentation engine 
-├── tools.py                # Template analyzer for JSON mapping generation
-├── table_styles.py         # Table styling configurations
-├── default.pptx           # Default PowerPoint template
-├── default.json           # Default template JSON mapping
-└── tests/
-    ├── test_tools.py       # Template analyzer testing
-    ├── templates/          # Test template files  
-    └── output/             # Generated mapping files
+├── mcp_server/
+│   ├── main.py             # FastMCP server and MCP tools
+│   ├── tools.py            # Template analyzer for JSON mapping generation
+│   └── content_*.py        # Content-first MCP tools (planned)
+├── deckbuilder/
+│   ├── engine.py           # Core presentation engine
+│   ├── structured_frontmatter.py  # YAML frontmatter processing
+│   └── placeholder_types.py       # PowerPoint placeholder definitions
+├── placekitten/
+│   └── __init__.py         # Image processing library (planned)
+└── assets/
+    └── templates/
+        ├── default.pptx    # Default PowerPoint template
+        └── default.json    # Default template JSON mapping
+tests/
+├── test_tools.py           # Template analyzer testing
+├── test_*.json             # Test presentation data
+├── test_*.md               # Test markdown presentations
+└── output/                 # Generated presentation files
 ```
 
 ## Data Flow
@@ -26,9 +35,9 @@ src/
 
 1. **Template Selection**: Client specifies template name (e.g., "default")
 2. **Template Loading**: 
-   - `deckbuilder.py` loads `templateName.pptx` from template folder
+   - `deckbuilder/engine.py` loads `templateName.pptx` from template folder
    - Automatically loads corresponding `templateName.json` mapping file
-   - Falls back to `src/default.json` if template-specific mapping not found
+   - Falls back to `assets/templates/default.json` if template-specific mapping not found
 3. **Slide Creation**: Client provides slide data via MCP tools
 4. **Layout Resolution**: 
    - Slide `type` mapped to layout name via JSON `aliases`
@@ -38,7 +47,7 @@ src/
 
 ### Template Analysis Flow
 
-1. **Template Analysis**: `tools.py` analyzes existing PowerPoint templates
+1. **Template Analysis**: `mcp_server/tools.py` analyzes existing PowerPoint templates
 2. **Structure Extraction**: Discovers layout names, indices, and placeholder information
 3. **JSON Generation**: Creates `templateName.g.json` with raw extracted structure  
 4. **User Customization**: Users edit `.g.json` to map placeholders to semantic field names
@@ -46,7 +55,7 @@ src/
 
 ## Core Components
 
-### FastMCP Server (`main.py`)
+### FastMCP Server (`mcp_server/main.py`)
 - **MCP Protocol Handler**: Implements Model Context Protocol for AI assistant integration
 - **Streamlined API**: Exposes two comprehensive tools: `create_presentation` and `create_presentation_from_markdown`
 - **Complete Workflows**: Each tool handles creation, population, and saving in a single call

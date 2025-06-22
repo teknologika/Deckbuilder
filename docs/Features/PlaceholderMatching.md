@@ -14,7 +14,7 @@ The placeholder matching system enables reliable content mapping to PowerPoint t
 
 ### Core Components
 
-- **Template Analyzer** (`tools.py`): Extracts layout and placeholder information from PPTX files
+- **Template Analyzer** (`src/mcp_server/tools.py`): Extracts layout and placeholder information from PPTX files
 - **Semantic Detection** (`placeholder_types.py`): Identifies placeholder types using PowerPoint's built-in semantic types
 - **JSON Mapping System**: Dynamic layout configuration using template-specific JSON files  
 - **Unified Mapping Logic** (`deckbuilder.py`): Combines semantic detection with JSON mappings for reliable content placement
@@ -48,7 +48,7 @@ The placeholder matching system enables reliable content mapping to PowerPoint t
 
 ## Implementation
 
-### Template Analyzer (`tools.py`)
+### Template Analyzer (`src/mcp_server/tools.py`)
 
 The `TemplateAnalyzer` class provides:
 - **Layout Discovery**: Extracts actual PowerPoint layout names (e.g., "Title Slide", "Title and Content")
@@ -323,7 +323,7 @@ slide_data = {
 
 ### Generated vs. Customized Names
 
-**Generated Output** (from `tools.py`):
+**Generated Output** (from `src/mcp_server/tools.py`):
 ```json
 {
   "Four Columns": {

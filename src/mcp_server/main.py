@@ -7,10 +7,27 @@ import asyncio
 import json
 import os
 
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+
 from deckbuilder.engine import Deckbuilder, get_deckbuilder_client
-from .content_analysis import analyze_presentation_needs
-from .layout_recommendations import recommend_slide_approach
-from .content_optimization import optimize_content_for_layout
+
+# Import content-first tools (will be implemented later)
+try:
+    from .content_analysis import analyze_presentation_needs
+    from .layout_recommendations import recommend_slide_approach
+    from .content_optimization import optimize_content_for_layout
+except ImportError:
+    # Placeholder functions for when these modules don't exist yet
+    def analyze_presentation_needs(*args, **kwargs):
+        return "Content analysis tool not implemented yet"
+    
+    def recommend_slide_approach(*args, **kwargs):
+        return "Layout recommendation tool not implemented yet"
+    
+    def optimize_content_for_layout(*args, **kwargs):
+        return "Content optimization tool not implemented yet"
 deck = get_deckbuilder_client()
 
 
@@ -55,7 +72,7 @@ mcp = FastMCP(
 )
 
 @mcp.tool()
-async def create_presentation(ctx: Context, json_data: str, fileName: str = "Sample_Presentation", templateName: str = "default") -> str:
+async def create_presentation(ctx: Context, json_data: dict, fileName: str = "Sample_Presentation", templateName: str = "default") -> str:
     """Create a complete PowerPoint presentation from JSON data
     
     This tool accepts JSON data containing all slides and creates a complete presentation with automatic saving.
@@ -63,7 +80,7 @@ async def create_presentation(ctx: Context, json_data: str, fileName: str = "Sam
     
     Args:
         ctx: MCP context
-        json_data: JSON string containing presentation data with slides
+        json_data: JSON object containing presentation data with slides
         fileName: Output filename (default: Sample_Presentation) 
         templateName: Template to use (default: default)
         
