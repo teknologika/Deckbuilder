@@ -1,0 +1,288 @@
+{
+  "layout_intelligence": {
+    "version": "1.0",
+    "description": "Semantic metadata for content-first layout recommendations using convention-based placeholder names",
+    "last_updated": "2025-06-23"
+  },
+  "content_patterns": {
+    "intent_recognition": {
+      "comparison": {
+        "keywords": ["vs", "versus", "compare", "contrast", "option", "alternative", "pros", "cons"],
+        "structure": ["paired_content", "left_right", "side_by_side"],
+        "layouts": ["Comparison", "Two Content"],
+        "confidence": 0.9
+      },
+      "overview": {
+        "keywords": ["overview", "summary", "introduction", "agenda", "outline", "roadmap"],
+        "structure": ["list_items", "bullet_points", "numbered_items"],
+        "layouts": ["Title and Content", "Agenda, 6 Textboxes"],
+        "confidence": 0.8
+      },
+      "features": {
+        "keywords": ["feature", "benefit", "capability", "function", "advantage"],
+        "structure": ["multiple_columns", "categorized_content"],
+        "layouts": ["Four Columns With Titles", "Three Columns With Titles"],
+        "confidence": 0.85
+      },
+      "process": {
+        "keywords": ["step", "process", "workflow", "procedure", "method"],
+        "structure": ["sequential", "numbered", "timeline"],
+        "layouts": ["Agenda, 6 Textboxes", "Title and 6-item Lists"],
+        "confidence": 0.8
+      },
+      "statistics": {
+        "keywords": ["number", "percent", "metric", "data", "result", "performance"],
+        "structure": ["big_number", "key_metric", "single_focus"],
+        "layouts": ["Big Number", "Title and Content"],
+        "confidence": 0.9
+      },
+      "analysis": {
+        "keywords": ["swot", "analysis", "strength", "weakness", "opportunity", "threat"],
+        "structure": ["four_quadrant", "categorized_analysis"],
+        "layouts": ["SWOT Analysis", "Four Columns With Titles"],
+        "confidence": 0.95
+      }
+    },
+    "content_type_mapping": {
+      "title_content": {
+        "placeholders": ["title_top_1"],
+        "detection": ["single_heading", "main_title"],
+        "layouts": ["Title Slide", "Title Only"]
+      },
+      "subtitle_content": {
+        "placeholders": ["subtitle_1"],
+        "detection": ["secondary_heading", "tagline"],
+        "layouts": ["Title Slide"]
+      },
+      "body_content": {
+        "placeholders": ["content_1", "content_main_1"],
+        "detection": ["paragraph", "bullet_list", "description"],
+        "layouts": ["Title and Content", "Section Header"]
+      },
+      "column_content": {
+        "placeholders": ["content_col1_1", "content_col2_1", "content_col3_1", "content_col4_1"],
+        "detection": ["multiple_sections", "categorized_items", "parallel_content"],
+        "layouts": ["Four Columns With Titles", "Three Columns With Titles", "Four Columns", "Three Columns"]
+      },
+      "comparison_content": {
+        "placeholders": ["content_left_1", "content_right_1", "title_left_1", "title_right_1"],
+        "detection": ["paired_items", "versus_content", "side_by_side"],
+        "layouts": ["Comparison", "Two Content"]
+      },
+      "image_content": {
+        "placeholders": ["image_1", "image_main_1"],
+        "detection": ["image_reference", "media_placeholder", "visual_content"],
+        "layouts": ["Picture with Caption"]
+      },
+      "caption_content": {
+        "placeholders": ["text_caption_1"],
+        "detection": ["image_description", "caption_text"],
+        "layouts": ["Picture with Caption", "Content with Caption"]
+      },
+      "agenda_content": {
+        "placeholders": ["number_item1_1", "content_item1_1", "number_item2_1", "content_item2_1"],
+        "detection": ["numbered_list", "agenda_items", "sequential_content"],
+        "layouts": ["Agenda, 6 Textboxes", "Title and 6-item Lists"]
+      }
+    }
+  },
+  "layout_compatibility": {
+    "Title Slide": {
+      "optimal_for": ["presentation_intro", "section_divider", "title_only"],
+      "placeholders": {
+        "required": ["title_top_1"],
+        "optional": ["subtitle_1", "date_footer_1", "footer_footer_1", "slide_number_footer_1"]
+      },
+      "content_hints": {
+        "title_top_1": "Main presentation title or section heading",
+        "subtitle_1": "Supporting tagline or description"
+      },
+      "confidence_factors": {
+        "single_heading": 0.9,
+        "short_title": 0.8,
+        "no_body_content": 0.85
+      }
+    },
+    "Title and Content": {
+      "optimal_for": ["general_content", "bullet_lists", "descriptions", "single_topic"],
+      "placeholders": {
+        "required": ["title_top_1", "content_1"],
+        "optional": ["date_footer_1", "footer_footer_1", "slide_number_footer_1"]
+      },
+      "content_hints": {
+        "title_top_1": "Slide topic or main point",
+        "content_1": "Bullet points, paragraphs, or detailed content"
+      },
+      "confidence_factors": {
+        "single_content_block": 0.8,
+        "bullet_list": 0.85,
+        "paragraph_content": 0.7
+      }
+    },
+    "Comparison": {
+      "optimal_for": ["vs_content", "pros_cons", "before_after", "option_analysis"],
+      "placeholders": {
+        "required": ["title_top_1", "title_left_1", "content_left_1", "title_right_1", "content_right_1"],
+        "optional": ["date_footer_1", "footer_footer_1", "slide_number_footer_1"]
+      },
+      "content_hints": {
+        "title_top_1": "Comparison topic",
+        "title_left_1": "Left option title",
+        "content_left_1": "Left option details",
+        "title_right_1": "Right option title", 
+        "content_right_1": "Right option details"
+      },
+      "confidence_factors": {
+        "paired_content": 0.95,
+        "vs_keywords": 0.9,
+        "comparison_structure": 0.85
+      }
+    },
+    "Four Columns With Titles": {
+      "optimal_for": ["feature_grid", "benefit_overview", "four_categories", "quadrant_analysis"],
+      "placeholders": {
+        "required": ["title_top_1", "title_col1_1", "content_col1_1", "title_col2_1", "content_col2_1", "title_col3_1", "content_col3_1", "title_col4_1", "content_col4_1"],
+        "optional": ["date_footer_1", "footer_footer_1", "slide_number_footer_1"]
+      },
+      "content_hints": {
+        "title_top_1": "Overall category or topic",
+        "title_col1_1": "First category title",
+        "content_col1_1": "First category details",
+        "title_col2_1": "Second category title",
+        "content_col2_1": "Second category details",
+        "title_col3_1": "Third category title", 
+        "content_col3_1": "Third category details",
+        "title_col4_1": "Fourth category title",
+        "content_col4_1": "Fourth category details"
+      },
+      "confidence_factors": {
+        "four_items": 0.95,
+        "categorized_content": 0.9,
+        "parallel_structure": 0.85
+      }
+    },
+    "Three Columns With Titles": {
+      "optimal_for": ["three_categories", "feature_comparison", "process_steps"],
+      "placeholders": {
+        "required": ["title_top_1", "title_col1_1", "content_col1_1", "title_col2_1", "content_col2_1", "title_col3_1", "content_col3_1"],
+        "optional": ["date_footer_1", "footer_footer_1", "slide_number_footer_1"]
+      },
+      "content_hints": {
+        "title_top_1": "Overall topic",
+        "title_col1_1": "First category",
+        "content_col1_1": "First details",
+        "title_col2_1": "Second category",
+        "content_col2_1": "Second details", 
+        "title_col3_1": "Third category",
+        "content_col3_1": "Third details"
+      },
+      "confidence_factors": {
+        "three_items": 0.9,
+        "categorized_content": 0.85,
+        "balanced_content": 0.8
+      }
+    },
+    "Picture with Caption": {
+      "optimal_for": ["visual_content", "image_explanation", "diagram_description"],
+      "placeholders": {
+        "required": ["title_top_1", "image_1", "text_caption_1"],
+        "optional": ["date_footer_1", "footer_footer_1", "slide_number_footer_1"]
+      },
+      "content_hints": {
+        "title_top_1": "Image or visual topic",
+        "image_1": "Main image or visual content",
+        "text_caption_1": "Image description or explanation"
+      },
+      "confidence_factors": {
+        "image_reference": 0.95,
+        "visual_content": 0.9,
+        "media_mention": 0.8
+      }
+    },
+    "Agenda, 6 Textboxes": {
+      "optimal_for": ["meeting_agenda", "process_steps", "numbered_items", "timeline"],
+      "placeholders": {
+        "required": ["title_top_1", "number_item1_1", "content_item1_1", "number_item2_1", "content_item2_1"],
+        "optional": ["number_item3_1", "content_item3_1", "number_item4_1", "content_item4_1", "number_item5_1", "content_item5_1", "number_item6_1", "content_item6_1", "date_footer_1", "footer_footer_1", "slide_number_footer_1"]
+      },
+      "content_hints": {
+        "title_top_1": "Agenda or process title",
+        "number_item1_1": "Item number (01, 1, etc.)",
+        "content_item1_1": "Item description"
+      },
+      "confidence_factors": {
+        "numbered_list": 0.9,
+        "agenda_keywords": 0.85,
+        "sequential_content": 0.8
+      }
+    },
+    "Big Number": {
+      "optimal_for": ["key_metric", "important_statistic", "single_number_focus"],
+      "placeholders": {
+        "required": ["title_top_1", "content_1"],
+        "optional": ["date_footer_1", "footer_footer_1", "slide_number_footer_1"]
+      },
+      "content_hints": {
+        "title_top_1": "Metric description",
+        "content_1": "Large number or percentage with context"
+      },
+      "confidence_factors": {
+        "percentage": 0.95,
+        "large_number": 0.9,
+        "metric_keywords": 0.85
+      }
+    },
+    "SWOT Analysis": {
+      "optimal_for": ["swot_analysis", "four_quadrant_analysis", "strategic_planning"],
+      "placeholders": {
+        "required": ["content_16", "content_17", "content_18", "content_19"],
+        "optional": ["date_footer_1", "footer_footer_1", "slide_number_footer_1"]
+      },
+      "content_hints": {
+        "content_16": "Strengths",
+        "content_17": "Weaknesses", 
+        "content_18": "Opportunities",
+        "content_19": "Threats"
+      },
+      "confidence_factors": {
+        "swot_keywords": 0.98,
+        "four_categories": 0.9,
+        "analysis_structure": 0.85
+      }
+    }
+  },
+  "recommendation_engine": {
+    "scoring_weights": {
+      "content_structure": 0.4,
+      "keyword_matching": 0.3,
+      "intent_recognition": 0.2,
+      "layout_compatibility": 0.1
+    },
+    "minimum_confidence": 0.6,
+    "fallback_layouts": ["Title and Content", "Title Slide"],
+    "recommendation_rules": {
+      "multiple_recommendations": true,
+      "max_recommendations": 3,
+      "include_alternatives": true,
+      "explain_reasoning": true
+    }
+  },
+  "optimization_hints": {
+    "content_length": {
+      "title_top_1": "Keep under 60 characters for readability",
+      "subtitle_1": "Aim for 80-120 characters", 
+      "content_areas": "Use bullet points for lists over 3 items",
+      "column_content": "Balance content length across columns"
+    },
+    "formatting_suggestions": {
+      "emphasis": "Use **bold** for key terms, *italic* for emphasis",
+      "structure": "Use consistent hierarchy with #, ##, ###",
+      "lists": "Use - for bullets, 1. for numbered items"
+    },
+    "layout_specific": {
+      "Comparison": "Keep left/right content balanced in length",
+      "Four Columns With Titles": "Aim for parallel structure across columns",
+      "Agenda, 6 Textboxes": "Use consistent numbering format (01, 02, etc.)"
+    }
+  }
+}
