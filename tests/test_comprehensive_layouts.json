@@ -52,12 +52,12 @@
         "type": "Two Content",
         "layout": "Two Content",
         "title": "Two Content Layout Test",
-        "Content Placeholder 2": [
+        "content_left_1": [
           "**Feature A** details",
           "*Feature B* information",
           "***Critical*** updates"
         ],
-        "Content Placeholder 3": [
+        "content_right_1": [
           "___Important___ notices",
           "**Security** measures",
           "*Performance* metrics"
@@ -67,10 +67,10 @@
         "type": "Comparison",
         "layout": "Comparison",
         "title": "Comparison Layout **Full** Test",
-        "Text Placeholder 2": "Option A Benefits",
-        "Content Placeholder 3": "**Cost effective** solution with *rapid* deployment and ***proven*** technology",
-        "Text Placeholder 4": "Option B Benefits",
-        "Content Placeholder 5": "___Advanced___ features with **future-proof** architecture and *scalable* design"
+        "title_left_1": "Option A Benefits",
+        "content_left_1": "**Cost effective** solution with *rapid* deployment and ***proven*** technology",
+        "title_right_1": "Option B Benefits",
+        "content_right_1": "___Advanced___ features with **future-proof** architecture and *scalable* design"
       },
       {
         "type": "Title Only",
@@ -111,121 +111,119 @@
             "bullet_levels": [1, 1, 1]
           }
         ],
-        "Text Placeholder 3": "Caption area with ___formatted___ text and **emphasis**."
+        "text_caption_1": "Caption area with ___formatted___ text and **emphasis**."
       },
       {
         "type": "Picture with Caption",
         "layout": "Picture with Caption",
         "title": "Picture Layout **Test**",
-        "Picture Placeholder 2": "placeholder_image.jpg",
-        "Text Placeholder 3": "Picture placeholder with ***formatted*** captions and *enhanced* presentation features"
+        "image_1": "placeholder_image.jpg",
+        "text_caption_1": "Picture placeholder with ***formatted*** captions and *enhanced* presentation features"
       },
       {
         "type": "Title and Vertical Text",
         "layout": "Title and Vertical Text",
         "title": "**Vertical Text** Layout Test",
-        "Vertical Text Placeholder 2": "This layout demonstrates vertical text capabilities with **formatted** content and *enhanced* presentation features for ___specialized___ content."
+        "content_1": "This layout demonstrates vertical text capabilities with **formatted** content and *enhanced* presentation features for ___specialized___ content."
       },
       {
         "type": "Vertical Title and Text",
         "layout": "Vertical Title and Text",
-        "Vertical Title 1": "Vertical Title Layout",
-        "Vertical Text Placeholder 2": "This layout demonstrates vertical title and text capabilities with **formatted** content and *enhanced* presentation features for ___specialized___ content."
+        "title_top_1": "Vertical Title Layout",
+        "content_1": "This layout demonstrates vertical title and text capabilities with **formatted** content and *enhanced* presentation features for ___specialized___ content."
       },
       {
         "type": "Three Columns With Titles",
         "layout": "Three Columns With Titles",
         "title": "Three Column Layout **With Titles** Test",
-        "Col 1 Title Placeholder 2": "Performance",
-        "Col 1 Text Placeholder 3": "**Fast processing** with optimized algorithms",
-        "Col 2 Title Placeholder 4": "Security",
-        "Col 2 Text Placeholder 5": "***Enterprise-grade*** encryption with ___SOC2___ compliance",
-        "Col 3 Title Placeholder 6": "Usability",
-        "Col 3 Text Placeholder 7": "*Intuitive* interface with **minimal** learning curve"
+        "title_col1_1": "Performance",
+        "content_col1_1": "**Fast processing** with optimized algorithms",
+        "title_col2_1": "Security",
+        "content_col2_1": "***Enterprise-grade*** encryption with ___SOC2___ compliance",
+        "title_col3_1": "Usability",
+        "content_col3_1": "*Intuitive* interface with **minimal** learning curve"
       },
       {
         "type": "Three Columns",
         "layout": "Three Columns",
         "title": "Three Column Layout **Without Titles** Test",
-        "Col 1 Text Placeholder 2": "**Fast processing** with optimized algorithms and *sub-millisecond* response times",
-        "Col 2 Text Placeholder 3": "***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance",
-        "Col 3 Text Placeholder 4": "*Intuitive* interface with **minimal** learning curve and comprehensive docs"
+        "content_col1_1": "**Fast processing** with optimized algorithms and *sub-millisecond* response times",
+        "content_col2_1": "***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance",
+        "content_col3_1": "*Intuitive* interface with **minimal** learning curve and comprehensive docs"
       },
       {
         "type": "Four Columns With Titles",
         "layout": "Four Columns With Titles", 
         "title": "Four Column Layout **With Titles** Test",
-        "Col 1 Title Placeholder 2": "Performance",
-        "Col 1 Text Placeholder 3": "**Fast processing** with optimized algorithms",
-        "Col 2 Title Placeholder 4": "Security",
-        "Col 2 Text Placeholder 5": "***Enterprise-grade*** encryption with ___SOC2___ compliance",
-        "Col 3 Title Placeholder 6": "Usability", 
-        "Col 3 Text Placeholder 7": "*Intuitive* interface with **minimal** learning curve",
-        "Col 4 Title Placeholder 8": "Cost",
-        "Col 4 Text Placeholder 9": "___Transparent___ pricing with **flexible** plans"
+        "title_col1_1": "Performance",
+        "content_col1_1": "**Fast processing** with optimized algorithms",
+        "title_col2_1": "Security",
+        "content_col2_1": "***Enterprise-grade*** encryption with ___SOC2___ compliance",
+        "title_col3_1": "Usability", 
+        "content_col3_1": "*Intuitive* interface with **minimal** learning curve",
+        "title_col4_1": "Cost",
+        "content_col4_1": "___Transparent___ pricing with **flexible** plans"
       },
       {
         "type": "Four Columns",
         "layout": "Four Columns",
         "title": "Four Column Layout **Without Titles** Test",
-        "Col 1 Text Placeholder 3": "**Fast processing** with optimized algorithms and *sub-millisecond* response times",
-        "Col 2 Text Placeholder 2": "***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance",
-        "Col 3 Text Placeholder 4": "*Intuitive* interface with **minimal** learning curve and comprehensive docs",
-        "Col 4 Text Placeholder 4": "___Transparent___ pricing with **flexible** plans and *proven* ROI"
+        "content_col1_1": "**Fast processing** with optimized algorithms and *sub-millisecond* response times",
+        "content_col2_1": "***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance",
+        "content_col3_1": "*Intuitive* interface with **minimal** learning curve and comprehensive docs",
+        "content_col4_1": "___Transparent___ pricing with **flexible** plans and *proven* ROI"
       },
       {
         "type": "Agenda, 6 Textboxes",
         "layout": "Agenda, 6 Textboxes",
         "title": "**Agenda** Layout Test",
-        "Text Placeholder Number 01": "01",
-        "Text Placeholder Content 1": "**Opening** remarks and introductions",
-        "Text Placeholder Number 02": "02",
-        "Text Placeholder Content 2": "*Market* analysis and trends",
-        "Text Placeholder Number 03": "03",
-        "Text Placeholder Content 3": "***Product*** roadmap updates",
-        "Text Placeholder Number 04": "04",
-        "Text Placeholder Content 4": "___Financial___ performance review",
-        "Text Placeholder Number 05": "05",
-        "Text Placeholder Content 5": "**Strategic** initiatives overview",
-        "Text Placeholder Number 06": "06",
-        "Text Placeholder Content 6": "*Q&A* session and next steps"
+        "number_item1_1": "01",
+        "content_item1_1": "**Opening** remarks and introductions",
+        "number_item2_1": "02",
+        "content_item2_1": "*Market* analysis and trends",
+        "number_item3_1": "03",
+        "content_item3_1": "***Product*** roadmap updates",
+        "number_item4_1": "04",
+        "content_item4_1": "___Financial___ performance review",
+        "number_item5_1": "05",
+        "content_item5_1": "**Strategic** initiatives overview",
+        "number_item6_1": "06",
+        "content_item6_1": "*Q&A* session and next steps"
       },
       {
         "type": "Title and 6-item Lists",
         "layout": "Title and 6-item Lists",
         "title": "**Six Item Lists** Layout Test",
-        "Text Placeholder Number 01": "01",
-        "Text Placeholder Title 1": "**Features**",
-        "Text Placeholder Content 1": "*Authentication*",
-        "Text Placeholder Number 02": "02",
-        "Text Placeholder Title 2": "**Authorization**",
-        "Text Placeholder Content 2": "___Encryption___",
-        "Text Placeholder Number 03": "03",
-        "Text Placeholder Title 3": "***Benefits***",
-        "Text Placeholder Content 3": "**Security**",
-        "Text Placeholder Number 04": "04",
-        "Text Placeholder Title 4": "*Performance*",
-        "Text Placeholder Content 4": "___Scalability___",
-        "Text Placeholder Number 05": "05",
-        "Text Placeholder Title 5": "**Reliability**",
-        "Text Placeholder Content 5": "*Monitoring*",
-        "Text Placeholder Number 06": "06",
-        "Text Placeholder Title 6": "***Support***",
-        "Text Placeholder 10": "**Documentation**"
+        "number_item1_1": "01",
+        "content_13": "**Features**",
+        "content_item1_1": "*Authentication*",
+        "number_item2_1": "02",
+        "content_14": "**Authorization**",
+        "content_item2_1": "___Encryption___",
+        "number_item3_1": "03",
+        "content_15": "***Benefits***",
+        "content_item3_1": "**Security**",
+        "content_16": "*Performance*",
+        "content_item4_1": "___Scalability___",
+        "content_17": "**Reliability**",
+        "content_item5_1": "*Monitoring*",
+        "content_24": "06",
+        "content_23": "***Support***",
+        "content_25": "**Documentation**"
       },
       {
         "type": "Big Number",
         "layout": "Big Number",
         "title": "**42%**",
-        "Subtitle 2": "Improvement in *performance* with ___new___ architecture"
+        "content_1": "Improvement in *performance* with ___new___ architecture"
       },
       {
         "type": "SWOT Analysis",
         "layout": "SWOT Analysis",
-        "Text Placeholder Top Left": "**Strong** market position with *proven* technology",
-        "Text Placeholder Top Right": "___Limited___ geographic presence and **high** costs",
-        "Text Placeholder Bottom Left": "*Emerging* markets and ***digital*** transformation", 
-        "Text Placeholder Bottom Right": "**Competition** and ___regulatory___ changes"
+        "content_16": "**Strong** market position with *proven* technology",
+        "content_17": "___Limited___ geographic presence and **high** costs",
+        "content_18": "*Emerging* markets and ***digital*** transformation", 
+        "content_19": "**Competition** and ___regulatory___ changes"
       },
       {
         "type": "Title and Content",
