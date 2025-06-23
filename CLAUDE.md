@@ -191,3 +191,108 @@ Generated presentations should demonstrate:
 - Proper layout selection based on content structure
 - Accurate placeholder mapping using semantic detection + JSON fallback
 - Professional appearance matching structured frontmatter specifications
+
+## Implementation Roadmap
+
+### ✅ Completed Features
+- [x] Core presentation engine with structured frontmatter support
+- [x] Template system with semantic detection and JSON mapping
+- [x] Layout selection fix (prefer `layout` field over `type` field)
+- [x] Enhanced placeholder naming (copy descriptive names from template mapping)
+- [x] File-based MCP tool (`create_presentation_from_file`)
+- [x] JSON object input fix (changed from string to dict parameter)
+
+### 🚧 Template Management System (Current Focus)
+
+#### Phase 1: Command-Line Tools ✅ COMPLETED
+- [x] **Create standalone template analysis utility**
+  - [x] Build `src/deckbuilder/cli_tools.py` with command-line interface
+  - [x] Add environment-independent path handling
+  - [x] Test with default template analysis
+
+- [x] **Implement template validation**
+  - [x] Add `validate` command to CLI tool
+  - [x] Cross-reference JSON mapping with actual template structure
+  - [x] Validate template file accessibility
+  - [x] Check JSON mapping completeness
+
+- [x] **Create documentation generator**
+  - [x] Add `document` command to CLI tool
+  - [x] Generate markdown docs with layout tables
+  - [x] Include placeholder details and usage examples
+  - [x] Auto-sync with template analysis results
+
+**CLI Usage Examples:**
+```bash
+# Analyze template structure
+python src/deckbuilder/cli_tools.py analyze default --verbose
+
+# Generate comprehensive documentation  
+python src/deckbuilder/cli_tools.py document default
+
+# Validate template and mappings
+python src/deckbuilder/cli_tools.py validate default
+
+# Custom paths
+python src/deckbuilder/cli_tools.py analyze custom --template-folder ./my-templates
+```
+
+#### Phase 2: Template Enhancement
+- [ ] **Master slide placeholder modification**
+  - [ ] Research python-pptx master slide editing capabilities
+  - [ ] Implement `enhance_template` MCP tool
+  - [ ] Add backup and versioning system
+  - [ ] Test placeholder name updates on master slides
+
+- [ ] **Convention-based naming system**
+  - [ ] Define naming patterns for all layout types
+  - [ ] Implement pattern detection algorithms
+  - [ ] Auto-generate structured frontmatter patterns
+  - [ ] Add naming convention validation
+
+#### Phase 3: Complete Structured Frontmatter Support
+- [ ] **Add missing layout patterns**
+  - [ ] Four Columns With Titles structured pattern
+  - [ ] SWOT Analysis structured pattern  
+  - [ ] Agenda structured pattern
+  - [ ] Big Number structured pattern
+  - [ ] Title Only, Blank, Section Header patterns
+
+- [ ] **Dynamic pattern generation**
+  - [ ] Replace hard-coded patterns with convention-based detection
+  - [ ] Auto-generate YAML structures from JSON mappings
+  - [ ] Unified registry for all 19 layouts
+  - [ ] Backward compatibility with existing patterns
+
+### 📋 Future Enhancements
+- [ ] **Content-First MCP Tools**
+  - [ ] `analyze_presentation_needs()` - Content and goal analysis
+  - [ ] `recommend_slide_approach()` - Layout recommendations
+  - [ ] `optimize_content_for_layout()` - Content optimization
+
+- [ ] **Advanced Template Features**
+  - [ ] Template comparison and migration tools
+  - [ ] Custom template creation wizard
+  - [ ] Template validation CI/CD integration
+  - [ ] Multi-template support and switching
+
+### 🔧 Technical Debt
+- [ ] **Code Organization**
+  - [ ] Consolidate template analysis code
+  - [ ] Improve error handling across MCP tools
+  - [ ] Add comprehensive logging
+  - [ ] Create unit tests for template management
+
+- [ ] **Documentation Updates**
+  - [ ] Update README with new MCP tools
+  - [ ] Add template creation user guide
+  - [ ] Document naming conventions clearly
+  - [ ] Create troubleshooting guide
+
+## Progress Tracking
+
+**Current Sprint**: Template Management System Phase 2
+**Next Priority**: Master slide placeholder modification with python-pptx
+**Completed**: ✅ Phase 1 - Command-line tools for template analysis, validation, and documentation
+**Blockers**: None identified
+**Target Completion**: Phase 2 - Week 2, Phase 3 - Week 3
