@@ -368,6 +368,196 @@ layout: Title Slide
         """Validate placeholder naming conventions"""
         # Placeholder for naming convention validation
         return {"status": "valid", "message": "Naming validation not yet implemented"}
+    
+    def enhance_template(self, template_name: str, mapping_file: str = None, create_backup: bool = True) -> dict:
+        """
+        Enhance template by updating master slide placeholder names using semantic mapping.
+        
+        Args:
+            template_name: Name of template to enhance
+            mapping_file: Custom JSON mapping file (optional)
+            create_backup: Create backup before modification (default: True)
+            
+        Returns:
+            Enhancement results with success/failure information
+        """
+        print(f"🔧 Enhancing template: {template_name}")
+        
+        try:
+            # Ensure template name has .pptx extension
+            if not template_name.endswith('.pptx'):
+                template_name += '.pptx'
+            
+            template_path = os.path.join(self.template_folder, template_name)
+            
+            if not os.path.exists(template_path):
+                return {"status": "error", "error": f"Template file not found: {template_path}"}
+            
+            # Determine mapping file path
+            base_name = template_name.replace('.pptx', '')
+            if not mapping_file:
+                mapping_file = os.path.join(self.template_folder, f"{base_name}.json")
+            
+            if not os.path.exists(mapping_file):
+                return {"status": "error", "error": f"Mapping file not found: {mapping_file}. Run 'analyze' first to generate mapping."}
+            
+            # Create backup if requested
+            if create_backup:
+                backup_path = self._create_template_backup(template_path)
+                print(f"📄 Backup created: {backup_path}")
+            
+            # Load mapping
+            with open(mapping_file, 'r', encoding='utf-8') as f:
+                mapping = json.load(f)
+            
+            # Enhance template
+            modifications = self._modify_master_slide_placeholders(template_path, mapping)
+            
+            if modifications["modified_count"] > 0:
+                print(f"✅ Enhancement complete!")
+                print(f"   📊 Modified {modifications['modified_count']} placeholders across {modifications['layout_count']} layouts")
+                
+                if "enhanced_template_path" in modifications:
+                    print(f"   📄 Enhanced template saved: {modifications['enhanced_template_path']}")
+                
+                if modifications["issues"]:
+                    print(f"⚠️  Issues encountered:")
+                    for issue in modifications["issues"]:
+                        print(f"   - {issue}")
+                
+                return {
+                    "status": "success", 
+                    "modifications": modifications,
+                    "backup_path": backup_path if create_backup else None
+                }
+            else:
+                print(f"ℹ️  No modifications needed - all placeholders already have correct names")
+                return {"status": "no_changes", "message": "Template already has correct placeholder names"}
+                
+        except Exception as e:
+            return {"status": "error", "error": str(e)}
+    
+    def _create_template_backup(self, template_path: str) -> str:
+        """Create backup copy of template file in organized backups folder"""
+        import shutil
+        from datetime import datetime
+        
+        # Generate backup filename with timestamp
+        path_obj = Path(template_path)
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        backup_name = f"{path_obj.stem}_backup_{timestamp}{path_obj.suffix}"
+        
+        # Create backups folder within templates directory
+        backups_folder = path_obj.parent / "backups"
+        backups_folder.mkdir(exist_ok=True)
+        
+        backup_path = backups_folder / backup_name
+        
+        # Copy file
+        shutil.copy2(template_path, backup_path)
+        return str(backup_path)
+    
+    def _modify_master_slide_placeholders(self, template_path: str, mapping: dict) -> dict:
+        """
+        Modify master slide placeholder names using python-pptx.
+        
+        Args:
+            template_path: Path to PowerPoint template
+            mapping: JSON mapping with placeholder names
+            
+        Returns:
+            Dictionary with modification results
+        """
+        from pptx import Presentation
+        
+        modifications = {
+            "modified_count": 0,
+            "layout_count": 0,
+            "issues": [],
+            "changes": []
+        }
+        
+        # Load presentation
+        prs = Presentation(template_path)
+        layouts_mapping = mapping.get("layouts", {})
+        
+        # Access the slide master (this is the key change!)
+        slide_master = prs.slide_master
+        
+        # First, try to modify placeholders on the master slide itself
+        try:
+            for placeholder in slide_master.placeholders:
+                placeholder_idx = str(placeholder.placeholder_format.idx)
+                # Try to find this placeholder in any layout mapping
+                for layout_name, layout_info in layouts_mapping.items():
+                    placeholder_mapping = layout_info.get("placeholders", {})
+                    if placeholder_idx in placeholder_mapping:
+                        new_name = placeholder_mapping[placeholder_idx]
+                        old_name = placeholder.name
+                        try:
+                            placeholder.element.nvSpPr.cNvPr.name = new_name
+                            modifications["modified_count"] += 1
+                            modifications["changes"].append({
+                                "location": "master_slide",
+                                "placeholder_idx": placeholder_idx,
+                                "old_name": old_name,
+                                "new_name": new_name
+                            })
+                            break
+                        except Exception as e:
+                            modifications["issues"].append(f"Failed to modify master placeholder {placeholder_idx}: {str(e)}")
+        except Exception as e:
+            modifications["issues"].append(f"No direct master placeholders or error: {e}")
+        
+        # Process each slide layout in the master
+        for layout in slide_master.slide_layouts:
+            layout_name = layout.name
+            modifications["layout_count"] += 1
+            
+            if layout_name not in layouts_mapping:
+                modifications["issues"].append(f"Layout '{layout_name}' not found in mapping file")
+                continue
+            
+            layout_mapping = layouts_mapping[layout_name]
+            placeholder_mapping = layout_mapping.get("placeholders", {})
+            
+            # Modify placeholders in this master slide layout
+            for placeholder in layout.placeholders:
+                placeholder_idx = str(placeholder.placeholder_format.idx)
+                
+                if placeholder_idx in placeholder_mapping:
+                    new_name = placeholder_mapping[placeholder_idx]
+                    old_name = placeholder.name
+                    
+                    try:
+                        # Update placeholder name on the master slide layout
+                        if hasattr(placeholder, 'element') and hasattr(placeholder.element, 'nvSpPr'):
+                            placeholder.element.nvSpPr.cNvPr.name = new_name
+                            modifications["modified_count"] += 1
+                            modifications["changes"].append({
+                                "layout": layout_name,
+                                "placeholder_idx": placeholder_idx,
+                                "old_name": old_name,
+                                "new_name": new_name
+                            })
+                        else:
+                            modifications["issues"].append(f"Cannot modify placeholder {placeholder_idx} in {layout_name} - unsupported structure")
+                    except Exception as e:
+                        modifications["issues"].append(f"Failed to modify placeholder {placeholder_idx} in {layout_name}: {str(e)}")
+        
+        # Save modified presentation with .g.pptx extension
+        try:
+            # Generate enhanced template filename with .g.pptx convention
+            path_obj = Path(template_path)
+            enhanced_name = f"{path_obj.stem}.g{path_obj.suffix}"
+            enhanced_path = path_obj.parent / enhanced_name
+            
+            prs.save(str(enhanced_path))
+            modifications["enhanced_template_path"] = str(enhanced_path)
+        except Exception as e:
+            modifications["issues"].append(f"Failed to save enhanced template: {str(e)}")
+            
+        return modifications
 
 
 def main():
@@ -381,6 +571,8 @@ Examples:
   python cli_tools.py analyze default --verbose
   python cli_tools.py document default
   python cli_tools.py validate default
+  python cli_tools.py enhance default
+  python cli_tools.py enhance default --no-backup
   python cli_tools.py analyze default --template-folder ./templates --output-folder ./output
         """
     )
@@ -407,6 +599,12 @@ Examples:
     validate_parser = subparsers.add_parser('validate', help='Validate template and mappings')
     validate_parser.add_argument('template', help='Template name to validate')
     
+    # Enhance command
+    enhance_parser = subparsers.add_parser('enhance', help='Enhance template with corrected placeholder names (saves as .g.pptx)')
+    enhance_parser.add_argument('template', help='Template name to enhance')
+    enhance_parser.add_argument('--mapping-file', help='Custom JSON mapping file path')
+    enhance_parser.add_argument('--no-backup', action='store_true', help='Skip creating backup before modification')
+    
     args = parser.parse_args()
     
     if not args.command:
@@ -426,6 +624,9 @@ Examples:
         manager.document_template(args.template, getattr(args, 'doc_output', None))
     elif args.command == 'validate':
         manager.validate_template(args.template)
+    elif args.command == 'enhance':
+        create_backup = not args.no_backup
+        manager.enhance_template(args.template, args.mapping_file, create_backup)
 
 
 if __name__ == '__main__':

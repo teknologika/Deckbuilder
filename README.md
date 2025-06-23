@@ -188,6 +188,7 @@ This project follows a **content-first design philosophy** that prioritizes user
 - **`engine.py`** - Core Deckbuilder class for presentation management
 - **`structured_frontmatter.py`** - YAML frontmatter processing and layout mapping
 - **`placeholder_types.py`** - PowerPoint placeholder type definitions
+- **`cli_tools.py`** - Command-line template management utilities
 
 **`src/placekitten/`** - Image Processing Library (Planned)
 - **`__init__.py`** - PlaceKitten library placeholder
@@ -260,6 +261,120 @@ columns:
 5. **Return** success confirmation with file details
 
 This eliminates the need for multiple tool calls and provides immediate, ready-to-use PowerPoint files.
+
+## Template Management CLI Tools
+
+In addition to the MCP server, the project includes standalone command-line tools for template management. These tools operate independently and don't require the MCP server to be running.
+
+### Available CLI Commands
+
+#### 1. `analyze` - Template Structure Analysis
+**Purpose**: Analyze PowerPoint templates to extract layout and placeholder information
+
+```bash
+# Basic analysis
+python src/deckbuilder/cli_tools.py analyze default
+
+# Detailed analysis with verbose output
+python src/deckbuilder/cli_tools.py analyze default --verbose
+
+# Custom template and output folders
+python src/deckbuilder/cli_tools.py analyze default --template-folder ./templates --output-folder ./output
+```
+
+**Features**:
+- Extracts all slide layouts with placeholder mappings
+- Detects naming inconsistencies and validation issues
+- Generates JSON mapping files (`.g.json`) for customization
+- Provides specific PowerPoint editing instructions for fixes
+
+#### 2. `document` - Template Documentation Generation
+**Purpose**: Generate comprehensive documentation for templates
+
+```bash
+# Generate documentation for default template
+python src/deckbuilder/cli_tools.py document default
+
+# Custom documentation output path
+python src/deckbuilder/cli_tools.py document default --doc-output ./docs/MyTemplate.md
+```
+
+**Output**:
+- Complete layout specifications with placeholder details
+- Usage examples in both JSON and YAML formats
+- Template management instructions
+- Status tracking (JSON mapping, structured frontmatter support)
+
+#### 3. `validate` - Template and Mapping Validation
+**Purpose**: Validate template structure and JSON mappings
+
+```bash
+# Validate template and mappings
+python src/deckbuilder/cli_tools.py validate default
+```
+
+**Validation Checks**:
+- Template file accessibility
+- JSON mapping structure and completeness
+- Placeholder naming conventions
+- Column layout consistency
+- Comparison layout structure
+
+### CLI Tool Setup
+
+The CLI tools automatically detect template and output folders using this priority:
+
+1. **Command-line arguments**: `--template-folder` and `--output-folder`
+2. **Current directory**: Looks for `assets/templates` relative to current directory
+3. **Project root**: Falls back to project's default template location
+
+**Quick Setup**:
+```bash
+# From project root
+cd /path/to/deck-builder-mcp
+
+# Analyze default template (auto-detects paths)
+python src/deckbuilder/cli_tools.py analyze default --verbose
+
+# Generate documentation
+python src/deckbuilder/cli_tools.py document default
+
+# Validate everything
+python src/deckbuilder/cli_tools.py validate default
+```
+
+### Template Enhancement Workflow
+
+1. **Analyze**: Extract current template structure
+   ```bash
+   python src/deckbuilder/cli_tools.py analyze default --verbose
+   ```
+
+2. **Review Issues**: Check validation output for naming problems
+   - Column layouts with inconsistent numbering
+   - Duplicate placeholder names
+   - Missing required placeholders
+
+3. **Fix in PowerPoint**: 
+   - Open PowerPoint template file
+   - Go to View > Slide Master
+   - Use Selection Pane to rename placeholders
+   - Follow specific fix instructions from validation output
+
+4. **Re-analyze**: Verify fixes
+   ```bash
+   python src/deckbuilder/cli_tools.py analyze default --verbose
+   ```
+
+5. **Generate Documentation**: Create updated documentation
+   ```bash
+   python src/deckbuilder/cli_tools.py document default
+   ```
+
+The CLI tools provide detailed fix instructions for common issues like:
+- **Column Layout Fixes**: "In PowerPoint: Rename 'Col 1 Text Placeholder 3' → 'Col 1 Text Placeholder 2'"
+- **Naming Consistency**: Standardizing placeholder naming patterns
+- **Sequential Numbering**: Ensuring columns are numbered 1, 2, 3, 4 consistently
 
 ### Configuration Files
 

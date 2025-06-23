@@ -15,7 +15,8 @@ src/
 ├── deckbuilder/
 │   ├── engine.py           # Core presentation engine
 │   ├── structured_frontmatter.py  # YAML frontmatter processing
-│   └── placeholder_types.py       # PowerPoint placeholder definitions
+│   ├── placeholder_types.py       # PowerPoint placeholder definitions
+│   └── cli_tools.py        # Standalone template management CLI utilities
 ├── placekitten/
 │   └── __init__.py         # Image processing library (planned)
 └── assets/
@@ -45,13 +46,15 @@ tests/
 5. **Content Placement**: Slide content mapped to specific placeholders using JSON placeholder mappings
 6. **Output Generation**: Completed presentation saved as timestamped `.g.pptx` file
 
-### Template Analysis Flow
+### Template Analysis Flow (CLI Tools)
 
-1. **Template Analysis**: `mcp_server/tools.py` analyzes existing PowerPoint templates
+1. **Template Analysis**: `deckbuilder/cli_tools.py` provides standalone template management
 2. **Structure Extraction**: Discovers layout names, indices, and placeholder information
-3. **JSON Generation**: Creates `templateName.g.json` with raw extracted structure  
-4. **User Customization**: Users edit `.g.json` to map placeholders to semantic field names
-5. **Template Activation**: Users rename `.g.json` to `.json` to activate the mapping
+3. **Validation**: Detects naming inconsistencies and provides PowerPoint fix instructions
+4. **JSON Generation**: Creates `templateName.g.json` with raw extracted structure  
+5. **Documentation**: Auto-generates comprehensive template documentation
+6. **User Customization**: Users edit `.g.json` to map placeholders to semantic field names
+7. **Template Activation**: Users rename `.g.json` to `.json` to activate the mapping
 
 ## Core Components
 
@@ -69,8 +72,16 @@ tests/
 - **Content Rendering**: Supports rich text formatting, tables, and multimedia content
 - **Singleton Pattern**: Ensures consistent state across MCP tool calls
 
-### Template Analyzer (`tools.py`)
+### Template Management System
+#### Template Analyzer (`mcp_server/tools.py`)
 - **PowerPoint Inspection**: Extracts layout and placeholder information from .pptx files
+
+#### CLI Template Tools (`deckbuilder/cli_tools.py`)
+- **Standalone Operation**: Template management independent of MCP server
+- **Comprehensive Analysis**: Layout extraction with validation and fix suggestions
+- **Documentation Generation**: Auto-creates template specifications and usage examples
+- **Validation System**: Detects placeholder naming issues with PowerPoint editing instructions
+- **Environment Independence**: Smart path detection with command-line argument support
 - **JSON Generation**: Creates template mapping files with actual PowerPoint names
 - **Environment Integration**: Uses standard template and output folder paths
 - **Automation Support**: Enables template analysis via test scripts

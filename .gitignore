@@ -213,3 +213,7 @@ Screenshot*.jpeg
 # Test output folders
 tests/templates/
 tests/output/
+
+# Template backup files
+assets/templates/backups/
+*_backup_*.pptx

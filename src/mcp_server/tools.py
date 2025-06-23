@@ -198,7 +198,7 @@ class TemplateAnalyzer:
                 validation_results["errors"].extend([f"{layout_name}: {e}" for e in layout_errors])
         
         # Global validation checks
-        self._validate_global_consistency(all_placeholder_names, validation_results)
+        self._validate_global_consistency(all_placeholder_names, validation_results, layouts)
         
         return validation_results
     
@@ -307,23 +307,50 @@ class TemplateAnalyzer:
         if len(content_placeholders) < 2:
             errors.append("Comparison layout should have at least 2 content placeholders for left/right content")
     
-    def _validate_global_consistency(self, all_placeholder_names: list, validation_results: Dict) -> None:
+    def _validate_global_consistency(self, all_placeholder_names: list, validation_results: Dict, layouts: Dict = None) -> None:
         """Validate global consistency across all layouts."""
-        # Check for common naming inconsistencies
+        # Track patterns by layout for more specific reporting
+        layout_patterns = {}
         unique_patterns = set()
         
-        for name in all_placeholder_names:
-            # Identify naming patterns
-            if "placeholder" in name.lower():
-                # Extract pattern like "Text Placeholder", "Content Placeholder"
-                parts = name.split()
-                if len(parts) >= 2:
-                    pattern = f"{parts[0]} {parts[1]}"
-                    unique_patterns.add(pattern)
+        if layouts:
+            for layout_name, layout_info in layouts.items():
+                layout_patterns[layout_name] = set()
+                placeholders = layout_info.get('placeholders', {})
+                
+                for name in placeholders.values():
+                    if "placeholder" in str(name).lower():
+                        # Extract pattern like "Text Placeholder", "Content Placeholder"
+                        parts = str(name).split()
+                        if len(parts) >= 2:
+                            pattern = f"{parts[0]} {parts[1]}"
+                            layout_patterns[layout_name].add(pattern)
+                            unique_patterns.add(pattern)
+        else:
+            # Fallback to old method if layouts not provided
+            for name in all_placeholder_names:
+                if "placeholder" in name.lower():
+                    parts = name.split()
+                    if len(parts) >= 2:
+                        pattern = f"{parts[0]} {parts[1]}"
+                        unique_patterns.add(pattern)
         
         # Check for mixed naming conventions
         if len(unique_patterns) > 1:
-            validation_results["warnings"].append(f"Multiple placeholder naming patterns detected: {sorted(unique_patterns)}")
+            warning_msg = f"Multiple placeholder naming patterns detected: {sorted(unique_patterns)}"
+            
+            # Add specific layout information if available
+            if layouts and layout_patterns:
+                layouts_with_patterns = []
+                for layout_name, patterns in layout_patterns.items():
+                    if patterns:  # Only include layouts that have patterns
+                        pattern_list = sorted(patterns)
+                        layouts_with_patterns.append(f"{layout_name} ({', '.join(pattern_list)})")
+                
+                if layouts_with_patterns:
+                    warning_msg += f". Affected layouts: {'; '.join(layouts_with_patterns)}"
+            
+            validation_results["warnings"].append(warning_msg)
     
     def _print_validation_results(self, validation_results: Dict) -> None:
         """Print validation results to console with formatting."""
@@ -367,7 +394,7 @@ class TemplateAnalyzer:
             print("   • Follow naming conventions like 'Col 1 Title Placeholder 2'")
         
         print(f"\n📝 After fixing placeholder names in PowerPoint, regenerate the template mapping:")
-        print("   python test_tools.py")
+        print("   python src/deckbuilder/cli_tools.py analyze default --verbose")
         print("\n💡 The analyzer will show ✅ validation passed when all issues are resolved")
         print("="*60)
 

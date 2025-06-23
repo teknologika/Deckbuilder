@@ -221,6 +221,8 @@ Generated presentations should demonstrate:
   - [x] Generate markdown docs with layout tables
   - [x] Include placeholder details and usage examples
   - [x] Auto-sync with template analysis results
+  
+- [ ] **Update the user documentation
 
 **CLI Usage Examples:**
 ```bash
@@ -243,6 +245,7 @@ python src/deckbuilder/cli_tools.py analyze custom --template-folder ./my-templa
   - [ ] Implement `enhance_template` MCP tool
   - [ ] Add backup and versioning system
   - [ ] Test placeholder name updates on master slides
+  - [ ] Update the user documentation
 
 - [ ] **Convention-based naming system**
   - [ ] Define naming patterns for all layout types
@@ -263,6 +266,8 @@ python src/deckbuilder/cli_tools.py analyze custom --template-folder ./my-templa
   - [ ] Auto-generate YAML structures from JSON mappings
   - [ ] Unified registry for all 19 layouts
   - [ ] Backward compatibility with existing patterns
+
+  - [ ] Update the user documentation
 
 ### 📋 Future Enhancements
 - [ ] **Content-First MCP Tools**
