@@ -17,7 +17,7 @@ try:
     from deckbuilder.structured_frontmatter import (
         StructuredFrontmatterRegistry,
         StructuredFrontmatterConverter,
-        StructuredFrontmatterValidator
+        StructuredFrontmatterValidator,
     )
     from deckbuilder.layout_intelligence import LayoutIntelligence
     from deckbuilder.cli_tools import PlaceholderContext
@@ -42,29 +42,22 @@ def mock_deckbuilder_env(deckbuilder_temp_dir):
     output_dir = deckbuilder_temp_dir / "output"
     templates_dir.mkdir()
     output_dir.mkdir()
-    
+
     env_vars = {
-        'DECK_TEMPLATE_FOLDER': str(templates_dir),
-        'DECK_OUTPUT_FOLDER': str(output_dir),
-        'DECK_TEMPLATE_NAME': 'default'
+        "DECK_TEMPLATE_FOLDER": str(templates_dir),
+        "DECK_OUTPUT_FOLDER": str(output_dir),
+        "DECK_TEMPLATE_NAME": "default",
     }
-    
+
     with patch.dict(os.environ, env_vars):
-        yield {
-            'templates_dir': templates_dir,
-            'output_dir': output_dir,
-            'env_vars': env_vars
-        }
+        yield {"templates_dir": templates_dir, "output_dir": output_dir, "env_vars": env_vars}
 
 
 @pytest.fixture
 def default_template_json():
     """Default template JSON for testing."""
     return {
-        "template_info": {
-            "name": "Default",
-            "version": "1.0"
-        },
+        "template_info": {"name": "Default", "version": "1.0"},
         "layouts": {
             "Title Slide": {
                 "index": 0,
@@ -73,8 +66,8 @@ def default_template_json():
                     "1": "subtitle_1",
                     "10": "date_footer_1",
                     "11": "footer_footer_1",
-                    "12": "slide_number_footer_1"
-                }
+                    "12": "slide_number_footer_1",
+                },
             },
             "Title and Content": {
                 "index": 1,
@@ -83,8 +76,8 @@ def default_template_json():
                     "1": "content_1",
                     "10": "date_footer_1",
                     "11": "footer_footer_1",
-                    "12": "slide_number_footer_1"
-                }
+                    "12": "slide_number_footer_1",
+                },
             },
             "Four Columns With Titles": {
                 "index": 2,
@@ -100,8 +93,8 @@ def default_template_json():
                     "8": "content_col4_1",
                     "10": "date_footer_1",
                     "11": "footer_footer_1",
-                    "12": "slide_number_footer_1"
-                }
+                    "12": "slide_number_footer_1",
+                },
             },
             "Comparison": {
                 "index": 3,
@@ -113,8 +106,8 @@ def default_template_json():
                     "4": "content_right_1",
                     "10": "date_footer_1",
                     "11": "footer_footer_1",
-                    "12": "slide_number_footer_1"
-                }
+                    "12": "slide_number_footer_1",
+                },
             },
             "Two Content": {
                 "index": 4,
@@ -124,10 +117,10 @@ def default_template_json():
                     "2": "content_right_1",
                     "10": "date_footer_1",
                     "11": "footer_footer_1",
-                    "12": "slide_number_footer_1"
-                }
-            }
-        }
+                    "12": "slide_number_footer_1",
+                },
+            },
+        },
     }
 
 
@@ -148,7 +141,7 @@ def placeholder_context():
         layout_index=0,
         placeholder_index=1,
         placeholder_type="content",
-        layout_name="Four Columns With Titles"
+        layout_name="Four Columns With Titles",
     )
 
 
@@ -185,21 +178,14 @@ def layout_intelligence():
     test_intelligence_data = {
         "content_patterns": {
             "intent_recognition": {
-                "comparison": {
-                    "keywords": ["vs", "versus", "compare", "comparison"]
-                },
-                "overview": {
-                    "keywords": ["overview", "summary", "introduction"]
-                }
+                "comparison": {"keywords": ["vs", "versus", "compare", "comparison"]},
+                "overview": {"keywords": ["overview", "summary", "introduction"]},
             }
         },
         "layout_compatibility": {
             "Four Columns With Titles": {
                 "optimal_for": ["multiple_columns", "comparison"],
-                "confidence_factors": {
-                    "columns": 0.8,
-                    "titles": 0.6
-                }
+                "confidence_factors": {"columns": 0.8, "titles": 0.6},
             }
         },
         "recommendation_engine": {
@@ -207,18 +193,19 @@ def layout_intelligence():
                 "content_structure": 0.4,
                 "keyword_matching": 0.3,
                 "intent_recognition": 0.2,
-                "layout_compatibility": 0.1
+                "layout_compatibility": 0.1,
             },
-            "minimum_confidence": 0.6
-        }
+            "minimum_confidence": 0.6,
+        },
     }
-    
+
     # Create temporary intelligence file
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
         import json
+
         json.dump(test_intelligence_data, f)
         temp_file = f.name
-    
+
     try:
         intelligence = LayoutIntelligence(temp_file)
         yield intelligence
@@ -251,8 +238,8 @@ def sample_structured_frontmatter():
             {"title": "Performance", "content": "Fast processing"},
             {"title": "Security", "content": "Enterprise encryption"},
             {"title": "Usability", "content": "Intuitive interface"},
-            {"title": "Cost", "content": "Competitive pricing"}
-        ]
+            {"title": "Cost", "content": "Competitive pricing"},
+        ],
     }
 
 
@@ -263,14 +250,14 @@ def mock_pptx_presentation():
     mock_slide = Mock()
     mock_layout = Mock()
     mock_placeholder = Mock()
-    
+
     # Set up basic mock structure
     mock_pres.slides = [mock_slide]
     mock_slide.slide_layout = mock_layout
     mock_layout.placeholders = [mock_placeholder]
     mock_placeholder.text = ""
     mock_placeholder.placeholder_format.idx = 1
-    
+
     return mock_pres
 
 
@@ -284,12 +271,7 @@ def sample_presentation_json():
                     "type": "Title Slide",
                     "layout": "Title Slide",
                     "title": "Test Presentation",
-                    "rich_content": [
-                        {
-                            "heading": "Testing Framework",
-                            "level": 2
-                        }
-                    ]
+                    "rich_content": [{"heading": "Testing Framework", "level": 2}],
                 },
                 {
                     "type": "Four Columns With Titles",
@@ -298,11 +280,11 @@ def sample_presentation_json():
                     "content_col1_1": "Fast processing with optimized algorithms",
                     "title_col2_1": "Security",
                     "content_col2_1": "Enterprise-grade encryption",
-                    "title_col3_1": "Usability", 
+                    "title_col3_1": "Usability",
                     "content_col3_1": "Intuitive interface",
                     "title_col4_1": "Cost",
-                    "content_col4_1": "Competitive pricing"
-                }
+                    "content_col4_1": "Competitive pricing",
+                },
             ]
         }
     }
@@ -313,7 +295,8 @@ def create_test_template_file(template_dir: Path, template_name: str, template_d
     """Create a test template JSON file."""
     template_file = template_dir / f"{template_name}.json"
     import json
-    with open(template_file, 'w') as f:
+
+    with open(template_file, "w") as f:
         json.dump(template_data, f, indent=2)
     return template_file
 
@@ -321,11 +304,12 @@ def create_test_template_file(template_dir: Path, template_name: str, template_d
 def create_test_pptx_file(output_dir: Path, filename: str) -> Path:
     """Create a test PowerPoint file."""
     from pptx import Presentation
+
     pres = Presentation()
     slide = pres.slides.add_slide(pres.slide_layouts[0])
     title = slide.shapes.title
     title.text = "Test Slide"
-    
+
     pptx_file = output_dir / filename
     pres.save(str(pptx_file))
     return pptx_file

@@ -1,7 +1,7 @@
 """
 PlaceKitten - Intelligent Image Processing Library
 
-A comprehensive Python library for intelligent image cropping, filtering, 
+A comprehensive Python library for intelligent image cropping, filtering,
 and placeholder generation with computer vision capabilities.
 """
 

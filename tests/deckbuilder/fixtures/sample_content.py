@@ -4,9 +4,12 @@ Sample content fixtures for deckbuilder testing.
 
 import pytest
 from tests.utils.content_generator import (
-    ContentGenerator, ContentType, ContentLength,
-    get_sample_business_content, get_sample_technical_content,
-    get_formatted_content_samples
+    ContentGenerator,
+    ContentType,
+    ContentLength,
+    get_sample_business_content,
+    get_sample_technical_content,
+    get_formatted_content_samples,
 )
 
 
@@ -61,7 +64,7 @@ def three_column_content(content_generator):
 @pytest.fixture
 def comparison_content(content_generator):
     """Content for comparison layouts."""
-    return content_generator.build_comparison_content('features', ContentType.BUSINESS)
+    return content_generator.build_comparison_content("features", ContentType.BUSINESS)
 
 
 @pytest.fixture
@@ -90,5 +93,5 @@ def content_length_variations(request):
 
 @pytest.fixture(params=[ContentType.BUSINESS, ContentType.TECHNICAL, ContentType.MARKETING])
 def content_type_variations(request):
-    """Parameterized fixture for different content types.""" 
+    """Parameterized fixture for different content types."""
     return request.param

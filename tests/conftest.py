@@ -41,19 +41,19 @@ def temp_dir():
 def mock_env_vars():
     """Mock environment variables for testing."""
     original_env = os.environ.copy()
-    
+
     # Set test environment variables
     test_env = {
         "DECK_TEMPLATE_FOLDER": str(Path(__file__).parent / "fixtures" / "sample_templates"),
         "DECK_OUTPUT_FOLDER": str(Path(__file__).parent / "fixtures" / "test_outputs"),
-        "DECK_TEMPLATE_NAME": "default"
+        "DECK_TEMPLATE_NAME": "default",
     }
-    
+
     for key, value in test_env.items():
         os.environ[key] = value
-    
+
     yield test_env
-    
+
     # Restore original environment
     os.environ.clear()
     os.environ.update(original_env)
@@ -63,10 +63,7 @@ def mock_env_vars():
 def sample_template_json():
     """Basic template JSON structure for testing."""
     return {
-        "template_info": {
-            "name": "Test Template",
-            "version": "1.0"
-        },
+        "template_info": {"name": "Test Template", "version": "1.0"},
         "layouts": {
             "Title Slide": {
                 "index": 0,
@@ -75,8 +72,8 @@ def sample_template_json():
                     "1": "subtitle_1",
                     "10": "date_footer_1",
                     "11": "footer_footer_1",
-                    "12": "slide_number_footer_1"
-                }
+                    "12": "slide_number_footer_1",
+                },
             },
             "Four Columns With Titles": {
                 "index": 1,
@@ -92,8 +89,8 @@ def sample_template_json():
                     "8": "content_col4_1",
                     "10": "date_footer_1",
                     "11": "footer_footer_1",
-                    "12": "slide_number_footer_1"
-                }
+                    "12": "slide_number_footer_1",
+                },
             },
             "Comparison": {
                 "index": 2,
@@ -105,10 +102,10 @@ def sample_template_json():
                     "4": "content_right_1",
                     "10": "date_footer_1",
                     "11": "footer_footer_1",
-                    "12": "slide_number_footer_1"
-                }
-            }
-        }
+                    "12": "slide_number_footer_1",
+                },
+            },
+        },
     }
 
 
@@ -122,25 +119,20 @@ def sample_presentation_data():
                     "type": "Title Slide",
                     "layout": "Title Slide",
                     "title": "Test Presentation",
-                    "rich_content": [
-                        {
-                            "heading": "Testing Framework Implementation",
-                            "level": 2
-                        }
-                    ]
+                    "rich_content": [{"heading": "Testing Framework Implementation", "level": 2}],
                 },
                 {
                     "type": "Four Columns With Titles",
                     "title": "Four Column Test",
                     "title_col1_1": "Performance",
                     "content_col1_1": "Fast processing with optimized algorithms",
-                    "title_col2_1": "Security", 
+                    "title_col2_1": "Security",
                     "content_col2_1": "Enterprise-grade encryption",
                     "title_col3_1": "Usability",
                     "content_col3_1": "Intuitive interface",
                     "title_col4_1": "Cost",
-                    "content_col4_1": "Competitive pricing"
-                }
+                    "content_col4_1": "Competitive pricing",
+                },
             ]
         }
     }
@@ -171,10 +163,10 @@ def formatted_content_samples():
     """Sample content with various formatting."""
     return {
         "bold": "**Bold text** for emphasis",
-        "italic": "*Italic text* for subtle emphasis", 
+        "italic": "*Italic text* for subtle emphasis",
         "underline": "___Underlined text___ for highlighting",
         "combined": "***Bold and italic*** with ___underline___ combinations",
-        "mixed": "Regular text with **bold**, *italic*, and ___underlined___ parts"
+        "mixed": "Regular text with **bold**, *italic*, and ___underlined___ parts",
     }
 
 
@@ -187,11 +179,11 @@ def table_data_sample():
             ["Authentication", "**Complete**", "*High*"],
             ["User Management", "***In Progress***", "___Medium___"],
             ["Reporting", "*Planned*", "**Low**"],
-            ["API Integration", "___Blocked___", "***Critical***"]
+            ["API Integration", "___Blocked___", "***Critical***"],
         ],
         "header_style": "dark_blue_white_text",
         "row_style": "alternating_light_gray",
-        "border_style": "thin_gray"
+        "border_style": "thin_gray",
     }
 
 
@@ -199,18 +191,18 @@ def table_data_sample():
 def create_test_file(path: Path, content: str) -> Path:
     """Create a test file with given content."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(content, encoding='utf-8')
+    path.write_text(content, encoding="utf-8")
     return path
 
 
 def load_json_file(path: Path) -> Dict[str, Any]:
     """Load JSON file safely."""
-    with open(path, 'r', encoding='utf-8') as f:
+    with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
 def save_json_file(path: Path, data: Dict[str, Any]) -> None:
     """Save data to JSON file."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, 'w', encoding='utf-8') as f:
+    with open(path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)

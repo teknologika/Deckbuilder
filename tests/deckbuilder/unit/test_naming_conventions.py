@@ -9,6 +9,7 @@ from unittest.mock import Mock
 try:
     from deckbuilder.naming_conventions import NamingConvention, PlaceholderPattern
     from deckbuilder.cli_tools import PlaceholderContext
+
     HAS_NAMING_CONVENTIONS = True
 except ImportError:
     HAS_NAMING_CONVENTIONS = False
@@ -19,30 +20,33 @@ except ImportError:
 @pytest.mark.deckbuilder
 class TestNamingConvention:
     """Test cases for NamingConvention class."""
-    
+
     def test_initialization(self, naming_convention):
         """Test NamingConvention initialization."""
         assert naming_convention is not None
-        assert hasattr(naming_convention, 'generate_placeholder_name')
-        assert hasattr(naming_convention, 'layout_mappings')
-    
-    @pytest.mark.parametrize("layout_name,expected_pattern", [
-        ("Four Columns With Titles", "title_col1_1"),
-        ("Comparison", "title_left_1"),
-        ("Two Content", "content_left_1"),
-        ("Title and Content", "content_1")
-    ])
+        assert hasattr(naming_convention, "generate_placeholder_name")
+        assert hasattr(naming_convention, "layout_mappings")
+
+    @pytest.mark.parametrize(
+        "layout_name,expected_pattern",
+        [
+            ("Four Columns With Titles", "title_col1_1"),
+            ("Comparison", "title_left_1"),
+            ("Two Content", "content_left_1"),
+            ("Title and Content", "content_1"),
+        ],
+    )
     def test_convention_generation_patterns(self, naming_convention, layout_name, expected_pattern):
         """Test convention-based placeholder naming patterns."""
         context = PlaceholderContext(
             layout_index=0,
             placeholder_index=0,
             placeholder_type="title" if "title" in expected_pattern else "content",
-            layout_name=layout_name
+            layout_name=layout_name,
         )
-        
+
         result = naming_convention.generate_placeholder_name(context)
-        
+
         # Check that result follows expected pattern structure
         if "col1" in expected_pattern:
             assert "col1" in result
@@ -52,7 +56,7 @@ class TestNamingConvention:
             assert result.startswith("title_")
         if result.startswith("content"):
             assert result.startswith("content_")
-    
+
     def test_multi_tier_detection_confidence(self, naming_convention):
         """Test 5-tier detection system with confidence scoring."""
         # Test different context scenarios for confidence scoring
@@ -62,88 +66,88 @@ class TestNamingConvention:
             # Medium confidence - type-based detection
             PlaceholderContext(0, 1, "content", "Unknown Layout"),
             # Lower confidence - position-based inference
-            PlaceholderContext(0, 5, "unknown", "Custom Layout")
+            PlaceholderContext(0, 5, "unknown", "Custom Layout"),
         ]
-        
+
         results = []
         for context in contexts:
             result = naming_convention.generate_placeholder_name(context)
             results.append(result)
-        
+
         # Verify all results are valid placeholder names
         for result in results:
             assert isinstance(result, str)
             assert len(result) > 0
             assert "_" in result  # Convention-based names should have underscores
-    
+
     def test_column_layout_naming(self, naming_convention):
         """Test naming for column-based layouts."""
         layout_name = "Four Columns With Titles"
-        
+
         # Test title placeholders for columns
         for col_num in range(1, 5):
             context = PlaceholderContext(
                 layout_index=0,
                 placeholder_index=col_num * 2 - 2,  # Even indices for titles
                 placeholder_type="title",
-                layout_name=layout_name
+                layout_name=layout_name,
             )
             result = naming_convention.generate_placeholder_name(context)
             assert f"col{col_num}" in result
             assert "title" in result
-        
-        # Test content placeholders for columns  
+
+        # Test content placeholders for columns
         for col_num in range(1, 5):
             context = PlaceholderContext(
                 layout_index=0,
                 placeholder_index=col_num * 2 - 1,  # Odd indices for content
                 placeholder_type="content",
-                layout_name=layout_name
+                layout_name=layout_name,
             )
             result = naming_convention.generate_placeholder_name(context)
             assert f"col{col_num}" in result
             assert "content" in result
-    
+
     def test_comparison_layout_naming(self, naming_convention):
         """Test naming for comparison layouts."""
         layout_name = "Comparison"
-        
+
         # Test left side placeholders
         left_title_context = PlaceholderContext(0, 0, "title", layout_name)
         left_content_context = PlaceholderContext(0, 1, "content", layout_name)
-        
+
         left_title = naming_convention.generate_placeholder_name(left_title_context)
         left_content = naming_convention.generate_placeholder_name(left_content_context)
-        
+
         assert "left" in left_title
         assert "left" in left_content
         assert "title" in left_title
         assert "content" in left_content
-        
+
         # Test right side placeholders
         right_title_context = PlaceholderContext(0, 2, "title", layout_name)
         right_content_context = PlaceholderContext(0, 3, "content", layout_name)
-        
+
         right_title = naming_convention.generate_placeholder_name(right_title_context)
         right_content = naming_convention.generate_placeholder_name(right_content_context)
-        
+
         assert "right" in right_title
         assert "right" in right_content
         assert "title" in right_title
         assert "content" in right_content
-    
+
     def test_footer_element_naming(self, naming_convention):
         """Test naming for footer elements."""
         context = PlaceholderContext(
             layout_index=0,
             placeholder_index=10,  # Footer placeholder index
             placeholder_type="footer",
-            layout_name="Title Slide"
+            layout_name="Title Slide",
         )
-        
+
         result = naming_convention.generate_placeholder_name(context)
         assert "footer" in result
-    
+
     def test_semantic_type_detection(self, naming_convention):
         """Test semantic type detection in naming."""
         test_cases = [
@@ -153,42 +157,42 @@ class TestNamingConvention:
             ("image", "image_"),
             ("text", "text_"),
             ("date", "date_"),
-            ("slide_number", "slide_number_")
+            ("slide_number", "slide_number_"),
         ]
-        
+
         for placeholder_type, expected_prefix in test_cases:
             context = PlaceholderContext(
                 layout_index=0,
                 placeholder_index=1,
                 placeholder_type=placeholder_type,
-                layout_name="Title and Content"
+                layout_name="Title and Content",
             )
-            
+
             result = naming_convention.generate_placeholder_name(context)
             assert result.startswith(expected_prefix)
-    
+
     def test_position_inference(self, naming_convention):
         """Test position-based naming inference."""
         # Test different positions and their inferred meanings
         position_tests = [
-            (0, "top"),    # First position usually top/main
-            (1, "main"),   # Second position usually main content
-            (10, "footer") # High index usually footer
+            (0, "top"),  # First position usually top/main
+            (1, "main"),  # Second position usually main content
+            (10, "footer"),  # High index usually footer
         ]
-        
+
         for placeholder_index, expected_position in position_tests:
             context = PlaceholderContext(
                 layout_index=0,
                 placeholder_index=placeholder_index,
                 placeholder_type="unknown",
-                layout_name="Custom Layout"
+                layout_name="Custom Layout",
             )
-            
+
             result = naming_convention.generate_placeholder_name(context)
             # Result should contain position indicator or be a valid fallback
             assert isinstance(result, str)
             assert len(result) > 0
-    
+
     def test_fallback_naming(self, naming_convention):
         """Test fallback naming for unknown scenarios."""
         # Test with completely unknown context
@@ -196,51 +200,51 @@ class TestNamingConvention:
             layout_index=99,
             placeholder_index=999,
             placeholder_type="unknown",
-            layout_name="Completely Unknown Layout"
+            layout_name="Completely Unknown Layout",
         )
-        
+
         result = naming_convention.generate_placeholder_name(context)
-        
+
         # Should still generate a valid placeholder name
         assert isinstance(result, str)
         assert len(result) > 0
         assert "_" in result
-        
+
         # Should follow basic convention format
         parts = result.split("_")
         assert len(parts) >= 2  # At least type_position or similar
-    
+
     def test_consistent_naming(self, naming_convention):
         """Test that naming is consistent for same inputs."""
         context = PlaceholderContext(
             layout_index=0,
             placeholder_index=1,
             placeholder_type="content",
-            layout_name="Four Columns With Titles"
+            layout_name="Four Columns With Titles",
         )
-        
+
         # Generate name multiple times
         result1 = naming_convention.generate_placeholder_name(context)
         result2 = naming_convention.generate_placeholder_name(context)
         result3 = naming_convention.generate_placeholder_name(context)
-        
+
         # Should be identical
         assert result1 == result2 == result3
-    
+
     def test_unique_naming_for_different_contexts(self, naming_convention):
         """Test that different contexts generate different names."""
         contexts = [
             PlaceholderContext(0, 1, "content", "Four Columns With Titles"),
             PlaceholderContext(0, 2, "content", "Four Columns With Titles"),
             PlaceholderContext(0, 1, "title", "Four Columns With Titles"),
-            PlaceholderContext(0, 1, "content", "Comparison")
+            PlaceholderContext(0, 1, "content", "Comparison"),
         ]
-        
+
         results = []
         for context in contexts:
             result = naming_convention.generate_placeholder_name(context)
             results.append(result)
-        
+
         # All results should be different
         assert len(set(results)) == len(results), f"Found duplicate names: {results}"
 
@@ -250,26 +254,26 @@ class TestNamingConvention:
 @pytest.mark.deckbuilder
 class TestPlaceholderContext:
     """Test cases for PlaceholderContext dataclass."""
-    
+
     def test_placeholder_context_creation(self):
         """Test PlaceholderContext creation."""
         context = PlaceholderContext(
             layout_index=1,
             placeholder_index=5,
             placeholder_type="content",
-            layout_name="Test Layout"
+            layout_name="Test Layout",
         )
-        
+
         assert context.layout_index == 1
         assert context.placeholder_index == 5
         assert context.placeholder_type == "content"
         assert context.layout_name == "Test Layout"
-    
+
     def test_placeholder_context_equality(self):
         """Test PlaceholderContext equality comparison."""
         context1 = PlaceholderContext(0, 1, "content", "Layout")
         context2 = PlaceholderContext(0, 1, "content", "Layout")
         context3 = PlaceholderContext(0, 2, "content", "Layout")
-        
+
         assert context1 == context2
         assert context1 != context3
