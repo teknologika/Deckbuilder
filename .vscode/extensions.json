@@ -1,0 +1,41 @@
+{
+    "recommendations": [
+        // Python development
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-python.black-formatter",
+        "ms-python.flake8",
+        
+        // Testing
+        "littlefoxteam.vscode-python-test-adapter",
+        "hbenl.vscode-test-explorer",
+        "ryanluker.vscode-coverage-gutters",
+        
+        // Code quality
+        "ms-python.isort",
+        "charliermarsh.ruff",
+        "ms-python.mypy-type-checker",
+        
+        // Documentation
+        "yzhang.markdown-all-in-one",
+        "DavidAnson.vscode-markdownlint",
+        "redhat.vscode-yaml",
+        
+        // Git integration
+        "eamodio.gitlens",
+        "github.vscode-pull-request-github",
+        
+        // Utilities
+        "ms-vscode.vscode-json",
+        "tamasfe.even-better-toml",
+        "ms-vsliveshare.vsliveshare",
+        
+        // File handling
+        "vscode-icons-team.vscode-icons",
+        "christian-kohler.path-intellisense",
+        
+        // Environment management
+        "ms-vscode-remote.remote-containers",
+        "ms-vscode.remote-explorer"
+    ]
+}

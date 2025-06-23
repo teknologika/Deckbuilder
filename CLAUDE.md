@@ -52,6 +52,11 @@ source venv/bin/activate
 
 ## Design Approach
 
+# How you work
+1. Design a feature first, remind me to put you into plan-only mode
+2. Save that design into ./docs/Features/feature_name.md
+3. At the bottom of the design put a TODO which you implement as we go. 
+
 This project follows a **content-first methodology**:
 1. **Understand user content and communication goals first**
 2. **Recommend presentation structure based on message intent**  

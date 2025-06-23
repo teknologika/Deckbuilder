@@ -1,0 +1,64 @@
+{
+    "folders": [
+        {
+            "name": "Deck Builder MCP",
+            "path": "."
+        }
+    ],
+    "settings": {
+        // Inherit from .vscode/settings.json but can override here
+        "python.testing.pytestEnabled": true,
+        "python.testing.unittestEnabled": false,
+        
+        // Workspace-specific overrides
+        "files.watcherExclude": {
+            "**/venv/**": true,
+            "**/__pycache__/**": true,
+            "**/htmlcov/**": true,
+            "**/.pytest_cache/**": true,
+            "**/tests/output/**": true
+        }
+    },
+    "extensions": {
+        "recommendations": [
+            "ms-python.python",
+            "ms-python.vscode-pylance", 
+            "ryanluker.vscode-coverage-gutters",
+            "yzhang.markdown-all-in-one",
+            "redhat.vscode-yaml"
+        ]
+    },
+    "tasks": {
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "label": "Setup Development Environment",
+                "type": "shell",
+                "command": "python",
+                "args": ["-m", "venv", "venv"],
+                "group": "build",
+                "presentation": {
+                    "echo": true,
+                    "reveal": "always",
+                    "focus": false,
+                    "panel": "shared"
+                },
+                "dependsOrder": "sequence",
+                "dependsOn": ["Install Dependencies"]
+            },
+            {
+                "label": "Install Dependencies", 
+                "type": "shell",
+                "command": "./venv/bin/pip",
+                "args": ["install", "-r", "requirements.txt"],
+                "group": "build",
+                "presentation": {
+                    "echo": true,
+                    "reveal": "always",
+                    "focus": false,
+                    "panel": "shared"
+                }
+            }
+        ]
+    }
+}

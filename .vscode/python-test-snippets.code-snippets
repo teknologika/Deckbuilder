@@ -1,0 +1,173 @@
+{
+    "Pytest Test Class": {
+        "prefix": "testclass",
+        "body": [
+            "@pytest.mark.${1:unit}",
+            "@pytest.mark.${2:deckbuilder}",
+            "class Test${3:ClassName}:",
+            "    \"\"\"Test cases for ${3:ClassName}.\"\"\"",
+            "    ",
+            "    def test_${4:method_name}(self${5:, fixture_name}):",
+            "        \"\"\"Test ${4:method_name} functionality.\"\"\"",
+            "        ${6:# Arrange}",
+            "        ${7:pass}",
+            "        ",
+            "        ${8:# Act}",
+            "        ${9:pass}",
+            "        ",
+            "        ${10:# Assert}",
+            "        ${11:assert True}",
+            "$0"
+        ],
+        "description": "Create a pytest test class with decorators"
+    },
+    "Pytest Test Method": {
+        "prefix": "testmethod",
+        "body": [
+            "def test_${1:method_name}(self${2:, fixture_name}):",
+            "    \"\"\"Test ${1:method_name} functionality.\"\"\"",
+            "    ${3:# Arrange}",
+            "    ${4:pass}",
+            "    ",
+            "    ${5:# Act}",
+            "    ${6:pass}",
+            "    ",
+            "    ${7:# Assert}",
+            "    ${8:assert True}",
+            "$0"
+        ],
+        "description": "Create a pytest test method"
+    },
+    "Pytest Parametrize": {
+        "prefix": "parametrize",
+        "body": [
+            "@pytest.mark.parametrize(\"${1:param_name}\", [",
+            "    ${2:value1},",
+            "    ${3:value2},",
+            "    ${4:value3}",
+            "])",
+            "def test_${5:method_name}(self, ${1:param_name}):",
+            "    \"\"\"Test ${5:method_name} with different parameters.\"\"\"",
+            "    ${6:assert ${1:param_name} is not None}",
+            "$0"
+        ],
+        "description": "Create a parametrized test"
+    },
+    "Pytest Fixture": {
+        "prefix": "fixture",
+        "body": [
+            "@pytest.fixture${1:(scope=\"${2:function}\")}",
+            "def ${3:fixture_name}():",
+            "    \"\"\"${4:Fixture description}.\"\"\"",
+            "    ${5:# Setup}",
+            "    ${6:value = None}",
+            "    ${7:yield value}",
+            "    ${8:# Teardown}",
+            "    ${9:pass}",
+            "$0"
+        ],
+        "description": "Create a pytest fixture"
+    },
+    "Content Generator Test": {
+        "prefix": "contenttest",
+        "body": [
+            "def test_${1:content_generation}(self, content_generator):",
+            "    \"\"\"Test ${1:content_generation} functionality.\"\"\"",
+            "    # Generate content",
+            "    content = content_generator.${2:build_column_content}(${3:4}, ContentType.${4:BUSINESS})",
+            "    ",
+            "    # Validate structure",
+            "    assert isinstance(content, list)",
+            "    assert len(content) == ${3:4}",
+            "    ",
+            "    # Validate content items",
+            "    for item in content:",
+            "        assert \"${5:title}\" in item",
+            "        assert \"${6:content}\" in item",
+            "        assert isinstance(item[\"${5:title}\"], str)",
+            "        assert len(item[\"${6:content}\"]) > 0",
+            "$0"
+        ],
+        "description": "Create a content generator test"
+    },
+    "PowerPoint Validation Test": {
+        "prefix": "pptxtest",
+        "body": [
+            "def test_${1:pptx_validation}(self, ${2:temp_dir}):",
+            "    \"\"\"Test PowerPoint validation functionality.\"\"\"",
+            "    from tests.utils.pptx_validator import PowerPointValidator",
+            "    ",
+            "    # Create test presentation",
+            "    pptx_path = ${2:temp_dir} / \"test.pptx\"",
+            "    ${3:# Create PPTX file}",
+            "    ",
+            "    # Expected content",
+            "    expected_content = {",
+            "        \"presentation\": {",
+            "            \"slides\": [",
+            "                {",
+            "                    \"type\": \"${4:Title Slide}\",",
+            "                    \"title\": \"${5:Test Title}\"",
+            "                }",
+            "            ]",
+            "        }",
+            "    }",
+            "    ",
+            "    # Validate",
+            "    validator = PowerPointValidator()",
+            "    report = validator.validate_presentation(pptx_path, expected_content)",
+            "    ",
+            "    # Assert results",
+            "    assert report.overall_result == ValidationResult.${6:PASS}",
+            "    assert report.failed_checks == 0",
+            "$0"
+        ],
+        "description": "Create a PowerPoint validation test"
+    },
+    "Template Test Generator Test": {
+        "prefix": "templatetest",
+        "body": [
+            "def test_${1:template_generation}(self, ${2:temp_dir}, ${3:default_template_json}):",
+            "    \"\"\"Test template test generation functionality.\"\"\"",
+            "    from tests.utils.template_test_generator import TemplateTestGenerator",
+            "    ",
+            "    # Save template to file",
+            "    template_file = ${2:temp_dir} / \"test_template.json\"",
+            "    with open(template_file, 'w') as f:",
+            "        json.dump(${3:default_template_json}, f, indent=2)",
+            "    ",
+            "    # Generate test files",
+            "    generator = TemplateTestGenerator()",
+            "    output_dir = ${2:temp_dir} / \"generated\"",
+            "    ",
+            "    report = generator.generate_test_files(template_file, output_dir)",
+            "    ",
+            "    # Validate generation",
+            "    assert report.template_name == \"${4:Default}\"",
+            "    assert len(report.generated_files) > 0",
+            "    assert report.coverage_percentage > 0",
+            "    ",
+            "    # Verify files exist",
+            "    for generated_file in report.generated_files:",
+            "        assert generated_file.file_path.exists()",
+            "$0"
+        ],
+        "description": "Create a template test generator test"
+    },
+    "Mock Environment Setup": {
+        "prefix": "mockenv",
+        "body": [
+            "@patch.dict(os.environ, {",
+            "    'DECK_TEMPLATE_FOLDER': '${1:/path/to/templates}',",
+            "    'DECK_OUTPUT_FOLDER': '${2:/path/to/output}',",
+            "    'DECK_TEMPLATE_NAME': '${3:default}'",
+            "})",
+            "def test_${4:with_environment}(self):",
+            "    \"\"\"Test functionality with mocked environment.\"\"\"",
+            "    ${5:# Test implementation}",
+            "    ${6:pass}",
+            "$0"
+        ],
+        "description": "Create a test with mocked environment variables"
+    }
+}

@@ -147,11 +147,7 @@ columns:
                 }
             },
             "mapping_rules": {
-                "title": "semantic:title",
-                "comparison.left.title": "Text Placeholder 2",
-                "comparison.left.content": "Content Placeholder 3",
-                "comparison.right.title": "Text Placeholder 4",
-                "comparison.right.content": "Content Placeholder 5"
+                "title": "semantic:title"
             },
             "validation": {
                 "required_fields": ["title", "comparison"],
@@ -181,9 +177,7 @@ comparison:
                 ]
             },
             "mapping_rules": {
-                "title": "semantic:title",
-                "sections[0].content": "Content Placeholder 2",
-                "sections[1].content": "Content Placeholder 3"
+                "title": "semantic:title"
             },
             "validation": {
                 "required_fields": ["title", "sections"],
@@ -218,7 +212,6 @@ sections:
             },
             "mapping_rules": {
                 "title": "semantic:title",
-                "media.caption": "Text Placeholder 3",
                 "media.description": "semantic:content"
             },
             "validation": {
@@ -234,6 +227,82 @@ media:
     • Frontend: React-based interface
     • API: RESTful services
     • Database: PostgreSQL with Redis
+---"""
+        },
+        
+        "Agenda, 6 Textboxes": {
+            "structure_type": "agenda",
+            "description": "Six-item agenda layout with numbered items",
+            "yaml_pattern": {
+                "layout": "Agenda, 6 Textboxes",
+                "title": str,
+                "agenda": [
+                    {"number": str, "item": str}
+                ]
+            },
+            "validation": {
+                "required_fields": ["title", "agenda"],
+                "max_items": 6
+            },
+            "example": """---
+layout: Agenda, 6 Textboxes
+title: Meeting Agenda
+agenda:
+  - number: "01"
+    item: Opening remarks
+  - number: "02"
+    item: Market analysis
+---"""
+        },
+        
+        "Title and 6-item Lists": {
+            "structure_type": "lists",
+            "description": "Six-item list layout with numbers, titles, and content",
+            "yaml_pattern": {
+                "layout": "Title and 6-item Lists",
+                "title": str,
+                "lists": [
+                    {"number": str, "title": str, "content": str}
+                ]
+            },
+            "validation": {
+                "required_fields": ["title", "lists"],
+                "max_items": 6
+            },
+            "example": """---
+layout: Title and 6-item Lists
+title: Feature Overview
+lists:
+  - number: "01"
+    title: Authentication
+    content: Secure login system
+---"""
+        },
+        
+        "SWOT Analysis": {
+            "structure_type": "analysis",
+            "description": "SWOT analysis layout with four quadrants",
+            "yaml_pattern": {
+                "layout": "SWOT Analysis",
+                "title": str,
+                "swot": {
+                    "strengths": str,
+                    "weaknesses": str,
+                    "opportunities": str,
+                    "threats": str
+                }
+            },
+            "validation": {
+                "required_fields": ["title", "swot"]
+            },
+            "example": """---
+layout: SWOT Analysis
+title: Strategic Analysis
+swot:
+  strengths: Strong market position
+  weaknesses: Limited resources
+  opportunities: New markets
+  threats: Competition
 ---"""
         }
     }
@@ -267,15 +336,15 @@ media:
         mapping_rules = {"title": "semantic:title"}  # Always use semantic for title
         
         if layout_name == "Four Columns With Titles":
-            # Find column placeholders by looking for patterns in placeholder names
+            # Find column placeholders using convention-based patterns
             col_title_placeholders = []
             col_content_placeholders = []
             
             for idx, placeholder_name in placeholders.items():
                 name_lower = placeholder_name.lower()
-                if "col" in name_lower and "title" in name_lower:
+                if "title_col" in name_lower:
                     col_title_placeholders.append((idx, placeholder_name))
-                elif "col" in name_lower and ("text" in name_lower or "content" in name_lower):
+                elif "content_col" in name_lower:
                     col_content_placeholders.append((idx, placeholder_name))
             
             # Sort by placeholder index to get correct order
@@ -283,62 +352,68 @@ media:
             col_content_placeholders.sort(key=lambda x: int(x[0]))
             
             # Build mapping rules for each column
-            for i, (idx, placeholder_name) in enumerate(col_title_placeholders):
+            for i, (idx, placeholder_name) in enumerate(col_title_placeholders[:4]):
                 mapping_rules[f"columns[{i}].title"] = placeholder_name
             
-            for i, (idx, placeholder_name) in enumerate(col_content_placeholders):
+            for i, (idx, placeholder_name) in enumerate(col_content_placeholders[:4]):
                 mapping_rules[f"columns[{i}].content"] = placeholder_name
                 
         elif layout_name == "Comparison":
-            # Find comparison placeholders
-            text_placeholders = []
-            content_placeholders = []
+            # Find comparison placeholders using convention-based patterns
+            left_placeholders = {}
+            right_placeholders = {}
             
             for idx, placeholder_name in placeholders.items():
                 name_lower = placeholder_name.lower()
-                if "text" in name_lower and "placeholder" in name_lower:
-                    text_placeholders.append((int(idx), placeholder_name))
-                elif "content" in name_lower and "placeholder" in name_lower:
-                    content_placeholders.append((int(idx), placeholder_name))
+                if "_left_" in name_lower:
+                    if "title" in name_lower:
+                        left_placeholders["title"] = placeholder_name
+                    elif "content" in name_lower:
+                        left_placeholders["content"] = placeholder_name
+                elif "_right_" in name_lower:
+                    if "title" in name_lower:
+                        right_placeholders["title"] = placeholder_name
+                    elif "content" in name_lower:
+                        right_placeholders["content"] = placeholder_name
             
-            # Sort by index
-            text_placeholders.sort()
-            content_placeholders.sort()
-            
-            # Map to left/right structure
-            if len(text_placeholders) >= 2:
-                mapping_rules["comparison.left.title"] = text_placeholders[0][1]
-                mapping_rules["comparison.right.title"] = text_placeholders[1][1]
-            
-            if len(content_placeholders) >= 2:
-                mapping_rules["comparison.left.content"] = content_placeholders[0][1]
-                mapping_rules["comparison.right.content"] = content_placeholders[1][1]
+            # Map to comparison structure
+            if "title" in left_placeholders:
+                mapping_rules["comparison.left.title"] = left_placeholders["title"]
+            if "content" in left_placeholders:
+                mapping_rules["comparison.left.content"] = left_placeholders["content"]
+            if "title" in right_placeholders:
+                mapping_rules["comparison.right.title"] = right_placeholders["title"]
+            if "content" in right_placeholders:
+                mapping_rules["comparison.right.content"] = right_placeholders["content"]
                 
         elif layout_name == "Two Content":
-            # Find content placeholders
+            # Find content placeholders using convention-based patterns
             content_placeholders = []
             
             for idx, placeholder_name in placeholders.items():
                 name_lower = placeholder_name.lower()
-                if "content" in name_lower and "placeholder" in name_lower:
-                    content_placeholders.append((int(idx), placeholder_name))
+                if "content_" in name_lower and ("_left_" in name_lower or "_right_" in name_lower):
+                    if "_left_" in name_lower:
+                        content_placeholders.append((0, placeholder_name))
+                    elif "_right_" in name_lower:
+                        content_placeholders.append((1, placeholder_name))
             
             content_placeholders.sort()
             
             # Map to sections
-            for i, (idx, placeholder_name) in enumerate(content_placeholders[:2]):
-                mapping_rules[f"sections[{i}].content"] = placeholder_name
+            for order, placeholder_name in content_placeholders:
+                mapping_rules[f"sections[{order}].content"] = placeholder_name
                 
         elif layout_name == "Three Columns With Titles":
-            # Find column placeholders by looking for patterns in placeholder names
+            # Find column placeholders using convention-based patterns
             col_title_placeholders = []
             col_content_placeholders = []
             
             for idx, placeholder_name in placeholders.items():
                 name_lower = placeholder_name.lower()
-                if "col" in name_lower and "title" in name_lower:
+                if "title_col" in name_lower:
                     col_title_placeholders.append((idx, placeholder_name))
-                elif "col" in name_lower and ("text" in name_lower or "content" in name_lower):
+                elif "content_col" in name_lower:
                     col_content_placeholders.append((idx, placeholder_name))
             
             # Sort by placeholder index to get correct order
@@ -353,12 +428,12 @@ media:
                 mapping_rules[f"columns[{i}].content"] = placeholder_name
                 
         elif layout_name == "Three Columns":
-            # Find column content placeholders only (no titles)
+            # Find column content placeholders using convention-based patterns
             col_content_placeholders = []
             
             for idx, placeholder_name in placeholders.items():
                 name_lower = placeholder_name.lower()
-                if "col" in name_lower and ("text" in name_lower or "content" in name_lower):
+                if "content_col" in name_lower:
                     col_content_placeholders.append((idx, placeholder_name))
             
             # Sort by placeholder index to get correct order
@@ -369,12 +444,12 @@ media:
                 mapping_rules[f"columns[{i}].content"] = placeholder_name
                 
         elif layout_name == "Four Columns":
-            # Find column content placeholders only (no titles) - different from "Four Columns With Titles"
+            # Find column content placeholders using convention-based patterns
             col_content_placeholders = []
             
             for idx, placeholder_name in placeholders.items():
                 name_lower = placeholder_name.lower()
-                if "col" in name_lower and ("text" in name_lower or "content" in name_lower):
+                if "content_col" in name_lower:
                     col_content_placeholders.append((idx, placeholder_name))
             
             # Sort by placeholder index to get correct order
@@ -385,15 +460,82 @@ media:
                 mapping_rules[f"columns[{i}].content"] = placeholder_name
                 
         elif layout_name == "Picture with Caption":
-            # Find text and content placeholders
+            # Find caption placeholder using convention-based patterns
             for idx, placeholder_name in placeholders.items():
                 name_lower = placeholder_name.lower()
-                if "text" in name_lower and "placeholder" in name_lower:
+                if "text_caption" in name_lower:
                     mapping_rules["media.caption"] = placeholder_name
                     break
             
             # Content uses semantic detection
             mapping_rules["media.description"] = "semantic:content"
+            
+        elif layout_name == "Agenda, 6 Textboxes":
+            # Find agenda item placeholders using convention-based patterns
+            number_placeholders = []
+            content_placeholders = []
+            
+            for idx, placeholder_name in placeholders.items():
+                name_lower = placeholder_name.lower()
+                if "number_item" in name_lower:
+                    number_placeholders.append((idx, placeholder_name))
+                elif "content_item" in name_lower:
+                    content_placeholders.append((idx, placeholder_name))
+            
+            number_placeholders.sort(key=lambda x: int(x[0]))
+            content_placeholders.sort(key=lambda x: int(x[0]))
+            
+            # Map agenda items
+            for i, (idx, placeholder_name) in enumerate(number_placeholders[:6]):
+                mapping_rules[f"agenda[{i}].number"] = placeholder_name
+            for i, (idx, placeholder_name) in enumerate(content_placeholders[:6]):
+                mapping_rules[f"agenda[{i}].item"] = placeholder_name
+                
+        elif layout_name == "Title and 6-item Lists":
+            # Find list item placeholders using convention-based patterns
+            number_placeholders = []
+            content_placeholders = []
+            title_placeholders = []
+            
+            for idx, placeholder_name in placeholders.items():
+                name_lower = placeholder_name.lower()
+                if "number_item" in name_lower:
+                    number_placeholders.append((idx, placeholder_name))
+                elif "content_item" in name_lower:
+                    content_placeholders.append((idx, placeholder_name))
+                elif "content_" in name_lower and "_1" in name_lower:
+                    # These are the title placeholders for lists
+                    title_placeholders.append((idx, placeholder_name))
+            
+            number_placeholders.sort(key=lambda x: int(x[0]))
+            content_placeholders.sort(key=lambda x: int(x[0]))
+            title_placeholders.sort(key=lambda x: int(x[0]))
+            
+            # Map list items
+            for i, (idx, placeholder_name) in enumerate(number_placeholders[:6]):
+                mapping_rules[f"lists[{i}].number"] = placeholder_name
+            for i, (idx, placeholder_name) in enumerate(content_placeholders[:6]):
+                mapping_rules[f"lists[{i}].content"] = placeholder_name
+            for i, (idx, placeholder_name) in enumerate(title_placeholders[:6]):
+                mapping_rules[f"lists[{i}].title"] = placeholder_name
+                
+        elif layout_name == "SWOT Analysis":
+            # Find SWOT content placeholders using convention-based patterns
+            swot_placeholders = []
+            
+            for idx, placeholder_name in placeholders.items():
+                name_lower = placeholder_name.lower()
+                if "content_" in name_lower and "_1" not in name_lower:
+                    # These are content placeholders like content_16, content_17, etc.
+                    swot_placeholders.append((idx, placeholder_name))
+            
+            swot_placeholders.sort(key=lambda x: int(x[0]))
+            
+            # Map SWOT quadrants (assuming they are in order: strengths, weaknesses, opportunities, threats)
+            swot_keys = ["strengths", "weaknesses", "opportunities", "threats"]
+            for i, key in enumerate(swot_keys):
+                if i < len(swot_placeholders):
+                    mapping_rules[f"swot.{key}"] = swot_placeholders[i][1]
         
         return mapping_rules
     

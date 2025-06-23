@@ -1,0 +1,222 @@
+name: Test Suite
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-deckbuilder:
+    name: Test Deckbuilder Engine
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8, 3.9, "3.10", "3.11"]
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+        
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+          
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: Validate test environment
+      run: |
+        python tests/utils/test_runner.py --validate
+        
+    - name: Run deckbuilder unit tests
+      run: |
+        python -m pytest tests/deckbuilder/unit/ -v -m "unit and deckbuilder" --tb=short
+        
+    - name: Run deckbuilder integration tests
+      run: |
+        python -m pytest tests/deckbuilder/integration/ -v -m "integration and deckbuilder" --tb=short
+        
+    - name: Generate coverage report
+      run: |
+        python -m pytest tests/deckbuilder/ --cov=src/deckbuilder --cov-report=xml --cov-report=term-missing
+        
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        flags: deckbuilder
+        name: deckbuilder-coverage
+        fail_ci_if_error: false
+
+  test-mcp-server:
+    name: Test MCP Server
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8, 3.9, "3.10", "3.11"]
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: Run MCP server tests
+      run: |
+        python -m pytest tests/mcp_server/ -v -m "mcp_server" --tb=short
+        
+    - name: Generate coverage report
+      run: |
+        python -m pytest tests/mcp_server/ --cov=src/mcp_server --cov-report=xml --cov-report=term-missing
+        
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        flags: mcp-server
+        name: mcp-server-coverage
+        fail_ci_if_error: false
+
+  test-integration:
+    name: Full Integration Tests
+    runs-on: ubuntu-latest
+    needs: [test-deckbuilder, test-mcp-server]
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: Run full test suite
+      run: |
+        python tests/utils/test_runner.py --all --coverage
+        
+    - name: Generate test report
+      run: |
+        python tests/utils/test_runner.py --report
+        
+    - name: Upload test artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-reports
+        path: |
+          htmlcov/
+          reports/
+          
+    - name: Check coverage threshold
+      run: |
+        python -m pytest tests/ --cov=src --cov-fail-under=70
+
+  test-template-generation:
+    name: Test Template Generation
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: Test template test generation
+      run: |
+        python -c "
+        from tests.utils.template_test_generator import generate_test_files_for_template, validate_template_coverage
+        from pathlib import Path
+        import json
+        
+        # Create sample template
+        template_data = {
+            'template_info': {'name': 'CI Test Template', 'version': '1.0'},
+            'layouts': {
+                'Title Slide': {'index': 0, 'placeholders': {'0': 'title_top_1'}},
+                'Four Columns With Titles': {'index': 1, 'placeholders': {'0': 'title_top_1', '1': 'title_col1_1'}}
+            }
+        }
+        
+        template_file = Path('ci_test_template.json')
+        with open(template_file, 'w') as f:
+            json.dump(template_data, f)
+        
+        # Generate test files
+        output_dir = Path('ci_generated_tests')
+        report = generate_test_files_for_template(template_file, output_dir)
+        
+        print(f'Generated {len(report.generated_files)} test files')
+        print(f'Coverage: {report.coverage_percentage:.1f}%')
+        
+        # Validate coverage
+        coverage = validate_template_coverage(template_file)
+        print(f'Layout coverage: {coverage}')
+        
+        assert len(report.generated_files) > 0
+        assert report.coverage_percentage > 0
+        "
+        
+    - name: Upload generated test files
+      uses: actions/upload-artifact@v3
+      with:
+        name: generated-test-files
+        path: ci_generated_tests/
+
+  code-quality:
+    name: Code Quality Checks
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install black flake8 mypy
+        
+    - name: Run black code formatting check
+      run: |
+        black --check --line-length 100 src/ tests/
+        
+    - name: Run flake8 linting
+      run: |
+        flake8 src/ tests/ --max-line-length=100 --ignore=E203,W503
+        
+    - name: Run type checking with mypy
+      run: |
+        mypy src/ --ignore-missing-imports || true  # Allow to fail for now

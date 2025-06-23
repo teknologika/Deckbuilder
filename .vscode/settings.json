@@ -1,0 +1,78 @@
+{
+    // Python settings
+    "python.defaultInterpreterPath": "./venv/bin/python",
+    "python.terminal.activateEnvironment": true,
+    "python.envFile": "${workspaceFolder}/.env",
+    
+    // Test discovery and execution
+    "python.testing.pytestEnabled": true,
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestArgs": [
+        "tests",
+        "--verbose",
+        "--tb=short"
+    ],
+    "python.testing.autoTestDiscoverOnSaveEnabled": true,
+    
+    // Code formatting and linting
+    "python.formatting.provider": "black",
+    "python.formatting.blackArgs": [
+        "--line-length=100"
+    ],
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": false,
+    "python.linting.flake8Enabled": true,
+    "python.linting.flake8Args": [
+        "--max-line-length=100",
+        "--ignore=E203,W503"
+    ],
+    
+    // File associations
+    "files.associations": {
+        "*.md": "markdown",
+        "*.pptx": "binary",
+        "pytest.ini": "ini"
+    },
+    
+    // Editor settings
+    "editor.rulers": [100],
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true
+    },
+    
+    // Test coverage settings
+    "coverage-gutters.showGutterCoverage": true,
+    "coverage-gutters.showLineCoverage": true,
+    "coverage-gutters.showRulerCoverage": true,
+    
+    // File explorer settings
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/*.pyc": true,
+        "**/htmlcov": true,
+        "**/.coverage": true,
+        "**/node_modules": true,
+        "**/.pytest_cache": true
+    },
+    
+    // Search settings
+    "search.exclude": {
+        "**/venv": true,
+        "**/__pycache__": true,
+        "**/htmlcov": true,
+        "**/.pytest_cache": true,
+        "**/tests/output": true
+    },
+    
+    // Terminal settings
+    "terminal.integrated.env.osx": {
+        "PYTHONPATH": "${workspaceFolder}/src:${workspaceFolder}/tests"
+    },
+    "terminal.integrated.env.linux": {
+        "PYTHONPATH": "${workspaceFolder}/src:${workspaceFolder}/tests"
+    },
+    "terminal.integrated.env.windows": {
+        "PYTHONPATH": "${workspaceFolder}/src;${workspaceFolder}/tests"
+    }
+}

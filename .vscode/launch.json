@@ -1,0 +1,125 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Current Test File",
+            "type": "python",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "${file}",
+                "--verbose",
+                "--tb=short"
+            ],
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src:${workspaceFolder}/tests"
+            },
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
+        {
+            "name": "Debug Specific Test Function",
+            "type": "python",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "${file}::${input:testFunction}",
+                "--verbose",
+                "--tb=long",
+                "-s"
+            ],
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src:${workspaceFolder}/tests"
+            },
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
+        {
+            "name": "Debug All Deckbuilder Tests",
+            "type": "python",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "tests/deckbuilder/",
+                "--verbose",
+                "-m",
+                "deckbuilder",
+                "-s"
+            ],
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src:${workspaceFolder}/tests"
+            },
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
+        {
+            "name": "Debug MCP Server Tests",
+            "type": "python",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "tests/mcp_server/",
+                "--verbose",
+                "-m",
+                "mcp_server",
+                "-s"
+            ],
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src:${workspaceFolder}/tests"
+            },
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
+        {
+            "name": "Debug Template Test Generator",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/tests/utils/template_test_generator.py",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src:${workspaceFolder}/tests"
+            },
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
+        {
+            "name": "Debug Content Generator",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/tests/utils/content_generator.py",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src:${workspaceFolder}/tests"
+            },
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
+        {
+            "name": "Debug PowerPoint Validator",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/tests/utils/pptx_validator.py",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src:${workspaceFolder}/tests"
+            },
+            "console": "integratedTerminal",
+            "justMyCode": false
+        }
+    ],
+    "inputs": [
+        {
+            "id": "testFunction",
+            "description": "Test function name to debug",
+            "default": "test_",
+            "type": "promptString"
+        }
+    ]
+}

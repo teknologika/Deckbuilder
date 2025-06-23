@@ -1,0 +1,69 @@
+{
+  "template_info": {
+    "name": "Default Test Template",
+    "version": "1.0"
+  },
+  "layouts": {
+    "Title Slide": {
+      "index": 0,
+      "placeholders": {
+        "0": "title_top_1",
+        "1": "subtitle_1",
+        "10": "date_footer_1",
+        "11": "footer_footer_1",
+        "12": "slide_number_footer_1"
+      }
+    },
+    "Title and Content": {
+      "index": 1,
+      "placeholders": {
+        "0": "title_top_1",
+        "1": "content_1",
+        "10": "date_footer_1",
+        "11": "footer_footer_1",
+        "12": "slide_number_footer_1"
+      }
+    },
+    "Four Columns With Titles": {
+      "index": 2,
+      "placeholders": {
+        "0": "title_top_1",
+        "1": "title_col1_1",
+        "2": "content_col1_1",
+        "3": "title_col2_1",
+        "4": "content_col2_1",
+        "5": "title_col3_1",
+        "6": "content_col3_1",
+        "7": "title_col4_1",
+        "8": "content_col4_1",
+        "10": "date_footer_1",
+        "11": "footer_footer_1",
+        "12": "slide_number_footer_1"
+      }
+    },
+    "Comparison": {
+      "index": 3,
+      "placeholders": {
+        "0": "title_top_1",
+        "1": "title_left_1",
+        "2": "content_left_1",
+        "3": "title_right_1",
+        "4": "content_right_1",
+        "10": "date_footer_1",
+        "11": "footer_footer_1",
+        "12": "slide_number_footer_1"
+      }
+    },
+    "Two Content": {
+      "index": 4,
+      "placeholders": {
+        "0": "title_top_1",
+        "1": "content_left_1",
+        "2": "content_right_1",
+        "10": "date_footer_1",
+        "11": "footer_footer_1",
+        "12": "slide_number_footer_1"
+      }
+    }
+  }
+}
