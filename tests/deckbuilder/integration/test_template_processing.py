@@ -3,11 +3,16 @@ Integration tests for template processing pipeline.
 """
 
 import json
+import os
+import sys
 
 import pytest
 
-from tests.utils.content_generator import ContentType, ContentLength
-from tests.utils.template_test_generator import TemplateTestGenerator
+# Add parent directory to path for test imports
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../.."))  # noqa: E402
+
+from tests.utils.content_generator import ContentType, ContentLength  # noqa: E402
+from tests.utils.template_test_generator import TemplateTestGenerator  # noqa: E402
 
 
 @pytest.mark.integration
