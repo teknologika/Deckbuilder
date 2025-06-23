@@ -158,11 +158,11 @@
         "Col 1 Title Placeholder 2": "Performance",
         "Col 1 Text Placeholder 3": "**Fast processing** with optimized algorithms",
         "Col 2 Title Placeholder 4": "Security",
-        "Col 1 Text Placeholder 5": "***Enterprise-grade*** encryption with ___SOC2___ compliance",
+        "Col 2 Text Placeholder 5": "***Enterprise-grade*** encryption with ___SOC2___ compliance",
         "Col 3 Title Placeholder 6": "Usability", 
-        "Col 1 Text Placeholder 7": "*Intuitive* interface with **minimal** learning curve",
+        "Col 3 Text Placeholder 7": "*Intuitive* interface with **minimal** learning curve",
         "Col 4 Title Placeholder 8": "Cost",
-        "Col 1 Text Placeholder 9": "___Transparent___ pricing with **flexible** plans"
+        "Col 4 Text Placeholder 9": "___Transparent___ pricing with **flexible** plans"
       },
       {
         "type": "Four Columns",

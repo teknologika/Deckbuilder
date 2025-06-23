@@ -237,15 +237,19 @@ class Deckbuilder:
         slide_data = self._auto_parse_json_formatting(slide_data)
         
         # Get slide type and determine layout using JSON mapping
-        slide_type = slide_data.get("type", "content")
+        # Prefer explicit "layout" field over "type" field
+        layout_or_type = slide_data.get("layout", slide_data.get("type", "content"))
         
         # Use layout mapping if available
         if self.layout_mapping:
             aliases = self.layout_mapping.get("aliases", {})
             layouts = self.layout_mapping.get("layouts", {})
             
-            # Get layout name from aliases
-            layout_name = aliases.get(slide_type, slide_type)
+            # Get layout name from aliases (or use direct layout name if it exists in layouts)
+            if layout_or_type in layouts:
+                layout_name = layout_or_type
+            else:
+                layout_name = aliases.get(layout_or_type, layout_or_type)
             
             # Get layout index
             layout_info = layouts.get(layout_name, {})
@@ -256,6 +260,9 @@ class Deckbuilder:
         
         slide_layout = self.prs.slide_layouts[layout_index]
         slide = self.prs.slides.add_slide(slide_layout)
+        
+        # Copy descriptive placeholder names from template mapping
+        self._copy_placeholder_names_from_mapping(slide, layout_name)
         
         # Add content to placeholders using template mapping + semantic detection
         self._apply_content_to_mapped_placeholders(slide, slide_data, layout_name)
@@ -270,6 +277,37 @@ class Deckbuilder:
         # Add table if provided
         if "table" in slide_data:
             self._add_table_to_slide(slide, slide_data["table"])
+
+    def _copy_placeholder_names_from_mapping(self, slide, layout_name):
+        """
+        Copy descriptive placeholder names from template mapping to slide placeholders.
+        
+        This enhances the PowerPoint editing experience by providing meaningful placeholder
+        names like "Col 1 Title Placeholder 2" instead of generic "Text Placeholder 2".
+        
+        Args:
+            slide: PowerPoint slide object
+            layout_name: Name of the PowerPoint layout
+        """
+        if not self.layout_mapping:
+            return
+            
+        # Get layout info from template mapping
+        layouts = self.layout_mapping.get("layouts", {})
+        layout_info = layouts.get(layout_name, {})
+        placeholder_mappings = layout_info.get("placeholders", {})
+        
+        # Update placeholder names to match template mapping
+        for placeholder in slide.placeholders:
+            placeholder_idx = str(placeholder.placeholder_format.idx)
+            if placeholder_idx in placeholder_mappings:
+                descriptive_name = placeholder_mappings[placeholder_idx]
+                try:
+                    # Update the placeholder name
+                    placeholder.element.nvSpPr.cNvPr.name = descriptive_name
+                except:
+                    # Fallback: some placeholder types might not allow name changes
+                    pass
 
     def _apply_content_to_mapped_placeholders(self, slide, slide_data, layout_name):
         """

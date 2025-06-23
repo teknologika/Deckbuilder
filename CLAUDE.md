@@ -28,6 +28,28 @@ Always use Python 3 and activate the virtual environment:
 source venv/bin/activate
 ```
 
+## ⚠️ IMPORTANT: MCP Server Environment Configuration
+
+**When testing the engine directly (not through MCP)**, the presentation engine will fail to load template mappings because environment variables are not set. Environment variables are configured in the MCP server parameters, not in local `.env` files.
+
+**MCP Server Configuration** (Claude Desktop config):
+```json
+{
+  "env": {
+    "DECK_TEMPLATE_FOLDER": "/path/to/deck-builder-mcp/assets/templates",
+    "DECK_OUTPUT_FOLDER": "/path/to/deck-builder-mcp/output", 
+    "DECK_TEMPLATE_NAME": "default"
+  }
+}
+```
+
+**Impact on Development**:
+- ✅ **MCP tools work correctly** - environment variables are available
+- ❌ **Direct engine testing may fail** - missing template paths cause fallback to minimal layout mapping
+- ❌ **Layout selection issues** - incorrect layouts selected when template mapping not loaded
+
+**Testing Workaround**: When testing engine directly, manually set environment variables or expect fallback behavior with limited layouts.
+
 ## Design Approach
 
 This project follows a **content-first methodology**:

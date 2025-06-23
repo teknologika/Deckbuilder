@@ -291,6 +291,78 @@ async def optimize_content_for_layout_tool(ctx: Context, content: str, chosen_la
         return f"Error optimizing content for layout: {str(e)}"
 
 @mcp.tool()
+async def create_presentation_from_file(ctx: Context, file_path: str, fileName: str = "Sample_Presentation", templateName: str = "default") -> str:
+    """Create a complete PowerPoint presentation from JSON or markdown file
+    
+    This tool reads presentation data directly from a local file without passing content through the context window.
+    Supports both JSON files (.json) and markdown files (.md) with frontmatter.
+    Automatically detects file type and processes accordingly.
+    
+    Args:
+        ctx: MCP context
+        file_path: Absolute path to JSON or markdown file containing presentation data
+        fileName: Output filename (default: Sample_Presentation)
+        templateName: Template to use (default: default)
+        
+    Supported file types:
+        - .json files: JSON format with presentation data
+        - .md files: Markdown with frontmatter slide definitions
+        
+    Example usage:
+        file_path: "/path/to/test_comprehensive_layouts.json"
+        file_path: "/path/to/presentation.md"
+        
+    Benefits:
+        - No token usage for large presentation files
+        - Direct file system access
+        - Supports both JSON and markdown formats
+        - Automatic file type detection
+    """
+    try:
+        # Check if file exists
+        if not os.path.exists(file_path):
+            return f"Error: File not found: {file_path}"
+        
+        # Determine file type and process accordingly
+        file_extension = os.path.splitext(file_path)[1].lower()
+        
+        if file_extension == '.json':
+            # Read JSON file
+            with open(file_path, 'r', encoding='utf-8') as f:
+                json_data = json.load(f)
+            
+            # Create presentation from JSON
+            deck.create_presentation(templateName, fileName)
+            deck.add_slide_from_json(json_data)
+            write_result = deck.write_presentation(fileName)
+            
+            return f"Successfully created presentation from JSON file: {file_path}. {write_result}"
+            
+        elif file_extension == '.md':
+            # Read markdown file
+            with open(file_path, 'r', encoding='utf-8') as f:
+                markdown_content = f.read()
+            
+            # Create presentation from markdown
+            slides = deck.parse_markdown_with_frontmatter(markdown_content)
+            deck.create_presentation(templateName, fileName)
+            
+            for slide_data in slides:
+                deck._add_slide(slide_data)
+            
+            write_result = deck.write_presentation(fileName)
+            
+            return f"Successfully created presentation from markdown file: {file_path} with {len(slides)} slides. {write_result}"
+            
+        else:
+            return f"Error: Unsupported file type '{file_extension}'. Supported types: .json, .md"
+            
+    except json.JSONDecodeError as e:
+        return f"Error parsing JSON file: {str(e)}"
+    except Exception as e:
+        return f"Error creating presentation from file: {str(e)}"
+
+@mcp.tool()
 async def create_presentation_from_markdown(ctx: Context, markdown_content: str, fileName: str = "Sample_Presentation", templateName: str = "default") -> str:
     """Create presentation from formatted markdown with frontmatter
     
