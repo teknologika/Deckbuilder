@@ -105,15 +105,15 @@ def mock_deckbuilder_env():
 def fresh_deckbuilder(mock_deckbuilder_env):
     """Provide a fresh Deckbuilder instance for each test with proper environment isolation."""
     from deckbuilder.engine import Deckbuilder
-    
+
     # Reset singleton to ensure fresh instance
     Deckbuilder.reset()
-    
+
     # Create new instance with current environment
     instance = Deckbuilder()
-    
+
     yield instance
-    
+
     # Clean up after test
     Deckbuilder.reset()
 

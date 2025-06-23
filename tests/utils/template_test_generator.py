@@ -272,6 +272,9 @@ class TemplateTestGenerator:
                     filename = f"{layout_name.lower().replace(' ', '_')}_example.md"
                     file_path = output_dir / filename
 
+                    # Ensure output directory exists
+                    file_path.parent.mkdir(parents=True, exist_ok=True)
+
                     with open(file_path, "w", encoding="utf-8") as f:
                         f.write(md_content)
 
