@@ -214,7 +214,10 @@ class TemplateTestGenerator:
         preview = f"Generated markdown with {len(markdown_sections)} layout sections"
 
         return GeneratedTestFile(
-            file_path=md_path, layout_name="multiple", file_type="markdown", content_preview=preview
+            file_path=md_path,
+            layout_name="multiple",
+            file_type="markdown",
+            content_preview=preview,
         )
 
     def _generate_markdown_section(

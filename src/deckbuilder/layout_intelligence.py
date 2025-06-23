@@ -8,7 +8,7 @@ semantic metadata and convention-based placeholder names.
 
 import json
 import re
-from typing import Dict, List, Tuple, Optional, Any
+from typing import Dict, List, Tuple, Optional
 from pathlib import Path
 from dataclasses import dataclass
 
@@ -198,7 +198,7 @@ class LayoutIntelligence:
             return "statistics"
         elif any(word in content_lower for word in ["step", "agenda", "process"]):
             return "agenda_content"
-        elif len(re.findall(r"^#{1,3}\s", content, re.MULTILINE)) >= 3:
+        elif len(re.findall(r"^#{1,3}\s", content_lower, re.MULTILINE)) >= 3:
             return "column_content"
         else:
             return "body_content"

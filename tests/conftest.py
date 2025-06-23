@@ -38,6 +38,60 @@ def temp_dir():
 
 
 @pytest.fixture
+def mock_deckbuilder_env():
+    """Mock environment variables for deckbuilder with proper cleanup."""
+    # Clear any existing singleton instances for atomic testing
+    try:
+        from deckbuilder.engine import Deckbuilder
+
+        if hasattr(Deckbuilder, "_instances"):
+            Deckbuilder._instances.clear()
+    except ImportError:
+        pass
+
+    # Create temporary directories
+    import tempfile
+
+    temp_base = tempfile.mkdtemp(prefix="deckbuilder_test_")
+    templates_dir = Path(temp_base) / "templates"
+    output_dir = Path(temp_base) / "output"
+
+    templates_dir.mkdir(parents=True, exist_ok=True)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    # Store original environment
+    original_env = os.environ.copy()
+
+    # Set test environment variables
+    test_env = {
+        "DECK_TEMPLATE_FOLDER": str(templates_dir),
+        "DECK_OUTPUT_FOLDER": str(output_dir),
+        "DECK_TEMPLATE_NAME": "default",
+    }
+
+    for key, value in test_env.items():
+        os.environ[key] = value
+
+    yield {"templates_dir": templates_dir, "output_dir": output_dir}
+
+    # Clean up: restore environment and clear singletons
+    os.environ.clear()
+    os.environ.update(original_env)
+
+    # Clear singleton instances again for next test
+    try:
+        if hasattr(Deckbuilder, "_instances"):
+            Deckbuilder._instances.clear()
+    except ImportError:
+        pass
+
+    # Clean up temp directory
+    import shutil
+
+    shutil.rmtree(temp_base, ignore_errors=True)
+
+
+@pytest.fixture
 def mock_env_vars():
     """Mock environment variables for testing."""
     original_env = os.environ.copy()

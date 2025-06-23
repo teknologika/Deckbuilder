@@ -12,7 +12,6 @@ PowerPoint placeholder names while maintaining full functionality. It includes:
 Based on the Template Discovery System specification (Option C).
 """
 
-import re
 from typing import Dict, List, Any, Optional, Union
 
 
@@ -26,11 +25,11 @@ class StructuredFrontmatterRegistry:
     def get_structure_patterns(self):
         """Get structure patterns that define how to parse structured frontmatter"""
         return {
-            "Four Columns Columns With Titles": {
+            "Four Columns With Titles": {
                 "structure_type": "columns",
                 "description": "Four-column comparison layout with individual titles and content",
                 "yaml_pattern": {
-                    "layout": "Four Columns",
+                    "layout": "Four Columns With Titles",
                     "title": str,
                     "columns": [{"title": str, "content": str}],
                 },
@@ -488,7 +487,8 @@ comparison:
 
             swot_placeholders.sort(key=lambda x: int(x[0]))
 
-            # Map SWOT quadrants (assuming they are in order: strengths, weaknesses, opportunities, threats)
+            # Map SWOT quadrants (assuming they are in order:
+            # strengths, weaknesses, opportunities, threats)
             swot_keys = ["strengths", "weaknesses", "opportunities", "threats"]
             for i, key in enumerate(swot_keys):
                 if i < len(swot_placeholders):
@@ -528,11 +528,17 @@ class StructuredFrontmatterConverter:
 
         structure_def = self.registry.get_structure_definition(layout_name)
         if not structure_def:
-            # No structured definition available, return as-is
+            # No structured definition available, return original data for backward compatibility
             return structured_data
 
+        # Create result with type field for supported layouts
         result = {"type": layout_name}
-        mapping_rules = structure_def["mapping_rules"]
+
+        # Copy title if present
+        if "title" in structured_data:
+            result["title"] = structured_data["title"]
+
+        mapping_rules = structure_def.get("mapping_rules", {})
 
         # Process each mapping rule
         for structured_path, placeholder_target in mapping_rules.items():
@@ -709,7 +715,11 @@ class StructuredFrontmatterValidator:
 
         structure_def = self.registry.get_structure_definition(layout_name)
         if not structure_def:
-            return {"valid": True, "warnings": ["No validation rules available for this layout"]}
+            return {
+                "valid": True,
+                "warnings": ["No validation rules available for this layout"],
+                "errors": [],
+            }
 
         validation_rules = structure_def.get("validation", {})
         result = {"valid": True, "warnings": [], "errors": []}
@@ -722,7 +732,7 @@ class StructuredFrontmatterValidator:
                 result["errors"].append(f"Missing required field: '{field}'")
 
         # Layout-specific validation
-        if layout_name == "Four Columns" and "columns" in data:
+        if layout_name in ["Four Columns", "Four Columns With Titles"] and "columns" in data:
             self._validate_four_columns(data, validation_rules, result)
         elif layout_name == "Comparison" and "comparison" in data:
             self._validate_comparison(data, validation_rules, result)
@@ -745,21 +755,22 @@ class StructuredFrontmatterValidator:
             result["errors"].append(f"Expected at least {min_cols} columns, got {len(columns)}")
         elif len(columns) > max_cols:
             result["warnings"].append(
-                f"Expected at most {max_cols} columns, got {len(columns)} (extra columns will be ignored)"
+                f"Expected at most {max_cols} columns, got {len(columns)} "
+                f"(extra columns will be ignored)"
             )
 
         # Validate each column structure
         for i, column in enumerate(columns):
             if not isinstance(column, dict):
                 result["errors"].append(
-                    f"Column {i+1} must be an object with 'title' and 'content'"
+                    f"Column {i + 1} must be an object with 'title' and 'content'"
                 )
                 continue
 
             if "title" not in column:
-                result["warnings"].append(f"Column {i+1} missing 'title' field")
+                result["warnings"].append(f"Column {i + 1} missing 'title' field")
             if "content" not in column:
-                result["warnings"].append(f"Column {i+1} missing 'content' field")
+                result["warnings"].append(f"Column {i + 1} missing 'content' field")
 
     def _validate_comparison(
         self, data: Dict[str, Any], rules: Dict[str, Any], result: Dict[str, Any]
@@ -798,7 +809,8 @@ class StructuredFrontmatterValidator:
             )
         elif len(sections) > max_sections:
             result["warnings"].append(
-                f"Expected at most {max_sections} sections, got {len(sections)} (extra sections will be ignored)"
+                f"Expected at most {max_sections} sections, got {len(sections)} "
+                f"(extra sections will be ignored)"
             )
 
 
@@ -838,5 +850,8 @@ def get_structured_frontmatter_help(
                 }
                 for name, definition in patterns.items()
             },
-            "usage": "Use 'layout: <LayoutName>' in frontmatter, then follow the structured format for that layout",
+            "usage": (
+                "Use 'layout: <LayoutName>' in frontmatter, then follow the structured "
+                "format for that layout"
+            ),
         }

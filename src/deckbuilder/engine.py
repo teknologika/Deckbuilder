@@ -10,7 +10,6 @@ from .placeholder_types import (
     is_title_placeholder,
     is_subtitle_placeholder,
     is_content_placeholder,
-    is_media_placeholder,
 )
 
 try:
@@ -38,6 +37,10 @@ def singleton(cls):
         if cls not in instances:
             instances[cls] = cls(*args, **kwargs)
         return instances[cls]
+
+    # Allow external access to clear instances for testing
+    get_instance._instances = instances
+    cls._instances = instances
 
     return get_instance
 
@@ -110,7 +113,7 @@ class Deckbuilder:
                     with open(mapping_path, "r", encoding="utf-8") as f:
                         self.layout_mapping = json.load(f)
                         return
-                except:
+                except Exception:
                     pass
 
         # Fallback to src folder
@@ -120,7 +123,7 @@ class Deckbuilder:
                 with open(src_mapping_path, "r", encoding="utf-8") as f:
                     self.layout_mapping = json.load(f)
                     return
-            except:
+            except Exception:
                 pass
 
         # Use fallback mapping if JSON not found
@@ -321,7 +324,7 @@ class Deckbuilder:
                 try:
                     # Update the placeholder name
                     placeholder.element.nvSpPr.cNvPr.name = descriptive_name
-                except:
+                except Exception:
                     # Fallback: some placeholder types might not allow name changes
                     pass
 
@@ -1278,7 +1281,10 @@ class Deckbuilder:
                         for cell in row:
                             if isinstance(cell, str):
                                 formatted_row.append(
-                                    {"text": cell, "formatted": self._parse_inline_formatting(cell)}
+                                    {
+                                        "text": cell,
+                                        "formatted": self._parse_inline_formatting(cell),
+                                    }
                                 )
                             else:
                                 # Keep non-string cells as-is
@@ -1312,7 +1318,10 @@ class Deckbuilder:
             # Automatically save the presentation to disk after creation
             write_result = self.write_presentation(fileName)
 
-            return f"Successfully created presentation with {len(slides)} slides from markdown. {write_result}"
+            return (
+                f"Successfully created presentation with {len(slides)} slides from markdown. "
+                f"{write_result}"
+            )
         except Exception as e:
             return f"Error creating presentation from markdown: {str(e)}"
 

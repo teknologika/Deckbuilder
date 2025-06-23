@@ -116,7 +116,9 @@ class TestDeckbuilderEngine:
     @patch.dict(os.environ, {}, clear=True)
     def test_missing_environment_variables(self):
         """Test behavior when environment variables are missing."""
-        # Clear all environment variables
+        # Clear all environment variables and singleton instances
+        if hasattr(Deckbuilder, "_instances"):
+            Deckbuilder._instances.clear()
 
         # Should still initialize with None values
         deckbuilder = Deckbuilder()

@@ -6,6 +6,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is an MCP (Model Context Protocol) Server for building PowerPoint presentations. The project has evolved beyond initial setup into a comprehensive content-first presentation intelligence system.
 
+## Run these commands and fix these errors before checking in 
+flake8 src/ tests/ --max-line-length=100 --ignore=E203,W503
+black --line-length 100 src/
+
+
+
 **Current Status**: 
 - ✅ Core presentation engine implemented with structured frontmatter support
 - ✅ Template system with semantic detection and JSON mapping  

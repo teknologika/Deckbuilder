@@ -79,7 +79,7 @@ class TemplateAnalyzer:
                 try:
                     if hasattr(layout, "name") and layout.name:
                         layout_name = layout.name
-                except:
+                except Exception:
                     pass  # Keep fallback name
 
                 layouts[layout_name] = layout_info
@@ -114,7 +114,7 @@ class TemplateAnalyzer:
                     elif hasattr(shape.placeholder_format, "type"):
                         placeholder_type = shape.placeholder_format.type
                         placeholder_info = f"type_{placeholder_type}"
-                except:
+                except Exception:
                     pass  # Keep default name if we can't get more info
 
                 placeholders[str(placeholder_idx)] = placeholder_info

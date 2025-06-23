@@ -7,7 +7,7 @@ with graceful fallbacks for template variations and missing elements.
 """
 
 import re
-from typing import Dict, List, Tuple, Optional, Any
+from typing import Dict, List, Optional
 from dataclasses import dataclass
 
 
