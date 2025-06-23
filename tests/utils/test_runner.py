@@ -6,7 +6,6 @@ Provides a convenient command-line interface for running different test suites
 and generating reports. Can be used from VS Code or command line.
 """
 
-import os
 import sys
 import argparse
 import subprocess
@@ -143,7 +142,7 @@ def generate_test_report() -> int:
 
 def run_parallel_tests(num_workers: int = 4) -> int:
     """Run tests in parallel using pytest-xdist."""
-    args = ["tests/", f"-n", str(num_workers), "--verbose"]
+    args = ["tests/", "-n", str(num_workers), "--verbose"]
 
     return run_pytest_command(args)
 

@@ -8,7 +8,7 @@ JSON presentation format and markdown with structured frontmatter.
 import json
 import yaml
 from pathlib import Path
-from typing import Dict, List, Any, Optional, Tuple
+from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
 from datetime import datetime
 
@@ -477,7 +477,7 @@ class TemplateTestGenerator:
             ],
             "content_right_1": [
                 f"***{content_lib['content'][0][:50]}***",
-                f"___Enhanced capabilities___",
+                "___Enhanced capabilities___",
             ],
         }
 
@@ -677,7 +677,7 @@ class TemplateTestGenerator:
             slide_data[f"number_item{i}_1"] = f"{i:02d}"
             title_idx = (i - 1) % len(content_lib["titles"])
             content_idx = (i - 1) % len(content_lib["bullets"])
-            slide_data[f"content_{12+i}_1"] = self.content_generator.apply_random_formatting(
+            slide_data[f"content_{12 + i}_1"] = self.content_generator.apply_random_formatting(
                 content_lib["titles"][title_idx]
             )
             slide_data[f"content_item{i}_1"] = self.content_generator.apply_random_formatting(
@@ -694,7 +694,7 @@ class TemplateTestGenerator:
         content_length: ContentLength,
     ) -> Dict[str, Any]:
         """Generate Big Number slide data."""
-        content_lib = self.content_generator.get_content_library(content_type)[content_length]
+        # content_lib = self.content_generator.get_content_library(content_type)[content_length]  # Future: use for content
 
         return {
             "type": layout_name,

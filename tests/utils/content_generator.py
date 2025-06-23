@@ -433,7 +433,7 @@ class ContentGenerator:
         agenda_items = []
         for i in range(num_items):
             item_idx = i % len(agenda_templates)
-            agenda_items.append({"number": f"{i+1:02d}", "item": agenda_templates[item_idx]})
+            agenda_items.append({"number": f"{i + 1:02d}", "item": agenda_templates[item_idx]})
 
         return agenda_items
 

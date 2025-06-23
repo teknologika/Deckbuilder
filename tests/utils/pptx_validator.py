@@ -5,18 +5,14 @@ Provides comprehensive validation of generated PowerPoint files including
 content verification, layout validation, and formatting checks.
 """
 
-import os
 import re
 from pathlib import Path
-from typing import Dict, List, Any, Optional, Tuple
+from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
 from enum import Enum
 
 try:
     from pptx import Presentation
-    from pptx.shapes.base import BaseShape
-    from pptx.text.text import _Text
-    from pptx.enum.shapes import MSO_SHAPE_TYPE
 
     HAS_PPTX = True
 except ImportError:
@@ -410,7 +406,7 @@ class PowerPointValidator:
                             ValidationError(
                                 check_name="bold_formatting",
                                 severity=ValidationResult.WARNING,
-                                message=f"Bold formatting not applied to text with ** markers",
+                                message="Bold formatting not applied to text with ** markers",
                                 slide_index=slide_index,
                                 actual_value=text,
                             )
@@ -421,7 +417,7 @@ class PowerPointValidator:
                             ValidationError(
                                 check_name="italic_formatting",
                                 severity=ValidationResult.WARNING,
-                                message=f"Italic formatting not applied to text with * markers",
+                                message="Italic formatting not applied to text with * markers",
                                 slide_index=slide_index,
                                 actual_value=text,
                             )
@@ -432,7 +428,7 @@ class PowerPointValidator:
                             ValidationError(
                                 check_name="underline_formatting",
                                 severity=ValidationResult.WARNING,
-                                message=f"Underline formatting not applied to text with ___ markers",
+                                message="Underline formatting not applied to text with ___ markers",
                                 slide_index=slide_index,
                                 actual_value=text,
                             )
@@ -564,19 +560,19 @@ class PowerPointValidator:
     ) -> str:
         """Generate detailed validation report."""
         report_lines = [
-            f"PowerPoint Validation Report",
-            f"=" * 50,
+            "PowerPoint Validation Report",
+            "=" * 50,
             f"File: {report.file_path}",
             f"Overall Result: {report.overall_result.value.upper()}",
             f"Success Rate: {report.success_rate:.1f}%",
-            f"",
-            f"Summary:",
+            "",
+            "Summary:",
             f"  Total Checks: {report.total_checks}",
             f"  Passed: {report.passed_checks}",
             f"  Failed: {report.failed_checks}",
             f"  Warnings: {report.warnings}",
             f"  Skipped: {report.skipped_checks}",
-            f"",
+            "",
         ]
 
         if report.errors:
