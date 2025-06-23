@@ -156,7 +156,7 @@ class ContentOptimizationEngine:
         # Create content mapping
         content_mapping = {
             "title": title,
-            **{f"column_{i+1}": col for i, col in enumerate(formatted_columns)},
+            **{f"column_{i + 1}": col for i, col in enumerate(formatted_columns)},
         }
 
         return ContentOptimizationResult(
@@ -504,7 +504,7 @@ class ContentOptimizationEngine:
         """Generate YAML for Four Columns layout."""
         yaml_columns = []
         for i, col in enumerate(columns):
-            col_title = f"Column {i+1}"
+            col_title = f"Column {i + 1}"
             # Try to extract a title from the column content
             if ":" in col:
                 parts = col.split(":", 1)
@@ -584,8 +584,9 @@ subtitle: {subtitle}
         self, content: str, chosen_layout: str, optimization_result: ContentOptimizationResult
     ) -> GapAnalysis:
         """Analyze how well the content fits the chosen layout."""
-        content_length = len(content.split())
-        layout_requirements = self._get_layout_requirements(chosen_layout)
+        # Analyze content characteristics
+        # content_length = len(content.split())  # Future: use for length analysis
+        # layout_requirements = self._get_layout_requirements(chosen_layout)  # Future: use for validation
 
         # Assess content fit
         fit_score = self._calculate_fit_score(content, chosen_layout, optimization_result)
@@ -691,7 +692,7 @@ subtitle: {subtitle}
 
         if content_fit == "poor":
             recommendations.append(
-                f"Consider switching to a simpler layout like 'Title and Content'"
+                "Consider switching to a simpler layout like 'Title and Content'"
             )
         elif content_fit == "fair":
             recommendations.append(

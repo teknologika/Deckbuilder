@@ -3,12 +3,10 @@ Integration tests for template processing pipeline.
 """
 
 import json
-import tempfile
-from pathlib import Path
 
 import pytest
 
-from tests.utils.content_generator import ContentGenerator, ContentType, ContentLength
+from tests.utils.content_generator import ContentType, ContentLength
 from tests.utils.template_test_generator import TemplateTestGenerator
 
 

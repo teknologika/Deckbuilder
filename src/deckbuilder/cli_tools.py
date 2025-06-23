@@ -6,23 +6,24 @@ Standalone utilities for template analysis, documentation generation, and valida
 These tools are designed to be run independently for template management tasks.
 """
 
+import argparse
+import json
 import os
 import sys
-import json
-import argparse
 from datetime import datetime
 from pathlib import Path
 
 # Add parent directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
-from mcp_server.tools import TemplateAnalyzer
+# Import after path modification - this is intentional to find the mcp_server module
+from mcp_server.tools import TemplateAnalyzer  # noqa: E402
 
 try:
-    from .naming_conventions import NamingConvention, PlaceholderContext
+    from .naming_conventions import NamingConvention, PlaceholderContext  # noqa: E402
 except ImportError:
     # Handle direct script execution
-    from naming_conventions import NamingConvention, PlaceholderContext
+    from naming_conventions import NamingConvention, PlaceholderContext  # noqa: E402
 
 
 class TemplateManager:
@@ -81,12 +82,12 @@ class TemplateManager:
 
             # Print summary
             layouts_count = len(result.get("layouts", {}))
-            print(f"✅ Analysis complete!")
+            print("✅ Analysis complete!")
             print(f"   📊 Found {layouts_count} layouts")
 
             # Print layout summary
             if verbose and "layouts" in result:
-                print(f"\n📋 Layout Summary:")
+                print("\n📋 Layout Summary:")
                 for layout_name, layout_info in result["layouts"].items():
                     placeholder_count = len(layout_info.get("placeholders", {}))
                     index = layout_info.get("index", "?")
@@ -97,7 +98,7 @@ class TemplateManager:
             output_file = os.path.join(self.output_folder, f"{base_name}.g.json")
             if os.path.exists(output_file):
                 print(f"📄 Generated: {output_file}")
-                print(f"   ✏️  Edit this file with semantic placeholder names")
+                print("   ✏️  Edit this file with semantic placeholder names")
                 print(f"   📝 Rename to '{base_name}.json' when ready")
 
             return result
@@ -199,11 +200,11 @@ class TemplateManager:
             # Add mapping info if available
             layout_mapping = mapping.get("layouts", {}).get(layout_name)
             if layout_mapping:
-                layout_section += f"\\n**JSON Mapping**: ✅ Configured\\n"
+                layout_section += "\\n**JSON Mapping**: ✅ Configured\\n"
             else:
-                layout_section += f"\\n**JSON Mapping**: ❌ Not configured\\n"
+                layout_section += "\\n**JSON Mapping**: ❌ Not configured\\n"
 
-            layout_section += f"**Structured Frontmatter**: ⏳ To be implemented\\n"
+            layout_section += "**Structured Frontmatter**: ⏳ To be implemented\\n"
 
             detailed_layouts.append(layout_section)
 
@@ -442,7 +443,7 @@ layout: Title Slide
             modifications = self._modify_master_slide_placeholders(template_path, mapping)
 
             if modifications["modified_count"] > 0:
-                print(f"✅ Enhancement complete!")
+                print("✅ Enhancement complete!")
                 print(
                     f"   📊 Modified {modifications['modified_count']} placeholders across {modifications['layout_count']} layouts"
                 )
@@ -453,7 +454,7 @@ layout: Title Slide
                     )
 
                 if modifications["issues"]:
-                    print(f"⚠️  Issues encountered:")
+                    print("⚠️  Issues encountered:")
                     for issue in modifications["issues"]:
                         print(f"   - {issue}")
 
@@ -463,7 +464,7 @@ layout: Title Slide
                     "backup_path": backup_path if create_backup else None,
                 }
             else:
-                print(f"ℹ️  No modifications needed - all placeholders already have correct names")
+                print("ℹ️  No modifications needed - all placeholders already have correct names")
                 return {
                     "status": "no_changes",
                     "message": "Template already has correct placeholder names",

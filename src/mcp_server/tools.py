@@ -247,10 +247,6 @@ class TemplateAnalyzer:
         # For layouts with titles, check title/content pairs match
         if "title" in layout_name.lower() and title_cols:
             if title_nums != content_nums:
-                # Generate specific fix suggestions for each mismatched placeholder
-                title_dict = {num: name for num, name in title_cols}
-                content_dict = {num: name for num, name in content_cols}
-
                 # Find content placeholders that need fixing
                 expected_content_nums = title_nums
                 for expected_num in expected_content_nums:
@@ -432,7 +428,7 @@ class TemplateAnalyzer:
             print("   • Follow naming conventions like 'Col 1 Title Placeholder 2'")
 
         print(
-            f"\n📝 After fixing placeholder names in PowerPoint, regenerate the template mapping:"
+            "\n📝 After fixing placeholder names in PowerPoint, regenerate the template mapping:"
         )
         print("   python src/deckbuilder/cli_tools.py analyze default --verbose")
         print("\n💡 The analyzer will show ✅ validation passed when all issues are resolved")

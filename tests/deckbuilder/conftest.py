@@ -12,7 +12,7 @@ import pytest
 
 # Import deckbuilder components
 try:
-    from deckbuilder.engine import Deckbuilder, get_deckbuilder_client
+    from deckbuilder.engine import Deckbuilder
     from deckbuilder.naming_conventions import NamingConvention
     from deckbuilder.structured_frontmatter import (
         StructuredFrontmatterRegistry,

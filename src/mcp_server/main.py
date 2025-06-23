@@ -1,18 +1,16 @@
+import asyncio
+import json
+import os
+import sys
 from mcp.server.fastmcp import FastMCP, Context
 from contextlib import asynccontextmanager
 from collections.abc import AsyncIterator
 from dataclasses import dataclass
 from dotenv import load_dotenv
-import asyncio
-import json
-import os
-
-import sys
-import os
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
-from deckbuilder.engine import Deckbuilder, get_deckbuilder_client
+from deckbuilder.engine import get_deckbuilder_client  # noqa: E402
 
 # Import content-first tools (will be implemented later)
 try:
@@ -86,8 +84,9 @@ async def create_presentation(
 ) -> str:
     """Create a complete PowerPoint presentation from JSON data
 
-    This tool accepts JSON data containing all slides and creates a complete presentation with automatic saving.
-    Supports all slide types: title, content, table, and all available layouts with inline formatting.
+    This tool accepts JSON data containing all slides and creates a complete presentation
+    with automatic saving. Supports all slide types: title, content, table, and all
+    available layouts with inline formatting.
 
     Args:
         ctx: MCP context
@@ -156,7 +155,7 @@ async def create_presentation(
         deck.create_presentation(templateName, fileName)
 
         # Add slides from JSON data
-        result = deck.add_slide_from_json(json_data)
+        deck.add_slide_from_json(json_data)
 
         # Automatically save the presentation
         write_result = deck.write_presentation(fileName)
@@ -191,9 +190,10 @@ async def analyze_presentation_needs_tool(
         JSON string with content analysis and structural recommendations
 
     Example:
-        user_input: "I need to present our Q3 results to the board. We had 23% revenue growth,
-                    expanded to 3 new markets, but customer churn increased to 8%. I want to show
-                    we're growing but acknowledge the churn issue and present our retention strategy."
+        user_input: "I need to present our Q3 results to the board. We had 23% revenue
+                    growth, expanded to 3 new markets, but customer churn increased to 8%.
+                    I want to show we're growing but acknowledge the churn issue and present
+                    our retention strategy."
         audience: "board"
         presentation_goal: "report"
 
@@ -224,8 +224,10 @@ async def recommend_slide_approach_tool(
 
     Args:
         ctx: MCP context
-        content_piece: Specific content to present (e.g., "We increased revenue 25%, expanded to 3 markets, but churn rose to 8%")
-        message_intent: What you want this content to communicate (e.g., "show growth while acknowledging challenges")
+        content_piece: Specific content to present (e.g., "We increased revenue 25%,
+                       expanded to 3 markets, but churn rose to 8%")
+        message_intent: What you want this content to communicate (e.g.,
+                        "show growth while acknowledging challenges")
         presentation_context: Optional JSON string from analyze_presentation_needs_tool output
 
     Returns:
@@ -276,15 +278,19 @@ async def optimize_content_for_layout_tool(
 
     Args:
         ctx: MCP context
-        content: Raw content to optimize (e.g., "Our platform offers real-time analytics, automated reporting, custom dashboards, and API integration")
-        chosen_layout: Layout to optimize for (e.g., "Four Columns" from recommend_slide_approach_tool)
-        slide_context: Optional JSON string with context from previous tools (analyze_presentation_needs, recommend_slide_approach)
+        content: Raw content to optimize (e.g., "Our platform offers real-time
+                 analytics, automated reporting, custom dashboards, and API integration")
+        chosen_layout: Layout to optimize for (e.g., "Four Columns" from
+                       recommend_slide_approach_tool)
+        slide_context: Optional JSON string with context from previous tools
+                       (analyze_presentation_needs, recommend_slide_approach)
 
     Returns:
         JSON string with optimized YAML structure, gap analysis, and presentation tips
 
     Example:
-        content: "Traditional approach costs $50K annually with 2-week deployment vs our solution at $30K with same-day setup"
+        content: "Traditional approach costs $50K annually with 2-week deployment
+                 vs our solution at $30K with same-day setup"
         chosen_layout: "Comparison"
 
         Returns:
@@ -326,7 +332,8 @@ async def create_presentation_from_file(
 ) -> str:
     """Create a complete PowerPoint presentation from JSON or markdown file
 
-    This tool reads presentation data directly from a local file without passing content through the context window.
+    This tool reads presentation data directly from a local file without passing
+    content through the context window.
     Supports both JSON files (.json) and markdown files (.md) with frontmatter.
     Automatically detects file type and processes accordingly.
 
@@ -384,7 +391,8 @@ async def create_presentation_from_file(
 
             write_result = deck.write_presentation(fileName)
 
-            return f"Successfully created presentation from markdown file: {file_path} with {len(slides)} slides. {write_result}"
+            return (f"Successfully created presentation from markdown file: "
+                    f"{file_path} with {len(slides)} slides. {write_result}")
 
         else:
             return f"Error: Unsupported file type '{file_extension}'. Supported types: .json, .md"
@@ -404,7 +412,8 @@ async def create_presentation_from_markdown(
 ) -> str:
     """Create presentation from formatted markdown with frontmatter
 
-    This tool accepts markdown content with frontmatter slide definitions and creates a complete presentation.
+    This tool accepts markdown content with frontmatter slide definitions and
+    creates a complete presentation.
     Each slide is defined using YAML frontmatter followed by markdown content.
     This tool automatically saves the presentation to disk after creation.
 
@@ -468,7 +477,8 @@ async def create_presentation_from_markdown(
         # Automatically save the presentation to disk after creation
         write_result = deck.write_presentation(fileName)
 
-        return f"Successfully created presentation with {len(slides)} slides from markdown. {write_result}"
+        return (f"Successfully created presentation with {len(slides)} slides "
+                f"from markdown. {write_result}")
     except Exception as e:
         return f"Error creating presentation from markdown: {str(e)}"
 

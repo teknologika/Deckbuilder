@@ -3,11 +3,9 @@ Unit tests for naming conventions system.
 """
 
 import pytest
-from unittest.mock import Mock
 
 # Test imports with graceful handling
 try:
-    from deckbuilder.naming_conventions import NamingConvention, PlaceholderPattern
     from deckbuilder.cli_tools import PlaceholderContext
 
     HAS_NAMING_CONVENTIONS = True

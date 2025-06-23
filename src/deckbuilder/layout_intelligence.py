@@ -185,10 +185,6 @@ class LayoutIntelligence:
 
     def _detect_content_type(self, content_lower: str) -> str:
         """Detect primary content type"""
-        type_mapping = self.intelligence_data.get("content_patterns", {}).get(
-            "content_type_mapping", {}
-        )
-
         # Simple heuristics for content type detection
         if any(word in content_lower for word in ["image", "picture", "photo", "diagram"]):
             return "image_content"
@@ -361,16 +357,15 @@ def test_layout_intelligence():
 
     test_content = """
     # Feature Comparison: Our Platform vs Competition
-    
+
     ## Performance
     Our platform delivers **fast processing** with optimized algorithms
-    
+
     ## Security
     ***Enterprise-grade*** encryption with SOC2 compliance
-    
+
     ## Usability
     *Intuitive* interface with minimal learning curve
-    
     ## Cost
     Transparent pricing with flexible plans
     """
@@ -380,7 +375,7 @@ def test_layout_intelligence():
 
     # Analyze content
     analysis = engine.analyze_content(test_content)
-    print(f"Content Analysis:")
+    print("Content Analysis:")
     print(f"  Intent: {analysis.intent}")
     print(f"  Content Type: {analysis.content_type}")
     print(f"  Structure: {analysis.structure_indicators}")
@@ -389,7 +384,7 @@ def test_layout_intelligence():
 
     # Get recommendations
     recommendations = engine.recommend_layouts(test_content)
-    print(f"\nLayout Recommendations:")
+    print("\nLayout Recommendations:")
 
     for i, rec in enumerate(recommendations, 1):
         print(f"\n{i}. {rec.layout_name} (Confidence: {rec.confidence:.2f})")

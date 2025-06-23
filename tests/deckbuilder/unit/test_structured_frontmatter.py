@@ -3,7 +3,6 @@ Unit tests for structured frontmatter system.
 """
 
 import pytest
-from unittest.mock import Mock, patch
 
 # Test imports with graceful handling
 try:

@@ -3,9 +3,8 @@ Unit tests for deckbuilder engine.
 """
 
 import os
-import tempfile
 from pathlib import Path
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 
 import pytest
 
@@ -80,7 +79,7 @@ class TestDeckbuilderEngine:
 
         # Reset singleton to ensure fresh instance with mock
         Deckbuilder.reset()
-        deckbuilder = Deckbuilder()
+        Deckbuilder()  # Create instance to trigger mock calls
 
         # Should call exists check for template file
         mock_exists.assert_called()
