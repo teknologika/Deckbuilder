@@ -13,14 +13,13 @@ import pytest
 # Import deckbuilder components
 try:
     from deckbuilder.engine import Deckbuilder
-    from deckbuilder.naming_conventions import NamingConvention
+    from deckbuilder.naming_conventions import NamingConvention, PlaceholderContext
     from deckbuilder.structured_frontmatter import (
         StructuredFrontmatterRegistry,
         StructuredFrontmatterConverter,
         StructuredFrontmatterValidator,
     )
     from deckbuilder.layout_intelligence import LayoutIntelligence
-    from deckbuilder.cli_tools import PlaceholderContext
 except ImportError:
     # Handle missing imports gracefully for early testing
     Deckbuilder = None
@@ -138,10 +137,9 @@ def placeholder_context():
     if PlaceholderContext is None:
         pytest.skip("PlaceholderContext not available")
     return PlaceholderContext(
-        layout_index=0,
-        placeholder_index=1,
-        placeholder_type="content",
         layout_name="Four Columns With Titles",
+        placeholder_idx="1",
+        placeholder_type="content",
     )
 
 
