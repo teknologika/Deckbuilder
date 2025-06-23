@@ -1,5 +1,7 @@
 # Deck Builder MCP
 
+[![Test Suite](https://github.com/teknologika/deck-builder-mcp/actions/workflows/test.yml/badge.svg)](https://github.com/teknologika/deck-builder-mcp/actions/workflows/test.yml)
+
 ## Overview
 
 The Deck Builder MCP is a Model Context Protocol (MCP) server that enables AI assistants to programmatically create and manipulate PowerPoint presentations. Built with Python and FastMCP, this server provides a comprehensive set of tools for generating professional presentations with multiple slide types, custom styling, and template support.
