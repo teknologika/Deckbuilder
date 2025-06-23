@@ -11,7 +11,7 @@ The server solves the common challenge of automating presentation creation by of
 - **Presentation Engine:** python-pptx
 - **Content Parsing:** PyYAML for frontmatter, custom markdown parser
 - **Transport:** stdio/SSE
-- **Language:** Python 3.x
+- **Language:** Python 3.11+
 - **Configuration:** Environment variables with .env support
 
 ## Features
@@ -34,7 +34,7 @@ The server solves the common challenge of automating presentation creation by of
 
 ### Development Environment
 
-- **Python 3.8+** with pip package manager
+- **Python 3.11+** with pip package manager
 - **Virtual environment** (recommended for dependency isolation)
 - **Claude Desktop** or another MCP-compatible client
 - **PowerPoint templates** (optional, default template included)

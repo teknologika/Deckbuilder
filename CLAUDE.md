@@ -29,7 +29,7 @@ The system transforms LLMs from layout pickers into intelligent presentation con
 
 ## Development Environment
 
-Always use Python 3 and activate the virtual environment:
+Always use Python 3.11+ and activate the virtual environment:
 ```bash
 source venv/bin/activate
 ```
