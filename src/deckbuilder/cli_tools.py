@@ -17,6 +17,11 @@ from pathlib import Path
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from mcp_server.tools import TemplateAnalyzer
+try:
+    from .naming_conventions import NamingConvention, PlaceholderContext
+except ImportError:
+    # Handle direct script execution
+    from naming_conventions import NamingConvention, PlaceholderContext
 
 
 class TemplateManager:
@@ -369,7 +374,7 @@ layout: Title Slide
         # Placeholder for naming convention validation
         return {"status": "valid", "message": "Naming validation not yet implemented"}
     
-    def enhance_template(self, template_name: str, mapping_file: str = None, create_backup: bool = True) -> dict:
+    def enhance_template(self, template_name: str, mapping_file: str = None, create_backup: bool = True, use_conventions: bool = False) -> dict:
         """
         Enhance template by updating master slide placeholder names using semantic mapping.
         
@@ -377,6 +382,7 @@ layout: Title Slide
             template_name: Name of template to enhance
             mapping_file: Custom JSON mapping file (optional)
             create_backup: Create backup before modification (default: True)
+            use_conventions: Use convention-based naming system (default: False)
             
         Returns:
             Enhancement results with success/failure information
@@ -393,22 +399,29 @@ layout: Title Slide
             if not os.path.exists(template_path):
                 return {"status": "error", "error": f"Template file not found: {template_path}"}
             
-            # Determine mapping file path
-            base_name = template_name.replace('.pptx', '')
-            if not mapping_file:
-                mapping_file = os.path.join(self.template_folder, f"{base_name}.json")
-            
-            if not os.path.exists(mapping_file):
-                return {"status": "error", "error": f"Mapping file not found: {mapping_file}. Run 'analyze' first to generate mapping."}
+            # Determine mapping file path (only if not using conventions)
+            if not use_conventions:
+                base_name = template_name.replace('.pptx', '')
+                if not mapping_file:
+                    mapping_file = os.path.join(self.template_folder, f"{base_name}.json")
+                
+                if not os.path.exists(mapping_file):
+                    return {"status": "error", "error": f"Mapping file not found: {mapping_file}. Run 'analyze' first to generate mapping."}
             
             # Create backup if requested
             if create_backup:
                 backup_path = self._create_template_backup(template_path)
                 print(f"📄 Backup created: {backup_path}")
             
-            # Load mapping
-            with open(mapping_file, 'r', encoding='utf-8') as f:
-                mapping = json.load(f)
+            # Load or generate mapping
+            if use_conventions:
+                print("🎯 Using convention-based naming system...")
+                # Generate convention-based mapping
+                mapping = self._generate_convention_mapping(template_path)
+            else:
+                # Load existing mapping
+                with open(mapping_file, 'r', encoding='utf-8') as f:
+                    mapping = json.load(f)
             
             # Enhance template
             modifications = self._modify_master_slide_placeholders(template_path, mapping)
@@ -558,6 +571,60 @@ layout: Title Slide
             modifications["issues"].append(f"Failed to save enhanced template: {str(e)}")
             
         return modifications
+    
+    def _generate_convention_mapping(self, template_path: str) -> dict:
+        """
+        Generate convention-based mapping for template placeholders.
+        
+        Args:
+            template_path: Path to PowerPoint template
+            
+        Returns:
+            Convention-based mapping dictionary
+        """
+        from pptx import Presentation
+        
+        # Load presentation to analyze structure
+        prs = Presentation(template_path)
+        convention = NamingConvention()
+        
+        # Build mapping using convention system
+        mapping = {
+            "template_info": {
+                "name": "Convention-Based",
+                "version": "1.0"
+            },
+            "layouts": {}
+        }
+        
+        # Process each slide layout
+        layout_index = 0
+        for layout in prs.slide_layouts:
+            layout_name = layout.name
+            layout_placeholders = {}
+            
+            for placeholder in layout.placeholders:
+                placeholder_idx = str(placeholder.placeholder_format.idx)
+                
+                # Create context for convention naming
+                context = PlaceholderContext(
+                    layout_name=layout_name,
+                    placeholder_idx=placeholder_idx,
+                    total_placeholders=len(layout.placeholders)
+                )
+                
+                # Generate convention-based name
+                convention_name = convention.generate_placeholder_name(context)
+                layout_placeholders[placeholder_idx] = convention_name
+            
+            mapping["layouts"][layout_name] = {
+                "index": layout_index,
+                "placeholders": layout_placeholders
+            }
+            
+            layout_index += 1
+        
+        return mapping
 
 
 def main():
@@ -573,6 +640,7 @@ Examples:
   python cli_tools.py validate default
   python cli_tools.py enhance default
   python cli_tools.py enhance default --no-backup
+  python cli_tools.py enhance default --use-conventions
   python cli_tools.py analyze default --template-folder ./templates --output-folder ./output
         """
     )
@@ -604,6 +672,7 @@ Examples:
     enhance_parser.add_argument('template', help='Template name to enhance')
     enhance_parser.add_argument('--mapping-file', help='Custom JSON mapping file path')
     enhance_parser.add_argument('--no-backup', action='store_true', help='Skip creating backup before modification')
+    enhance_parser.add_argument('--use-conventions', action='store_true', help='Use convention-based naming system instead of JSON mapping')
     
     args = parser.parse_args()
     
@@ -626,7 +695,7 @@ Examples:
         manager.validate_template(args.template)
     elif args.command == 'enhance':
         create_backup = not args.no_backup
-        manager.enhance_template(args.template, args.mapping_file, create_backup)
+        manager.enhance_template(args.template, args.mapping_file, create_backup, args.use_conventions)
 
 
 if __name__ == '__main__':

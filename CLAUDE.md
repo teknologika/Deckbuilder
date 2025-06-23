@@ -99,20 +99,27 @@ Refer to these comprehensive specifications before implementing:
 
 ## Implementation Priorities
 
-### Phase 1: Content-First MCP Tools (Current Focus)
-1. `analyze_presentation_needs()` - Content and goal analysis
-2. `recommend_slide_approach()` - Layout recommendations  
-3. `optimize_content_for_layout()` - Content optimization and YAML generation
+### Phase 1: Content-First MCP Tools ✅ COMPLETED
+1. ✅ `analyze_presentation_needs()` - Content and goal analysis (placeholder implemented)
+2. ✅ `recommend_slide_approach()` - Layout recommendations (placeholder implemented)
+3. ✅ `optimize_content_for_layout()` - Content optimization and YAML generation (placeholder implemented)
 
-### Phase 2: Layout Intelligence
-1. Create `src/layout_intelligence.json` with semantic metadata
-2. Implement content matching algorithms
-3. Test end-to-end content-first workflow
+### Phase 2: Template Management System ✅ COMPLETED
+1. ✅ **CLI Template Management Tools** - Comprehensive command-line utilities
+   - `analyze` - Template structure analysis with detailed validation
+   - `document` - Auto-generated comprehensive template documentation
+   - `validate` - Template and mapping validation with specific fix suggestions
+   - `enhance` - Master slide placeholder modification with organized backup system
+2. ✅ **Master Slide Enhancement** - Direct PowerPoint template modification using python-pptx
+3. ✅ **Organized File Management** - `.g.pptx` convention and dedicated backup folders
+4. ✅ **Comprehensive Documentation** - Updated user guides and technical specifications
 
-### Phase 3: Template Expansion
-1. Progressive implementation of 50+ layouts from `SupportedTemplates.md`
-2. Enhanced content intelligence for new layouts
-3. Performance optimization and comprehensive testing
+### Phase 3: Content Intelligence & Layout Expansion (Current Focus)
+1. **Convention-Based Naming System** - Standardized placeholder naming patterns
+2. **Layout Intelligence Implementation** - `src/layout_intelligence.json` with semantic metadata
+3. **Content Matching Algorithms** - Smart layout recommendations based on content analysis
+4. **Template Library Expansion** - Progressive implementation of 50+ layouts from `SupportedTemplates.md`
+5. **Performance Optimization** - Enhanced content intelligence and comprehensive testing
 
 ## Important Instructions
 
@@ -146,20 +153,29 @@ The project includes comprehensive test files for validation:
   - Real-world presentation requests
   - Content-first workflow validation
 
-#### Template Analysis Tools
-- **`tests/test_tools.py`**: Template analyzer and environment setup
-  - Extracts PowerPoint template structure
-  - Generates JSON mappings for new templates
-  - Sets up test environment with proper folder structure
+#### Template Management CLI Tools
+- **`src/deckbuilder/cli_tools.py`**: Comprehensive template management utilities
+  - Extracts PowerPoint template structure with detailed validation
+  - Generates JSON mappings and comprehensive documentation
+  - Enhances templates with master slide placeholder modification
+  - Provides organized backup system and error reporting
 
 ### Running Tests
 
-#### Template Analysis
-Generate JSON mappings for PowerPoint templates:
+#### Template Analysis and Enhancement
+Generate JSON mappings and enhance PowerPoint templates:
 ```bash
-cd tests
-python test_tools.py
-# Creates templateName.g.json files for customization
+# Analyze template structure with validation
+python src/deckbuilder/cli_tools.py analyze default --verbose
+
+# Generate comprehensive documentation
+python src/deckbuilder/cli_tools.py document default
+
+# Validate template and mappings
+python src/deckbuilder/cli_tools.py validate default
+
+# Enhance template with corrected placeholder names
+python src/deckbuilder/cli_tools.py enhance default
 ```
 
 #### Presentation Generation Testing
