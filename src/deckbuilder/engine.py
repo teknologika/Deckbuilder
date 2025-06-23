@@ -38,9 +38,15 @@ def singleton(cls):
             instances[cls] = cls(*args, **kwargs)
         return instances[cls]
 
+    def reset():
+        """Reset the singleton instance for testing purposes"""
+        instances.clear()
+
     # Allow external access to clear instances for testing
     get_instance._instances = instances
+    get_instance.reset = reset
     cls._instances = instances
+    cls.reset = reset
 
     return get_instance
 

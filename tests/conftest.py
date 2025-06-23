@@ -44,10 +44,15 @@ def mock_deckbuilder_env():
     try:
         from deckbuilder.engine import Deckbuilder
 
-        if hasattr(Deckbuilder, "_instances"):
-            Deckbuilder._instances.clear()
-    except ImportError:
-        pass
+        # Use the new reset method for cleaner singleton management
+        Deckbuilder.reset()
+    except (ImportError, AttributeError):
+        # Fallback to manual clearing if reset method not available
+        try:
+            if hasattr(Deckbuilder, "_instances"):
+                Deckbuilder._instances.clear()
+        except Exception:
+            pass
 
     # Create temporary directories
     import tempfile
@@ -80,15 +85,37 @@ def mock_deckbuilder_env():
 
     # Clear singleton instances again for next test
     try:
-        if hasattr(Deckbuilder, "_instances"):
-            Deckbuilder._instances.clear()
-    except ImportError:
-        pass
+        # Use the new reset method for cleaner singleton management
+        Deckbuilder.reset()
+    except (ImportError, AttributeError):
+        # Fallback to manual clearing if reset method not available
+        try:
+            if hasattr(Deckbuilder, "_instances"):
+                Deckbuilder._instances.clear()
+        except Exception:
+            pass
 
     # Clean up temp directory
     import shutil
 
     shutil.rmtree(temp_base, ignore_errors=True)
+
+
+@pytest.fixture
+def fresh_deckbuilder(mock_deckbuilder_env):
+    """Provide a fresh Deckbuilder instance for each test with proper environment isolation."""
+    from deckbuilder.engine import Deckbuilder
+    
+    # Reset singleton to ensure fresh instance
+    Deckbuilder.reset()
+    
+    # Create new instance with current environment
+    instance = Deckbuilder()
+    
+    yield instance
+    
+    # Clean up after test
+    Deckbuilder.reset()
 
 
 @pytest.fixture
