@@ -427,9 +427,7 @@ class TemplateAnalyzer:
             print("   • Ensure column numbers are sequential (1, 2, 3, 4)")
             print("   • Follow naming conventions like 'Col 1 Title Placeholder 2'")
 
-        print(
-            "\n📝 After fixing placeholder names in PowerPoint, regenerate the template mapping:"
-        )
+        print("\n📝 After fixing placeholder names in PowerPoint, regenerate the template mapping:")
         print("   python src/deckbuilder/cli_tools.py analyze default --verbose")
         print("\n💡 The analyzer will show ✅ validation passed when all issues are resolved")
         print("=" * 60)

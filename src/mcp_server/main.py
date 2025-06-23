@@ -391,8 +391,10 @@ async def create_presentation_from_file(
 
             write_result = deck.write_presentation(fileName)
 
-            return (f"Successfully created presentation from markdown file: "
-                    f"{file_path} with {len(slides)} slides. {write_result}")
+            return (
+                f"Successfully created presentation from markdown file: "
+                f"{file_path} with {len(slides)} slides. {write_result}"
+            )
 
         else:
             return f"Error: Unsupported file type '{file_extension}'. Supported types: .json, .md"
@@ -477,8 +479,10 @@ async def create_presentation_from_markdown(
         # Automatically save the presentation to disk after creation
         write_result = deck.write_presentation(fileName)
 
-        return (f"Successfully created presentation with {len(slides)} slides "
-                f"from markdown. {write_result}")
+        return (
+            f"Successfully created presentation with {len(slides)} slides "
+            f"from markdown. {write_result}"
+        )
     except Exception as e:
         return f"Error creating presentation from markdown: {str(e)}"
 
