@@ -6,9 +6,61 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is an MCP (Model Context Protocol) Server for building PowerPoint presentations. The project has evolved beyond initial setup into a comprehensive content-first presentation intelligence system.
 
-## Run these commands and fix these errors before checking in 
-flake8 src/ tests/ --max-line-length=100 --ignore=E203,W503
+## 🔧 Code Quality Standards
+
+**CRITICAL: Always run these commands and fix ALL errors before committing:**
+
+```bash
+# Format code with black (REQUIRED)
 black --line-length 100 src/
+
+# Check all flake8 violations (REQUIRED)  
+flake8 src/ tests/ --max-line-length=100 --ignore=E203,W503
+
+# Run tests to ensure no regressions (REQUIRED)
+pytest tests/
+```
+
+**⚠️ ZERO TOLERANCE POLICY: No commits allowed with flake8 F-level errors (F401, F841, F811, F541, etc.)**
+
+### Code Quality Rules
+
+**Imports (Critical F-level violations):**
+- Remove ALL unused imports (F401) - check each import statement
+- Import order: stdlib → third-party → local, alphabetical within groups
+- Use `# noqa: E402` only when imports must follow `sys.path.insert()`
+- Never duplicate imports (F811)
+
+**Variables (Critical F-level violations):**
+- Remove ALL unused variables (F841) - either use them or delete them
+- Use `_` for intentionally unused variables: `for _, item in enumerate(items)`
+- Comment out variables for future use: `# content_length = len(content)  # Future: use for analysis`
+
+**F-strings (Critical F-level violations):**
+- Fix ALL f-strings without placeholders (F541): `f"Hello"` → `"Hello"`
+- Only use f-strings when you have variables: `f"Hello {name}"`
+
+**Line Length (E501 - Style violations):**
+- Maximum 100 characters per line
+- Break long function calls, docstrings, and string literals
+- Use parentheses for continuation: `("long string part 1 "\n"part 2")`
+
+### Enforcement Strategy
+1. **Pre-commit**: Always run `flake8` before any commit
+2. **Zero F-errors**: F-level errors MUST be fixed immediately  
+3. **Style consistency**: Use `black` for automatic formatting
+4. **Test coverage**: Ensure all code changes include relevant tests
+
+### CI Integration
+The project includes GitHub Actions workflows that enforce code quality:
+
+- **`.github/workflows/test.yml`**: Runs pytest and flake8 on every push/PR
+- **`.github/workflows/claude-code-review.yml`**: Claude-powered code review for PRs
+
+**CI Requirements:**
+- All tests must pass (50+ tests including engine, template processing, etc.)
+- Zero flake8 F-level errors (F401, F841, F811, F541) 
+- Python 3.11+ compatibility required
 
 
 
@@ -134,11 +186,14 @@ Refer to these comprehensive specifications before implementing:
 
 ## Important Instructions
 
-1. **Always design a feature first, and ask me to review the design before implementing it**
-2. **Follow content-first principles**: Start with user needs, not system capabilities
-3. **Maintain separation of concerns**: Technical structure vs semantic intelligence
-4. **Document decisions**: Update feature docs when making design choices
-5. **Test with real scenarios**: Use actual user presentation needs for validation
+1. **🔧 CODE QUALITY FIRST**: Always run `flake8` and fix ALL F-level errors before any commit
+2. **Always design a feature first, and ask me to review the design before implementing it**
+3. **Follow content-first principles**: Start with user needs, not system capabilities
+4. **Maintain separation of concerns**: Technical structure vs semantic intelligence
+5. **Document decisions**: Update feature docs when making design choices
+6. **Test with real scenarios**: Use actual user presentation needs for validation
+7. **Clean imports**: Remove unused imports (F401) and variables (F841) immediately
+8. **Format consistently**: Use `black --line-length 100 src/` before committing
 
 ## Testing & Validation
 
