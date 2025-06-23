@@ -136,6 +136,8 @@ Refer to these comprehensive specifications before implementing:
 
 ## Testing & Validation
 
+When tests fail, ask the user how to fix them before actually fixing them.
+
 ### Test Files and Usage
 
 The project includes comprehensive test files for validation:
