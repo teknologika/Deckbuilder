@@ -15,15 +15,16 @@ from unittest.mock import patch, MagicMock
 import pytest
 
 # Add src to Python path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / "src"))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / "src"))  # noqa: E402
 
 # Test imports with graceful handling
 HAS_MCP_TOOLS = False
 try:
-    from mcp_server.tools import analyze_pptx_template
-    from deckbuilder.engine import get_deckbuilder_client
+    from mcp_server.tools import analyze_pptx_template  # noqa: E402
+    from deckbuilder.engine import get_deckbuilder_client  # noqa: E402
     HAS_MCP_TOOLS = True
-except ImportError:
+except ImportError as e:
+    print(f"Import error: {e}")
     # Create mock functions to avoid NameError
     def analyze_pptx_template(template_name):
         return {"mock": True}
