@@ -35,7 +35,7 @@ def create_presentation(templateName: str = "default", fileName: str = "Sample_P
 
 **What it does:**
 - Loads PowerPoint template from templates folder
-- Loads corresponding JSON mapping file for layout configuration  
+- Loads corresponding JSON mapping file for layout configuration
 - Clears any existing slides
 - Prepares presentation for content addition
 
@@ -93,7 +93,7 @@ slides = {
                 "subtitle": "Annual results and strategic outlook"
             },
             {
-                "type": "Title and Content", 
+                "type": "Title and Content",
                 "title": "Key Achievements",
                 "content": [
                     "**Revenue Growth**: 25% year-over-year",
@@ -126,7 +126,7 @@ def write_presentation(fileName: str = "Sample_Presentation") -> str
 
 **Example:**
 ```python
-result = deck.write_presentation("QuarterlyReport") 
+result = deck.write_presentation("QuarterlyReport")
 print(result)  # "Presentation saved as: QuarterlyReport.2025-01-26_1445.g.pptx"
 ```
 
@@ -184,7 +184,7 @@ layout: Title Slide
 ## Slide Subtitle
 
 ---
-layout: Title and Content  
+layout: Title and Content
 ---
 # Content Title
 Content goes here
@@ -226,7 +226,7 @@ def create_presentation_from_markdown(markdown_content: str, fileName: str = "Sa
 
 **Parameters:**
 - `markdown_content` (str): Markdown with frontmatter
-- `fileName` (str): Output filename base  
+- `fileName` (str): Output filename base
 - `templateName` (str): Template to use
 
 **Returns:** Success message with slide count and filename
@@ -248,7 +248,7 @@ style: dark_blue_white_text
 
 | **Region** | *Sales* | ___Target___ |
 | North | $1.2M | $1.0M |
-| South | $980K | $1.1M |  
+| South | $980K | $1.1M |
 | East | $1.5M | $1.3M |
 | West | $750K | $900K |
 """
@@ -268,14 +268,14 @@ print(result)  # "Successfully created presentation with 2 slides from markdown.
 }
 ```
 
-### Title and Content  
+### Title and Content
 ```python
 {
     "type": "Title and Content",
     "title": "Slide title",
     "content": [
         "Bullet point one",
-        "Bullet point two", 
+        "Bullet point two",
         "Regular paragraph text"
     ]
 }
@@ -288,7 +288,7 @@ print(result)  # "Successfully created presentation with 2 slides from markdown.
     "title": "Table title",
     "table": {
         "header_style": "dark_blue_white_text",     # Header colors
-        "row_style": "alternating_light_gray",      # Row colors  
+        "row_style": "alternating_light_gray",      # Row colors
         "border_style": "thin_gray",                # Border style
         "data": [
             ["Header 1", "Header 2", "Header 3"],   # First row = headers
@@ -305,13 +305,13 @@ print(result)  # "Successfully created presentation with 2 slides from markdown.
 - `"dark_blue_white_text"` - Dark blue background, white text
 - `"light_blue_dark_text"` - Light blue background, dark text
 
-*Row Styles:*  
+*Row Styles:*
 - `"alternating_light_gray"` - White and light gray alternating
 - `"solid_white"` - All white rows
 
 *Border Styles:*
 - `"thin_gray"` - Thin gray borders
-- `"thick_gray"` - Thick gray borders  
+- `"thick_gray"` - Thick gray borders
 - `"no_borders"` - No borders
 
 ### Section Header
@@ -365,7 +365,7 @@ import os
 
 # Optional: Set custom paths
 os.environ["DECK_TEMPLATE_FOLDER"] = "/path/to/templates"
-os.environ["DECK_OUTPUT_FOLDER"] = "/path/to/output"  
+os.environ["DECK_OUTPUT_FOLDER"] = "/path/to/output"
 os.environ["DECK_TEMPLATE_NAME"] = "corporate"
 
 # Then use normally
@@ -379,24 +379,24 @@ from deckbuilder import get_deckbuilder_client
 
 def create_quarterly_report():
     """Create a complete quarterly report presentation."""
-    
+
     deck = get_deckbuilder_client()
-    
+
     # Method 1: Step by step
     deck.create_presentation("corporate", "Q4_Report")
-    
+
     # Add title slide
     title_data = {
         "presentation": {
             "slides": [{
                 "type": "Title Slide",
-                "title": "**Q4 2024 Results**", 
+                "title": "**Q4 2024 Results**",
                 "subtitle": "Quarterly performance review"
             }]
         }
     }
     deck.add_slide_from_json(title_data)
-    
+
     # Add content slides
     content_data = {
         "presentation": {
@@ -412,7 +412,7 @@ def create_quarterly_report():
                 },
                 {
                     "type": "table",
-                    "title": "Department Performance", 
+                    "title": "Department Performance",
                     "table": {
                         "header_style": "dark_blue_white_text",
                         "row_style": "alternating_light_gray",
@@ -428,7 +428,7 @@ def create_quarterly_report():
         }
     }
     deck.add_slide_from_json(content_data)
-    
+
     # Save presentation
     result = deck.write_presentation("Q4_Report")
     return result

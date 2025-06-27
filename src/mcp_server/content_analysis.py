@@ -9,7 +9,7 @@ not "what layouts exist?"
 """
 
 import re
-from typing import Dict, List, Any
+from typing import Any, Dict, List
 
 
 class ContentAnalyzer:

@@ -37,7 +37,7 @@ python tests/utils/test_runner.py --validate
 - **Automatic test discovery**: Tests are automatically discovered and shown in the Testing panel
 - **Run individual tests**: Click any test in the Test Explorer to run it
 - **Debug tests**: Set breakpoints and debug tests directly in VS Code
-- **Keyboard shortcuts**: 
+- **Keyboard shortcuts**:
   - `Ctrl+Shift+P` → "Python: Run All Tests"
   - `Ctrl+Shift+P` → "Python: Debug All Tests"
 

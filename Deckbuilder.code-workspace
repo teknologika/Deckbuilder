@@ -9,7 +9,7 @@
         // Inherit from .vscode/settings.json but can override here
         "python.testing.pytestEnabled": true,
         "python.testing.unittestEnabled": false,
-        
+
         // Workspace-specific overrides
         "files.watcherExclude": {
             "**/venv/**": true,
@@ -22,7 +22,7 @@
     "extensions": {
         "recommendations": [
             "ms-python.python",
-            "ms-python.vscode-pylance", 
+            "ms-python.vscode-pylance",
             "ryanluker.vscode-coverage-gutters",
             "yzhang.markdown-all-in-one",
             "redhat.vscode-yaml"
@@ -47,7 +47,7 @@
                 "dependsOn": ["Install Dependencies"]
             },
             {
-                "label": "Install Dependencies", 
+                "label": "Install Dependencies",
                 "type": "shell",
                 "command": "./venv/bin/pip",
                 "args": ["install", "-r", "requirements.txt"],

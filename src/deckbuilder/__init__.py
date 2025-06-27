@@ -7,8 +7,8 @@ structured frontmatter processing.
 
 from .engine import Deckbuilder, get_deckbuilder_client
 from .structured_frontmatter import (
-    StructuredFrontmatterRegistry,
     StructuredFrontmatterConverter,
+    StructuredFrontmatterRegistry,
     StructuredFrontmatterValidator,
 )
 

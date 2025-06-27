@@ -54,7 +54,7 @@ presentation_data = {
                 "title": "Key Points",
                 "content": [
                     "**First point** - Something important",
-                    "*Second point* - Something interesting", 
+                    "*Second point* - Something interesting",
                     "***Third point*** - Something critical"
                 ]
             },
@@ -92,7 +92,7 @@ print(result)  # "Successfully created presentation: MyPresentation.2025-01-26_1
 # Title slide
 {
     "type": "Title Slide",
-    "title": "Your Title Here", 
+    "title": "Your Title Here",
     "subtitle": "Your Subtitle"
 }
 
@@ -109,7 +109,7 @@ print(result)  # "Successfully created presentation: MyPresentation.2025-01-26_1
 
 # Table slide with styling
 {
-    "type": "table", 
+    "type": "table",
     "title": "Table Title",
     "table": {
         "header_style": "dark_blue_white_text",  # or "light_blue_dark_text"
@@ -126,7 +126,7 @@ print(result)  # "Successfully created presentation: MyPresentation.2025-01-26_1
 {
     "type": "Section Header",
     "title": "Section Title",
-    "subtitle": "Section Description"  
+    "subtitle": "Section Description"
 }
 ```
 
@@ -153,7 +153,7 @@ layout: Title and Content
 Our platform offers significant advantages over traditional approaches.
 
 - **Performance** - 3x faster processing
-- **Reliability** - 99.9% uptime guarantee  
+- **Reliability** - 99.9% uptime guarantee
 - **Security** - Enterprise-grade encryption
 - **Support** - 24/7 expert assistance
 
@@ -177,7 +177,7 @@ row_style: alternating_light_gray
 deck = get_deckbuilder_client()
 result = deck.create_presentation_from_markdown(
     markdown_content,
-    fileName="MyMarkdownPresentation", 
+    fileName="MyMarkdownPresentation",
     templateName="default"
 )
 
@@ -188,14 +188,14 @@ print(result)
 
 **Inline Formatting** (works in both JSON and Markdown):
 - `**bold text**` → **bold text**
-- `*italic text*` → *italic text*  
+- `*italic text*` → *italic text*
 - `___underlined text___` → ___underlined text___
 - `***bold italic***` → ***bold italic***
 - `***___all three___***` → ***bold italic underlined***
 
 **Content Types**:
 - `# Heading` → Section heading (larger text)
-- `## Subheading` → Subsection heading  
+- `## Subheading` → Subsection heading
 - `Regular paragraph` → Normal paragraph text
 - `- Bullet point` → Bullet list item
 - Tables use standard markdown syntax
@@ -207,7 +207,7 @@ For more complex layouts, use structured YAML:
 ```yaml
 ---
 layout: Four Columns
-title: Feature Comparison  
+title: Feature Comparison
 columns:
   - title: Performance
     content: "**Lightning fast** processing with optimized algorithms"
@@ -227,7 +227,7 @@ comparison:
     title: Current Approach
     content: "**Legacy** system with *limited* scalability"
   right:
-    title: Our Solution  
+    title: Our Solution
     content: "***Modern*** architecture with ___unlimited___ growth potential"
 ---
 ```
@@ -267,7 +267,7 @@ layout: Title Slide
 ## Q4 2024 Results
 
 ---
-layout: Section Header  
+layout: Section Header
 ---
 # Executive Summary
 
@@ -275,7 +275,7 @@ layout: Section Header
 layout: Title and Content
 ---
 # Key Metrics
-- Revenue: **$2.1M** 
+- Revenue: **$2.1M**
 - Growth: ***25%***
 
 ---
@@ -288,12 +288,12 @@ layout: Section Header
 
 You now know everything needed for one-shot presentation creation. The system handles:
 - ✅ Template loading and management
-- ✅ Content formatting and styling  
+- ✅ Content formatting and styling
 - ✅ Slide layout selection
 - ✅ File output with timestamps
 - ✅ Error handling and fallbacks
 
-**Next Steps**: 
+**Next Steps**:
 - See [Core API Reference](Deckbuilder_Core_API.md) for all available functions
 - See [Template Management](Deckbuilder_Template_Management.md) for custom templates
 - See [Supported Templates](Supported_Templates.md) for complete layout library status

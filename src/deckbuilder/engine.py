@@ -1,19 +1,21 @@
-import os
-import shutil
 import json
-import yaml
+import os
 import re
+import shutil
+
+import yaml
 from pptx import Presentation
-from pptx.util import Cm, Pt
 from pptx.dml.color import RGBColor
+from pptx.util import Cm, Pt
+
 from .placeholder_types import (
-    is_title_placeholder,
-    is_subtitle_placeholder,
     is_content_placeholder,
+    is_subtitle_placeholder,
+    is_title_placeholder,
 )
 
 try:
-    from .table_styles import TABLE_HEADER_STYLES, TABLE_ROW_STYLES, TABLE_BORDER_STYLES
+    from .table_styles import TABLE_BORDER_STYLES, TABLE_HEADER_STYLES, TABLE_ROW_STYLES
 except ImportError:
     # Fallback values if modules don't exist
     TABLE_HEADER_STYLES = {
@@ -53,7 +55,6 @@ def singleton(cls):
 
 @singleton
 class Deckbuilder:
-
     def __init__(self):
         self.template_path = os.getenv("DECK_TEMPLATE_FOLDER")
         self.template_name = os.getenv("DECK_TEMPLATE_NAME")
@@ -1076,7 +1077,6 @@ class Deckbuilder:
         converter = StructuredFrontmatterConverter(self.layout_mapping)
 
         if converter.registry.supports_structured_frontmatter(layout_name):
-
             # Validate structured frontmatter
             validator = StructuredFrontmatterValidator()
             validation_result = validator.validate_structured_frontmatter(parsed, layout_name)

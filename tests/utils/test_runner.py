@@ -6,9 +6,9 @@ Provides a convenient command-line interface for running different test suites
 and generating reports. Can be used from VS Code or command line.
 """
 
-import sys
 import argparse
 import subprocess
+import sys
 from pathlib import Path
 from typing import List, Optional
 

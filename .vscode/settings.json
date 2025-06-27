@@ -3,7 +3,7 @@
     "python.defaultInterpreterPath": "./venv/bin/python",
     "python.terminal.activateEnvironment": true,
     "python.envFile": "${workspaceFolder}/.env",
-    
+
     // Test discovery and execution
     "python.testing.pytestEnabled": true,
     "python.testing.unittestEnabled": false,
@@ -12,7 +12,7 @@
         "--disable-warnings"
     ],
     "python.testing.autoTestDiscoverOnSaveEnabled": true,
-    
+
     // Code formatting and linting
     "python.formatting.provider": "black",
     "python.formatting.blackArgs": [
@@ -25,26 +25,26 @@
         "--max-line-length=100",
         "--ignore=E203,W503"
     ],
-    
+
     // File associations
     "files.associations": {
         "*.md": "markdown",
         "*.pptx": "binary",
         "pytest.ini": "ini"
     },
-    
+
     // Editor settings
     "editor.rulers": [100],
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
         "source.organizeImports": "explicit"
     },
-    
+
     // Test coverage settings
     "coverage-gutters.showGutterCoverage": true,
     "coverage-gutters.showLineCoverage": true,
     "coverage-gutters.showRulerCoverage": true,
-    
+
     // File explorer settings
     "files.exclude": {
         "**/__pycache__": true,
@@ -54,7 +54,7 @@
         "**/node_modules": true,
         "**/.pytest_cache": true
     },
-    
+
     // Search settings
     "search.exclude": {
         "**/venv": true,
@@ -63,7 +63,7 @@
         "**/.pytest_cache": true,
         "**/tests/output": true
     },
-    
+
     // Terminal settings
     "terminal.integrated.env.osx": {
         "PYTHONPATH": "${workspaceFolder}/src:${workspaceFolder}/tests"

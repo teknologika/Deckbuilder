@@ -16,7 +16,7 @@ The placeholder matching system enables reliable content mapping to PowerPoint t
 
 - **Template Analyzer** (`src/mcp_server/tools.py`): Extracts layout and placeholder information from PPTX files
 - **Semantic Detection** (`placeholder_types.py`): Identifies placeholder types using PowerPoint's built-in semantic types
-- **JSON Mapping System**: Dynamic layout configuration using template-specific JSON files  
+- **JSON Mapping System**: Dynamic layout configuration using template-specific JSON files
 - **Unified Mapping Logic** (`deckbuilder.py`): Combines semantic detection with JSON mappings for reliable content placement
 - **Template Packages**: PPTX file + JSON configuration file pairs
 - **Backward Compatibility**: Maintains existing API while adding flexibility
@@ -86,9 +86,9 @@ slide_data = {
     "subtitle": "Subtitle Text"          # Automatically finds subtitle placeholder
 }
 
-# Content slide using semantic detection  
+# Content slide using semantic detection
 slide_data = {
-    "type": "Title and Content", 
+    "type": "Title and Content",
     "title": "Content Slide Title",      # Automatically finds title placeholder
     "content": [                         # Automatically finds content placeholder
         "First bullet point",
@@ -134,7 +134,7 @@ else:
 ### Template Creation Workflow
 
 1. **Create PowerPoint Template**: Design your template with named placeholders
-2. **Generate Mapping**: `python tests/test_tools.py` to create `.g.json` file  
+2. **Generate Mapping**: `python tests/test_tools.py` to create `.g.json` file
 3. **Customize Mapping**: Edit placeholder assignments in the `.g.json` file
 4. **Activate Template**: Rename `.g.json` to `.json` and place with `.pptx` file
 5. **Use Template**: Reference by name in `create_presentation(templateName)`
@@ -210,22 +210,22 @@ The system combines semantic detection with JSON mappings for reliable content p
 def _add_slide(self, slide_data):
     # Get slide type and determine layout using JSON mapping
     slide_type = slide_data.get("type", "content")
-    
+
     # Use layout mapping if available
     if self.layout_mapping:
         aliases = self.layout_mapping.get("aliases", {})
         layouts = self.layout_mapping.get("layouts", {})
-        
+
         # Get layout name from aliases
         layout_name = aliases.get(slide_type, slide_type)
-        
+
         # Get layout index
         layout_info = layouts.get(layout_name, {})
         layout_index = layout_info.get("index", 1)
     else:
         # Fallback
         layout_index = 1
-    
+
     slide_layout = self.prs.slide_layouts[layout_index]
     slide = self.prs.slides.add_slide(slide_layout)
 ```
@@ -236,28 +236,28 @@ def _apply_content_to_mapped_placeholders(self, slide, slide_data, layout_name):
     # Process each field in slide_data using semantic detection
     for field_name, field_value in slide_data.items():
         target_placeholder = None
-        
+
         # Handle title placeholders using semantic detection
         if field_name == "title":
             for placeholder in slide.placeholders:
                 if is_title_placeholder(placeholder.placeholder_format.type):
                     target_placeholder = placeholder
                     break
-        
+
         # Handle subtitle placeholders using semantic detection
         elif field_name == "subtitle":
             for placeholder in slide.placeholders:
                 if is_subtitle_placeholder(placeholder.placeholder_format.type):
                     target_placeholder = placeholder
                     break
-        
+
         # Handle content placeholders using semantic detection
         elif field_name == "content":
             for placeholder in slide.placeholders:
                 if is_content_placeholder(placeholder.placeholder_format.type):
                     target_placeholder = placeholder
                     break
-        
+
         # Handle other fields using JSON mapping
         else:
             # Try to find by exact field name match in JSON mapping
@@ -267,7 +267,7 @@ def _apply_content_to_mapped_placeholders(self, slide, slide_data, layout_name):
                     if placeholder.placeholder_format.idx == placeholder_idx:
                         target_placeholder = placeholder
                         break
-        
+
         if target_placeholder:
             # Apply content based on placeholder's semantic type
             self._apply_content_by_semantic_type(target_placeholder, field_name, field_value, slide_data)
@@ -284,7 +284,7 @@ For common slide fields (`title`, `subtitle`, `content`), the system uses PowerP
 # From placeholder_types.py
 TITLE_PLACEHOLDERS = {
     PP_PLACEHOLDER_TYPE.TITLE,         # Standard slide title
-    PP_PLACEHOLDER_TYPE.CENTER_TITLE,  # Centered title (title slides) 
+    PP_PLACEHOLDER_TYPE.CENTER_TITLE,  # Centered title (title slides)
     PP_PLACEHOLDER_TYPE.VERTICAL_TITLE # Vertical orientation title
 }
 
@@ -330,7 +330,7 @@ slide_data = {
     "index": 11,
     "placeholders": {
       "0": "Title 1",                    // PowerPoint's actual name
-      "13": "col_1_title",               // PowerPoint's actual name  
+      "13": "col_1_title",               // PowerPoint's actual name
       "14": "col_1_content"              // PowerPoint's actual name
     }
   }
@@ -345,7 +345,7 @@ slide_data = {
     "placeholders": {
       "0": "title",                      // Simplified for slide_data
       "13": "feature_name",              // Semantic field name
-      "14": "feature_description"        // Semantic field name  
+      "14": "feature_description"        // Semantic field name
     }
   }
 }
@@ -367,7 +367,7 @@ slide_data = {"type": "Title and Content", "title": "My Title"}
 slide_data = {"type": "Title and Content", "slide_title": "My Title"}
 ```
 
-#### 2. Custom Fields Not Working  
+#### 2. Custom Fields Not Working
 **Problem**: Custom layout fields (like column content) aren't appearing
 **Solution**: Check that your JSON mapping includes the correct field names:
 
@@ -411,7 +411,7 @@ slide_data = {"type": "Title and Content", "slide_title": "My Title"}
 
 **Rationale:**
 - **Separation of Concerns**: Technical template data vs semantic intelligence remain distinct
-- **Easy to Extend**: Add new layouts without touching core template structure  
+- **Easy to Extend**: Add new layouts without touching core template structure
 - **LLM-Friendly**: Rich descriptive content optimized for content analysis
 - **Maintainable**: Content experts can edit without touching placeholder mappings
 - **Backwards Compatible**: Existing template system unchanged
@@ -427,12 +427,12 @@ The content-first MCP tools will use a separate `src/layout_intelligence.json` f
     "content_triggers": ["vs", "versus", "compared to", "old way", "new approach", "before", "after"],
     "ideal_for": {
       "content_types": ["decision making", "feature comparison", "method analysis"],
-      "audience": ["stakeholders", "decision makers", "executives"],  
+      "audience": ["stakeholders", "decision makers", "executives"],
       "presentation_goals": ["persuade", "inform", "evaluate options"]
     },
     "use_cases": [
       "Traditional vs Modern Architecture",
-      "Our Solution vs Competitors", 
+      "Our Solution vs Competitors",
       "Before vs After Implementation"
     ],
     "strengths": ["clear contrast", "easy comparison", "decision support"],
@@ -460,7 +460,7 @@ The content-first MCP tools will use a separate `src/layout_intelligence.json` f
     "limitations": ["limited detail per section", "requires even content distribution"],
     "recommendation_confidence": {
       "high": "when content has 4 distinct categories or features",
-      "medium": "when content can be logically grouped into 4 sections", 
+      "medium": "when content can be logically grouped into 4 sections",
       "low": "when content doesn't naturally divide into 4 parts"
     }
   }

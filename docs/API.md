@@ -11,7 +11,7 @@ Creates a complete PowerPoint presentation from JSON data with automatic saving.
 
 **Parameters:**
 - `json_data` (string): JSON string containing complete presentation data with all slides
-- `fileName` (string): Output filename (default: "Sample_Presentation")  
+- `fileName` (string): Output filename (default: "Sample_Presentation")
 - `templateName` (string): Template to use (default: "default")
 
 **Returns:** Success message with filename and save confirmation
@@ -31,7 +31,7 @@ Creates a complete PowerPoint presentation from JSON data with automatic saving.
         "title": "Content Slide",
         "content": [
           "**Bold** bullet point",
-          "*Italic* text with ___underline___", 
+          "*Italic* text with ___underline___",
           "***Bold italic*** combination"
         ]
       },
@@ -55,7 +55,7 @@ Creates a complete PowerPoint presentation from JSON data with automatic saving.
 **Supported Slide Types:**
 - `title`: Title slide with title and subtitle
 - `content`: Content slide with rich text, bullets, headings
-- `table`: Table slide with full styling support  
+- `table`: Table slide with full styling support
 - All PowerPoint layout types supported via template mapping
 
 **Inline Formatting Support:**
@@ -166,7 +166,7 @@ This creates `templateName.g.json` files with extracted structure ready for cust
 - `DECK_TEMPLATE_FOLDER`: Directory containing template files
 - `DECK_OUTPUT_FOLDER`: Directory for generated presentations
 
-**Optional Variables:**  
+**Optional Variables:**
 - `DECK_TEMPLATE_NAME`: Default template name
 - `HOST`: Server host (default: "0.0.0.0")
 - `PORT`: Server port (default: "8050")
@@ -176,7 +176,7 @@ This creates `templateName.g.json` files with extracted structure ready for cust
 **Common Error Types:**
 - **Template Not Found**: Falls back to basic layout support
 - **Invalid JSON**: Returns JSON parsing error with details
-- **Missing Placeholders**: Gracefully skips unavailable placeholders  
+- **Missing Placeholders**: Gracefully skips unavailable placeholders
 - **File I/O Errors**: Returns specific error messages for debugging
 
 **Error Response Format:**
@@ -187,6 +187,6 @@ This creates `templateName.g.json` files with extracted structure ready for cust
 **Example Error Responses:**
 ```
 "Error creating presentation: Template file not found: custom.pptx"
-"Error parsing JSON: Expecting ',' delimiter: line 4 column 5"  
+"Error parsing JSON: Expecting ',' delimiter: line 4 column 5"
 "Error adding slide from JSON: Layout index 15 not found in template"
 ```

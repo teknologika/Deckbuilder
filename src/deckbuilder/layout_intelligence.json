@@ -129,7 +129,7 @@
         "title_top_1": "Comparison topic",
         "title_left_1": "Left option title",
         "content_left_1": "Left option details",
-        "title_right_1": "Right option title", 
+        "title_right_1": "Right option title",
         "content_right_1": "Right option details"
       },
       "confidence_factors": {
@@ -150,7 +150,7 @@
         "content_col1_1": "First category details",
         "title_col2_1": "Second category title",
         "content_col2_1": "Second category details",
-        "title_col3_1": "Third category title", 
+        "title_col3_1": "Third category title",
         "content_col3_1": "Third category details",
         "title_col4_1": "Fourth category title",
         "content_col4_1": "Fourth category details"
@@ -172,7 +172,7 @@
         "title_col1_1": "First category",
         "content_col1_1": "First details",
         "title_col2_1": "Second category",
-        "content_col2_1": "Second details", 
+        "content_col2_1": "Second details",
         "title_col3_1": "Third category",
         "content_col3_1": "Third details"
       },
@@ -240,7 +240,7 @@
       },
       "content_hints": {
         "content_16": "Strengths",
-        "content_17": "Weaknesses", 
+        "content_17": "Weaknesses",
         "content_18": "Opportunities",
         "content_19": "Threats"
       },
@@ -270,7 +270,7 @@
   "optimization_hints": {
     "content_length": {
       "title_top_1": "Keep under 60 characters for readability",
-      "subtitle_1": "Aim for 80-120 characters", 
+      "subtitle_1": "Aim for 80-120 characters",
       "content_areas": "Use bullet points for lists over 3 items",
       "column_content": "Balance content length across columns"
     },

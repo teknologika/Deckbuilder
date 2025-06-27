@@ -13,7 +13,7 @@ layout: Title and Content
 This section demonstrates content slides with various formatting options.
 
 - First bullet point with **bold text**
-- Second point with *italic text* 
+- Second point with *italic text*
 - Third point with ***bold and italic***
 - Fourth point with ___underlined text___
 

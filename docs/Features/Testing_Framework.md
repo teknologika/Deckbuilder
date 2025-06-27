@@ -113,10 +113,10 @@ tests/
 class TestDeckbuilderEngine:
     def test_singleton_behavior(self):
         """Verify deckbuilder singleton pattern"""
-    
+
     def test_template_loading(self, sample_template):
         """Test template JSON loading and parsing"""
-    
+
     def test_environment_configuration(self):
         """Test environment variable handling"""
 
@@ -128,7 +128,7 @@ class TestNamingConventions:
     ])
     def test_convention_generation(self, layout_name, expected_pattern):
         """Test convention-based placeholder naming"""
-    
+
     def test_multi_tier_detection(self):
         """Test 5-tier detection system confidence scoring"""
 
@@ -136,7 +136,7 @@ class TestNamingConventions:
 class TestStructuredFrontmatter:
     def test_yaml_to_placeholder_conversion(self, structured_yaml):
         """Test conversion from structured YAML to placeholders"""
-    
+
     def test_validation_rules(self, invalid_frontmatter):
         """Test frontmatter validation and error handling"""
 ```
@@ -149,7 +149,7 @@ class TestStructuredFrontmatter:
 class TestTemplateProcessing:
     def test_full_template_processing(self, complex_template):
         """Test complete template processing pipeline"""
-    
+
     def test_placeholder_population(self, content_variations):
         """Test all placeholders get populated correctly"""
 
@@ -157,10 +157,10 @@ class TestTemplateProcessing:
 class TestPowerPointGeneration:
     def test_slide_creation(self, sample_presentation_data):
         """Test slide creation from JSON data"""
-    
+
     def test_formatting_preservation(self, formatted_content):
         """Test bold/italic/underline formatting preservation"""
-    
+
     def test_table_generation(self, table_data):
         """Test table creation and styling"""
 ```
@@ -206,16 +206,16 @@ MARKETING_CONTENT = {
 class PowerPointValidator:
     def validate_content_preservation(self, pptx_path, expected_content):
         """Verify all expected content appears in generated PPTX"""
-    
+
     def validate_layout_correctness(self, pptx_path, layout_mapping):
         """Verify correct slide layouts are used"""
-    
+
     def validate_formatting_preservation(self, pptx_path, formatting_rules):
         """Verify bold/italic/underline formatting is preserved"""
-    
+
     def validate_placeholder_population(self, pptx_path):
         """Ensure no placeholders remain empty"""
-    
+
     def generate_validation_report(self, results):
         """Generate detailed validation report"""
 ```
@@ -230,10 +230,10 @@ class PowerPointValidator:
 class TestMCPTools:
     def test_create_presentation_tool(self, mock_request):
         """Test create_presentation_from_markdown tool"""
-    
+
     def test_analyze_template_tool(self, sample_template):
         """Test analyze_pptx_template tool"""
-    
+
     def test_error_handling(self, invalid_requests):
         """Test tool error handling and responses"""
 
@@ -241,7 +241,7 @@ class TestMCPTools:
 class TestMCPHandlers:
     def test_request_parsing(self, mcp_requests):
         """Test MCP request parsing and validation"""
-    
+
     def test_response_formatting(self, tool_results):
         """Test MCP response formatting"""
 ```
@@ -254,10 +254,10 @@ class TestMCPHandlers:
 class TestMCPCommunication:
     def test_server_startup(self):
         """Test MCP server initialization"""
-    
+
     def test_tool_discovery(self, mcp_client):
         """Test tool discovery and registration"""
-    
+
     def test_end_to_end_presentation_creation(self, full_request):
         """Test complete presentation creation workflow"""
 ```
@@ -272,10 +272,10 @@ class TestMCPCommunication:
 class TemplateTestGenerator:
     def generate_test_files(self, template_json_path):
         """Generate {template_name}_test.json and {template_name}_test.md"""
-    
+
     def validate_layout_coverage(self, template_json):
         """Ensure all layouts in template have test coverage"""
-    
+
     def generate_structured_frontmatter_tests(self, layouts):
         """Generate structured frontmatter examples for each layout"""
 ```
@@ -288,13 +288,13 @@ class TemplateTestGenerator:
 class ContentGenerator:
     def build_column_content(self, num_columns, content_type='business'):
         """Generate content for multi-column layouts"""
-    
+
     def build_comparison_content(self, comparison_type='features'):
         """Generate left/right comparison content"""
-    
+
     def build_table_content(self, rows, cols, include_formatting=True):
         """Generate table data with optional formatting"""
-    
+
     def apply_formatting_variations(self, content):
         """Add bold/italic/underline variations to content"""
 ```
@@ -324,7 +324,7 @@ pytest -k "naming_conventions"
 
 # Run tests with specific marks
 pytest -m "unit"
-pytest -m "integration" 
+pytest -m "integration"
 pytest -m "slow" --maxfail=1
 
 # Run tests in parallel
@@ -360,9 +360,9 @@ jobs:
       - uses: actions/checkout@v3
       - name: Run deckbuilder tests
         run: pytest tests/deckbuilder/ --cov=src/deckbuilder
-  
+
   test-mcp-server:
-    runs-on: ubuntu-latest  
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Run MCP server tests

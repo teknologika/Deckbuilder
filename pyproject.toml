@@ -3,9 +3,9 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "deck-builder-mcp"
+name = "deckbuilder"
 version = "0.1.0"
-description = "A Model Context Protocol (MCP) server for creating PowerPoint presentations"
+description = "A Library and Model Context Protocol (MCP) server for creating PowerPoint presentations"
 readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "Apache-2.0"}
@@ -30,26 +30,38 @@ dependencies = [
     "python-pptx>=1.0.0",
     "python-dotenv>=1.0.0",
     "pyyaml>=6.0.0",
+    "opencv-python>=4.8.0",
+    "Pillow>=10.0.0",
+    "numpy>=1.24.0"
 ]
 
 [project.optional-dependencies]
-dev = [
+test = [
     "pytest>=7.0.0",
     "pytest-cov>=4.0.0",
     "pytest-mock>=3.10.0",
     "pytest-xdist>=3.0.0",
     "pytest-html>=3.0.0",
-    "black>=22.0.0",
+]
+lint = [
     "flake8>=5.0.0",
+    "bandit>=1.7.5"
+]
+format = [
+    "black>=22.0.0",
+]
+dev = [
+    "deckbuilder[test,lint,format]",
+    "tomli>=2.0.1"
 ]
 
 [project.urls]
-Homepage = "https://github.com/teknologika/deck-builder-mcp"
-Repository = "https://github.com/teknologika/deck-builder-mcp.git"
-Issues = "https://github.com/teknologika/deck-builder-mcp/issues"
+Homepage = "https://github.com/teknologika/deckbuilder"
+Repository = "https://github.com/teknologika/deckbuilder.git"
+Issues = "https://github.com/teknologika/deckbuilder/issues"
 
 [project.scripts]
-deck-builder-mcp = "src.mcp_server.main:main"
+deckbuilder = "src.mcp_server.main:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

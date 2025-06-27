@@ -3,13 +3,14 @@ Sample content fixtures for deckbuilder testing.
 """
 
 import pytest
+
 from tests.utils.content_generator import (
     ContentGenerator,
-    ContentType,
     ContentLength,
+    ContentType,
+    get_formatted_content_samples,
     get_sample_business_content,
     get_sample_technical_content,
-    get_formatted_content_samples,
 )
 
 

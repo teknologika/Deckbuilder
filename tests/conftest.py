@@ -2,13 +2,13 @@
 Global pytest configuration and fixtures for deck-builder MCP tests.
 """
 
-import os
-import sys
 import json
-import tempfile
+import os
 import shutil
+import sys
+import tempfile
 from pathlib import Path
-from typing import Dict, Any
+from typing import Any, Dict
 
 import pytest
 

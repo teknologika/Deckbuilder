@@ -43,7 +43,7 @@ The project has evolved beyond initial setup into a comprehensive content-first 
 # Format code with black (REQUIRED)
 black --line-length 100 src/
 
-# Check all flake8 violations (REQUIRED)  
+# Check all flake8 violations (REQUIRED)
 flake8 src/ tests/ --max-line-length=100 --ignore=E203,W503,E501
 
 # Run tests to ensure no regressions (REQUIRED)
@@ -80,7 +80,7 @@ pytest tests/
 
 ### Enforcement Strategy
 1. **Pre-commit**: Always run `flake8` before any commit
-2. **Zero F-errors**: F-level errors MUST be fixed immediately  
+2. **Zero F-errors**: F-level errors MUST be fixed immediately
 3. **Style consistency**: Use `black` for automatic formatting
 4. **Test coverage**: Ensure all code changes include relevant tests
 
@@ -92,14 +92,14 @@ The project includes GitHub Actions workflows that enforce code quality:
 
 **CI Requirements:**
 - All tests must pass (50+ tests including engine, template processing, etc.)
-- Zero flake8 F-level errors (F401, F841, F811, F541) 
+- Zero flake8 F-level errors (F401, F841, F811, F541)
 - Python 3.11+ compatibility required
 
 
 
-**Current Status**: 
+**Current Status**:
 - ✅ Core presentation engine implemented with structured frontmatter support
-- ✅ Template system with semantic detection and JSON mapping  
+- ✅ Template system with semantic detection and JSON mapping
 - 🚧 Content-first MCP tools in design phase
 - 📋 50+ layout templates planned for progressive implementation
 
@@ -107,7 +107,7 @@ The project includes GitHub Actions workflows that enforce code quality:
 
 Deckbuilder implements a **content-first design philosophy** with three key components:
 1. **Presentation Engine**: PowerPoint generation with template support
-2. **Content Intelligence**: Semantic analysis for layout recommendations  
+2. **Content Intelligence**: Semantic analysis for layout recommendations
 3. **Progressive Templates**: Expanding library of business presentation layouts
 
 The system transforms LLMs from layout pickers into intelligent presentation consultants.
@@ -128,7 +128,7 @@ source venv/bin/activate
 {
   "env": {
     "DECK_TEMPLATE_FOLDER": "/path/to/deckbuilder/assets/templates",
-    "DECK_OUTPUT_FOLDER": "/path/to/deckbuilder/output", 
+    "DECK_OUTPUT_FOLDER": "/path/to/deckbuilder/output",
     "DECK_TEMPLATE_NAME": "default"
   }
 }
@@ -146,11 +146,11 @@ source venv/bin/activate
 # How you work
 1. Design a feature first, remind me to put you into plan-only mode
 2. Save that design into ./docs/Features/feature_name.md
-3. At the bottom of the design put a TODO which you implement as we go. 
+3. At the bottom of the design put a TODO which you implement as we go.
 
 This project follows a **content-first methodology**:
 1. **Understand user content and communication goals first**
-2. **Recommend presentation structure based on message intent**  
+2. **Recommend presentation structure based on message intent**
 3. **Suggest optimal layouts with audience consideration**
 4. **Optimize content for chosen layouts**
 
@@ -161,10 +161,10 @@ Never start with "what layouts exist?" - always start with "what does the user w
 ### Content Intelligence Storage
 - **Decision**: Separate `layout_intelligence.json` file (Option 2)
 - **Rationale**: Clean separation of technical template structure from semantic content intelligence
-- **Location**: `src/layout_intelligence.json` 
+- **Location**: `src/layout_intelligence.json`
 - **Integration**: Used by content-first MCP tools for layout recommendations
 
-### Template Architecture  
+### Template Architecture
 - **Technical Structure**: `default.json` (placeholder mappings)
 - **Semantic Intelligence**: `layout_intelligence.json` (content matching)
 - **Documentation**: `SupportedTemplates.md` (implementation roadmap)
@@ -175,18 +175,18 @@ Never start with "what layouts exist?" - always start with "what does the user w
 Refer to these comprehensive specifications before implementing:
 
 ### Core Feature Specifications
-- **[Placeholder_Matching.md](docs/Features/Placeholder_Matching.md)**: 
+- **[Placeholder_Matching.md](docs/Features/Placeholder_Matching.md)**:
   - Hybrid semantic detection and JSON mapping system
   - Template analyzer workflow and JSON schema
   - Content placement strategies and troubleshooting
   - **Content Intelligence Storage Design** with Option 2 decision rationale
-  
+
 - **[Template_Discovery.md](docs/Features/Template_Discovery.md)**:
   - Content-first MCP tools design (analyze_presentation_needs, recommend_slide_approach, optimize_content_for_layout)
   - Complete end-to-end user workflow scenarios
   - Design evolution from layout-centric to content-first approach
   - Implementation roadmap and success criteria
-  
+
 - **[Supported_Templates.md](docs/Features/Supported_Templates.md)**:
   - Progressive implementation roadmap for 50+ business presentation layouts
   - Status tracking with ✅/❌ indicators across 7 layout categories

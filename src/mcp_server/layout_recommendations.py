@@ -9,8 +9,8 @@ not just "what layouts exist?"
 """
 
 import re
-from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
+from typing import Any, Dict, List, Optional
 
 
 @dataclass

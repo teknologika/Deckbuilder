@@ -28,7 +28,7 @@ except ImportError as e:
     # Create mock functions to avoid NameError
     def analyze_pptx_template(template_name):
         return {"mock": True}
-    
+
     def get_deckbuilder_client():
         return None
 
@@ -38,13 +38,13 @@ def mock_deckbuilder_env():
     """Mock environment variables for deckbuilder with cleanup."""
     templates_dir = Path(__file__).parent.parent.parent / "fixtures" / "sample_templates"
     output_dir = Path(__file__).parent.parent.parent / "fixtures" / "test_outputs"
-    
+
     # Ensure directories exist
     templates_dir.mkdir(parents=True, exist_ok=True)
     output_dir.mkdir(parents=True, exist_ok=True)
 
     original_env = os.environ.copy()
-    
+
     # Set test environment variables
     test_env = {
         "DECK_TEMPLATE_FOLDER": str(templates_dir),
@@ -79,10 +79,10 @@ def sample_test_data():
                     "title": "Feature Overview",
                     "title_col1_1": "Performance",
                     "content_col1_1": "Fast processing",
-                    "title_col2_1": "Security", 
+                    "title_col2_1": "Security",
                     "content_col2_1": "Enterprise encryption",
                     "title_col3_1": "Usability",
-                    "content_col3_1": "Intuitive interface", 
+                    "content_col3_1": "Intuitive interface",
                     "title_col4_1": "Cost",
                     "content_col4_1": "Competitive pricing",
                 },
@@ -140,7 +140,7 @@ class TestMCPToolsIntegration:
         """Test the analyze_pptx_template MCP tool."""
         # This is a mock test since we don't have actual template files
         # In a real environment, this would test against actual template files
-        
+
         with patch('mcp_server.tools.analyze_pptx_template') as mock_analyze:
             mock_analyze.return_value = {
                 "template_info": {"name": "Test Template", "version": "1.0"},
@@ -151,9 +151,9 @@ class TestMCPToolsIntegration:
                     }
                 }
             }
-            
+
             result = analyze_pptx_template("default")
-            
+
             assert result is not None
             assert "template_info" in result
             assert "layouts" in result
@@ -165,30 +165,30 @@ class TestMCPToolsIntegration:
         # Mock the deckbuilder instance
         mock_deck = MagicMock()
         mock_deckbuilder_class.return_value = mock_deck
-        
+
         # Mock successful operations
         mock_deck.create_presentation.return_value = "✓ Presentation created successfully"
         mock_deck.add_slide_from_json.return_value = "✓ Slide added successfully"
         mock_deck.write_presentation.return_value = "✓ Presentation saved successfully"
-        
+
         # Test the workflow
         deck = get_deckbuilder_client()
-        
+
         # Create presentation
         result = deck.create_presentation("default", "test_json")
         assert "successfully" in result.lower()
-        
+
         # Add slides
         slide_count = 0
         for slide_data in sample_test_data["presentation"]["slides"]:
             result = deck.add_slide_from_json(slide_data)
             slide_count += 1
             assert "successfully" in result.lower()
-        
+
         # Save presentation
         result = deck.write_presentation("test_json")
         assert "successfully" in result.lower()
-        
+
         # Verify calls
         assert slide_count == 2
         mock_deck.create_presentation.assert_called_once_with("default", "test_json")
@@ -201,26 +201,26 @@ class TestMCPToolsIntegration:
         # Mock the deckbuilder instance
         mock_deck = MagicMock()
         mock_deckbuilder_class.return_value = mock_deck
-        
+
         # Mock successful operation
         mock_deck.create_presentation_from_markdown.return_value = "✓ Presentation created from markdown successfully"
-        
+
         # Test the workflow
         deck = get_deckbuilder_client()
-        
+
         # Create presentation from markdown
         result = deck.create_presentation_from_markdown(
             markdown_content=sample_markdown_content,
             fileName="test_markdown",
             templateName="default"
         )
-        
+
         assert "successfully" in result.lower()
-        
+
         # Verify call
         mock_deck.create_presentation_from_markdown.assert_called_once_with(
             markdown_content=sample_markdown_content,
-            fileName="test_markdown", 
+            fileName="test_markdown",
             templateName="default"
         )
 
@@ -230,11 +230,11 @@ class TestMCPToolsIntegration:
         assert "DECK_TEMPLATE_FOLDER" in os.environ
         assert "DECK_OUTPUT_FOLDER" in os.environ
         assert "DECK_TEMPLATE_NAME" in os.environ
-        
+
         # Verify directories exist
         templates_dir = Path(os.environ["DECK_TEMPLATE_FOLDER"])
         output_dir = Path(os.environ["DECK_OUTPUT_FOLDER"])
-        
+
         assert templates_dir.exists()
         assert output_dir.exists()
 
@@ -245,9 +245,9 @@ class TestMCPToolsIntegration:
         mock_deck = MagicMock()
         mock_deckbuilder_class.return_value = mock_deck
         mock_deck.create_presentation.side_effect = FileNotFoundError("Template not found")
-        
+
         deck = get_deckbuilder_client()
-        
+
         # Should handle the error gracefully
         with pytest.raises(FileNotFoundError):
             deck.create_presentation("nonexistent_template", "test")
@@ -260,10 +260,10 @@ class TestMCPToolsIntegration:
         mock_deckbuilder_class.return_value = mock_deck
         mock_deck.create_presentation.return_value = "✓ Presentation created"
         mock_deck.add_slide_from_json.side_effect = ValueError("Invalid slide data")
-        
+
         deck = get_deckbuilder_client()
         deck.create_presentation("default", "test")
-        
+
         # Should handle invalid slide data gracefully
         invalid_slide = {"invalid": "data"}
         with pytest.raises(ValueError):
@@ -272,7 +272,7 @@ class TestMCPToolsIntegration:
 
 @pytest.mark.skipif(not HAS_MCP_TOOLS, reason="MCP tools not available")
 @pytest.mark.integration
-@pytest.mark.mcp_server 
+@pytest.mark.mcp_server
 @pytest.mark.requires_template
 class TestMCPToolsWithRealFiles:
     """Integration tests that require actual template files."""
@@ -281,10 +281,10 @@ class TestMCPToolsWithRealFiles:
         """Test template analysis with actual template file (if available)."""
         templates_dir = Path(os.environ["DECK_TEMPLATE_FOLDER"])
         template_file = templates_dir / "default.pptx"
-        
+
         if not template_file.exists():
             pytest.skip("Real template file not available for testing")
-        
+
         # Test with real file
         try:
             result = analyze_pptx_template("default")
@@ -300,7 +300,7 @@ class TestMCPToolsWithRealFiles:
             deck = get_deckbuilder_client()
         except Exception:
             pytest.skip("Deckbuilder not available for full workflow test")
-        
+
         # This would be a full integration test in a real environment
         # For now, we'll just verify the client can be created
         assert deck is not None

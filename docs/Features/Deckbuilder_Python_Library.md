@@ -20,7 +20,7 @@
 
 **Goal**: Programmatic control and integration
 
-### [📖 Core API Reference](Deckbuilder_Core_API.md)  
+### [📖 Core API Reference](Deckbuilder_Core_API.md)
 - Complete function reference
 - Parameter details and return values
 - Error handling strategies
@@ -93,7 +93,7 @@ Deckbuilder uses a **content-first design philosophy** that transforms LLMs from
 git clone <repository-url>
 cd deckbuilder
 
-# Set up virtual environment  
+# Set up virtual environment
 python3 -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
@@ -165,7 +165,7 @@ print(result)  # "Successfully created presentation: MyPresentation.2025-01-26_1
 Each guide is designed for specific use cases:
 
 - **[Quick Start](Deckbuilder_Quick_Start.md)** - Get up and running in 5 minutes
-- **[Core API](Deckbuilder_Core_API.md)** - Complete function reference for developers  
+- **[Core API](Deckbuilder_Core_API.md)** - Complete function reference for developers
 - **[Template Management](Deckbuilder_Template_Management.md)** - Custom templates and advanced configuration
 - **[Content Intelligence](Deckbuilder_Content_Intelligence.md)** - AI-powered features and optimization
 
@@ -178,7 +178,7 @@ For deeper understanding of the system architecture and design decisions:
 - **[Supported Templates](Supported_Templates.md)** - Complete roadmap of 50+ business presentation layouts
 - **[Placeholder Matching](Placeholder_Matching.md)** - Hybrid template system architecture and design
 - **[Template Discovery](Template_Discovery.md)** - Content-first design evolution and structured frontmatter
-- **[Convention Based Naming](Convention_Based_Naming.md)** - Multi-tier placeholder naming system  
+- **[Convention Based Naming](Convention_Based_Naming.md)** - Multi-tier placeholder naming system
 - **[Default Template](Default_Template.md)** - Built-in template specifications
 - **[Testing Framework](Testing_Framework.md)** - Comprehensive testing approach and validation
 - **[Template Management](Template_Management.md)** - Original template management system design

@@ -6,10 +6,10 @@ content verification, layout validation, and formatting checks.
 """
 
 import re
-from pathlib import Path
-from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
 from enum import Enum
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 try:
     from pptx import Presentation

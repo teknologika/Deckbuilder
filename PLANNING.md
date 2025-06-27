@@ -43,7 +43,7 @@ This is a comprehensive Python library and MCP (Model Context Protocol) Server f
 - **Never start with "what layouts exist?"**
 - **Always start with "what does the user want to communicate?"**
 - Understand user content and communication goals first
-- Recommend presentation structure based on message intent  
+- Recommend presentation structure based on message intent
 - Suggest optimal layouts with audience consideration
 - Optimize content for chosen layouts
 
@@ -72,7 +72,7 @@ This is a comprehensive Python library and MCP (Model Context Protocol) Server f
 - **tools.py**: MCP tool implementations (create_presentation, analyze_needs, etc.)
 - **Content-First Tools**:
   - `analyze_presentation_needs()` - Content and goal analysis
-  - `recommend_slide_approach()` - Layout recommendations  
+  - `recommend_slide_approach()` - Layout recommendations
   - `optimize_content_for_layout()` - Content optimization and YAML generation
 
 ### 2. Presentation Engine (`/src/deckbuilder/`)
@@ -84,7 +84,7 @@ This is a comprehensive Python library and MCP (Model Context Protocol) Server f
 
 ### 3. Content Intelligence System
 - **layout_intelligence.json**: Semantic metadata for layout recommendations
-- **layout_intelligence.py**: Content matching algorithms  
+- **layout_intelligence.py**: Content matching algorithms
 - **naming_conventions.py**: Standardized placeholder naming patterns
 - **Hybrid Approach**: Semantic detection + JSON mapping for reliability
 
@@ -129,7 +129,7 @@ Design → Plan Mode → Feature Documentation → Implementation → Testing �
 # Format code with black (REQUIRED)
 black --line-length 100 src/
 
-# Check all flake8 violations (REQUIRED)  
+# Check all flake8 violations (REQUIRED)
 flake8 src/ tests/ --max-line-length=100 --ignore=E203,W503,E501
 
 # Run tests to ensure no regressions (REQUIRED)
@@ -157,7 +157,7 @@ Environment variables configured in MCP server parameters (not local `.env`):
 {
   "env": {
     "DECK_TEMPLATE_FOLDER": "/path/to/deckbuilder/assets/templates",
-    "DECK_OUTPUT_FOLDER": "/path/to/deckbuilder/output", 
+    "DECK_OUTPUT_FOLDER": "/path/to/deckbuilder/output",
     "DECK_TEMPLATE_NAME": "default"
   }
 }
@@ -210,7 +210,7 @@ python src/deckbuilder/cli_tools.py validate default
 
 ### 🖼️ Current Focus: PlaceKitten Image Processing Library
 1. **Asset Cleanup** - Flatten image directory structure for cleaner paths
-2. **Core Library Implementation** - Basic placeholder generation with existing kitten images  
+2. **Core Library Implementation** - Basic placeholder generation with existing kitten images
 3. **Intelligent Cropping Engine** - Computer vision-based automatic cropping for optimal composition
 4. **Filter Pipeline System** - Professional image processing with method chaining
 5. **MCP Integration** - Seamless integration with presentation generation workflows

@@ -48,7 +48,7 @@
             }
         },
         {
-            "label": "pytest: Run MCP Server Tests", 
+            "label": "pytest: Run MCP Server Tests",
             "type": "shell",
             "command": "${config:python.defaultInterpreterPath}",
             "args": [
@@ -89,7 +89,7 @@
         },
         {
             "label": "pytest: Run Integration Tests Only",
-            "type": "shell", 
+            "type": "shell",
             "command": "${config:python.defaultInterpreterPath}",
             "args": [
                 "-m",

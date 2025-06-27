@@ -35,12 +35,12 @@ tests/
 ### Presentation Creation Flow
 
 1. **Template Selection**: Client specifies template name (e.g., "default")
-2. **Template Loading**: 
+2. **Template Loading**:
    - `deckbuilder/engine.py` loads `templateName.pptx` from template folder
    - Automatically loads corresponding `templateName.json` mapping file
    - Falls back to `assets/templates/default.json` if template-specific mapping not found
 3. **Slide Creation**: Client provides slide data via MCP tools
-4. **Layout Resolution**: 
+4. **Layout Resolution**:
    - Slide `type` mapped to layout name via JSON `aliases`
    - Layout name resolved to PowerPoint layout index via JSON `layouts`
 5. **Content Placement**: Slide content mapped to specific placeholders using JSON placeholder mappings
@@ -51,7 +51,7 @@ tests/
 1. **Template Analysis**: `deckbuilder/cli_tools.py` provides standalone template management
 2. **Structure Extraction**: Discovers layout names, indices, and placeholder information
 3. **Validation**: Detects naming inconsistencies and provides PowerPoint fix instructions
-4. **JSON Generation**: Creates `templateName.g.json` with raw extracted structure  
+4. **JSON Generation**: Creates `templateName.g.json` with raw extracted structure
 5. **Documentation**: Auto-generates comprehensive template documentation
 6. **User Customization**: Users edit `.g.json` to map placeholders to semantic field names
 7. **Template Activation**: Users rename `.g.json` to `.json` to activate the mapping

@@ -28,8 +28,8 @@ intelligence = LayoutIntelligence()
 
 # Analyze your content
 content = """
-Our new mobile app has four key features: real-time notifications 
-for instant updates, offline mode for uninterrupted access, 
+Our new mobile app has four key features: real-time notifications
+for instant updates, offline mode for uninterrupted access,
 cloud sync across all devices, and an advanced analytics dashboard.
 """
 
@@ -76,7 +76,7 @@ Market share expanded from 12% to 15%
 analysis = intelligence.analyze_content(content)
 
 print(f"Intent: {analysis.intent}")                    # "comparison"
-print(f"Content Type: {analysis.content_type}")        # "statistics"  
+print(f"Content Type: {analysis.content_type}")        # "statistics"
 print(f"Structure: {analysis.structure_indicators}")   # ["multiple_items", "numeric_data"]
 print(f"Keywords: {analysis.keywords_found}")          # ["vs", "increased", "improved", "performance"]
 print(f"Has Numbers: {analysis.has_numbers}")          # True
@@ -106,7 +106,7 @@ def recommend_layouts(content: str, max_recommendations: int = 3) -> List[Layout
 content = """
 Our platform offers these core capabilities:
 Performance: 99.9% uptime with sub-second response times
-Security: Enterprise-grade encryption with SOC2 compliance  
+Security: Enterprise-grade encryption with SOC2 compliance
 Scalability: Auto-scaling to handle traffic spikes
 Support: 24/7 expert assistance with dedicated account management
 """
@@ -136,7 +136,7 @@ for rec in recommendations:
 @dataclass
 class ContentAnalysis:
     intent: str                    # What you're trying to communicate
-    content_type: str             # Type of content  
+    content_type: str             # Type of content
     structure_indicators: List[str] # Content structure patterns
     keywords_found: List[str]      # Semantic keywords
     content_blocks: int           # Number of content sections
@@ -164,7 +164,7 @@ class ContentAnalysis:
 ### `LayoutRecommendation`
 
 ```python
-@dataclass  
+@dataclass
 class LayoutRecommendation:
     layout_name: str              # Layout name to use
     confidence: float             # Confidence (0.0-1.0)
@@ -180,7 +180,7 @@ class LayoutRecommendation:
 ```python
 content = """
 Our cloud platform delivers unmatched performance with 99.9% uptime,
-enterprise security with SOC2 compliance, infinite scalability 
+enterprise security with SOC2 compliance, infinite scalability
 with auto-scaling, and 24/7 expert support.
 """
 
@@ -197,7 +197,7 @@ recommendations = intelligence.recommend_layouts(content)
 
 ```python
 content = """
-Traditional solution: $50K annual cost, 2-week deployment, 
+Traditional solution: $50K annual cost, 2-week deployment,
 limited scalability, basic support.
 Our solution: $30K annual cost, same-day deployment,
 unlimited scalability, 24/7 premium support.
@@ -207,7 +207,7 @@ analysis = intelligence.analyze_content(content)
 recommendations = intelligence.recommend_layouts(content)
 
 # Likely results:
-# Intent: "comparison"  
+# Intent: "comparison"
 # Recommended: "Comparison" (high confidence)
 # Reasoning: Clear before/after structure, comparative language
 ```
@@ -243,34 +243,34 @@ from deckbuilder.layout_intelligence import LayoutIntelligence
 
 def create_intelligent_presentation(content_pieces, filename):
     """Create presentation with AI-recommended layouts."""
-    
+
     deck = get_deckbuilder_client()
     intelligence = LayoutIntelligence()
-    
+
     deck.create_presentation("default", filename)
-    
+
     slides = []
     for content in content_pieces:
         # Get AI recommendation
         recommendations = intelligence.recommend_layouts(content)
         best_layout = recommendations[0]  # Highest confidence
-        
+
         # Create slide with recommended layout
         slide = {
             "type": best_layout.layout_name,
             "title": "Auto-Generated Title",  # Could be optimized too
         }
-        
+
         # Apply recommended content mapping
         for placeholder, text in best_layout.placeholder_mapping.items():
             slide[placeholder] = text
-            
+
         slides.append(slide)
-    
+
     # Add all slides
     presentation_data = {"presentation": {"slides": slides}}
     deck.add_slide_from_json(presentation_data)
-    
+
     return deck.write_presentation(filename)
 
 # Usage
@@ -352,7 +352,7 @@ for hint in best_rec.optimization_hints:
 
 # Example output:
 # • Consider adding specific metrics for stronger impact
-# • Break long sentences into bullet points for clarity  
+# • Break long sentences into bullet points for clarity
 # • Add quantitative data to support claims
 # • Use parallel structure for better readability
 ```
@@ -377,5 +377,5 @@ This content intelligence system is designed to augment human creativity, not re
 
 - **[Template Discovery](Template_Discovery.md)** - Content-first design evolution and MCP tools design
 - **[Supported Templates](Supported_Templates.md)** - Available layouts for recommendations
-- **[Placeholder Matching](Placeholder_Matching.md)** - How content gets mapped to template placeholders  
+- **[Placeholder Matching](Placeholder_Matching.md)** - How content gets mapped to template placeholders
 - **[Testing Framework](Testing_Framework.md)** - Testing content intelligence with real scenarios

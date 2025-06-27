@@ -12,7 +12,7 @@ PowerPoint placeholder names while maintaining full functionality. It includes:
 Based on the Template Discovery System specification (Option C).
 """
 
-from typing import Dict, List, Any, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 
 class StructuredFrontmatterRegistry:

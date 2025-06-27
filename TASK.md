@@ -125,7 +125,7 @@ Tasks are organized by phase and component.
 
 - [ ] **Fix remaining flake8 E501 line length violations (56 total)**
   - [ ] Break long docstrings and function calls in `src/deckbuilder/cli_tools.py` (6 violations)
-  - [ ] Fix line length in `src/deckbuilder/naming_conventions.py` (1 violation) 
+  - [ ] Fix line length in `src/deckbuilder/naming_conventions.py` (1 violation)
   - [ ] Clean up `src/mcp_server/content_optimization.py` (1 violation)
   - [ ] Refactor `src/mcp_server/tools.py` (3 violations)
   - [ ] Break long strings in `tests/utils/content_generator.py` (45 violations)

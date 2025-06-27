@@ -188,7 +188,7 @@ Creates presentations from JSON data with automatic saving.
 
 ### Content-First Tools (🚧 In Development)
 - `analyze_presentation_needs()` - Content and goal analysis
-- `recommend_slide_approach()` - Layout recommendations  
+- `recommend_slide_approach()` - Layout recommendations
 - `optimize_content_for_layout()` - Content optimization
 
 ## Template Management CLI

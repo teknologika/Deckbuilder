@@ -18,7 +18,7 @@ The CLI tools help you analyze existing templates and create these mapping files
 # Analyze an existing PowerPoint template
 python src/deckbuilder/cli_tools.py analyze my_template --verbose
 
-# Generate documentation for the template  
+# Generate documentation for the template
 python src/deckbuilder/cli_tools.py document my_template
 
 # Validate template structure and mappings
@@ -74,7 +74,7 @@ python src/deckbuilder/cli_tools.py document TEMPLATE_NAME [options]
 **What it generates:**
 - Layout specifications with placeholder tables
 - JSON and YAML usage examples
-- Template management instructions  
+- Template management instructions
 - Status tracking (mapping support, frontmatter compatibility)
 
 **Example:**
@@ -173,7 +173,7 @@ python src/deckbuilder/cli_tools.py analyze my_template --verbose
             }
         },
         "Title and Content": {
-            "index": 1, 
+            "index": 1,
             "placeholders": {
                 "0": "Title 1",
                 "14": "Content Placeholder 2"
@@ -184,7 +184,7 @@ python src/deckbuilder/cli_tools.py analyze my_template --verbose
             "placeholders": {
                 "0": "Title 1",
                 "12": "Col 1 Title 2",
-                "13": "Col 1 Content 3", 
+                "13": "Col 1 Content 3",
                 "14": "Col 2 Title 4",
                 "15": "Col 2 Content 5"
             }
@@ -211,7 +211,7 @@ Edit the `.g.json` file to:
             "index": 7,
             "placeholders": {
                 "0": "title",              // Main title
-                "12": "col1_title",        // Column 1 title  
+                "12": "col1_title",        // Column 1 title
                 "13": "col1_content",      // Column 1 content
                 "14": "col2_title",        // Column 2 title
                 "15": "col2_content"       // Column 2 content
@@ -254,7 +254,7 @@ presentation_data = {
                 "title": "Feature Comparison",
                 "col1_title": "Performance",
                 "col1_content": "**Fast** and reliable",
-                "col2_title": "Security", 
+                "col2_title": "Security",
                 "col2_content": "***Enterprise-grade***"
             }
         ]
@@ -263,7 +263,7 @@ presentation_data = {
 
 result = deck.create_presentation_from_json(
     presentation_data,
-    "CustomPresentation", 
+    "CustomPresentation",
     "my_template"  # Your template name
 )
 ```
@@ -302,7 +302,7 @@ python src/deckbuilder/cli_tools.py enhance my_template --use-conventions
 **Naming patterns:**
 - `title_top_1` - Main title placeholder
 - `content_col1_1` - First column content
-- `content_col2_1` - Second column content  
+- `content_col2_1` - Second column content
 - `image_center_1` - Centered image placeholder
 - `date_footer_1` - Footer date placeholder
 
@@ -319,10 +319,10 @@ python src/deckbuilder/cli_tools.py validate my_template
 ⚠ Layout 'Four Columns' issues:
   → Col 1 Content: Rename 'Col 1 Text Placeholder 3' to 'Col 1 Content 3'
   → Col 2 Content: Rename 'Col 2 Text Placeholder 5' to 'Col 2 Content 5'
-  
+
 Fix in PowerPoint:
 1. Open template in PowerPoint
-2. Go to View → Slide Master  
+2. Go to View → Slide Master
 3. Select 'Four Columns' layout
 4. Use Selection Pane to rename placeholders
 5. Save template

@@ -52,7 +52,7 @@ python src/deckbuilder/cli_tools.py --template-folder ./templates --output-folde
 ```
 🔍 Analyzing template: default
 📊 Found 19 layouts
-⚠️  Multiple placeholder naming patterns detected: 
+⚠️  Multiple placeholder naming patterns detected:
 ['Col 1', 'Col 2', 'Content Placeholder', 'Date Placeholder']
 📄 Generated: template_output/default.g.json
 ```

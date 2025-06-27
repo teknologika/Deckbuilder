@@ -8,8 +8,8 @@ A standardized placeholder naming convention system that automatically generates
 
 Template analysis shows inconsistent placeholder naming patterns:
 ```
-Multiple placeholder naming patterns detected: 
-['Col 1', 'Col 2', 'Col 3', 'Col 4', 'Content Placeholder', 'Date Placeholder', 
+Multiple placeholder naming patterns detected:
+['Col 1', 'Col 2', 'Col 3', 'Col 4', 'Content Placeholder', 'Date Placeholder',
 'Footer Placeholder', 'Picture Placeholder', 'Slide Number', 'Text Placeholder', 'Vertical Text']
 ```
 
@@ -26,7 +26,7 @@ This inconsistency makes it difficult to:
 
 Where:
 - **ContentType**: Semantic content type (title, content, image, number, etc.)
-- **Position**: Spatial or logical position (top, left, center, col1, col2, etc.)  
+- **Position**: Spatial or logical position (top, left, center, col1, col2, etc.)
 - **Index**: Unique identifier within layout (1, 2, 3, etc.)
 
 ### Standard Content Types
@@ -78,7 +78,7 @@ Where:
 ```
 title_top_1          # Main slide title
 title_col1_1         # Column 1 title
-content_col1_1       # Column 1 content  
+content_col1_1       # Column 1 content
 title_col2_1         # Column 2 title
 content_col2_1       # Column 2 content
 title_col3_1         # Column 3 title
@@ -95,7 +95,7 @@ slide_number_footer_1 # Slide number
 title_top_1          # Main title
 title_left_1         # Left side title
 content_left_1       # Left side content
-title_right_1        # Right side title  
+title_right_1        # Right side title
 content_right_1      # Right side content
 date_footer_1        # Date
 footer_bottom_1      # Footer
@@ -119,14 +119,14 @@ Create `src/deckbuilder/naming_conventions.py`:
 
 ```python
 class NamingConvention:
-    def generate_placeholder_name(self, layout_name: str, placeholder_idx: int, 
+    def generate_placeholder_name(self, layout_name: str, placeholder_idx: int,
                                  placeholder_type: str, spatial_context: dict) -> str:
         """Generate standardized placeholder name"""
-        
+
     def detect_content_type(self, placeholder_type: str, layout_context: str) -> str:
         """Detect semantic content type from PowerPoint type"""
-        
-    def determine_position(self, layout_name: str, placeholder_idx: int, 
+
+    def determine_position(self, layout_name: str, placeholder_idx: int,
                           total_placeholders: int) -> str:
         """Determine spatial/logical position"""
 ```

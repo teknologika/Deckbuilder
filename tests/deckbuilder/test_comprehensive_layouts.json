@@ -105,7 +105,7 @@
           {
             "bullets": [
               "**Primary** content area",
-              "*Secondary* information", 
+              "*Secondary* information",
               "***Important*** notes"
             ],
             "bullet_levels": [1, 1, 1]
@@ -153,13 +153,13 @@
       },
       {
         "type": "Four Columns With Titles",
-        "layout": "Four Columns With Titles", 
+        "layout": "Four Columns With Titles",
         "title": "Four Column Layout **With Titles** Test",
         "title_col1_1": "Performance",
         "content_col1_1": "**Fast processing** with optimized algorithms",
         "title_col2_1": "Security",
         "content_col2_1": "***Enterprise-grade*** encryption with ___SOC2___ compliance",
-        "title_col3_1": "Usability", 
+        "title_col3_1": "Usability",
         "content_col3_1": "*Intuitive* interface with **minimal** learning curve",
         "title_col4_1": "Cost",
         "content_col4_1": "___Transparent___ pricing with **flexible** plans"
@@ -222,7 +222,7 @@
         "layout": "SWOT Analysis",
         "content_16": "**Strong** market position with *proven* technology",
         "content_17": "___Limited___ geographic presence and **high** costs",
-        "content_18": "*Emerging* markets and ***digital*** transformation", 
+        "content_18": "*Emerging* markets and ***digital*** transformation",
         "content_19": "**Competition** and ___regulatory___ changes"
       },
       {
@@ -238,7 +238,7 @@
             ["API Integration", "___Blocked___", "***Critical***"]
           ],
           "header_style": "dark_blue_white_text",
-          "row_style": "alternating_light_gray", 
+          "row_style": "alternating_light_gray",
           "border_style": "thin_gray"
         }
       }

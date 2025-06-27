@@ -7,8 +7,8 @@ import pytest
 # Test imports with graceful handling
 try:
     from deckbuilder.structured_frontmatter import (
-        StructuredFrontmatterRegistry,
         StructuredFrontmatterConverter,
+        StructuredFrontmatterRegistry,
         StructuredFrontmatterValidator,
     )
 

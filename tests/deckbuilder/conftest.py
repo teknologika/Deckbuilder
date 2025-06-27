@@ -3,8 +3,8 @@ Deckbuilder-specific pytest configuration and fixtures.
 """
 
 import os
-import tempfile
 import shutil
+import tempfile
 from pathlib import Path
 from unittest.mock import Mock, patch
 
@@ -13,13 +13,13 @@ import pytest
 # Import deckbuilder components
 try:
     from deckbuilder.engine import Deckbuilder
+    from deckbuilder.layout_intelligence import LayoutIntelligence
     from deckbuilder.naming_conventions import NamingConvention, PlaceholderContext
     from deckbuilder.structured_frontmatter import (
-        StructuredFrontmatterRegistry,
         StructuredFrontmatterConverter,
+        StructuredFrontmatterRegistry,
         StructuredFrontmatterValidator,
     )
-    from deckbuilder.layout_intelligence import LayoutIntelligence
 except ImportError:
     # Handle missing imports gracefully for early testing
     Deckbuilder = None

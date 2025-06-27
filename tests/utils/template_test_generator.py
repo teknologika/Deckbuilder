@@ -6,14 +6,15 @@ JSON presentation format and markdown with structured frontmatter.
 """
 
 import json
-import yaml
-from pathlib import Path
-from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
 from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
+import yaml
 
 # Import content generator
-from .content_generator import ContentGenerator, ContentType, ContentLength
+from .content_generator import ContentGenerator, ContentLength, ContentType
 
 
 @dataclass

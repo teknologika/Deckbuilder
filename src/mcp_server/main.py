@@ -2,11 +2,12 @@ import asyncio
 import json
 import os
 import sys
-from mcp.server.fastmcp import FastMCP, Context
-from contextlib import asynccontextmanager
 from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from dataclasses import dataclass
+
 from dotenv import load_dotenv
+from mcp.server.fastmcp import Context, FastMCP
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
@@ -15,8 +16,8 @@ from deckbuilder.engine import get_deckbuilder_client  # noqa: E402
 # Import content-first tools (will be implemented later)
 try:
     from .content_analysis import analyze_presentation_needs
-    from .layout_recommendations import recommend_slide_approach
     from .content_optimization import optimize_content_for_layout
+    from .layout_recommendations import recommend_slide_approach
 except ImportError:
     # Placeholder functions for when these modules don't exist yet
     def analyze_presentation_needs(*args, **kwargs):

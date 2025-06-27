@@ -51,14 +51,14 @@ processed = cropped.apply_filter("sepia").save("output/result.jpg")
 class PlaceKitten:
     def __init__(self, source_folder: str = "demo"):
         """Initialize PlaceKitten with source image folder"""
-    
-    def generate(self, width: int, height: int = None, 
-                filter_type: str = None, image_id: int = None, 
+
+    def generate(self, width: int, height: int = None,
+                filter_type: str = None, image_id: int = None,
                 random: bool = False) -> ImageProcessor:
         """Generate placeholder image with specified dimensions"""
-    
-    def batch_process(self, input_folder: str, output_folder: str, 
-                     width: int, height: int = None, 
+
+    def batch_process(self, input_folder: str, output_folder: str,
+                     width: int, height: int = None,
                      filters: list = None) -> list:
         """Process multiple images in batch"""
 ```
@@ -69,20 +69,20 @@ class PlaceKitten:
 class ImageProcessor:
     def __init__(self, image_path: str = None, image_array: np.ndarray = None):
         """Initialize with image file or numpy array"""
-    
-    def smart_crop(self, width: int, height: int = None, 
+
+    def smart_crop(self, width: int, height: int = None,
                    save_steps: bool = False) -> "ImageProcessor":
         """Intelligent cropping with computer vision"""
-    
+
     def apply_filter(self, filter_name: str, **kwargs) -> "ImageProcessor":
         """Apply image filter"""
-    
+
     def resize(self, width: int, height: int = None) -> "ImageProcessor":
         """Resize image maintaining aspect ratio"""
-    
+
     def save(self, output_path: str, quality: str = "high") -> str:
         """Save processed image"""
-    
+
     def get_array(self) -> np.ndarray:
         """Get image as numpy array"""
 ```
@@ -97,7 +97,7 @@ processor.apply_filter("blur", strength=10)
 processor.apply_filter("invert")
 processor.apply_filter("sepia")
 
-# Advanced filters  
+# Advanced filters
 processor.apply_filter("pixelate", strength=5)
 processor.apply_filter("brightness", value=100)
 processor.apply_filter("contrast", value=70)
@@ -119,7 +119,7 @@ result = (ImageProcessor("input.jpg")
 #### Auto-Height (16:9 aspect ratio)
 ```python
 pk.generate(500)        # 500x281 (16:9)
-pk.generate(800)        # 800x450 (16:9)  
+pk.generate(800)        # 800x450 (16:9)
 pk.generate(1920)       # 1920x1080 (16:9)
 ```
 
@@ -179,13 +179,13 @@ def generate_placeholder_image(
 ) -> str:
     """Generate placeholder image for presentation slides"""
     from placekitten import PlaceKitten
-    
+
     pk = PlaceKitten()
     processor = pk.generate(width, height, filter_type, image_id, random)
-    
+
     if smart_crop:
         processor = processor.smart_crop(width, height)
-    
+
     return processor.save(f"output/slide_image_{width}x{height}.jpg")
 ```
 
@@ -206,7 +206,7 @@ slides_data = {
         {
             "layout": "Picture with Caption",
             "content": {
-                "title": "Market Analysis", 
+                "title": "Market Analysis",
                 "image_path": business_image,
                 "caption": "Revenue trends showing consistent growth"
             }
@@ -290,7 +290,7 @@ slides_data = {
 
 ### Functional Requirements
 - ✅ Python-based image generation with dimensions
-- ✅ Filter pipeline with multiple effect options  
+- ✅ Filter pipeline with multiple effect options
 - ✅ Intelligent cropping with computer vision
 - ✅ Integration with deck-builder-mcp workflows
 
@@ -306,5 +306,5 @@ slides_data = {
 - Detailed processing visualization for learning
 - Seamless integration with presentation workflows
 
-# Possible implementation 
+# Possible implementation
 https://tomaszs2.medium.com/effortless-image-cropping-with-python-automate-your-workflow-in-minute-987fbec9c3e8

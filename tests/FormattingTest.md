@@ -55,7 +55,7 @@ layout: content
 # Paragraph Formatting Tests
 
 ## Complex Paragraph Example
-This paragraph demonstrates ***comprehensive formatting capabilities*** within a single block of text. We start with **bold emphasis** for important points, use *italic text* for subtle emphasis, and apply ___underlining___ to highlight ***key terminology and concepts***. 
+This paragraph demonstrates ***comprehensive formatting capabilities*** within a single block of text. We start with **bold emphasis** for important points, use *italic text* for subtle emphasis, and apply ___underlining___ to highlight ***key terminology and concepts***.
 
 The formatting should work seamlessly across word boundaries and maintain readability while providing visual hierarchy through **strategic use** of *different* ___formatting___ ***combinations***.
 

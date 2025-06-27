@@ -8,9 +8,9 @@ semantic metadata and convention-based placeholder names.
 
 import json
 import re
-from typing import Dict, List, Tuple, Optional
-from pathlib import Path
 from dataclasses import dataclass
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple
 
 
 @dataclass

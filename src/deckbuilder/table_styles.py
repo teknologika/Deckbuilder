@@ -5,8 +5,8 @@ This module contains all the predefined table styles including header styles,
 row styles, and border styles that can be applied to tables in presentations.
 """
 
-from pptx.util import Cm
 from pptx.dml.color import RGBColor
+from pptx.util import Cm
 
 # Table header styling definitions
 TABLE_HEADER_STYLES = {

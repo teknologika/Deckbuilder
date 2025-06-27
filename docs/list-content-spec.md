@@ -48,7 +48,7 @@ This specification defines how to add bulleted and numbered list support to the 
 ## Key Features
 
 1. **Nested Objects**: Support for text mixed with lists within paragraphs
-2. **Circle Bullets**: Default/prioritized bullet style 
+2. **Circle Bullets**: Default/prioritized bullet style
 3. **Presentation-wide Colors**: Set once at presentation creation, applied to all lists
 4. **Backwards Compatibility**: Still handle simple string arrays
 5. **Mixed Content**: Text and lists can be interspersed
@@ -79,7 +79,7 @@ This specification defines how to add bulleted and numbered list support to the 
     "Our new system provides several key advantages:",
     {
       "type": "list",
-      "bullet_style": "circle", 
+      "bullet_style": "circle",
       "items": [
         "Improved efficiency and automation",
         {
