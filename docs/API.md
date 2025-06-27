@@ -1,8 +1,8 @@
-# API Reference
+# Deckbuilder API Reference
 
 ## Overview
 
-The deck-builder-mcp server provides a streamlined MCP (Model Context Protocol) interface for programmatic PowerPoint presentation creation. The server exposes two comprehensive tools that handle complete presentation workflows with automatic saving.
+The Deckbuilder server provides a streamlined MCP (Model Context Protocol) interface for programmatic PowerPoint presentation creation. The server exposes comprehensive tools that handle complete presentation workflows with automatic saving.
 
 ## MCP Tools
 
@@ -152,10 +152,10 @@ Templates use paired files:
 
 ### Template Analysis
 
-Use `tools.py` to generate JSON mappings from existing PowerPoint templates:
+Use the CLI tools to generate JSON mappings from existing PowerPoint templates:
 
 ```bash
-python tests/test_tools.py
+python src/deckbuilder/cli_tools.py analyze default --verbose
 ```
 
 This creates `templateName.g.json` files with extracted structure ready for customization.

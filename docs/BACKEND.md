@@ -1,8 +1,8 @@
-# Backend Architecture
+# Deckbuilder Backend Architecture
 
 ## Overview
 
-The deck-builder-mcp backend is an MCP (Model Context Protocol) server built with FastMCP that enables AI assistants to create and manipulate PowerPoint presentations programmatically. The system uses a dynamic template mapping approach for flexible content placement.
+The Deckbuilder backend is an MCP (Model Context Protocol) server built with FastMCP that enables AI assistants to create and manipulate PowerPoint presentations programmatically. The system uses a dynamic template mapping approach for flexible content placement with content-first intelligence.
 
 ## Project Structure
 
@@ -65,7 +65,7 @@ tests/
 - **Environment Management**: Handles template and output folder configuration
 - **Async Operations**: Supports concurrent presentation generation
 
-### Deckbuilder Engine (`deckbuilder.py`)
+### Deckbuilder Engine (`deckbuilder/engine.py`)
 - **Presentation Management**: Creates and manipulates PowerPoint presentations using python-pptx
 - **Template System**: Loads PowerPoint templates and JSON mapping configurations
 - **Layout Resolution**: Maps user slide types to PowerPoint layouts via JSON configuration
@@ -73,8 +73,6 @@ tests/
 - **Singleton Pattern**: Ensures consistent state across MCP tool calls
 
 ### Template Management System
-#### Template Analyzer (`mcp_server/tools.py`)
-- **PowerPoint Inspection**: Extracts layout and placeholder information from .pptx files
 
 #### CLI Template Tools (`deckbuilder/cli_tools.py`)
 - **Standalone Operation**: Template management independent of MCP server
@@ -92,11 +90,16 @@ tests/
 - **Fallback Strategy**: Graceful degradation when mappings are unavailable
 - **Auto-Discovery**: Automatic copying of template files on first use
 
-### Styling Engine (`table_styles.py`)
+### Styling Engine (`deckbuilder/table_styles.py`)
 - **Table Formatting**: Comprehensive table styling with headers, borders, and colors
 - **Theme Support**: Predefined color schemes and formatting options
 - **Custom Colors**: Support for hex color overrides
 - **Style Inheritance**: Consistent formatting across presentation elements
+
+### Content Intelligence System
+- **Layout Intelligence** (`deckbuilder/layout_intelligence.json`): Semantic metadata for smart layout recommendations
+- **Content Analysis** (`mcp_server/content_analysis.py`): Content-first MCP tools for analyzing user needs
+- **Structured Frontmatter** (`deckbuilder/structured_frontmatter.py`): YAML processing with automatic PowerPoint mapping
 
 ## MCP Tool Architecture
 

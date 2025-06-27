@@ -1,10 +1,39 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## Project Overview
 
-This is an MCP (Model Context Protocol) Server for building PowerPoint presentations. The project has evolved beyond initial setup into a comprehensive content-first presentation intelligence system.
+Deckbuilder is a Python library and accompanying MCP (Model Context Protocol) Server for intelligent PowerPoint presentation generation.
+The project has evolved beyond initial setup into a comprehensive content-first presentation intelligence system.
+
+### 🔄 Project Awareness & Context
+- **Always read `PLANNING.md`** at the start of a new conversation to understand the project's architecture, goals, style, and constraints.
+- **Check `TASK.md`** before starting a new task. If the task isn’t listed, add it with a brief description and today's date.
+- **Use consistent naming conventions, file structure, and architecture patterns** as described in `PLANNING.md`.
+
+### 🧱 Code Structure & Modularity
+- **Never create a file longer than 500 lines of code.** If a file approaches this limit, refactor by splitting it into modules or helper files.
+- **Organize code into clearly separated modules**, grouped by feature or responsibility.
+- **Use clear, consistent imports** (prefer relative imports within packages).
+
+### 🧪 Testing & Reliability
+- **Always create Pytest unit tests for new features** (functions, classes, routes, etc).
+- **After updating any logic**, check whether existing unit tests need to be updated. If so, do it.
+- **Tests should live in a `/tests` folder** mirroring the main app structure.
+  - Include at least:
+    - 1 test for expected use
+    - 1 edge case
+    - 1 failure case
+
+### ✅ Task Completion
+- **Mark completed tasks in `TASK.md`** immediately after finishing them.
+- Add new sub-tasks or TODOs discovered during development to `TASK.md` under a “Discovered During Work” section.
+
+### 📎 Style & Conventions
+- **Use Python** as the primary language.
+- **Follow PEP8**, use type hints, and format with `black`.
+- **Run flake8**, and fix any errors before check-in.
+- **Use `pydantic` for data validation**.
+
 
 ## 🔧 Code Quality Standards
 
@@ -22,6 +51,9 @@ pytest tests/
 ```
 
 **⚠️ ZERO TOLERANCE POLICY: No commits allowed with flake8 F-level errors (F401, F841, F811, F541, etc.)**
+
+
+
 
 ### Code Quality Rules
 
@@ -73,7 +105,7 @@ The project includes GitHub Actions workflows that enforce code quality:
 
 ## Architecture
 
-This project implements a **content-first design philosophy** with three key components:
+Deckbuilder implements a **content-first design philosophy** with three key components:
 1. **Presentation Engine**: PowerPoint generation with template support
 2. **Content Intelligence**: Semantic analysis for layout recommendations  
 3. **Progressive Templates**: Expanding library of business presentation layouts
@@ -95,8 +127,8 @@ source venv/bin/activate
 ```json
 {
   "env": {
-    "DECK_TEMPLATE_FOLDER": "/path/to/deck-builder-mcp/assets/templates",
-    "DECK_OUTPUT_FOLDER": "/path/to/deck-builder-mcp/output", 
+    "DECK_TEMPLATE_FOLDER": "/path/to/deckbuilder/assets/templates",
+    "DECK_OUTPUT_FOLDER": "/path/to/deckbuilder/output", 
     "DECK_TEMPLATE_NAME": "default"
   }
 }
@@ -276,130 +308,3 @@ Generated presentations should demonstrate:
 - Proper layout selection based on content structure
 - Accurate placeholder mapping using semantic detection + JSON fallback
 - Professional appearance matching structured frontmatter specifications
-
-## Implementation Roadmap
-
-### ✅ Completed Features
-- [x] Core presentation engine with structured frontmatter support
-- [x] Template system with semantic detection and JSON mapping
-- [x] Layout selection fix (prefer `layout` field over `type` field)
-- [x] Enhanced placeholder naming (copy descriptive names from template mapping)
-- [x] File-based MCP tool (`create_presentation_from_file`)
-- [x] JSON object input fix (changed from string to dict parameter)
-
-### 🚧 Template Management System (Current Focus)
-
-#### Phase 1: Command-Line Tools ✅ COMPLETED
-- [x] **Create standalone template analysis utility**
-  - [x] Build `src/deckbuilder/cli_tools.py` with command-line interface
-  - [x] Add environment-independent path handling
-  - [x] Test with default template analysis
-
-- [x] **Implement template validation**
-  - [x] Add `validate` command to CLI tool
-  - [x] Cross-reference JSON mapping with actual template structure
-  - [x] Validate template file accessibility
-  - [x] Check JSON mapping completeness
-
-- [x] **Create documentation generator**
-  - [x] Add `document` command to CLI tool
-  - [x] Generate markdown docs with layout tables
-  - [x] Include placeholder details and usage examples
-  - [x] Auto-sync with template analysis results
-  
-- [ ] **Update the user documentation
-
-**CLI Usage Examples:**
-```bash
-# Analyze template structure
-python src/deckbuilder/cli_tools.py analyze default --verbose
-
-# Generate comprehensive documentation  
-python src/deckbuilder/cli_tools.py document default
-
-# Validate template and mappings
-python src/deckbuilder/cli_tools.py validate default
-
-# Custom paths
-python src/deckbuilder/cli_tools.py analyze custom --template-folder ./my-templates
-```
-
-#### Phase 2: Template Enhancement
-- [ ] **Master slide placeholder modification**
-  - [ ] Research python-pptx master slide editing capabilities
-  - [ ] Implement `enhance_template` MCP tool
-  - [ ] Add backup and versioning system
-  - [ ] Test placeholder name updates on master slides
-  - [ ] Update the user documentation
-
-- [ ] **Convention-based naming system**
-  - [ ] Define naming patterns for all layout types
-  - [ ] Implement pattern detection algorithms
-  - [ ] Auto-generate structured frontmatter patterns
-  - [ ] Add naming convention validation
-
-#### Phase 3: Complete Structured Frontmatter Support
-- [ ] **Add missing layout patterns**
-  - [ ] Four Columns With Titles structured pattern
-  - [ ] SWOT Analysis structured pattern  
-  - [ ] Agenda structured pattern
-  - [ ] Big Number structured pattern
-  - [ ] Title Only, Blank, Section Header patterns
-
-- [ ] **Dynamic pattern generation**
-  - [ ] Replace hard-coded patterns with convention-based detection
-  - [ ] Auto-generate YAML structures from JSON mappings
-  - [ ] Unified registry for all 19 layouts
-  - [ ] Backward compatibility with existing patterns
-
-  - [ ] Update the user documentation
-
-### 📋 Future Enhancements
-- [ ] **Content-First MCP Tools**
-  - [ ] `analyze_presentation_needs()` - Content and goal analysis
-  - [ ] `recommend_slide_approach()` - Layout recommendations
-  - [ ] `optimize_content_for_layout()` - Content optimization
-
-- [ ] **Advanced Template Features**
-  - [ ] Template comparison and migration tools
-  - [ ] Custom template creation wizard
-  - [ ] Template validation CI/CD integration
-  - [ ] Multi-template support and switching
-
-### 🧹 Code Quality Maintenance
-
-**Priority: Medium - Ongoing cleanup items that don't block functionality**
-
-- [ ] **Fix remaining flake8 E501 line length violations (56 total)**
-  - [ ] Break long docstrings and function calls in `src/deckbuilder/cli_tools.py` (6 violations)
-  - [ ] Fix line length in `src/deckbuilder/naming_conventions.py` (1 violation) 
-  - [ ] Clean up `src/mcp_server/content_optimization.py` (1 violation)
-  - [ ] Refactor `src/mcp_server/tools.py` (3 violations)
-  - [ ] Break long strings in `tests/utils/content_generator.py` (45 violations)
-  - [ ] Update CI to remove E501 from ignore list once fixed
-
-- [ ] **Code formatting consistency**
-  - [ ] Run `black --line-length 100 src/ tests/` after line length fixes
-  - [ ] Ensure all new code follows 100-character limit
-  - [ ] Add pre-commit hooks for automatic formatting
-
-### 🔧 Technical Debt
-- [ ] **Code Organization**
-  - [ ] Consolidate template analysis code
-  - [ ] Improve error handling across MCP tools
-  - [ ] Add comprehensive logging
-  - [ ] Create unit tests for template management
-
-- [ ] **Documentation Updates**
-  - [ ] Update README with new MCP tools
-  - [ ] Add template creation user guide
-  - [ ] Document naming conventions clearly
-  - [ ] Create troubleshooting guide
-
-## Progress Tracking
-
-**Current Sprint**: Template Management System Phase 2
-**Next Priority**: Master slide placeholder modification with python-pptx
-**Completed**: ✅ Phase 1 - Command-line tools for template analysis, validation, and documentation
-**Blockers**: None identified
-**Target Completion**: Phase 2 - Week 2, Phase 3 - Week 3
