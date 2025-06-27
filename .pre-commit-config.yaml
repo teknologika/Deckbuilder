@@ -59,6 +59,6 @@ repos:
         entry: pytest --cov=src --cov-report=term-missing --cov-fail-under=10
         language: python
         language_version: python3.13
-        additional_dependencies: [pytest-cov, PyYAML, python-pptx, pydantic]
+        additional_dependencies: [pytest-cov, PyYAML, python-pptx, pydantic, numpy, opencv-python, pillow]
         pass_filenames: false
         always_run: true

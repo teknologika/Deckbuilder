@@ -1,81 +1,117 @@
 #!/usr/bin/env python3
 """
-Test script for PlaceKitten core functionality.
-
-This script tests the basic PlaceKitten functionality without requiring
-all dependencies to be installed.
+Test script for PlaceKitten library - Phase 2 functionality testing.
+Tests computer vision pipeline, smart cropping, and step visualization.
 """
 
 import os
 import sys
 from pathlib import Path
 
-# Add src to path for testing
-sys.path.insert(0, str(Path(__file__).parent / "src"))
+# Add the src directory to Python path
+project_root = Path(__file__).parent.parent.parent
+src_path = project_root / "src"
+sys.path.insert(0, str(src_path))
+
+try:
+    from placekitten import PlaceKitten
+
+    print("✅ PlaceKitten import successful")
+except ImportError as e:
+    print(f"❌ Import failed: {e}")
+    sys.exit(1)
 
 
 def test_basic_functionality():
     """Test basic PlaceKitten functionality."""
-    print("🧪 Testing PlaceKitten Core Functionality")
-    print("=" * 50)
+    print("\n🧪 Testing basic functionality...")
 
     try:
-        # Test import
-        print("📦 Testing imports...")
-        from placekitten import ImageProcessor, PlaceKitten, list_available_filters
+        # Initialize PlaceKitten
+        kitten = PlaceKitten("demo")
+        print("✅ PlaceKitten initialization successful")
 
-        print("✅ Imports successful!")
+        # Show available images
+        images = kitten.list_available_images()
+        print(f"✅ Found {len(images)} available images:")
+        for i, img in enumerate(images[:3], 1):  # Show first 3 with 1-based indexing
+            print(f"   {i}: {img}")
 
-        # Test filter list
-        print("🎨 Testing filter registry...")
-        filters = list_available_filters()
-        print(f"✅ Found {len(filters)} filters: {', '.join(filters)}")
-
-        # Test PlaceKitten initialization
-        print("🐱 Testing PlaceKitten initialization...")
-        pk = PlaceKitten()
-        print("✅ PlaceKitten initialized!")
-
-        # Test image discovery
-        print("🔍 Testing image discovery...")
-        images = pk.list_available_images()
-        count = pk.get_image_count()
-        print(f"✅ Found {count} images: {', '.join(images)}")
-
-        if count > 0:
-            # Test basic image generation
-            print("🖼️  Testing image generation...")
-            processor = pk.generate(width=400, height=300)
-            print(f"✅ Generated image: {processor.get_size()}")
-
-            # Test filter application
-            print("🎨 Testing filter application...")
-            filtered = processor.apply_filter("sepia")
-            print(f"✅ Applied sepia filter: {filtered.get_size()}")
-
-            # Test method chaining
-            print("⛓️  Testing method chaining...")
-            chained = pk.generate(800).apply_filter("grayscale").resize(200, 200)
-            print(f"✅ Method chaining works: {chained.get_size()}")
-
-            print("\n🎉 All basic tests passed!")
-            print("✅ Core PlaceKitten functionality is working!")
-
-        else:
-            print("⚠️  No images found - cannot test generation")
-            print("💡 Ensure kitten images are in assets/images/")
-
-    except ImportError as e:
-        print(f"❌ Import error: {e}")
-        print("💡 You may need to install dependencies:")
-        print("   pip install Pillow numpy")
-
+        return kitten
     except Exception as e:
-        print(f"❌ Test failed: {e}")
-        import traceback
+        print(f"❌ Basic functionality test failed: {e}")
+        return None
 
-        traceback.print_exc()
+
+def test_smart_cropping():
+    """Test smart cropping functionality with step visualization."""
+    from placekitten import PlaceKitten
+    
+    kitten = PlaceKitten("demo")
+    
+    # Generate image with smart cropping and step visualization
+    processor = kitten.generate(
+        width=800, height=450, image_id=1  # 16:9 aspect ratio, 1-based indexing
+    )
+    
+    # Test smart cropping with step visualization
+    smart_processor = processor.smart_crop(
+        width=800, height=450, save_steps=True, output_prefix="test_demo"
+    )
+    
+    # Save the final result
+    output_file = smart_processor.save("test_final_result.jpg")
+    assert output_file.endswith("test_final_result.jpg")
+    
+    # Check if debug steps were saved
+    step_files = [f for f in os.listdir(".") if f.startswith("test_demo_")]
+    assert len(step_files) == 9  # Should have 9 processing steps
+
+
+def test_filter_pipeline():
+    """Test filter pipeline functionality."""
+    from placekitten import PlaceKitten
+    
+    kitten = PlaceKitten("demo")
+    
+    # Test different filters
+    filters_to_test = ["grayscale", "sepia", "blur"]
+    
+    for filter_name in filters_to_test:
+        processor = kitten.generate(
+            width=400, height=225, filter_type=filter_name, image_id=1  # 1-based indexing
+        )
+        output_file = processor.save(f"test_filter_{filter_name}.jpg")
+        assert output_file.endswith(f"test_filter_{filter_name}.jpg")
+
+
+def main():
+    """Run comprehensive PlaceKitten tests."""
+    print("🐱 PlaceKitten Phase 2 Testing Suite")
+    print("=" * 50)
+
+    # Test 1: Basic functionality
+    kitten = test_basic_functionality()
+    if not kitten:
+        return
+
+    # Test 2: Smart cropping with computer vision
+    if not test_smart_cropping(kitten):
+        return
+
+    # Test 3: Filter pipeline
+    if not test_filter_pipeline(kitten):
+        return
+
+    print("\n🎉 All tests completed successfully!")
+    print("Phase 2 implementation is working correctly.")
+
+    # Show generated files
+    generated_files = [f for f in os.listdir(".") if f.startswith("test_")]
+    print(f"\n📁 Generated {len(generated_files)} test files:")
+    for f in sorted(generated_files):
+        print(f"   📄 {f}")
 
 
 if __name__ == "__main__":
-    test_basic_functionality()
+    main()

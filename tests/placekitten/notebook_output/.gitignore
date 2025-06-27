@@ -1,0 +1,11 @@
+# Ignore all generated images from PlaceKitten notebook demo
+*.jpg
+*.png
+*.jpeg
+*.webp
+
+# Ignore batch output folders
+batch_output/
+
+# Keep this .gitignore file
+!.gitignore

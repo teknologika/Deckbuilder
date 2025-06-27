@@ -1,0 +1,11 @@
+# Keep placekitten demo images in repository
+# This folder contains the default kitten images for PlaceKitten library
+
+# Include all image files
+!*.png
+!*.jpg
+!*.jpeg
+!*.webp
+
+# Keep this .gitignore file
+!.gitignore

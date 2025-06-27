@@ -586,7 +586,8 @@ subtitle: {subtitle}
         """Analyze how well the content fits the chosen layout."""
         # Analyze content characteristics
         # content_length = len(content.split())  # Future: use for length analysis
-        # layout_requirements = self._get_layout_requirements(chosen_layout)  # Future: use for validation
+        # layout_requirements = self._get_layout_requirements(chosen_layout)
+        # Future: use for validation
 
         # Assess content fit
         fit_score = self._calculate_fit_score(content, chosen_layout, optimization_result)
@@ -718,9 +719,10 @@ subtitle: {subtitle}
 
         # Layout-specific delivery guidance
         if layout == "Four Columns":
-            tips[
-                "delivery_guidance"
-            ] = "Present columns in logical order, allow time for audience to process each section"
+            tips["delivery_guidance"] = (
+                "Present columns in logical order, allow time for audience to "
+                "process each section"
+            )
         elif layout == "Comparison":
             tips[
                 "delivery_guidance"

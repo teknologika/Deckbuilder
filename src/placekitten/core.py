@@ -5,7 +5,6 @@ This module provides the main PlaceKitten class that handles image generation
 from existing kitten images with dimension management and basic functionality.
 """
 
-import os
 import random
 from pathlib import Path
 from typing import List, Optional
@@ -34,15 +33,15 @@ class PlaceKitten:
 
     def _setup_image_paths(self) -> None:
         """Setup paths to kitten images."""
-        # Get project root (3 levels up from this file)
-        project_root = Path(__file__).parent.parent.parent
+        # Get placekitten module directory (this file's parent)
+        placekitten_module = Path(__file__).parent
 
         if self.source_folder == "demo":
-            # Use the assets/images folder directly for demo mode
-            self.images_path = project_root / "assets" / "images"
+            # Use the images folder within placekitten module for demo mode
+            self.images_path = placekitten_module / "images"
         else:
-            # Use custom source folder
-            self.images_path = project_root / "assets" / "images" / self.source_folder
+            # Use custom source folder within placekitten module
+            self.images_path = placekitten_module / "images" / self.source_folder
 
         if not self.images_path.exists():
             raise RuntimeError(f"Image source folder not found: {self.images_path}")
@@ -69,7 +68,7 @@ class PlaceKitten:
 
     def generate(
         self,
-        width: int,
+        width: Optional[int] = None,
         height: Optional[int] = None,
         filter_type: Optional[str] = None,
         image_id: Optional[int] = None,
@@ -79,39 +78,50 @@ class PlaceKitten:
         Generate placeholder image with specified dimensions.
 
         Args:
-            width: Image width in pixels
-            height: Image height in pixels (auto-calculated for 16:9 if None)
+            width: Image width in pixels (optional - scales from height if only height given)
+            height: Image height in pixels (optional - scales from width if only width given)
             filter_type: Filter to apply (e.g., "sepia", "grayscale")
-            image_id: Specific image ID to use (0-based index)
-            random_selection: Use random image selection
+            image_id: Specific image ID to use (1-based index, uses random if invalid/None)
+            random_selection: Force random image selection (overrides image_id)
 
         Returns:
             ImageProcessor instance for further manipulation
         """
-        # Calculate height if not provided (16:9 aspect ratio)
-        if height is None:
-            height = self._calculate_height(width)
 
         # Get available images
         available_images = self._get_available_images()
 
-        # Select image
-        if image_id is not None:
-            if 0 <= image_id < len(available_images):
-                selected_image = available_images[image_id]
-            else:
-                raise ValueError(f"Image ID {image_id} out of range (0-{len(available_images)-1})")
-        elif random_selection:
-            selected_image = random.choice(available_images)
+        # Select image (using 1-based indexing, random for invalid/None)
+        if random_selection:
+            selected_image = random.choice(available_images)  # nosec
+        elif image_id is not None and 1 <= image_id <= len(available_images):
+            selected_image = available_images[image_id - 1]  # Convert to 0-based index
         else:
-            # Default to first image
-            selected_image = available_images[0]
+            # Use random for None or out-of-range image_id
+            selected_image = random.choice(available_images)  # nosec
 
         # Create ImageProcessor with the selected image
         processor = ImageProcessor(str(selected_image))
 
-        # Resize to target dimensions
-        processor = processor.resize(width, height)
+        # Handle dimensions - preserve aspect ratio or use original size
+        if width is None and height is None:
+            # Return full size image - no resizing
+            pass
+        elif width is not None and height is not None:
+            # Both specified - resize to exact dimensions
+            processor = processor.resize(width, height)
+        elif width is not None:
+            # Only width specified - calculate height preserving aspect ratio
+            original_width, original_height = processor.get_size()
+            aspect_ratio = original_height / original_width
+            calculated_height = int(width * aspect_ratio)
+            processor = processor.resize(width, calculated_height)
+        elif height is not None:
+            # Only height specified - calculate width preserving aspect ratio
+            original_width, original_height = processor.get_size()
+            aspect_ratio = original_width / original_height
+            calculated_width = int(height * aspect_ratio)
+            processor = processor.resize(calculated_width, height)
 
         # Apply filter if specified
         if filter_type:

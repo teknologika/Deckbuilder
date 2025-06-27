@@ -20,9 +20,10 @@ Tasks are organized by phase and component.
 #### Phase 0: Asset Cleanup (Immediate Priority)
 - [x] **Clean up image directory structure**
   - [x] Move kitten images from `assets/images/Images/` to `assets/images/`
-  - [x] Remove empty nested `Images/` folder
-  - [x] Update any existing path references in documentation
-  - [x] Verify all 7 kitten images are accessible in new location
+  - [x] Remove empty nested `Images/` folder  
+  - [x] Move kitten images from `assets/images/` to `src/placekitten/images/`
+  - [x] Update PlaceKitten core to use module-local image storage
+  - [x] Verify all 6 kitten images are accessible in new location
 
 #### Phase 1: Core Library Implementation
 - [x] **Add dependencies and setup**
