@@ -217,3 +217,14 @@ tests/output/
 # Template backup files
 assets/templates/backups/
 *_backup_*.pptx
+test_demo_1-original.jpg
+test_demo_2-grayscale.jpg
+test_demo_3-blurred.jpg
+test_demo_4-edges.jpg
+test_demo_5-largest-contour.jpg
+test_demo_6-bounding-box.jpg
+test_demo_7-rule-of-thirds.jpg
+test_demo_8-crop-area.jpg
+test_demo_9-final.jpg
+tests/placekitten/debug_scaling.py
+tests/placekitten/debug_scaling.py

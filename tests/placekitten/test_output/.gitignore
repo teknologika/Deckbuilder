@@ -1,0 +1,8 @@
+# Ignore all test output files
+*.jpg
+*.png
+*.jpeg
+*.webp
+
+# Keep this .gitignore file
+!.gitignore

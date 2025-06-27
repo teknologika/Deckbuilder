@@ -51,11 +51,13 @@ class PlaceKitten:
         if self._image_cache is None:
             # Cache the image list for performance
             image_extensions = {".png", ".jpg", ".jpeg", ".webp"}
-            self._image_cache = [
-                img
-                for img in self.images_path.iterdir()
-                if img.is_file() and img.suffix.lower() in image_extensions
-            ]
+            self._image_cache = sorted(
+                [
+                    img
+                    for img in self.images_path.iterdir()
+                    if img.is_file() and img.suffix.lower() in image_extensions
+                ]
+            )
 
         if not self._image_cache:
             raise RuntimeError(f"No images found in {self.images_path}")

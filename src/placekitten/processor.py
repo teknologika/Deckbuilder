@@ -5,13 +5,11 @@ This module provides the ImageProcessor class for image loading, resizing,
 filtering, and saving with method chaining support.
 """
 
-import os
-from datetime import datetime
 from pathlib import Path
-from typing import Optional, Union
+from typing import Optional
 
 import numpy as np
-from PIL import Image, ImageEnhance, ImageFilter
+from PIL import Image
 
 from .filters import apply_filter
 from .smart_crop import smart_crop_engine
@@ -58,11 +56,11 @@ class ImageProcessor:
             New ImageProcessor instance with resized image
         """
         if height is None:
-            # Maintain aspect ratio
+            # Maintain aspect ratio when height not specified
             aspect_ratio = self.image.height / self.image.width
             height = int(width * aspect_ratio)
 
-        # Use high-quality resampling
+        # Use high-quality resampling with both dimensions
         resized_image = self.image.resize((width, height), Image.Resampling.LANCZOS)
 
         # Create new processor instance
