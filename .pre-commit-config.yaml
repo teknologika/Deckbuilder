@@ -4,7 +4,7 @@ repos:
     rev: 23.7.0
     hooks:
       - id: black
-        args: ["--line-length=100"]
+        args: ["--line-length=100", "--include", "\\.pyi?$|\\.ipynb$"]
 
   # Linting (logic, unused imports, etc.)
   - repo: https://github.com/pycqa/flake8
