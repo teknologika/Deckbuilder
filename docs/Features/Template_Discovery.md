@@ -466,7 +466,7 @@ src/
 └── main.py (✅ MCP server entry point)
 
 docs/Features/
-├── PlaceholderMatching.md (✅ existing)
+├── Placeholder_Matching.md (✅ existing)
 ├── TemplateDiscovery.md (✅ this file)
 └── generated/ (❌ planned for auto-docs)
 

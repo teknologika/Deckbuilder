@@ -2,7 +2,37 @@
 
 [![Test Suite](https://github.com/teknologika/deckbuilder/actions/workflows/test.yml/badge.svg)](https://github.com/teknologika/deckbuilder/actions/workflows/test.yml)
 
-A Python library and MCP (Model Context Protocol) server for intelligent PowerPoint presentation generation. Deckbuilder transforms LLMs from layout pickers into presentation consultants using a **content-first design philosophy**.
+Deckbuilder is a Python library and MCP (Model Context Protocol) server for intelligent PowerPoint presentation generation. Deckbuilder transforms LLMs from layout pickers into presentation consultants using a **content-first design philosophy**.
+
+# Core Features
+
+### ** One-shot Powerpoint Presentation creation from JSON or FrontMatter formatted Markdown **
+
+Deckbuilder provides a comprehensive Python library for PowerPoint generation with sophisticated content intelligence. The library features a singleton-based presentation engine that processes JSON data, markdown with YAML frontmatter, and structured content through semantic placeholder detection. Key capabilities include a hybrid template system combining semantic detection with JSON mapping, CLI tools for template management and validation, multi-tier placeholder naming conventions, and content-first layout recommendations. The system supports 50+ business presentation layouts with rich formatting (bold, italic, underline), professional table styling, and automatic template enhancement with organized backup systems.
+
+[Deckbuilder Python Library](docs/Features/Deckbuilder_Python_Library.md)
+
+### 🎨 **Rich Content Support**
+- **Inline Formatting**: `**bold**`, `*italic*`, `___underline___`, `***bold italic***`
+- **Mixed Content**: Headings, paragraphs, and bullet points in single slides
+- **Advanced Tables**: Professional styling with custom colors and themes
+- **50+ Layout Library**: Progressive implementation of business presentation layouts
+
+### 📝 **Multiple Input Formats**
+- **JSON**: Precise programmatic control with comprehensive structure
+- **Markdown + YAML**: Intuitive authoring with frontmatter definitions
+
+
+### 🎯 **Content-First Intelligence**
+Instead of asking "what layouts exist?", the Deckbuilder MCP tools ask "what does the user want to communicate?" This transforms the system from a layout picker into an intelligent presentation consultant.
+
+
+### 🔧 **Template Management**
+- **CLI Tools**: Analyze, validate, and enhance PowerPoint templates
+- **Semantic Detection**: Automatic placeholder identification
+- **Hybrid Mapping**: Semantic detection + JSON configuration for reliability
+
+
 
 ## Quick Start
 
@@ -50,51 +80,30 @@ mkdir -p ~/Documents/Deckbuilder
 ```bash
 ./run_server.sh
 ```
-
-## Core Features
-
-### 🎯 **Content-First Intelligence**
-Instead of asking "what layouts exist?", Deckbuilder asks "what does the user want to communicate?" This transforms the system from a layout picker into an intelligent presentation consultant.
-
-### 📝 **Multiple Input Formats**
-- **JSON**: Precise programmatic control with comprehensive structure
-- **Markdown + YAML**: Intuitive authoring with frontmatter definitions
-
-### 🎨 **Rich Content Support**
-- **Inline Formatting**: `**bold**`, `*italic*`, `___underline___`, `***bold italic***`
-- **Mixed Content**: Headings, paragraphs, and bullet points in single slides
-- **Advanced Tables**: Professional styling with custom colors and themes
-- **50+ Layout Library**: Progressive implementation of business presentation layouts
-
-### 🔧 **Template Management**
-- **CLI Tools**: Analyze, validate, and enhance PowerPoint templates
-- **Semantic Detection**: Automatic placeholder identification
-- **Hybrid Mapping**: Semantic detection + JSON configuration for reliability
-
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    MCP Server Layer                     │
-│  ┌─────────────────┐        ┌────────────────────┐     │
-│  │   FastMCP       │        │   Content-First    │     │
-│  │   Endpoints     │◄──────►│   MCP Tools        │     │
-│  └────────┬────────┘        └────────────────────┘     │
-│           │                                              │
-├───────────┴──────────────────────────────────────────────┤
-│                 Presentation Engine                      │
-│  ┌─────────────────┐        ┌────────────────────┐     │
-│  │  PowerPoint     │        │   Template         │     │
-│  │  Generation     │◄──────►│   Management       │     │
-│  └────────┬────────┘        └────────────────────┘     │
-│           │                                              │
-├───────────┴──────────────────────────────────────────────┤
-│                Content Intelligence                      │
-│  ┌─────────────────┐        ┌────────────────────┐     │
-│  │  Layout         │        │   Semantic         │     │
-│  │  Intelligence   │◄──────►│   Analysis         │     │
-│  └─────────────────┘        └────────────────────┘     │
-└─────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────┐
+│                    MCP Server Layer                 │
+│  ┌─────────────────┐        ┌────────────────────┐  │
+│  │   FastMCP       │        │   Content-First    │  │
+│  │   Endpoints     │◄──────►│   MCP Tools        │  │
+│  └────────┬────────┘        └────────────────────┘  │
+│           │                                         │
+├───────────┴─────────────────────────────────────────┤
+│                 Presentation Engine                 │
+│  ┌─────────────────┐        ┌────────────────────┐  │
+│  │  PowerPoint     │        │   Template         │  │
+│  │  Generation     │◄──────►│   Management       │  │
+│  └────────┬────────┘        └────────────────────┘  │
+│           │                                         │
+├───────────┴─────────────────────────────────────────┤
+│                Content Intelligence                 │
+│  ┌─────────────────┐        ┌────────────────────┐  │
+│  │  Layout         │        │   Semantic         │  │
+│  │  Intelligence   │◄──────►│   Analysis         │  │
+│  └─────────────────┘        └────────────────────┘  │
+└─────────────────────────────────────────────────────┘
 ```
 
 ## Usage Examples

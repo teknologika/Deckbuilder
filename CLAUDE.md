@@ -175,19 +175,19 @@ Never start with "what layouts exist?" - always start with "what does the user w
 Refer to these comprehensive specifications before implementing:
 
 ### Core Feature Specifications
-- **[PlaceholderMatching.md](docs/Features/PlaceholderMatching.md)**: 
+- **[Placeholder_Matching.md](docs/Features/Placeholder_Matching.md)**: 
   - Hybrid semantic detection and JSON mapping system
   - Template analyzer workflow and JSON schema
   - Content placement strategies and troubleshooting
   - **Content Intelligence Storage Design** with Option 2 decision rationale
   
-- **[TemplateDiscovery.md](docs/Features/TemplateDiscovery.md)**:
+- **[Template_Discovery.md](docs/Features/Template_Discovery.md)**:
   - Content-first MCP tools design (analyze_presentation_needs, recommend_slide_approach, optimize_content_for_layout)
   - Complete end-to-end user workflow scenarios
   - Design evolution from layout-centric to content-first approach
   - Implementation roadmap and success criteria
   
-- **[SupportedTemplates.md](docs/Features/SupportedTemplates.md)**:
+- **[Supported_Templates.md](docs/Features/Supported_Templates.md)**:
   - Progressive implementation roadmap for 50+ business presentation layouts
   - Status tracking with ✅/❌ indicators across 7 layout categories
   - Required placeholders and descriptions for each layout

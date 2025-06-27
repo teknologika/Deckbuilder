@@ -227,7 +227,7 @@ template_output/
 └── ...
 
 docs/Features/
-├── DefaultTemplate.md        # Generated documentation
+├── Default_Template.md        # Generated documentation
 └── ...
 ```
 
