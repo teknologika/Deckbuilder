@@ -25,12 +25,14 @@ __license__ = "MIT"
 from .core import PlaceKitten
 from .processor import ImageProcessor
 from .filters import apply_filter, list_available_filters, register_custom_filter
+from .smart_crop import SmartCropEngine
 
 # Public API exports
 __all__ = [
     # Main classes
     "PlaceKitten",
     "ImageProcessor",
+    "SmartCropEngine",
     
     # Filter utilities
     "apply_filter",

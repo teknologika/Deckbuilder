@@ -305,3 +305,6 @@ slides_data = {
 - Comprehensive filter and customization options
 - Detailed processing visualization for learning
 - Seamless integration with presentation workflows
+
+# Possible implementation 
+https://tomaszs2.medium.com/effortless-image-cropping-with-python-automate-your-workflow-in-minute-987fbec9c3e8

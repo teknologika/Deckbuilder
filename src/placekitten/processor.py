@@ -12,6 +12,7 @@ from typing import Optional, Union
 from PIL import Image, ImageFilter, ImageEnhance
 from datetime import datetime
 from .filters import apply_filter
+from .smart_crop import smart_crop_engine
 
 
 class ImageProcessor:
@@ -98,24 +99,51 @@ class ImageProcessor:
         self, 
         width: int, 
         height: Optional[int] = None, 
-        save_steps: bool = False
+        save_steps: bool = False,
+        output_prefix: str = "smart_crop"
     ) -> "ImageProcessor":
         """
-        Intelligent cropping with computer vision (placeholder for Phase 2).
+        Intelligent cropping with computer vision.
+        
+        Uses advanced computer vision techniques including:
+        - Edge detection with Canny algorithm
+        - Contour analysis for subject identification  
+        - Rule-of-thirds composition optimization
+        - Step-by-step visualization (optional)
         
         Args:
             width: Target width
             height: Target height (16:9 if None)
-            save_steps: Save intermediate processing steps
+            save_steps: Save intermediate processing steps for debugging
+            output_prefix: Prefix for debug step files
             
         Returns:
-            New ImageProcessor instance with cropped image
+            New ImageProcessor instance with intelligently cropped image
         """
         if height is None:
             height = int(width * 9 / 16)
         
-        # Phase 1: Simple center crop (will be enhanced in Phase 2)
-        # Calculate crop box for center crop
+        try:
+            # Use the smart crop engine for intelligent processing
+            cropped_image, crop_info = smart_crop_engine.smart_crop(
+                self.image, width, height, save_steps, output_prefix
+            )
+            
+            # Create new processor instance
+            new_processor = ImageProcessor.__new__(ImageProcessor)
+            new_processor.image = cropped_image
+            new_processor.source_path = self.source_path
+            new_processor.crop_info = crop_info  # Store crop metadata
+            
+            return new_processor
+            
+        except Exception as e:
+            # Fallback to simple center crop if OpenCV fails
+            print(f"⚠️  Smart crop failed ({e}), falling back to center crop")
+            return self._fallback_center_crop(width, height)
+    
+    def _fallback_center_crop(self, width: int, height: int) -> "ImageProcessor":
+        """Fallback center crop implementation."""
         img_width, img_height = self.image.size
         
         # Calculate scaling to fit target aspect ratio
@@ -209,10 +237,25 @@ class ImageProcessor:
             Dictionary with image information
         """
         width, height = self.image.size
-        return {
+        info = {
             'width': width,
             'height': height,
             'mode': self.image.mode,
             'format': self.image.format,
             'source_path': self.source_path
         }
+        
+        # Add crop information if available
+        if hasattr(self, 'crop_info'):
+            info['crop_info'] = self.crop_info
+            
+        return info
+    
+    def get_crop_info(self) -> Optional[dict]:
+        """
+        Get crop information from smart crop operation.
+        
+        Returns:
+            Dictionary with crop details or None if no smart crop was performed
+        """
+        return getattr(self, 'crop_info', None)
