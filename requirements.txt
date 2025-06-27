@@ -10,6 +10,11 @@ python-dotenv>=1.0.0
 # YAML parsing for frontmatter
 pyyaml>=6.0.0
 
+# PlaceKitten image processing dependencies
+opencv-python>=4.8.0
+Pillow>=10.0.0
+numpy>=1.24.0
+
 # Testing dependencies
 pytest>=7.0.0
 pytest-cov>=4.0.0
