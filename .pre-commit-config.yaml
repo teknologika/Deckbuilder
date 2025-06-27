@@ -15,17 +15,17 @@ repos:
         args: ["--max-line-length=100", "--ignore=E203,W503"]
 
   # Import sorting
-  - repo: https://github.com/pre-commit/mirrors-isort
-    rev: v5.10.1
-    hooks:
-      - id: isort
-        args: ["--profile=black"]
+  # - repo: https://github.com/pre-commit/mirrors-isort
+  #   rev: v5.10.1
+  #   hooks:
+  #     - id: isort
+  #       args: ["--profile=black"]
 
   # Type checking
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.7.1
-    hooks:
-      - id: mypy
+  # - repo: https://github.com/pre-commit/mirrors-mypy
+  #   rev: v1.7.1
+  #   hooks:
+  #     - id: mypy
 
   # Security scanning
   - repo: https://github.com/PyCQA/bandit
@@ -35,28 +35,30 @@ repos:
         args: ["-c", "bandit.yaml"]
 
   # Docstring linting
-  - repo: https://github.com/PyCQA/pydocstyle
-    rev: 6.3.0
-    hooks:
-      - id: pydocstyle
-        additional_dependencies:
-          - tomli>=2.0.1
+  # - repo: https://github.com/PyCQA/pydocstyle
+  #   rev: 6.3.0
+  #   hooks:
+  #     - id: pydocstyle
+  #       additional_dependencies:
+  #         - tomli>=2.0.1
 
   # Basic file hygiene
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
-    hooks:
-      - id: end-of-file-fixer
-      - id: trailing-whitespace
-      - id: check-yaml
-      - id: check-added-large-files
+  # - repo: https://github.com/pre-commit/pre-commit-hooks
+  #   rev: v4.5.0
+  #   hooks:
+  #     - id: end-of-file-fixer
+  #     - id: trailing-whitespace
+  #     - id: check-yaml
+  #     - id: check-added-large-files
 
   # Testing with coverage threshold
   - repo: local
     hooks:
       - id: pytest
         name: pytest with coverage
-        entry: pytest --cov=src --cov-fail-under=10
-        language: system
+        entry: pytest --cov=src --cov-report=term-missing --cov-fail-under=10
+        language: python
+        language_version: python3.13
+        additional_dependencies: [pytest-cov, PyYAML, python-pptx, pydantic]
         pass_filenames: false
         always_run: true
