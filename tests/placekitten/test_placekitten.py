@@ -60,7 +60,11 @@ def test_smart_cropping():
 
     # Test smart cropping with step visualization
     smart_processor = processor.smart_crop(
-        width=800, height=450, save_steps=True, output_folder=str(test_output_dir)
+        width=800,
+        height=450,
+        save_steps=True,
+        output_prefix="test_demo",
+        output_folder=str(test_output_dir),
     )
 
     # Save the final result

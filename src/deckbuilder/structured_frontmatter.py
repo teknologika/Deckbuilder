@@ -184,17 +184,26 @@ comparison:
                 "yaml_pattern": {
                     "layout": "Picture with Caption",
                     "title": str,
-                    "media": {"caption": str, "description": str},
+                    "media": {
+                        "image_path": str,  # NEW - Primary image source (optional)
+                        "alt_text": str,  # NEW - Accessibility support (optional)
+                        "caption": str,
+                        "description": str,
+                    },
                 },
                 "mapping_rules": {
                     "title": "semantic:title",
                     "media.description": "semantic:content",
+                    "media.image_path": "image_placeholder",  # NEW - Special image handling
+                    "media.alt_text": "image_alt_text",  # NEW - Accessibility
                 },
                 "validation": {"required_fields": ["title", "media"]},
                 "example": """---
                 layout: Picture with Caption
                 title: System Architecture
                 media:
+                  image_path: "assets/architecture_diagram.png"  # Primary image source
+                  alt_text: "System architecture overview"       # Accessibility support
                   caption: High-level system architecture diagram
                   description: |
                     Main components include:
@@ -296,22 +305,22 @@ comparison:
             col_title_placeholders = []
             col_content_placeholders = []
 
-            for idx, placeholder_name in placeholders.items():
+            for _idx, placeholder_name in placeholders.items():
                 name_lower = placeholder_name.lower()
                 if "title_col" in name_lower:
-                    col_title_placeholders.append((idx, placeholder_name))
+                    col_title_placeholders.append((_idx, placeholder_name))
                 elif "content_col" in name_lower:
-                    col_content_placeholders.append((idx, placeholder_name))
+                    col_content_placeholders.append((_idx, placeholder_name))
 
             # Sort by placeholder index to get correct order
             col_title_placeholders.sort(key=lambda x: int(x[0]))
             col_content_placeholders.sort(key=lambda x: int(x[0]))
 
             # Build mapping rules for each column
-            for i, (idx, placeholder_name) in enumerate(col_title_placeholders[:4]):
+            for i, (_idx, placeholder_name) in enumerate(col_title_placeholders[:4]):
                 mapping_rules[f"columns[{i}].title"] = placeholder_name
 
-            for i, (idx, placeholder_name) in enumerate(col_content_placeholders[:4]):
+            for i, (_idx, placeholder_name) in enumerate(col_content_placeholders[:4]):
                 mapping_rules[f"columns[{i}].content"] = placeholder_name
 
         elif layout_name == "Comparison":
@@ -319,7 +328,7 @@ comparison:
             left_placeholders = {}
             right_placeholders = {}
 
-            for idx, placeholder_name in placeholders.items():
+            for _idx, placeholder_name in placeholders.items():
                 name_lower = placeholder_name.lower()
                 if "_left_" in name_lower:
                     if "title" in name_lower:
@@ -346,7 +355,7 @@ comparison:
             # Find content placeholders using convention-based patterns
             content_placeholders = []
 
-            for idx, placeholder_name in placeholders.items():
+            for _idx, placeholder_name in placeholders.items():
                 name_lower = placeholder_name.lower()
                 if "content_" in name_lower and ("_left_" in name_lower or "_right_" in name_lower):
                     if "_left_" in name_lower:
@@ -365,59 +374,59 @@ comparison:
             col_title_placeholders = []
             col_content_placeholders = []
 
-            for idx, placeholder_name in placeholders.items():
+            for _idx, placeholder_name in placeholders.items():
                 name_lower = placeholder_name.lower()
                 if "title_col" in name_lower:
-                    col_title_placeholders.append((idx, placeholder_name))
+                    col_title_placeholders.append((_idx, placeholder_name))
                 elif "content_col" in name_lower:
-                    col_content_placeholders.append((idx, placeholder_name))
+                    col_content_placeholders.append((_idx, placeholder_name))
 
             # Sort by placeholder index to get correct order
             col_title_placeholders.sort(key=lambda x: int(x[0]))
             col_content_placeholders.sort(key=lambda x: int(x[0]))
 
             # Build mapping rules for each column (max 3)
-            for i, (idx, placeholder_name) in enumerate(col_title_placeholders[:3]):
+            for i, (_idx, placeholder_name) in enumerate(col_title_placeholders[:3]):
                 mapping_rules[f"columns[{i}].title"] = placeholder_name
 
-            for i, (idx, placeholder_name) in enumerate(col_content_placeholders[:3]):
+            for i, (_idx, placeholder_name) in enumerate(col_content_placeholders[:3]):
                 mapping_rules[f"columns[{i}].content"] = placeholder_name
 
         elif layout_name == "Three Columns":
             # Find column content placeholders using convention-based patterns
             col_content_placeholders = []
 
-            for idx, placeholder_name in placeholders.items():
+            for _idx, placeholder_name in placeholders.items():
                 name_lower = placeholder_name.lower()
                 if "content_col" in name_lower:
-                    col_content_placeholders.append((idx, placeholder_name))
+                    col_content_placeholders.append((_idx, placeholder_name))
 
             # Sort by placeholder index to get correct order
             col_content_placeholders.sort(key=lambda x: int(x[0]))
 
             # Build mapping rules for each column content (max 3)
-            for i, (idx, placeholder_name) in enumerate(col_content_placeholders[:3]):
+            for i, (_idx, placeholder_name) in enumerate(col_content_placeholders[:3]):
                 mapping_rules[f"columns[{i}].content"] = placeholder_name
 
         elif layout_name == "Four Columns":
             # Find column content placeholders using convention-based patterns
             col_content_placeholders = []
 
-            for idx, placeholder_name in placeholders.items():
+            for _idx, placeholder_name in placeholders.items():
                 name_lower = placeholder_name.lower()
                 if "content_col" in name_lower:
-                    col_content_placeholders.append((idx, placeholder_name))
+                    col_content_placeholders.append((_idx, placeholder_name))
 
             # Sort by placeholder index to get correct order
             col_content_placeholders.sort(key=lambda x: int(x[0]))
 
             # Build mapping rules for each column content (max 4)
-            for i, (idx, placeholder_name) in enumerate(col_content_placeholders[:4]):
+            for i, (_idx, placeholder_name) in enumerate(col_content_placeholders[:4]):
                 mapping_rules[f"columns[{i}].content"] = placeholder_name
 
         elif layout_name == "Picture with Caption":
             # Find caption placeholder using convention-based patterns
-            for idx, placeholder_name in placeholders.items():
+            for _idx, placeholder_name in placeholders.items():
                 name_lower = placeholder_name.lower()
                 if "text_caption" in name_lower:
                     mapping_rules["media.caption"] = placeholder_name
@@ -431,20 +440,20 @@ comparison:
             number_placeholders = []
             content_placeholders = []
 
-            for idx, placeholder_name in placeholders.items():
+            for _idx, placeholder_name in placeholders.items():
                 name_lower = placeholder_name.lower()
                 if "number_item" in name_lower:
-                    number_placeholders.append((idx, placeholder_name))
+                    number_placeholders.append((_idx, placeholder_name))
                 elif "content_item" in name_lower:
-                    content_placeholders.append((idx, placeholder_name))
+                    content_placeholders.append((_idx, placeholder_name))
 
             number_placeholders.sort(key=lambda x: int(x[0]))
             content_placeholders.sort(key=lambda x: int(x[0]))
 
             # Map agenda items
-            for i, (idx, placeholder_name) in enumerate(number_placeholders[:6]):
+            for i, (_idx, placeholder_name) in enumerate(number_placeholders[:6]):
                 mapping_rules[f"agenda[{i}].number"] = placeholder_name
-            for i, (idx, placeholder_name) in enumerate(content_placeholders[:6]):
+            for i, (_idx, placeholder_name) in enumerate(content_placeholders[:6]):
                 mapping_rules[f"agenda[{i}].item"] = placeholder_name
 
         elif layout_name == "Title and 6-item Lists":
@@ -453,37 +462,37 @@ comparison:
             content_placeholders = []
             title_placeholders = []
 
-            for idx, placeholder_name in placeholders.items():
+            for _idx, placeholder_name in placeholders.items():
                 name_lower = placeholder_name.lower()
                 if "number_item" in name_lower:
-                    number_placeholders.append((idx, placeholder_name))
+                    number_placeholders.append((_idx, placeholder_name))
                 elif "content_item" in name_lower:
-                    content_placeholders.append((idx, placeholder_name))
+                    content_placeholders.append((_idx, placeholder_name))
                 elif "content_" in name_lower and "_1" in name_lower:
                     # These are the title placeholders for lists
-                    title_placeholders.append((idx, placeholder_name))
+                    title_placeholders.append((_idx, placeholder_name))
 
             number_placeholders.sort(key=lambda x: int(x[0]))
             content_placeholders.sort(key=lambda x: int(x[0]))
             title_placeholders.sort(key=lambda x: int(x[0]))
 
             # Map list items
-            for i, (idx, placeholder_name) in enumerate(number_placeholders[:6]):
+            for i, (_idx, placeholder_name) in enumerate(number_placeholders[:6]):
                 mapping_rules[f"lists[{i}].number"] = placeholder_name
-            for i, (idx, placeholder_name) in enumerate(content_placeholders[:6]):
+            for i, (_idx, placeholder_name) in enumerate(content_placeholders[:6]):
                 mapping_rules[f"lists[{i}].content"] = placeholder_name
-            for i, (idx, placeholder_name) in enumerate(title_placeholders[:6]):
+            for i, (_idx, placeholder_name) in enumerate(title_placeholders[:6]):
                 mapping_rules[f"lists[{i}].title"] = placeholder_name
 
         elif layout_name == "SWOT Analysis":
             # Find SWOT content placeholders using convention-based patterns
             swot_placeholders = []
 
-            for idx, placeholder_name in placeholders.items():
+            for _idx, placeholder_name in placeholders.items():
                 name_lower = placeholder_name.lower()
                 if "content_" in name_lower and "_1" not in name_lower:
                     # These are content placeholders like content_16, content_17, etc.
-                    swot_placeholders.append((idx, placeholder_name))
+                    swot_placeholders.append((_idx, placeholder_name))
 
             swot_placeholders.sort(key=lambda x: int(x[0]))
 
