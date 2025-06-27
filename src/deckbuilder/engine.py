@@ -2,17 +2,22 @@ import json
 import os
 import re
 import shutil
+from pathlib import Path
 
 import yaml
 from pptx import Presentation
 from pptx.dml.color import RGBColor
+from pptx.enum.shapes import PP_PLACEHOLDER_TYPE
 from pptx.util import Cm, Pt
 
 from .placeholder_types import (
     is_content_placeholder,
+    is_media_placeholder,
     is_subtitle_placeholder,
     is_title_placeholder,
 )
+from .image_handler import ImageHandler
+from .placekitten_integration import PlaceKittenIntegration
 
 try:
     from .table_styles import TABLE_BORDER_STYLES, TABLE_HEADER_STYLES, TABLE_ROW_STYLES
@@ -62,6 +67,10 @@ class Deckbuilder:
         self.prs = Presentation()
         self.layout_mapping = None
 
+        # Initialize image handling components
+        self.image_handler = ImageHandler()
+        self.placekitten = PlaceKittenIntegration(self.image_handler)
+
         # Ensure default template exists in templates folder
         self._check_template_exists(self.template_name or "default")
 
@@ -103,9 +112,9 @@ class Deckbuilder:
                     src_json = os.path.join(assets_path, base_name + ".json")
                     if os.path.exists(src_json):
                         shutil.copy2(src_json, json_template)
-            except (OSError, IOError):
+            except OSError:
                 # Handle file operation errors silently
-                pass
+                pass  # nosec - Continue with setup if template copy fails
 
     def _load_layout_mapping(self, templateName: str):
         """Load layout mapping from JSON file."""
@@ -121,7 +130,7 @@ class Deckbuilder:
                         self.layout_mapping = json.load(f)
                         return
                 except Exception:
-                    pass
+                    pass  # nosec - Continue if layout mapping fails to load
 
         # Fallback to src folder
         src_mapping_path = os.path.join(os.path.dirname(__file__), templateName)
@@ -131,7 +140,7 @@ class Deckbuilder:
                     self.layout_mapping = json.load(f)
                     return
             except Exception:
-                pass
+                return  # nosec - Return if fallback layout mapping fails
 
         # Use fallback mapping if JSON not found
         self.layout_mapping = {
@@ -252,6 +261,9 @@ class Deckbuilder:
             self.prs.part.drop_rel(rId)
             del self.prs.slides._sldIdLst[i]
 
+        # Reset slide index for consistent image selection
+        self._current_slide_index = 0
+
     def _add_slide(self, slide_data: dict):
         """
         Add a single slide to the presentation based on slide data.
@@ -259,6 +271,9 @@ class Deckbuilder:
         Args:
             slide_data: Dictionary containing slide information
         """
+        # Track slide index for consistent image selection
+        self._current_slide_index = getattr(self, "_current_slide_index", 0) + 1
+
         # Auto-parse JSON formatting for inline formatting support
         slide_data = self._auto_parse_json_formatting(slide_data)
 
@@ -333,7 +348,7 @@ class Deckbuilder:
                     placeholder.element.nvSpPr.cNvPr.name = descriptive_name
                 except Exception:
                     # Fallback: some placeholder types might not allow name changes
-                    pass
+                    pass  # nosec - Continue processing other placeholders
 
     def _apply_content_to_mapped_placeholders(self, slide, slide_data, layout_name):
         """
@@ -395,6 +410,13 @@ class Deckbuilder:
                         target_placeholder = placeholder
                         break
 
+            # Handle image_path fields - find PICTURE placeholders
+            elif field_name == "image_path" or field_name.endswith(".image_path"):
+                for placeholder in slide.placeholders:
+                    if placeholder.placeholder_format.type == PP_PLACEHOLDER_TYPE.PICTURE:
+                        target_placeholder = placeholder
+                        break
+
             # Handle other fields by checking if they match placeholder names in JSON mapping
             else:
                 # Try to find by exact field name match in JSON mapping
@@ -410,6 +432,9 @@ class Deckbuilder:
                 self._apply_content_by_semantic_type(
                     target_placeholder, field_name, field_value, slide_data
                 )
+
+        # Process nested structures like media.image_path
+        self._process_nested_image_fields(slide, slide_data)
 
     def _add_content_to_placeholders_fallback(self, slide, slide_data):
         """
@@ -481,6 +506,22 @@ class Deckbuilder:
             # Content placeholders - handle text, lists, etc. with inline formatting
             self._add_simple_content_to_placeholder(placeholder, field_value)
 
+        elif is_media_placeholder(placeholder_type):
+            # Media placeholders - handle images, charts, etc.
+            if placeholder_type == PP_PLACEHOLDER_TYPE.PICTURE:
+                self._handle_image_placeholder(placeholder, field_name, field_value, slide_data)
+            else:
+                # Other media types - fallback to text for now
+                if hasattr(placeholder, "text_frame") and placeholder.text_frame:
+                    text_frame = placeholder.text_frame
+                    text_frame.clear()
+                    p = (
+                        text_frame.paragraphs[0]
+                        if text_frame.paragraphs
+                        else text_frame.add_paragraph()
+                    )
+                    self._apply_inline_formatting(str(field_value), p)
+
         else:
             # Other placeholder types - apply inline formatting where possible
             if hasattr(placeholder, "text_frame") and placeholder.text_frame:
@@ -494,6 +535,28 @@ class Deckbuilder:
                 self._apply_inline_formatting(str(field_value), p)
             else:
                 placeholder.text = str(field_value)
+
+    def _process_nested_image_fields(self, slide, slide_data):
+        """
+        Process nested image fields like media.image_path from structured frontmatter.
+
+        Args:
+            slide: PowerPoint slide object
+            slide_data: Dictionary containing slide content
+        """
+        # Check for media structure with image_path
+        if "media" in slide_data and isinstance(slide_data["media"], dict):
+            media_data = slide_data["media"]
+            image_path = media_data.get("image_path")
+
+            if image_path:
+                # Find the first PICTURE placeholder
+                for placeholder in slide.placeholders:
+                    if placeholder.placeholder_format.type == PP_PLACEHOLDER_TYPE.PICTURE:
+                        self._handle_image_placeholder(
+                            placeholder, "media.image_path", image_path, slide_data
+                        )
+                        break
 
     def _add_simple_content_to_placeholder(self, placeholder, content):
         """Add simple content to a content placeholder with inline formatting support."""
@@ -966,9 +1029,9 @@ class Deckbuilder:
                 if right and hasattr(cell.border, "right"):
                     cell.border.right.color.rgb = color
                     cell.border.right.width = width
-        except (AttributeError, Exception):
+        except Exception:
             # Borders not fully supported in python-pptx, skip silently
-            pass
+            return  # nosec - Skip border styling if not supported
 
     def _parse_custom_color(self, color_value):
         """
@@ -1330,6 +1393,96 @@ class Deckbuilder:
             )
         except Exception as e:
             return f"Error creating presentation from markdown: {str(e)}"
+
+    def _handle_image_placeholder(self, placeholder, field_name, field_value, slide_data):
+        """
+        Handle image insertion into PICTURE placeholders with smart fallback.
+
+        Args:
+            placeholder: PowerPoint picture placeholder
+            field_name: Name of the field (e.g., 'image_path', 'media.image_path')
+            field_value: Image path or URL
+            slide_data: Complete slide data for context
+        """
+        try:
+            # Get placeholder dimensions for proper image sizing
+            width = placeholder.width
+            height = placeholder.height
+            dimensions = (int(width.inches * 96), int(height.inches * 96))  # Convert to pixels
+
+            # Prepare context for consistent PlaceKitten generation
+            context = {
+                "layout": slide_data.get("layout", slide_data.get("type", "unknown")),
+                "slide_index": getattr(self, "_current_slide_index", 0),
+            }
+
+            # Try to use provided image path
+            final_image_path = None
+            if field_value and isinstance(field_value, str):
+                # Validate and process the provided image
+                if self.image_handler.validate_image(field_value):
+                    final_image_path = self.image_handler.process_image(
+                        field_value, dimensions, quality="high"
+                    )
+                else:
+                    print(f"Warning: Invalid image path '{field_value}', using fallback")
+
+            # Generate PlaceKitten fallback if needed
+            if not final_image_path:
+                final_image_path = self.placekitten.generate_fallback(dimensions, context)
+
+            # Insert image into placeholder if we have a valid path
+            if final_image_path and Path(final_image_path).exists():
+                try:
+                    # Insert image into the picture placeholder
+                    picture = placeholder.insert_picture(final_image_path)
+
+                    # Preserve alt text if provided
+                    alt_text = slide_data.get("alt_text") or slide_data.get("media", {}).get(
+                        "alt_text"
+                    )
+                    if alt_text and hasattr(picture, "element"):
+                        # Set accessibility description
+                        picture.element.nvPicPr.cNvPr.descr = str(alt_text)
+
+                    print(f"✅ Successfully inserted image into placeholder: {field_name}")
+
+                except Exception as e:
+                    print(f"Warning: Failed to insert image into placeholder: {e}")
+                    # Fallback: add image path as text if insertion fails
+                    if hasattr(placeholder, "text_frame") and placeholder.text_frame:
+                        placeholder.text_frame.text = f"Image: {Path(final_image_path).name}"
+
+            else:
+                print(f"Warning: No valid image available for placeholder {field_name}")
+                # Fallback: show placeholder text
+                if hasattr(placeholder, "text_frame") and placeholder.text_frame:
+                    placeholder.text_frame.text = "Image placeholder"
+
+        except Exception as e:
+            print(f"Error handling image placeholder {field_name}: {e}")
+            # Fallback: show error message in placeholder
+            if hasattr(placeholder, "text_frame") and placeholder.text_frame:
+                placeholder.text_frame.text = f"Image error: {field_name}"
+
+    def _get_placeholder_dimensions_pixels(self, placeholder):
+        """
+        Get placeholder dimensions in pixels for image processing.
+
+        Args:
+            placeholder: PowerPoint placeholder object
+
+        Returns:
+            tuple: (width, height) in pixels
+        """
+        try:
+            # Convert EMU units to inches, then to pixels (96 DPI)
+            width_pixels = int(placeholder.width.inches * 96)
+            height_pixels = int(placeholder.height.inches * 96)
+            return (width_pixels, height_pixels)
+        except Exception:
+            # Fallback to common slide dimensions
+            return (800, 600)
 
 
 def get_deckbuilder_client():

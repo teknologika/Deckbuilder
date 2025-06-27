@@ -227,6 +227,11 @@ Refer to these comprehensive specifications before implementing:
 6. **Test with real scenarios**: Use actual user presentation needs for validation
 7. **Clean imports**: Remove unused imports (F401) and variables (F841) immediately
 8. **Format consistently**: Use `black --line-length 100 src/` before committing
+9. **🚫 NO ROOT DIRECTORY POLLUTION**: Never create test files, output files, or temporary files in the root directory. Use appropriate subdirectories:
+   - Test files: `/tests/` directory with proper structure
+   - Output files: `/output/` or `/temp/` directories  
+   - Temporary files: Use Python's `tempfile` module or `/temp/` directory
+   - Integration tests: `/tests/integration/` directory
 
 ## Testing & Validation
 
