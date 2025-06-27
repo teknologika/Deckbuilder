@@ -15,72 +15,96 @@ Tasks are organized by phase and component.
 - [x] File-based MCP tool (`create_presentation_from_file`)
 - [x] JSON object input fix (changed from string to dict parameter)
 
-### 🚧 Template Management System (Current Focus)
+### 🖼️ PlaceKitten Library Development (Current Focus)
 
-#### Phase 1: Command-Line Tools ✅ COMPLETED
-- [x] **Create standalone template analysis utility**
-  - [x] Build `src/deckbuilder/cli_tools.py` with command-line interface
-  - [x] Add environment-independent path handling
-  - [x] Test with default template analysis
+#### Phase 0: Asset Cleanup (Immediate Priority)
+- [ ] **Clean up image directory structure**
+  - [ ] Move kitten images from `assets/images/Images/` to `assets/images/`
+  - [ ] Remove empty nested `Images/` folder
+  - [ ] Update any existing path references in documentation
+  - [ ] Verify all 7 kitten images are accessible in new location
 
-- [x] **Implement template validation**
-  - [x] Add `validate` command to CLI tool
-  - [x] Cross-reference JSON mapping with actual template structure
-  - [x] Validate template file accessibility
-  - [x] Check JSON mapping completeness
+#### Phase 1: Core Library Implementation
+- [ ] **Add dependencies and setup**
+  - [ ] Add OpenCV (cv2) to requirements.txt for computer vision
+  - [ ] Add Pillow (PIL) to requirements.txt for image processing
+  - [ ] Add NumPy to requirements.txt for array operations
+  - [ ] Create demo image source folder structure
 
-- [x] **Create documentation generator**
-  - [x] Add `document` command to CLI tool
-  - [x] Generate markdown docs with layout tables
-  - [x] Include placeholder details and usage examples
-  - [x] Auto-sync with template analysis results
-  
-- [ ] **Update the user documentation
+- [ ] **Implement PlaceKitten class**
+  - [ ] Build main PlaceKitten class with basic image generation
+  - [ ] Add dimension handling (auto-height 16:9 and custom)
+  - [ ] Implement image selection from existing kitten images
+  - [ ] Add file path resolution and management
 
-**CLI Usage Examples:**
-```bash
-# Analyze template structure
-python src/deckbuilder/cli_tools.py analyze default --verbose
+- [ ] **Create ImageProcessor class**
+  - [ ] Build ImageProcessor for image manipulation
+  - [ ] Add basic resize and save functionality
+  - [ ] Implement method chaining support
+  - [ ] Add image loading from files or arrays
 
-# Generate comprehensive documentation  
-python src/deckbuilder/cli_tools.py document default
+- [ ] **Basic filter pipeline**
+  - [ ] Implement core filters (grayscale, blur, sepia, invert)
+  - [ ] Add advanced filters (brightness, contrast, pixelate)
+  - [ ] Create filter chaining and composition
+  - [ ] Add filter validation and error handling
 
-# Validate template and mappings
-python src/deckbuilder/cli_tools.py validate default
+#### Phase 2: Intelligent Processing
+- [ ] **Computer vision pipeline**
+  - [ ] Integrate OpenCV for edge detection
+  - [ ] Implement Canny edge detection for contour analysis
+  - [ ] Add Gaussian blur for noise reduction
+  - [ ] Create contour identification algorithms
 
-# Custom paths
-python src/deckbuilder/cli_tools.py analyze custom --template-folder ./my-templates
-```
+- [ ] **Smart cropping engine**
+  - [ ] Implement rule-of-thirds composition calculation
+  - [ ] Add subject detection using largest contour
+  - [ ] Create optimal positioning algorithms for 16:9 format
+  - [ ] Add boundary safety validation
 
-#### Phase 2: Template Enhancement
-- [ ] **Master slide placeholder modification**
-  - [ ] Research python-pptx master slide editing capabilities
-  - [ ] Implement `enhance_template` MCP tool
-  - [ ] Add backup and versioning system
-  - [ ] Test placeholder name updates on master slides
-  - [ ] Update the user documentation
+- [ ] **Step visualization system**
+  - [ ] Implement 9-step processing visualization
+  - [ ] Add debug output for each processing stage
+  - [ ] Create educational step-by-step image generation
+  - [ ] Add optional visualization toggling
 
-- [ ] **Convention-based naming system**
-  - [ ] Define naming patterns for all layout types
-  - [ ] Implement pattern detection algorithms
-  - [ ] Auto-generate structured frontmatter patterns
-  - [ ] Add naming convention validation
+#### Phase 3: Advanced Features
+- [ ] **Batch processing capabilities**
+  - [ ] Implement multi-image processing workflows
+  - [ ] Add progress tracking for batch operations
+  - [ ] Create quality optimization algorithms
+  - [ ] Add error handling for batch failures
 
-#### Phase 3: Complete Structured Frontmatter Support
-- [ ] **Add missing layout patterns**
-  - [ ] Four Columns With Titles structured pattern
-  - [ ] SWOT Analysis structured pattern  
-  - [ ] Agenda structured pattern
-  - [ ] Big Number structured pattern
-  - [ ] Title Only, Blank, Section Header patterns
+- [ ] **Performance optimization**
+  - [ ] Implement image caching system
+  - [ ] Add memory usage optimization (<500MB per session)
+  - [ ] Create parallel processing for batch operations
+  - [ ] Add performance metrics and monitoring (<2s target)
 
-- [ ] **Dynamic pattern generation**
-  - [ ] Replace hard-coded patterns with convention-based detection
-  - [ ] Auto-generate YAML structures from JSON mappings
-  - [ ] Unified registry for all 19 layouts
-  - [ ] Backward compatibility with existing patterns
+- [ ] **Quality assurance and validation**
+  - [ ] Add input format validation (JPG, PNG, WebP)
+  - [ ] Implement output quality controls
+  - [ ] Create comprehensive error handling
+  - [ ] Add processing validation checks
 
-  - [ ] Update the user documentation
+#### Phase 4: MCP Integration
+- [ ] **Deck builder integration**
+  - [ ] Create generate_placeholder_image MCP tool
+  - [ ] Add process_image_for_presentation MCP tool
+  - [ ] Implement batch_process_images MCP tool
+  - [ ] Add automatic template sizing support
+
+- [ ] **Presentation workflow optimization**
+  - [ ] Integrate with existing slide template system
+  - [ ] Add structured frontmatter support for images
+  - [ ] Create seamless workflow with markdown generation
+  - [ ] Add presentation format optimization (JPG/PNG)
+
+- [ ] **Testing and validation**
+  - [ ] Create comprehensive unit tests
+  - [ ] Add integration tests with deck builder
+  - [ ] Implement performance benchmarking
+  - [ ] Add user acceptance testing scenarios
 
 ### 📋 Future Enhancements
 - [ ] **Content-First MCP Tools**
@@ -93,6 +117,7 @@ python src/deckbuilder/cli_tools.py analyze custom --template-folder ./my-templa
   - [ ] Custom template creation wizard
   - [ ] Template validation CI/CD integration
   - [ ] Multi-template support and switching
+
 
 ### 🧹 Code Quality Maintenance
 
@@ -126,9 +151,9 @@ python src/deckbuilder/cli_tools.py analyze custom --template-folder ./my-templa
 
 ## Progress Tracking
 
-**Current Sprint**: Content Intelligence & Layout Expansion (Phase 3)
-**Next Priority**: Convention-based naming system and layout intelligence implementation
-**Completed**: ✅ Phase 1 & 2 - CLI tools, template management, and core MCP server
+**Current Sprint**: PlaceKitten Library Development (Phase 1)
+**Next Priority**: Core library implementation with basic placeholder generation and dimension handling
+**Completed**: ✅ Template Management System - CLI tools, documentation, and validation systems
 **Blockers**: None identified
-**Target Completion**: Phase 3 - Content intelligence system - End of current sprint
-**Last Updated**: 2025-01-26
+**Target Completion**: Phase 1 - Core PlaceKitten library with basic image processing - End of current sprint
+**Last Updated**: 2025-06-27

@@ -14,11 +14,18 @@ This is a comprehensive Python library and MCP (Model Context Protocol) Server f
 │  │   Endpoints     │◄──────►│   MCP Tools        │     │
 │  └────────┬────────┘        └────────────────────┘     │
 │           │                                              │
-├───────────┴──────────────────────────────────────────────┤
-│                 Presentation Engine                      │
-│  ┌─────────────────┐        ┌────────────────────┐     │
+├───────────┼──────────────────────────────────────────────┤
+│           │           Presentation Engine                │
+│  ┌────────▼────────┐        ┌────────────────────┐     │
 │  │  PowerPoint     │        │   Template         │     │
 │  │  Generation     │◄──────►│   Management       │     │
+│  └────────┬────────┘        └────────────────────┘     │
+│           │                                              │
+├───────────┼──────────────────────────────────────────────┤
+│           │          PlaceKitten Image Processing        │
+│  ┌────────▼────────┐        ┌────────────────────┐     │
+│  │   Intelligent   │        │   Filter Pipeline  │     │
+│  │   Cropping      │◄──────►│   & Processing     │     │
 │  └────────┬────────┘        └────────────────────┘     │
 │           │                                              │
 ├───────────┴──────────────────────────────────────────────┤
@@ -201,18 +208,25 @@ python src/deckbuilder/cli_tools.py validate default
 - Master slide enhancement with backup system
 - Comprehensive testing framework (50+ tests)
 
-### 🚧 Current Focus: Content Intelligence & Layout Expansion
-1. **Convention-Based Naming System** - Standardized placeholder patterns
-2. **Layout Intelligence Implementation** - Full semantic metadata system
-3. **Content Matching Algorithms** - Smart recommendations based on analysis
-4. **Template Library Expansion** - Progressive 50+ layout implementation
-5. **Performance Optimization** - Enhanced content intelligence
+### 🖼️ Current Focus: PlaceKitten Image Processing Library
+1. **Asset Cleanup** - Flatten image directory structure for cleaner paths
+2. **Core Library Implementation** - Basic placeholder generation with existing kitten images  
+3. **Intelligent Cropping Engine** - Computer vision-based automatic cropping for optimal composition
+4. **Filter Pipeline System** - Professional image processing with method chaining
+5. **MCP Integration** - Seamless integration with presentation generation workflows
+6. **Advanced Features** - Batch processing, performance optimization, and comprehensive testing
 
 ### 📋 Future Enhancements
-- Advanced template comparison and migration tools
-- Custom template creation wizard
-- Multi-template support and switching
-- Real-time content analysis and optimization
+- **Content Intelligence & Layout Expansion**
+  - Convention-based naming system and standardized placeholder patterns
+  - Layout intelligence implementation with full semantic metadata system
+  - Content matching algorithms for smart recommendations based on analysis
+  - Template library expansion with progressive 50+ layout implementation
+- **Advanced Template Features**
+  - Template comparison and migration tools
+  - Custom template creation wizard
+  - Multi-template support and switching
+  - Real-time content analysis and optimization
 
 ## Success Metrics
 
@@ -223,10 +237,12 @@ python src/deckbuilder/cli_tools.py validate default
 - **All files under 500 lines** with clear modular organization
 
 ### Feature Completion Metrics
-- **Content-First Tools**: Analyze → Recommend → Optimize workflow
-- **Template Coverage**: 50+ business presentation layouts implemented
+- **PlaceKitten Library**: Complete image processing with smart cropping and filters
+- **MCP Integration**: Seamless placeholder image generation in presentation workflows
+- **Performance Targets**: <2s image processing, <5s smart crop with visualization
+- **Content-First Tools**: Analyze → Recommend → Optimize workflow (Future)
+- **Template Coverage**: 50+ business presentation layouts implemented (Future)
 - **User Experience**: Single command presentation generation from markdown
-- **Performance**: Sub-second template analysis and validation
 
 ## Constraints & Limitations
 
