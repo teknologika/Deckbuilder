@@ -10,13 +10,19 @@ Deckbuilder is a Python library and MCP (Model Context Protocol) server for inte
 
 Deckbuilder provides a comprehensive Python library for PowerPoint generation with sophisticated content intelligence. The library features a singleton-based presentation engine that processes JSON data, markdown with YAML frontmatter, and structured content through semantic placeholder detection. Key capabilities include a hybrid template system combining semantic detection with JSON mapping, CLI tools for template management and validation, multi-tier placeholder naming conventions, and content-first layout recommendations. The system supports 50+ business presentation layouts with rich formatting (bold, italic, underline), professional table styling, and automatic template enhancement with organized backup systems.
 
-[Deckbuilder Python Library](docs/Features/Deckbuilder_Python_Library.md)
+[Deckbuilder Python Library](docs/Features/Deckbuilder_Python_Library.md) | [PlaceKitten Documentation](src/placekitten/README.md)
 
 ### 🎨 **Rich Content Support**
 - **Inline Formatting**: `**bold**`, `*italic*`, `___underline___`, `***bold italic***`
 - **Mixed Content**: Headings, paragraphs, and bullet points in single slides
 - **Advanced Tables**: Professional styling with custom colors and themes
 - **50+ Layout Library**: Progressive implementation of business presentation layouts
+
+### 🖼️ **PlaceKitten Image Processing**
+- **Smart Image Fallbacks**: Automatic placeholder generation for missing images
+- **Computer Vision**: Intelligent cropping with face detection and rule-of-thirds
+- **Professional Filters**: 10+ effects including grayscale for business presentations
+- **Seamless Integration**: Enhanced YAML structure with `image_path` support
 
 ### 📝 **Multiple Input Formats**
 - **JSON**: Precise programmatic control with comprehensive structure
@@ -166,6 +172,40 @@ style: dark_blue_white_text
     ]
   }
 }
+```
+
+### PlaceKitten Image Processing (Enhanced YAML)
+
+```markdown
+---
+layout: Picture with Caption
+title: Market Analysis
+media:
+  image_path: "charts/revenue_growth.png"  # Primary image source
+  alt_text: "Revenue growth chart"          # Accessibility support
+  caption: "**Q4 Revenue Growth**"          # Formatted caption
+  description: |
+    Revenue increased ***23%*** this quarter with strong performance in:
+    • Enterprise sales: *35% growth*
+    • Subscription revenue: **18% increase**
+    • New market expansion: ***12% boost***
+---
+```
+
+**Smart Fallback Behavior**: When `image_path` is missing or invalid, PlaceKitten automatically generates professional placeholder images with:
+- **Grayscale filtering** for business-appropriate presentation context
+- **Smart cropping** to exact placeholder dimensions using computer vision
+- **Cached generation** for optimal performance
+
+```python
+# Direct PlaceKitten usage
+from placekitten import PlaceKitten
+
+pk = PlaceKitten()
+placeholder = (pk.generate(1920, 1080, image_id=1)
+                .smart_crop(1920, 1080)
+                .apply_filter("grayscale")
+                .save("professional_placeholder.jpg"))
 ```
 
 ## MCP Tools
