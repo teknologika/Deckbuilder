@@ -97,6 +97,8 @@ class ImageProcessor:
         height: Optional[int] = None,
         save_steps: bool = False,
         output_prefix: str = "smart_crop",
+        output_folder: Optional[str] = None,
+        strategy: str = "haar-face",
     ) -> "ImageProcessor":
         """
         Intelligent cropping with computer vision.
@@ -105,6 +107,7 @@ class ImageProcessor:
         - Edge detection with Canny algorithm
         - Contour analysis for subject identification
         - Rule-of-thirds composition optimization
+        - Haar cascade face detection for face-priority cropping
         - Step-by-step visualization (optional)
 
         Args:
@@ -112,6 +115,8 @@ class ImageProcessor:
             height: Target height (16:9 if None)
             save_steps: Save intermediate processing steps for debugging
             output_prefix: Prefix for debug step files
+            output_folder: Directory to save step files (optional)
+            strategy: Cropping strategy to use ("haar-face", "contour", etc.)
 
         Returns:
             New ImageProcessor instance with intelligently cropped image
@@ -122,7 +127,7 @@ class ImageProcessor:
         try:
             # Use the smart crop engine for intelligent processing
             cropped_image, crop_info = smart_crop_engine.smart_crop(
-                self.image, width, height, save_steps, output_prefix
+                self.image, width, height, save_steps, output_prefix, output_folder, strategy
             )
 
             # Create new processor instance

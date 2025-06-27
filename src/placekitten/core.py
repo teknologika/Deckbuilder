@@ -174,7 +174,7 @@ class PlaceKitten:
             # Generate filename
             width = config.get("width", 500)
             height = config.get("height", self._calculate_height(width))
-            filename = f"placekitten_{width}x{height}_{i+1}.jpg"
+            filename = f"placekitten_{width}x{height}_{i + 1}.jpg"
 
             # Save image
             output_file = output_path / filename

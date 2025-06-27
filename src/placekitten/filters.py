@@ -5,7 +5,7 @@ This module provides a comprehensive set of image filters and effects
 for the PlaceKitten library with easy extensibility.
 """
 
-from typing import Any, Callable, Dict
+from typing import Callable, Dict
 
 import PIL.ImageOps
 from PIL import Image, ImageEnhance, ImageFilter

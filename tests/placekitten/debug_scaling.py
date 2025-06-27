@@ -5,10 +5,10 @@ import sys
 from pathlib import Path
 
 # Add src to path
-src_path = Path(__file__).parent / "src"
+src_path = Path(__file__).parent.parent.parent / "src"  # noqa: E402
 sys.path.insert(0, str(src_path))
 
-from placekitten import PlaceKitten
+from placekitten import PlaceKitten  # noqa: E402
 
 
 def test_scaling():
@@ -53,7 +53,7 @@ def test_scaling():
     both_dims = kitten.generate(width=800, height=600, image_id=1)
     w, h = both_dims.get_size()
     print(f"   Size: {w}x{h}")
-    print(f"   Expected: 800x600")
+    print("   Expected: 800x600")
     print(f"   Match: {'✅' if (w == 800 and h == 600) else '❌'}")
     print()
 

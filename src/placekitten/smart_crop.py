@@ -37,6 +37,8 @@ class SmartCropEngine:
         target_height: int,
         save_steps: bool = False,
         output_prefix: str = "smart_crop",
+        output_folder: Optional[str] = None,
+        strategy: str = "haar-face",
     ) -> Tuple[Image.Image, Dict]:
         """
         Perform intelligent cropping with computer vision.
@@ -47,6 +49,7 @@ class SmartCropEngine:
             target_height: Target height in pixels
             save_steps: Save intermediate processing steps
             output_prefix: Prefix for step visualization files
+            output_folder: Directory to save step files (optional)
 
         Returns:
             Tuple of (cropped_image, crop_info)
@@ -61,52 +64,81 @@ class SmartCropEngine:
 
         # Step 1: Original analysis
         step1_image = cv_image.copy()
-        self._add_debug_step("1-original", step1_image, save_steps, output_prefix)
+        self._add_debug_step("1-original", step1_image, save_steps, output_prefix, output_folder)
 
         # Step 2: Grayscale conversion
         gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
         step2_image = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
-        self._add_debug_step("2-grayscale", step2_image, save_steps, output_prefix)
+        self._add_debug_step("2-grayscale", step2_image, save_steps, output_prefix, output_folder)
 
         # Step 3: Noise reduction with Gaussian blur
         blurred = cv2.GaussianBlur(gray, (5, 5), 0)
         step3_image = cv2.cvtColor(blurred, cv2.COLOR_GRAY2BGR)
-        self._add_debug_step("3-blurred", step3_image, save_steps, output_prefix)
+        self._add_debug_step("3-blurred", step3_image, save_steps, output_prefix, output_folder)
 
         # Step 4: Edge detection with Canny
         edges = cv2.Canny(blurred, 50, 150)
-        step4_image = cv2.cvtColor(edges, cv2.COLOR_GRAY2BGR)
         # Highlight edges in red for visualization
         step4_vis = cv_image.copy()
         step4_vis[edges > 0] = [0, 0, 255]  # Red edges
-        self._add_debug_step("4-edges", step4_vis, save_steps, output_prefix)
+        self._add_debug_step("4-edges", step4_vis, save_steps, output_prefix, output_folder)
 
-        # Step 5: Contour detection and analysis
-        contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-        # Find the largest contour (main subject)
-        largest_contour = None
+        # Strategy-based subject detection
+        subject_bbox = None
         largest_area = 0
 
-        for contour in contours:
-            area = cv2.contourArea(contour)
-            if area > largest_area:
-                largest_area = area
-                largest_contour = contour
+        if strategy == "haar-face":
+            face_cascade = cv2.CascadeClassifier(
+                cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
+            )
+            faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5)
 
-        # Visualize largest contour
-        step5_image = cv_image.copy()
-        if largest_contour is not None:
-            cv2.drawContours(step5_image, [largest_contour], -1, (0, 255, 0), 3)
-        self._add_debug_step("5-largest-contour", step5_image, save_steps, output_prefix)
+            if len(faces) > 0:
+                subject_bbox = max(faces, key=lambda r: r[2] * r[3])  # Select largest face
+                x, y, w, h = subject_bbox
+                step5_image = cv_image.copy()
+                cv2.rectangle(step5_image, (x, y), (x + w, y + h), (0, 255, 0), 3)
+                largest_area = w * h
+            else:
+                step5_image = cv_image.copy()
 
-        # Step 6: Calculate bounding box of subject
-        subject_bbox = None
-        if largest_contour is not None:
-            x, y, w, h = cv2.boundingRect(largest_contour)
-            subject_bbox = (x, y, w, h)
+            # Fallback to contour-based detection if face detection fails
+            if subject_bbox is None:
+                contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+                largest_contour = None
+                for contour in contours:
+                    area = cv2.contourArea(contour)
+                    if area > largest_area:
+                        largest_area = area
+                        largest_contour = contour
 
-            # Visualize bounding box
+                if largest_contour is not None:
+                    x, y, w, h = cv2.boundingRect(largest_contour)
+                    subject_bbox = (x, y, w, h)
+                    cv2.drawContours(step5_image, [largest_contour], -1, (0, 255, 0), 3)
+
+        else:
+            # Default to contour-based detection
+            contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            largest_contour = None
+            for contour in contours:
+                area = cv2.contourArea(contour)
+                if area > largest_area:
+                    largest_area = area
+                    largest_contour = contour
+
+            step5_image = cv_image.copy()
+            if largest_contour is not None:
+                cv2.drawContours(step5_image, [largest_contour], -1, (0, 255, 0), 3)
+                x, y, w, h = cv2.boundingRect(largest_contour)
+                subject_bbox = (x, y, w, h)
+        self._add_debug_step(
+            "5-largest-contour", step5_image, save_steps, output_prefix, output_folder
+        )
+
+        # Step 6: Calculate bounding box of subject (visualization only)
+        if subject_bbox is not None:
+            x, y, w, h = subject_bbox
             step6_image = cv_image.copy()
             cv2.rectangle(step6_image, (x, y), (x + w, y + h), (255, 0, 0), 2)
             # Fill bounding box with semi-transparent blue
@@ -115,8 +147,9 @@ class SmartCropEngine:
             step6_image = cv2.addWeighted(step6_image, 0.8, overlay, 0.2, 0)
         else:
             step6_image = cv_image.copy()
-
-        self._add_debug_step("6-bounding-box", step6_image, save_steps, output_prefix)
+        self._add_debug_step(
+            "6-bounding-box", step6_image, save_steps, output_prefix, output_folder
+        )
 
         # Step 7: Rule of thirds grid and composition
         crop_box = self._calculate_optimal_crop(
@@ -126,13 +159,15 @@ class SmartCropEngine:
         # Visualize rule of thirds and crop area
         step7_image = cv_image.copy()
         self._draw_rule_of_thirds(step7_image, original_width, original_height)
-        self._add_debug_step("7-rule-of-thirds", step7_image, save_steps, output_prefix)
+        self._add_debug_step(
+            "7-rule-of-thirds", step7_image, save_steps, output_prefix, output_folder
+        )
 
         # Step 8: Final crop area visualization
         step8_image = cv_image.copy()
         x1, y1, x2, y2 = crop_box
         cv2.rectangle(step8_image, (x1, y1), (x2, y2), (255, 0, 255), 3)  # Magenta border
-        self._add_debug_step("8-crop-area", step8_image, save_steps, output_prefix)
+        self._add_debug_step("8-crop-area", step8_image, save_steps, output_prefix, output_folder)
 
         # Step 9: Perform the actual crop
         cropped_cv = cv_image[y1:y2, x1:x2]
@@ -144,7 +179,7 @@ class SmartCropEngine:
         final_image = self._cv2_to_pil(cropped_resized)
 
         # Save final result
-        self._add_debug_step("9-final", cropped_resized, save_steps, output_prefix)
+        self._add_debug_step("9-final", cropped_resized, save_steps, output_prefix, output_folder)
 
         # Store crop information
         self.crop_info = {
@@ -243,16 +278,28 @@ class SmartCropEngine:
         return Image.fromarray(rgb_image)
 
     def _add_debug_step(
-        self, step_name: str, image: np.ndarray, save_steps: bool, output_prefix: str
+        self,
+        step_name: str,
+        image: np.ndarray,
+        save_steps: bool,
+        output_prefix: str,
+        output_folder: Optional[str] = None,
     ) -> None:
         """Add debug step and optionally save to file."""
         if save_steps:
             step_info = {"name": step_name, "image": image.copy()}
             self.debug_steps.append(step_info)
 
-            # Save step image
+            # Save step image with proper folder handling
             filename = f"{output_prefix}_{step_name}.jpg"
-            cv2.imwrite(filename, image)
+            if output_folder:
+                # Ensure output folder exists
+                Path(output_folder).mkdir(parents=True, exist_ok=True)
+                filepath = Path(output_folder) / filename
+            else:
+                filepath = Path(filename)
+
+            cv2.imwrite(str(filepath), image)
 
     def get_debug_steps(self) -> List[Dict]:
         """Get list of debug steps with images."""
