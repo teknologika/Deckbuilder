@@ -75,25 +75,9 @@ pip install deckbuilder
 }
 ```
 
-3. **Create directories and copy templates:**
-```bash
-mkdir -p ~/Documents/Deckbuilder/Templates
-mkdir -p ~/Documents/Deckbuilder
-
-# Copy default template from package installation
-python -c "
-import deckbuilder
-import shutil
-from pathlib import Path
-pkg_path = Path(deckbuilder.__file__).parent
-template_src = pkg_path.parent / 'assets' / 'templates'
-if template_src.exists():
-    shutil.copytree(template_src, Path.home() / 'Documents/Deckbuilder/Templates', dirs_exist_ok=True)
-    print('✅ Templates copied successfully')
-else:
-    print('⚠️ Template source not found, you may need to copy templates manually')
-"
-```
+3. **Ready to use!** 
+   - Templates and directories are created automatically on first use
+   - No manual setup required
 
 #### Option 2: Development Install
 
@@ -124,10 +108,9 @@ pip install -e .[dev]
 }
 ```
 
-3. **Create output directory:**
-```bash
-mkdir -p ~/Documents/Deckbuilder
-```
+3. **Ready to develop!**
+   - Output directories are created automatically
+   - Templates are loaded from the source `assets/templates/` folder
 
 4. **Test the server:**
 ```bash
