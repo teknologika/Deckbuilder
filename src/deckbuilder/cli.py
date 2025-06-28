@@ -39,23 +39,58 @@ except ImportError:
 class DeckbuilderCLI:
     """Standalone Deckbuilder command-line interface"""
 
-    def __init__(self):
-        self.setup_environment()
+    def __init__(self, templates_path=None, output_path=None):
+        self.setup_environment(templates_path, output_path)
 
-    def setup_environment(self):
-        """Setup environment variables for standalone operation"""
-        # Set defaults if not already configured
-        if not os.getenv("DECK_TEMPLATE_FOLDER"):
-            template_folder = project_root / "assets" / "templates"
-            os.environ["DECK_TEMPLATE_FOLDER"] = str(template_folder)
+    def setup_environment(self, templates_path=None, output_path=None):
+        """Setup environment variables with priority: CLI args > env vars > defaults"""
 
-        if not os.getenv("DECK_OUTPUT_FOLDER"):
-            output_folder = Path.cwd() / "output"
-            output_folder.mkdir(exist_ok=True)
-            os.environ["DECK_OUTPUT_FOLDER"] = str(output_folder)
+        # Template folder resolution priority
+        if templates_path:
+            # 1. CLI argument has highest priority
+            os.environ["DECK_TEMPLATE_FOLDER"] = str(Path(templates_path).resolve())
+        elif not os.getenv("DECK_TEMPLATE_FOLDER"):
+            # 2. Environment variable already set (skip)
+            # 3. Default location: ./templates/
+            default_templates = Path.cwd() / "templates"
+            if default_templates.exists():
+                os.environ["DECK_TEMPLATE_FOLDER"] = str(default_templates)
+            else:
+                # Will trigger error message in commands that need templates
+                pass
 
+        # Output folder resolution priority
+        if output_path:
+            # 1. CLI argument has highest priority
+            output_folder = Path(output_path)
+            output_folder.mkdir(parents=True, exist_ok=True)
+            os.environ["DECK_OUTPUT_FOLDER"] = str(output_folder.resolve())
+        elif not os.getenv("DECK_OUTPUT_FOLDER"):
+            # 2. Environment variable already set (skip)
+            # 3. Default location: current directory
+            os.environ["DECK_OUTPUT_FOLDER"] = str(Path.cwd())
+
+        # Default template name
         if not os.getenv("DECK_TEMPLATE_NAME"):
             os.environ["DECK_TEMPLATE_NAME"] = "default"
+
+    def _validate_templates_folder(self):
+        """Validate templates folder exists and provide helpful error message"""
+        template_folder = os.getenv("DECK_TEMPLATE_FOLDER")
+        if not template_folder or not Path(template_folder).exists():
+            print("❌ Template folder not found: ./templates/")
+            print("💡 Run 'deckbuilder init' to create template folder and copy default files")
+            return False
+        return True
+
+    def _get_available_templates(self):
+        """Get list of available templates with error handling"""
+        template_folder = os.getenv("DECK_TEMPLATE_FOLDER")
+        if not template_folder or not Path(template_folder).exists():
+            return []
+
+        template_path = Path(template_folder)
+        return [template.stem for template in template_path.glob("*.pptx")]
 
     def create_presentation(
         self, input_file: str, output_name: Optional[str] = None, template: Optional[str] = None
@@ -74,7 +109,13 @@ class DeckbuilderCLI:
         input_path = Path(input_file)
 
         if not input_path.exists():
+            print(f"❌ Input file not found: {input_file}")
+            print("💡 Check file path or create the file first")
             raise FileNotFoundError(f"Input file not found: {input_file}")
+
+        # Validate templates folder exists
+        if not self._validate_templates_folder():
+            return
 
         # Determine output filename
         if not output_name:
@@ -114,16 +155,22 @@ class DeckbuilderCLI:
 
     def analyze_template(self, template_name: str = "default", verbose: bool = False):
         """Analyze PowerPoint template structure"""
+        if not self._validate_templates_folder():
+            return
         manager = TemplateManager()
         manager.analyze_template(template_name, verbose=verbose)
 
     def validate_template(self, template_name: str = "default"):
         """Validate template and mappings"""
+        if not self._validate_templates_folder():
+            return
         manager = TemplateManager()
         manager.validate_template(template_name)
 
     def document_template(self, template_name: str = "default", output_file: Optional[str] = None):
         """Generate comprehensive template documentation"""
+        if not self._validate_templates_folder():
+            return
         manager = TemplateManager()
         manager.document_template(template_name, output_file)
 
@@ -135,6 +182,8 @@ class DeckbuilderCLI:
         use_conventions: bool = True,
     ):
         """Enhance template with improved placeholder names"""
+        if not self._validate_templates_folder():
+            return
         manager = TemplateManager()
         create_backup = not no_backup
         manager.enhance_template(template_name, mapping_file, create_backup, use_conventions)
@@ -216,20 +265,70 @@ class DeckbuilderCLI:
 
     def list_templates(self):
         """List available templates"""
-        template_folder = os.getenv("DECK_TEMPLATE_FOLDER")
-        if not template_folder or not Path(template_folder).exists():
-            print("❌ Template folder not found or not configured")
+        if not self._validate_templates_folder():
             return
 
-        template_path = Path(template_folder)
-        templates = list(template_path.glob("*.pptx"))
-
+        templates = self._get_available_templates()
         if templates:
             print("📋 Available templates:")
             for template in templates:
-                print(f"  • {template.stem}")
+                print(f"  • {template}")
         else:
             print("❌ No templates found in template folder")
+            print("💡 Run 'deckbuilder init' to copy default template files")
+
+    def init_templates(self, path: str = "./templates"):
+        """Initialize template folder with default files and provide setup guidance"""
+        import shutil
+
+        target_path = Path(path).resolve()
+
+        # Create template folder
+        target_path.mkdir(parents=True, exist_ok=True)
+
+        try:
+            # Find the package assets (development structure)
+            assets_path = Path(__file__).parent.parent.parent / "assets" / "templates"
+            if assets_path.exists():
+                source_pptx = assets_path / "default.pptx"
+                source_json = assets_path / "default.json"
+            else:
+                print("❌ Could not locate template assets")
+                print("💡 Default templates not found in package")
+                return
+
+            # Copy template files
+            files_copied = []
+            if source_pptx.exists():
+                shutil.copy2(source_pptx, target_path / "default.pptx")
+                files_copied.append("default.pptx")
+
+            if source_json.exists():
+                shutil.copy2(source_json, target_path / "default.json")
+                files_copied.append("default.json")
+
+            if not files_copied:
+                print("❌ No template files found to copy")
+                return
+
+            # Success message
+            print(f"✅ Template folder created at {target_path}")
+            print(f"📁 Copied: {', '.join(files_copied)}")
+            print()
+
+            # Environment variable guidance
+            print("💡 To make this permanent, add to your .bash_profile:")
+            print(f'export DECK_TEMPLATE_FOLDER="{target_path}"')
+            print(f'export DECK_OUTPUT_FOLDER="{target_path.parent}"')
+            print('export DECK_TEMPLATE_NAME="default"')
+            print()
+            print("Then reload: source ~/.bash_profile")
+            print()
+            print("🚀 Ready to use! Try: deckbuilder create example.md")
+
+        except Exception as e:
+            print(f"❌ Error setting up templates: {e}")
+            print("💡 Make sure you have write permissions to the target directory")
 
     def get_config(self):
         """Display current configuration"""
@@ -249,7 +348,7 @@ def create_parser():
 Examples:
   # Create presentation from markdown
   deckbuilder create presentation.md
-  deckbuilder create slides.md --output "My Presentation" --template custom
+  deckbuilder -t ~/templates -o ~/output create slides.md
 
   # Template management
   deckbuilder analyze default --verbose
@@ -264,6 +363,14 @@ Examples:
   deckbuilder config
   deckbuilder templates
         """,
+    )
+
+    # Global arguments (apply to all commands)
+    parser.add_argument(
+        "-t", "--templates", metavar="PATH", help="Template folder path (default: ./templates/)"
+    )
+    parser.add_argument(
+        "-o", "--output", metavar="PATH", help="Output folder path (default: current directory)"
     )
 
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
@@ -319,6 +426,14 @@ Examples:
     subparsers.add_parser("config", help="Show current configuration")
     subparsers.add_parser("templates", help="List available templates")
 
+    # Init command
+    init_parser = subparsers.add_parser(
+        "init", help="Initialize template folder with default files"
+    )
+    init_parser.add_argument(
+        "path", nargs="?", default="./templates", help="Template folder path (default: ./templates)"
+    )
+
     return parser
 
 
@@ -331,8 +446,8 @@ def main():
         parser.print_help()
         return
 
-    # Initialize CLI
-    cli = DeckbuilderCLI()
+    # Initialize CLI with global arguments
+    cli = DeckbuilderCLI(templates_path=args.templates, output_path=args.output)
 
     try:
         # Route commands
@@ -381,6 +496,9 @@ def main():
 
         elif args.command == "templates":
             cli.list_templates()
+
+        elif args.command == "init":
+            cli.init_templates(args.path)
 
     except Exception as e:
         print(f"❌ Command failed: {e}")
