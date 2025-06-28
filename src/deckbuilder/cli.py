@@ -337,6 +337,35 @@ class DeckbuilderCLI:
         print(f"  Output Folder: {os.getenv('DECK_OUTPUT_FOLDER', 'Not set')}")
         print(f"  Default Template: {os.getenv('DECK_TEMPLATE_NAME', 'Not set')}")
 
+    def show_completion_help(self):
+        """Show tab completion installation instructions"""
+        print("🔧 Tab Completion Setup")
+        print()
+        print("To enable tab completion for deckbuilder commands:")
+        print()
+        print("1. Download the completion script:")
+        completion_url = (
+            "https://raw.githubusercontent.com/teknologika/deckbuilder/main/"
+            "deckbuilder-completion.bash"
+        )
+        print(f"   curl -o ~/.deckbuilder-completion.bash {completion_url}")
+        print()
+        print("2. Add to your .bash_profile:")
+        print('   echo "source ~/.deckbuilder-completion.bash" >> ~/.bash_profile')
+        print()
+        print("3. Reload your shell:")
+        print("   source ~/.bash_profile")
+        print()
+        print("✨ After setup, you can use TAB to complete:")
+        print("   • Commands: deckbuilder <TAB>")
+        print("   • Template names: deckbuilder analyze <TAB>")
+        print("   • File paths: deckbuilder create <TAB>")
+        print("   • Global flags: deckbuilder -<TAB>")
+        print()
+        print("For system-wide installation:")
+        print("   sudo curl -o /etc/bash_completion.d/deckbuilder")
+        print(f"        {completion_url}")
+
 
 def create_parser():
     """Create command-line argument parser"""
@@ -359,9 +388,11 @@ Examples:
   deckbuilder image 800 600 --filter grayscale --output placeholder.jpg
   deckbuilder crop input.jpg 1920 1080 --save-steps
 
-  # Configuration
+  # Configuration and setup
   deckbuilder config
   deckbuilder templates
+  deckbuilder completion
+  deckbuilder init
         """,
     )
 
@@ -425,6 +456,7 @@ Examples:
     # Configuration commands
     subparsers.add_parser("config", help="Show current configuration")
     subparsers.add_parser("templates", help="List available templates")
+    subparsers.add_parser("completion", help="Show tab completion setup instructions")
 
     # Init command
     init_parser = subparsers.add_parser(
@@ -496,6 +528,9 @@ def main():
 
         elif args.command == "templates":
             cli.list_templates()
+
+        elif args.command == "completion":
+            cli.show_completion_help()
 
         elif args.command == "init":
             cli.init_templates(args.path)

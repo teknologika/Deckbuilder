@@ -41,6 +41,13 @@ Instead of asking "what layouts exist?", the Deckbuilder MCP tools ask "what doe
 - **Semantic Detection**: Automatic placeholder identification
 - **Hybrid Mapping**: Semantic detection + JSON configuration for reliability
 
+### ⚡ **Enhanced CLI Experience**
+- **Smart Defaults**: `./templates/` for templates, current directory for output
+- **Environment Resolution**: CLI args > environment variables > sensible defaults
+- **One-Command Setup**: `deckbuilder init` creates templates and provides configuration guidance
+- **Tab Completion**: Command, template, and file path completion for bash
+- **Global Arguments**: `-t/--templates` and `-o/--output` for custom paths
+
 
 
 ## Quick Start
@@ -123,8 +130,14 @@ After installation, you can use Deckbuilder directly from the command line witho
 
 ### Production CLI (After pip install)
 ```bash
+# Initialize templates (one-time setup)
+deckbuilder init
+
 # Create presentation from markdown
 deckbuilder create examples/basic_presentation.md --output "My Presentation"
+
+# Use global arguments for custom paths
+deckbuilder -t ~/my-templates -o ~/presentations create slides.md
 
 # Template management
 deckbuilder analyze default --verbose
@@ -135,8 +148,9 @@ deckbuilder templates
 deckbuilder image 800 600 --filter grayscale --output placeholder.jpg
 deckbuilder crop photo.jpg 1920 1080 --save-steps
 
-# Configuration
+# Configuration and setup
 deckbuilder config
+deckbuilder completion  # Tab completion setup instructions
 deckbuilder --help
 ```
 

@@ -10,6 +10,7 @@ include requirements.txt
 include pyproject.toml
 include pytest.ini
 include bandit.yaml
+include deckbuilder-completion.bash
 
 # Include PlaceKitten image assets
 recursive-include src/placekitten/images *.png *.jpg *.jpeg
