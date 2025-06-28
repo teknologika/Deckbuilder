@@ -48,9 +48,9 @@ jobs:
 
     - name: Generate development version
       run: |
-        # Create dev version: 1.0.0.dev20250628.1234
-        TIMESTAMP=$(date +%Y%m%d%H%M)
-        DEV_VERSION="1.0.0.dev${TIMESTAMP}.${GITHUB_RUN_NUMBER}"
+        # Create simple dev version: 1.0.0.dev.0001, 1.0.0.dev.0002, etc.
+        DEV_NUMBER=$(printf "%04d" $GITHUB_RUN_NUMBER)
+        DEV_VERSION="1.0.0.dev.${DEV_NUMBER}"
         echo "DEV_VERSION=${DEV_VERSION}" >> $GITHUB_ENV
         echo "📦 Development version: ${DEV_VERSION}"
         
