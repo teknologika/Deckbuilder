@@ -81,13 +81,37 @@ layout: Title Only
 
 ---
 layout: Picture with Caption
-title: Picture Layout **Test**
+title: Image Support **Demonstration**
 media:
-  caption: "Picture placeholder with ***formatted*** captions"
-  description: "This slide demonstrates picture functionality with *formatting* capabilities and ___enhanced___ presentation features"
+  image_path: "assets/test_architecture.png"  # Non-existent - triggers PlaceKitten fallback
+  alt_text: "System architecture diagram with main components"
+  caption: "Smart image fallback with ***professional*** styling"
+  description: |
+    This slide demonstrates PlaceKitten integration with:
+    • **Automatic fallback** when images are missing
+    • *Professional grayscale* styling for business presentations
+    • ***Smart cropping*** with face detection and rule-of-thirds
+    • ___Consistent caching___ for optimal performance
 ---
 
-Content from Picture with Caption structured frontmatter above.
+Content from Picture with Caption structured frontmatter above showing enhanced image support.
+
+---
+layout: Picture with Caption
+title: Valid Image **Test**
+media:
+  image_path: "src/placekitten/images/ACuteKitten-1.png"  # Valid PlaceKitten image
+  alt_text: "Adorable kitten demonstrating valid image processing"
+  caption: "Direct image insertion with ***processing*** pipeline"
+  description: |
+    This slide shows valid image handling:
+    • **Direct image** validation and processing
+    • *Automatic resizing* to placeholder dimensions
+    • ***High-quality*** output with caching
+    • ___Accessibility support___ with alt text
+---
+
+Content demonstrating direct image insertion when valid path is provided.
 
 ---
 layout: Comparison

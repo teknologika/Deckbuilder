@@ -213,6 +213,8 @@ Screenshot*.jpeg
 # Test output folders
 tests/templates/
 tests/output/
+tests/deckbuilder/output/*
+temp/*
 
 # Template backup files
 assets/templates/backups/

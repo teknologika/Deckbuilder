@@ -116,7 +116,7 @@ The system transforms LLMs from layout pickers into intelligent presentation con
 
 Always use Python 3.11+ and activate the virtual environment:
 ```bash
-source venv/bin/activate
+source .venv/bin/activate
 ```
 
 ## ⚠️ IMPORTANT: MCP Server Environment Configuration
@@ -229,9 +229,11 @@ Refer to these comprehensive specifications before implementing:
 8. **Format consistently**: Use `black --line-length 100 src/` before committing
 9. **🚫 NO ROOT DIRECTORY POLLUTION**: Never create test files, output files, or temporary files in the root directory. Use appropriate subdirectories:
    - Test files: `/tests/` directory with proper structure
-   - Output files: `/output/` or `/temp/` directories  
-   - Temporary files: Use Python's `tempfile` module or `/temp/` directory
+   - Output files: `/tests/output/` directory ONLY
+   - Temporary files: Use Python's `tempfile` module or existing `/temp/` subdirectories
    - Integration tests: `/tests/integration/` directory
+   - Debug scripts: `/tests/debug/` directory (temporary, must be cleaned up)
+   - **NEVER create new directories in root** - use existing structure only
 
 ## Testing & Validation
 

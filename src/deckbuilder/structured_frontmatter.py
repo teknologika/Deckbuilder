@@ -191,12 +191,7 @@ comparison:
                         "description": str,
                     },
                 },
-                "mapping_rules": {
-                    "title": "semantic:title",
-                    "media.description": "semantic:content",
-                    "media.image_path": "image_placeholder",  # NEW - Special image handling
-                    "media.alt_text": "image_alt_text",  # NEW - Accessibility
-                },
+                "mapping_rules": {"title": "semantic:title"},
                 "validation": {"required_fields": ["title", "media"]},
                 "example": """---
                 layout: Picture with Caption
@@ -425,15 +420,16 @@ comparison:
                 mapping_rules[f"columns[{i}].content"] = placeholder_name
 
         elif layout_name == "Picture with Caption":
-            # Find caption placeholder using convention-based patterns
+            # Find caption and image placeholders using convention-based patterns
             for _idx, placeholder_name in placeholders.items():
                 name_lower = placeholder_name.lower()
                 if "text_caption" in name_lower:
                     mapping_rules["media.caption"] = placeholder_name
-                    break
+                elif "image" in name_lower:
+                    mapping_rules["media.image_path"] = placeholder_name
 
-            # Content uses semantic detection
-            mapping_rules["media.description"] = "semantic:content"
+            # For Picture with Caption, description goes to the text area below image
+            # Don't map to semantic:content to avoid conflicts with image placeholder
 
         elif layout_name == "Agenda, 6 Textboxes":
             # Find agenda item placeholders using convention-based patterns

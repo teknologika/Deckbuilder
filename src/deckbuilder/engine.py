@@ -297,6 +297,7 @@ class Deckbuilder:
             layout_index = layout_info.get("index", 1)
         else:
             # Fallback
+            layout_name = layout_or_type  # Use the original layout name as fallback
             layout_index = 1
 
         slide_layout = self.prs.slide_layouts[layout_index]
@@ -410,8 +411,12 @@ class Deckbuilder:
                         target_placeholder = placeholder
                         break
 
-            # Handle image_path fields - find PICTURE placeholders
-            elif field_name == "image_path" or field_name.endswith(".image_path"):
+            # Handle image_path fields and image placeholder fields - find PICTURE placeholders
+            elif (
+                field_name == "image_path"
+                or field_name.endswith(".image_path")
+                or "image" in field_name.lower()
+            ):
                 for placeholder in slide.placeholders:
                     if placeholder.placeholder_format.type == PP_PLACEHOLDER_TYPE.PICTURE:
                         target_placeholder = placeholder
@@ -540,11 +545,28 @@ class Deckbuilder:
         """
         Process nested image fields like media.image_path from structured frontmatter.
 
+        Note: This method handles raw frontmatter with nested media structures.
+        Structured frontmatter conversion flattens media.image_path to image_1,
+        which is already handled by the main field processing loop.
+
         Args:
             slide: PowerPoint slide object
             slide_data: Dictionary containing slide content
         """
-        # Check for media structure with image_path
+        # Skip if this appears to be structured frontmatter that was already converted
+        # (indicated by presence of flattened image fields like image_1, image_path)
+        has_converted_image_fields = any(
+            field_name == "image_path"
+            or field_name.endswith("_1")
+            and "image" in field_name.lower()
+            for field_name in slide_data.keys()
+        )
+
+        if has_converted_image_fields:
+            # Already processed by structured frontmatter conversion
+            return
+
+        # Check for media structure with image_path (raw frontmatter)
         if "media" in slide_data and isinstance(slide_data["media"], dict):
             media_data = slide_data["media"]
             image_path = media_data.get("image_path")
@@ -733,6 +755,14 @@ class Deckbuilder:
         if not content_placeholder:
             return
 
+        # Skip if this placeholder has been converted to an image placeholder
+        if not hasattr(content_placeholder, "text_frame") or content_placeholder.text_frame is None:
+            print(
+                f"Warning: Skipping rich content for placeholder "
+                f"{content_placeholder.placeholder_format.idx} - converted to image placeholder"
+            )
+            return
+
         # Clear existing content
         text_frame = content_placeholder.text_frame
         text_frame.clear()
@@ -799,6 +829,14 @@ class Deckbuilder:
         """Add simple content to slide with inline formatting support (backwards compatibility)"""
         for shape in slide.placeholders:
             if shape.placeholder_format.idx == 1:  # Content placeholder
+                # Skip if this placeholder has been converted to an image placeholder
+                if not hasattr(shape, "text_frame") or shape.text_frame is None:
+                    print(
+                        f"Warning: Skipping content for placeholder "
+                        f"{shape.placeholder_format.idx} - converted to image placeholder"
+                    )
+                    continue
+
                 text_frame = shape.text_frame
                 text_frame.clear()
 
@@ -1136,6 +1174,9 @@ class Deckbuilder:
         if not layout_name:
             return parsed
 
+        # Ensure layout mapping is loaded for structured frontmatter conversion
+        self._ensure_layout_mapping()
+
         # Check if this is structured frontmatter
         converter = StructuredFrontmatterConverter(self.layout_mapping)
 
@@ -1434,18 +1475,30 @@ class Deckbuilder:
             # Insert image into placeholder if we have a valid path
             if final_image_path and Path(final_image_path).exists():
                 try:
-                    # Insert image into the picture placeholder
-                    picture = placeholder.insert_picture(final_image_path)
+                    # Check if placeholder can accept images (not already filled)
+                    if hasattr(placeholder, "insert_picture"):
+                        # Insert image into the picture placeholder
+                        picture = placeholder.insert_picture(final_image_path)
 
-                    # Preserve alt text if provided
-                    alt_text = slide_data.get("alt_text") or slide_data.get("media", {}).get(
-                        "alt_text"
-                    )
-                    if alt_text and hasattr(picture, "element"):
-                        # Set accessibility description
-                        picture.element.nvPicPr.cNvPr.descr = str(alt_text)
+                        # Preserve alt text if provided
+                        alt_text = slide_data.get("alt_text") or slide_data.get("media", {}).get(
+                            "alt_text"
+                        )
+                        if alt_text and hasattr(picture, "element"):
+                            # Set accessibility description
+                            picture.element.nvPicPr.cNvPr.descr = str(alt_text)
 
-                    print(f"✅ Successfully inserted image into placeholder: {field_name}")
+                        print(f"✅ Successfully inserted image into placeholder: {field_name}")
+                    else:
+                        msg = f"Warning: Placeholder {field_name} cannot accept images"
+                        print(msg)
+                        # Try to replace existing content if it's a picture shape
+                        if hasattr(placeholder, "element") and hasattr(
+                            placeholder.element, "nvPicPr"
+                        ):
+                            print("   Placeholder already contains an image, skipping...")
+                        elif hasattr(placeholder, "text_frame") and placeholder.text_frame:
+                            placeholder.text_frame.text = f"Image: {Path(final_image_path).name}"
 
                 except Exception as e:
                     print(f"Warning: Failed to insert image into placeholder: {e}")
