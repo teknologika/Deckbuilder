@@ -25,7 +25,7 @@ jobs:
       uses: lewagon/wait-on-check-action@v1.3.1
       with:
         ref: ${{ github.ref }}
-        check-name: 'Test Deckbuilder Engine'
+        check-name: 'Test Deckbuilder Engine (3.11)'
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         wait-interval: 30
         allowed-conclusions: success
