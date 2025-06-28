@@ -67,8 +67,11 @@ class Deckbuilder:
         self.prs = Presentation()
         self.layout_mapping = None
 
-        # Initialize image handling components
-        self.image_handler = ImageHandler()
+        # Initialize image handling components with cache in output directory
+        cache_dir = "temp/image_cache"  # Default fallback
+        if self.output_folder:
+            cache_dir = os.path.join(self.output_folder, "tmp", "image_cache")
+        self.image_handler = ImageHandler(cache_dir)
         self.placekitten = PlaceKittenIntegration(self.image_handler)
 
         # Ensure default template exists in templates folder

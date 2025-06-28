@@ -29,7 +29,14 @@ class ImageHandler:
             cache_dir: Directory for caching processed images
         """
         self.cache_dir = Path(cache_dir)
-        self.cache_dir.mkdir(parents=True, exist_ok=True)
+        try:
+            self.cache_dir.mkdir(parents=True, exist_ok=True)
+        except OSError:
+            # Fallback to a temporary directory if cache_dir is not writable
+            import tempfile
+
+            self.cache_dir = Path(tempfile.gettempdir()) / "deckbuilder_image_cache"
+            self.cache_dir.mkdir(parents=True, exist_ok=True)
 
         # Supported image formats for PowerPoint
         self.supported_formats = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".gif"}
