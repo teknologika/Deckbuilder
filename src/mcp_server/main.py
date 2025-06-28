@@ -89,9 +89,13 @@ async def create_presentation(
     with automatic saving. Supports all slide types: title, content, table, and all
     available layouts with inline formatting.
 
+    IMPORTANT: Use the provided JSON data exactly as given by the user. Do not modify,
+    reformat, or adjust the JSON structure unless the tool fails with specific errors
+    that require fixes.
+
     Args:
         ctx: MCP context
-        json_data: JSON object containing presentation data with slides
+        json_data: JSON object containing presentation data with slides (use as-is)
         fileName: Output filename (default: Sample_Presentation)
         templateName: Template to use (default: default)
 
@@ -164,6 +168,10 @@ async def create_presentation(
 
     IMPORTANT: Do NOT include markdown table separator lines (|---|---|---|) in table data.
     Only include actual table rows with content.
+
+    USER CONTENT POLICY: When users provide JSON or markdown content (pasted or referenced),
+    use it exactly as provided. Do not modify, reformat, or "improve" the structure unless
+    the tool fails with specific errors requiring fixes. Respect the user's formatting choices.
     """
     try:
         # Create presentation
@@ -353,9 +361,13 @@ async def create_presentation_from_file(
     Supports both JSON files (.json) and markdown files (.md) with frontmatter.
     Automatically detects file type and processes accordingly.
 
+    IMPORTANT: Process the file content exactly as provided. Do not modify the JSON
+    structure or markdown formatting unless the tool fails with specific errors
+    that require fixes.
+
     Args:
         ctx: MCP context
-        file_path: Absolute path to JSON or markdown file containing presentation data
+        file_path: Absolute path to JSON or markdown file (process content as-is)
         fileName: Output filename (default: Sample_Presentation)
         templateName: Template to use (default: default)
 
@@ -435,9 +447,13 @@ async def create_presentation_from_markdown(
     Each slide is defined using YAML frontmatter followed by markdown content.
     This tool automatically saves the presentation to disk after creation.
 
+    IMPORTANT: Use the provided markdown content exactly as given by the user. Do not
+    modify the frontmatter structure, markdown formatting, or content unless the tool
+    fails with specific errors that require fixes.
+
     Args:
         ctx: MCP context
-        markdown_content: Markdown string with frontmatter slide definitions
+        markdown_content: Markdown string with frontmatter (use as-is)
         fileName: Output filename (default: Sample_Presentation)
         templateName: Template/theme to use (default: default)
 
