@@ -73,10 +73,10 @@ jobs:
         deckbuilder config
         deckbuilder templates || echo "Templates command tested (expected to show no templates in clean env)"
         
-        # Test Python import
-        python -c "from src.deckbuilder.engine import Deckbuilder; print('✅ Engine import successful')"
-        python -c "from src.placekitten import PlaceKitten; print('✅ PlaceKitten import successful')"
-        python -c "from src.mcp_server.main import main; print('✅ MCP server import successful')"
+        # Test Python import (using installed package structure)
+        python -c "from deckbuilder.engine import Deckbuilder; print('✅ Engine import successful')"
+        python -c "from placekitten import PlaceKitten; print('✅ PlaceKitten import successful')"
+        python -c "from mcp_server.main import main; print('✅ MCP server import successful')"
 
     - name: Test CLI commands with sample data
       run: |
