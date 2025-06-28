@@ -216,6 +216,9 @@ tests/output/
 tests/deckbuilder/output/*
 temp/*
 
+# CLI output directory
+output/
+
 # Template backup files
 assets/templates/backups/
 *_backup_*.pptx
