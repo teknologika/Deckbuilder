@@ -52,13 +52,11 @@ Instead of asking "what layouts exist?", the Deckbuilder MCP tools ask "what doe
 
 ### Installation
 
-1. **Clone and setup:**
+#### Option 1: Production Install (Recommended)
+
+1. **Install from PyPI:**
 ```bash
-git clone <repository-url>
-cd deckbuilder
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install -r requirements.txt
+pip install deckbuilder
 ```
 
 2. **Configure Claude Desktop:**
@@ -66,10 +64,8 @@ pip install -r requirements.txt
 {
   "mcpServers": {
     "deckbuilder": {
-      "command": "/path/to/deckbuilder/venv/bin/python",
-      "args": ["/path/to/deckbuilder/src/mcp_server/main.py"],
+      "command": "deckbuilder-server",
       "env": {
-        "TRANSPORT": "stdio",
         "DECK_TEMPLATE_FOLDER": "/Users/username/Documents/Deckbuilder/Templates",
         "DECK_TEMPLATE_NAME": "default",
         "DECK_OUTPUT_FOLDER": "/Users/username/Documents/Deckbuilder"
@@ -79,9 +75,57 @@ pip install -r requirements.txt
 }
 ```
 
-3. **Create directories:**
+3. **Create directories and copy templates:**
 ```bash
 mkdir -p ~/Documents/Deckbuilder/Templates
+mkdir -p ~/Documents/Deckbuilder
+
+# Copy default template from package installation
+python -c "
+import deckbuilder
+import shutil
+from pathlib import Path
+pkg_path = Path(deckbuilder.__file__).parent
+template_src = pkg_path.parent / 'assets' / 'templates'
+if template_src.exists():
+    shutil.copytree(template_src, Path.home() / 'Documents/Deckbuilder/Templates', dirs_exist_ok=True)
+    print('✅ Templates copied successfully')
+else:
+    print('⚠️ Template source not found, you may need to copy templates manually')
+"
+```
+
+#### Option 2: Development Install
+
+1. **Clone and setup:**
+```bash
+git clone https://github.com/teknologika/deckbuilder.git
+cd deckbuilder
+python3 -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+pip install -e .[dev]
+```
+
+2. **Configure Claude Desktop (Development):**
+```json
+{
+  "mcpServers": {
+    "deckbuilder-dev": {
+      "command": "/path/to/deckbuilder/.venv/bin/python",
+      "args": ["/path/to/deckbuilder/src/mcp_server/main.py"],
+      "env": {
+        "TRANSPORT": "stdio",
+        "DECK_TEMPLATE_FOLDER": "/path/to/deckbuilder/assets/templates",
+        "DECK_TEMPLATE_NAME": "default",
+        "DECK_OUTPUT_FOLDER": "/Users/username/Documents/Deckbuilder"
+      }
+    }
+  }
+}
+```
+
+3. **Create output directory:**
+```bash
 mkdir -p ~/Documents/Deckbuilder
 ```
 
@@ -89,6 +133,43 @@ mkdir -p ~/Documents/Deckbuilder
 ```bash
 ./run_server.sh
 ```
+
+## CLI Usage (Standalone)
+
+After installation, you can use Deckbuilder directly from the command line without Claude Desktop:
+
+### Production CLI (After pip install)
+```bash
+# Create presentation from markdown
+deckbuilder create examples/basic_presentation.md --output "My Presentation"
+
+# Template management
+deckbuilder analyze default --verbose
+deckbuilder validate default
+deckbuilder templates
+
+# PlaceKitten image generation
+deckbuilder image 800 600 --filter grayscale --output placeholder.jpg
+deckbuilder crop photo.jpg 1920 1080 --save-steps
+
+# Configuration
+deckbuilder config
+deckbuilder --help
+```
+
+### Development CLI (From source)
+```bash
+# Activate virtual environment first
+source .venv/bin/activate
+
+# Use Python module directly
+python src/deckbuilder/cli.py create examples/basic_presentation.md
+python src/deckbuilder/cli.py --help
+
+# Or use the development script
+./deckbuilder create examples/basic_presentation.md
+```
+
 ## Architecture
 
 ```
