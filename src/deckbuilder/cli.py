@@ -19,14 +19,21 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-# Add project root to path for imports
-current_dir = Path(__file__).parent
-project_root = current_dir.parent.parent
-sys.path.insert(0, str(project_root))
+# Conditional imports for development vs installed package
+try:
+    # Try package imports first (for installed package)
+    from deckbuilder.engine import Deckbuilder
+    from deckbuilder.cli_tools import TemplateManager
+    from placekitten import PlaceKitten
+except ImportError:
+    # Fallback to development imports (when running from source)
+    current_dir = Path(__file__).parent
+    project_root = current_dir.parent.parent
+    sys.path.insert(0, str(project_root))
 
-from src.deckbuilder.engine import Deckbuilder  # noqa: E402
-from src.deckbuilder.cli_tools import TemplateManager  # noqa: E402
-from src.placekitten import PlaceKitten  # noqa: E402
+    from src.deckbuilder.engine import Deckbuilder  # noqa: E402
+    from src.deckbuilder.cli_tools import TemplateManager  # noqa: E402
+    from src.placekitten import PlaceKitten  # noqa: E402
 
 
 class DeckbuilderCLI:
@@ -173,7 +180,10 @@ class DeckbuilderCLI:
         output_file: Optional[str] = None,
     ):
         """Apply smart cropping to an existing image"""
-        from src.placekitten.processor import ImageProcessor
+        try:
+            from placekitten.processor import ImageProcessor
+        except ImportError:
+            from src.placekitten.processor import ImageProcessor
 
         input_path = Path(input_file)
         if not input_path.exists():
