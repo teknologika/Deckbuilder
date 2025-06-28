@@ -155,6 +155,14 @@ Tasks are organized by phase and component.
 
 ### 🚀 Next Development Phases (Current Focus)
 
+#### URGENT: PlaceKitten CLI Bug Fix
+- [ ] **Fix PlaceKitten CLI Image Generation Bug**
+  - [ ] PlaceKitten CLI commands creating directories instead of image files
+  - [ ] Error: `[Errno 21] Is a directory: 'filename.jpg'` when using `deckbuilder image` command
+  - [ ] Affects TestPyPI package validation and user experience
+  - [ ] Test environment validation failing due to image generation issues
+  - **Priority**: High - Blocking TestPyPI validation and user testing
+
 #### Phase A: Documentation & Planning Cleanup
 - [ ] **PlaceKitten Documentation**
   - [ ] Create comprehensive src/placekitten/README.md with API docs and examples

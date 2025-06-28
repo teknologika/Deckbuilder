@@ -8,7 +8,7 @@ Deckbuilder is a Python library and MCP (Model Context Protocol) server for inte
 
 # Core Features
 
-### ** One-shot Powerpoint Presentation creation from JSON or FrontMatter formatted Markdown **
+### One-shot Powerpoint Presentation creation from JSON or FrontMatter formatted Markdown
 
 Deckbuilder provides a comprehensive Python library for PowerPoint generation with sophisticated content intelligence. The library features a singleton-based presentation engine that processes JSON data, markdown with YAML frontmatter, and structured content through semantic placeholder detection. Key capabilities include a hybrid template system combining semantic detection with JSON mapping, CLI tools for template management and validation, multi-tier placeholder naming conventions, and content-first layout recommendations. The system supports 50+ business presentation layouts with rich formatting (bold, italic, underline), professional table styling, and automatic template enhancement with organized backup systems.
 
