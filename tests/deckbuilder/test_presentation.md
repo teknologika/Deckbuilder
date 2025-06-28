@@ -83,7 +83,7 @@ layout: Title Only
 layout: Picture with Caption
 title: Image Support **Demonstration**
 media:
-  image_path: "assets/test_architecture.png"  # Non-existent - triggers PlaceKitten fallback
+  image_path: "assets/non_existent_image.png"  # Non-existent - triggers PlaceKitten fallback
   alt_text: "System architecture diagram with main components"
   caption: "Smart image fallback with ***professional*** styling"
   description: |
@@ -93,8 +93,6 @@ media:
     • ***Smart cropping*** with face detection and rule-of-thirds
     • ___Consistent caching___ for optimal performance
 ---
-
-Content from Picture with Caption structured frontmatter above showing enhanced image support.
 
 ---
 layout: Picture with Caption
@@ -110,8 +108,6 @@ media:
     • ***High-quality*** output with caching
     • ___Accessibility support___ with alt text
 ---
-
-Content demonstrating direct image insertion when valid path is provided.
 
 ---
 layout: Comparison

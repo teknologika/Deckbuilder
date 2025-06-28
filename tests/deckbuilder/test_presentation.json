@@ -117,12 +117,23 @@
       },
       {
         "type": "Picture with Caption",
-        "title": "Picture Layout **Test**",
-        "text_caption_1": "Picture placeholder with ***formatted*** captions",
-        "content": "This slide demonstrates picture functionality with *formatting* capabilities and ___enhanced___ presentation features",
+        "title": "Picture Layout **Test** - Fallback",
+        "image_1": "assets/non_existent_image.png",
+        "text_caption_1": "PlaceKitten fallback with ***professional*** styling",
         "rich_content": [
           {
-            "paragraph": "Content from Picture with Caption structured frontmatter above."
+            "paragraph": "This slide demonstrates PlaceKitten fallback from JSON input."
+          }
+        ]
+      },
+      {
+        "type": "Picture with Caption", 
+        "title": "Picture Layout **Test** - Valid Image",
+        "image_1": "src/placekitten/images/ACuteKitten-2.png",
+        "text_caption_1": "Direct image insertion from ***JSON*** format",
+        "rich_content": [
+          {
+            "paragraph": "This slide demonstrates direct image processing from JSON input."
           }
         ]
       },
