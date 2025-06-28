@@ -724,13 +724,13 @@ subtitle: {subtitle}
                 "process each section"
             )
         elif layout == "Comparison":
-            tips[
-                "delivery_guidance"
-            ] = "Guide audience through left side first, then right, conclude with recommendation"
+            tips["delivery_guidance"] = (
+                "Guide audience through left side first, then right, conclude with recommendation"
+            )
         elif layout == "Title and Content":
-            tips[
-                "delivery_guidance"
-            ] = "Use title to set context, walk through content points systematically"
+            tips["delivery_guidance"] = (
+                "Use title to set context, walk through content points systematically"
+            )
         else:
             tips["delivery_guidance"] = "Keep focus on key message, use slide as visual support"
 
@@ -738,13 +738,13 @@ subtitle: {subtitle}
         if slide_context and "audience" in slide_context:
             audience = slide_context["audience"]
             if audience == "board":
-                tips[
-                    "audience_adaptation"
-                ] = "Focus on high-level insights, minimize technical details"
+                tips["audience_adaptation"] = (
+                    "Focus on high-level insights, minimize technical details"
+                )
             elif audience == "technical":
-                tips[
-                    "audience_adaptation"
-                ] = "Include technical details, be prepared for deep-dive questions"
+                tips["audience_adaptation"] = (
+                    "Include technical details, be prepared for deep-dive questions"
+                )
             else:
                 tips["audience_adaptation"] = "Balance detail level, check for understanding"
         else:
