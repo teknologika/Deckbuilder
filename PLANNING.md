@@ -81,6 +81,7 @@ This is a comprehensive Python library and MCP (Model Context Protocol) Server f
 - **placeholder_types.py**: Template placeholder detection and mapping
 - **table_styles.py**: Professional table formatting system
 - **cli_tools.py**: Command-line template management utilities
+- **cli.py**: Standalone CLI interface with environment logic and user-friendly commands
 
 ### 3. Content Intelligence System
 - **layout_intelligence.json**: Semantic metadata for layout recommendations
@@ -88,7 +89,14 @@ This is a comprehensive Python library and MCP (Model Context Protocol) Server f
 - **naming_conventions.py**: Standardized placeholder naming patterns
 - **Hybrid Approach**: Semantic detection + JSON mapping for reliability
 
-### 4. Template Management System
+### 4. CLI Interface System
+- **Environment Resolution Logic**: CLI args > environment variables > sensible defaults
+- **Template Setup**: `deckbuilder init [PATH]` command for streamlined initialization
+- **User-Friendly Commands**: Simplified arguments (`-t`, `-o`) with tab completion
+- **Error Handling**: Actionable error messages with setup guidance
+- **Environment Integration**: Bash profile examples and permanent configuration support
+
+### 5. Template Management System
 - **CLI Tools**: analyze, document, validate, enhance commands
 - **Master Slide Enhancement**: Direct PowerPoint template modification
 - **Organized File Management**: `.g.pptx` convention with backup system
@@ -278,6 +286,15 @@ media:
   - Enhanced template analysis with detailed reporting and validation
   - Direct presentation generation: `deckbuilder create presentation.md`
   - Debug tools for template validation, image testing, and troubleshooting
+
+- **CLI Environment Logic Improvements** 🚧 IN PROGRESS
+  - Environment variable resolution priority: CLI args > env vars > defaults
+  - `deckbuilder init [PATH]` command for streamlined template setup
+  - Simplified global arguments: `-t/--templates`, `-o/--output`
+  - Enhanced error messages with actionable guidance
+  - Environment variable setup guidance and bash_profile examples
+  - Tab completion support for commands, templates, and file paths
+  - **Reference**: [CLI Design Specification](docs/Features/Deckbuilder_CLI.md)
 
 - **User Experience Enhancement**
   - Simplified workflows with intuitive command structure

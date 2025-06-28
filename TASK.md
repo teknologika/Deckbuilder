@@ -163,14 +163,23 @@ Tasks are organized by phase and component.
   - [ ] Document integration patterns and use cases
 
 #### Phase B: Command Line Tools Enhancement  
-- [ ] **Standalone CLI Development**
-  - [ ] Create standalone CLI entry point separate from MCP server
-  - [ ] Enhanced template analysis with better reporting and validation
-  - [ ] Presentation generation commands for direct CLI usage
+- [x] **Standalone CLI Development**
+  - [x] Create standalone CLI entry point separate from MCP server
+  - [x] Enhanced template analysis with better reporting and validation
+  - [x] Presentation generation commands for direct CLI usage
   - [ ] Debug and troubleshooting tools for template validation and image testing
 
+- [ ] **CLI Environment Logic Improvements** 🚧 IN PROGRESS
+  - [ ] Improve environment variable resolution priority (CLI args > env vars > defaults)
+  - [ ] Add `deckbuilder init [PATH]` command for template setup
+  - [ ] Simplify global arguments (`-t/--templates`, `-o/--output`)
+  - [ ] Enhanced error messages with actionable guidance
+  - [ ] Environment variable setup guidance in init command
+  - [ ] Tab completion support for commands and templates
+  - **Design Document**: [Deckbuilder_CLI.md](docs/Features/Deckbuilder_CLI.md)
+
 - [ ] **User Experience Improvements**
-  - [ ] Simplified workflow: `deckbuilder create presentation.md`
+  - [x] Simplified workflow: `deckbuilder create presentation.md`
   - [ ] Progress indicators and clear feedback for operations
   - [ ] Better error handling with helpful error messages and suggestions
   - [ ] Configuration management for CLI-based settings and preferences
