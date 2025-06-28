@@ -71,7 +71,7 @@ mcp = FastMCP(
     "deckbuilder",
     description="MCP server for creation of powerpoint decks",
     lifespan=deckbuilder_lifespan,
-    host=os.getenv("HOST", "0.0.0.0"),
+    host=os.getenv("HOST", "0.0.0.0"),  # nosec B104
     port=os.getenv("PORT", "8050"),
 )
 
@@ -124,6 +124,12 @@ async def create_presentation(
                                 ["Data 1", "Data 2", "Data 3"]
                             ]
                         }
+                    },
+                    {
+                        "type": "Picture with Caption",
+                        "title": "Image Example",
+                        "image_1": "path/to/image.png",
+                        "text_caption_1": "**Professional** image with *automatic* fallback"
                     }
                 ]
             }
@@ -133,7 +139,15 @@ async def create_presentation(
         - title: Title slide with title and subtitle
         - content: Content slide with rich text, bullets, headings
         - table: Table slide with full styling support
+        - Picture with Caption: Image slides with automatic PlaceKitten fallback
         - All PowerPoint layout types are supported via the template mapping
+
+    Image support:
+        - Direct image insertion via image_1, image_2, etc. fields
+        - Automatic PlaceKitten fallback for missing images
+        - Professional styling: grayscale filter + smart cropping
+        - Intelligent face detection and rule-of-thirds composition
+        - Optimized caching for performance
 
     Inline formatting support:
         - **bold** - Bold text
@@ -298,6 +312,7 @@ async def optimize_content_for_layout_tool(
         - optimized_content.yaml_structure: Ready-to-use YAML for create_presentation_from_markdown
         - gap_analysis: Content fit assessment and recommendations
         - presentation_tips: Delivery guidance and timing estimates
+        - image_recommendations: Suggested visual content with PlaceKitten fallback support
 
     Complete Content-First Workflow:
     1. analyze_presentation_needs_tool() -> overall structure
@@ -456,10 +471,27 @@ async def create_presentation_from_markdown(
         | John Smith | $125,000 | North |
         | Sarah Johnson | $98,500 | South |
 
+        ---
+        layout: Picture with Caption
+        title: System **Architecture** Overview
+        media:
+          image_path: "diagrams/system_architecture.png"
+          alt_text: "System architecture diagram showing microservices"
+          caption: "***Scalable*** microservices with *intelligent* load balancing"
+        ---
+
     Supported layouts:
         - title: Title slide with title and subtitle
         - content: Content slide with rich text support (headings, paragraphs, bullets)
         - table: Table slide with styling options
+        - Picture with Caption: Image slides with PlaceKitten fallback support
+
+    Image features:
+        - Smart fallback: Missing images automatically use PlaceKitten placeholders
+        - Professional styling: Grayscale filter + intelligent cropping
+        - Face detection: Optimized cropping for portrait images
+        - Performance: Intelligent caching system for repeated use
+        - Accessibility: Alt text support for screen readers
 
     Table styling options:
         - style: Header style (dark_blue_white_text, light_blue_dark_text, etc.)
