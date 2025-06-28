@@ -4,18 +4,19 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "deckbuilder"
-version = "0.1.0"
-description = "A Library and Model Context Protocol (MCP) server for creating PowerPoint presentations"
+version = "1.0.0"
+description = "Intelligent PowerPoint presentation generation with content-first design philosophy, PlaceKitten image processing, and comprehensive CLI tools"
 readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "Apache-2.0"}
 authors = [
     {name = "Bruce McLeod"},
 ]
-keywords = ["mcp", "powerpoint", "presentations", "automation"]
+keywords = ["mcp", "powerpoint", "presentations", "automation", "content-first", "template-management", "image-processing", "cli"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
     "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
@@ -23,6 +24,10 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Topic :: Office/Business :: Office Suites",
     "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Multimedia :: Graphics :: Graphics Conversion",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Environment :: Console",
+    "Operating System :: OS Independent",
 ]
 
 dependencies = [
@@ -60,12 +65,22 @@ dev = [
 Homepage = "https://github.com/teknologika/deckbuilder"
 Repository = "https://github.com/teknologika/deckbuilder.git"
 Issues = "https://github.com/teknologika/deckbuilder/issues"
+Documentation = "https://github.com/teknologika/deckbuilder/blob/main/README.md"
+Changelog = "https://github.com/teknologika/deckbuilder/releases"
+"Bug Reports" = "https://github.com/teknologika/deckbuilder/issues"
+"Source Code" = "https://github.com/teknologika/deckbuilder"
 
 [project.scripts]
-deckbuilder = "src.mcp_server.main:main"
+deckbuilder = "src.deckbuilder.cli:main"
+deckbuilder-server = "src.mcp_server.main:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+"deckbuilder" = ["layout_intelligence.json"]
+"placekitten" = ["images/*", "README.md"]
+"*" = ["*.json", "*.md"]
 
 [tool.black]
 line-length = 100

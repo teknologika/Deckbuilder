@@ -1,0 +1,62 @@
+# Include project metadata files
+include README.md
+include LICENSE
+include CLAUDE.md
+include PLANNING.md
+include TASK.md
+
+# Include requirements and configuration
+include requirements.txt
+include pyproject.toml
+include pytest.ini
+include bandit.yaml
+
+# Include PlaceKitten image assets
+recursive-include src/placekitten/images *.png *.jpg *.jpeg
+include src/placekitten/README.md
+
+# Include template assets
+recursive-include assets/templates *.pptx *.json
+
+# Include layout intelligence data
+include src/deckbuilder/layout_intelligence.json
+
+# Include documentation
+recursive-include docs *.md *.css *.html
+
+# Include examples (will create these)
+recursive-include examples *.md *.json
+
+# Include test data and fixtures (needed for some functionality)
+recursive-include tests/deckbuilder/fixtures *.json *.md
+include tests/deckbuilder/test_presentation.md
+include tests/deckbuilder/test_presentation.json
+
+# Exclude unnecessary files
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude *.pyd
+global-exclude __pycache__
+global-exclude .pytest_cache
+global-exclude .coverage
+global-exclude *.egg-info
+global-exclude .DS_Store
+global-exclude Thumbs.db
+
+# Exclude development files
+global-exclude .git*
+global-exclude .vscode
+global-exclude .idea
+exclude .gitignore
+exclude .pre-commit-config.yaml
+
+# Exclude output and temporary directories
+recursive-exclude output *
+recursive-exclude temp *
+recursive-exclude template_output *
+recursive-exclude tests/deckbuilder/output *
+recursive-exclude tests/placekitten/test_output *
+
+# Exclude build artifacts
+recursive-exclude dist *
+recursive-exclude build *

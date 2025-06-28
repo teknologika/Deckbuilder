@@ -1,0 +1,115 @@
+name: Publish Development Release
+
+on:
+  workflow_run:
+    workflows: ["Test Suite"]
+    types: [completed]
+    branches: [main, develop]
+  workflow_dispatch:
+    inputs:
+      force_publish:
+        description: 'Force publish even if tests are not run'
+        required: false
+        default: 'false'
+
+jobs:
+  publish-testpypi:
+    name: Publish to TestPyPI
+    runs-on: ubuntu-latest
+    if: |
+      github.repository == 'teknologika/deckbuilder' && 
+      (github.event.workflow_run.conclusion == 'success' || 
+       github.event_name == 'workflow_dispatch')
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        # Get the commit that triggered the workflow_run
+        ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Cache pip dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-publish-${{ hashFiles('**/requirements.txt', '**/pyproject.toml') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-publish-
+          ${{ runner.os }}-pip-
+
+    - name: Install build dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install build twine
+
+    - name: Generate development version
+      run: |
+        # Create dev version: 1.0.0.dev20250628.1234
+        TIMESTAMP=$(date +%Y%m%d%H%M)
+        DEV_VERSION="1.0.0.dev${TIMESTAMP}.${GITHUB_RUN_NUMBER}"
+        echo "DEV_VERSION=${DEV_VERSION}" >> $GITHUB_ENV
+        echo "📦 Development version: ${DEV_VERSION}"
+        
+        # Update pyproject.toml version dynamically
+        sed -i "s/version = \".*\"/version = \"${DEV_VERSION}\"/" pyproject.toml
+        echo "✅ Updated pyproject.toml with development version"
+
+    - name: Verify version update
+      run: |
+        echo "🔍 Verifying version in pyproject.toml:"
+        grep "version = " pyproject.toml
+
+    - name: Build package
+      run: |
+        echo "🔨 Building package..."
+        python -m build
+        echo "📋 Package contents:"
+        ls -la dist/
+
+    - name: Verify package integrity
+      run: |
+        echo "🔍 Checking package integrity..."
+        twine check dist/*
+
+    - name: Publish to TestPyPI
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.TEST_PYPI_API_TOKEN }}
+      run: |
+        echo "🚀 Publishing to TestPyPI..."
+        twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+        echo "✅ Successfully published ${DEV_VERSION} to TestPyPI"
+
+    - name: Generate installation instructions
+      run: |
+        echo "📋 TestPyPI Installation Instructions:" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "To test this development release:" >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+        echo "pip install -i https://test.pypi.org/simple/ deckbuilder==${DEV_VERSION}" >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "Or install latest development version:" >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+        echo "pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ deckbuilder" >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "🔗 [View on TestPyPI](https://test.pypi.org/project/deckbuilder/)" >> $GITHUB_STEP_SUMMARY
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: testpypi-dist-${{ env.DEV_VERSION }}
+        path: dist/
+        retention-days: 30
+
+    - name: Notify development release
+      run: |
+        echo "🎉 Development release published successfully!"
+        echo "📦 Version: ${DEV_VERSION}"
+        echo "🔗 TestPyPI: https://test.pypi.org/project/deckbuilder/${DEV_VERSION}/"
+        echo "📥 Install: pip install -i https://test.pypi.org/simple/ deckbuilder==${DEV_VERSION}"
