@@ -747,27 +747,63 @@ Perfect for **one-off** slides with *unique* requirements.
             f.write(json_content)
 
     def get_config(self):
-        """Display current configuration"""
+        """Display current configuration with proper defaults and source indicators"""
         print("🔧 Deckbuilder Configuration:")
-        print(f"  Template Folder: {os.getenv('DECK_TEMPLATE_FOLDER', 'Not set')}")
-        print(f"  Output Folder: {os.getenv('DECK_OUTPUT_FOLDER', 'Not set')}")
-        print(f"  Default Template: {os.getenv('DECK_TEMPLATE_NAME', 'Not set')}")
 
-        # Display language setting with description
+        # Template folder with source indication
+        template_folder = os.getenv("DECK_TEMPLATE_FOLDER")
+        if template_folder:
+            # Check if it's the default path to determine source
+            default_path = str(Path.cwd() / "templates")
+            if template_folder == default_path:
+                print("  Template Folder: ./templates (Default)")
+            else:
+                print(f"  Template Folder: {template_folder} (Environment Variable)")
+        else:
+            print("  Template Folder: ./templates (Default)")
+
+        # Output folder with source indication
+        output_folder = os.getenv("DECK_OUTPUT_FOLDER")
+        if output_folder:
+            # Check if it's the current directory to determine source
+            current_dir = str(Path.cwd())
+            if output_folder == current_dir:
+                print("  Output Folder: . (Default)")
+            else:
+                print(f"  Output Folder: {output_folder} (Environment Variable)")
+        else:
+            print("  Output Folder: . (Default)")
+
+        # Default template with source indication
+        template_name = os.getenv("DECK_TEMPLATE_NAME")
+        if template_name:
+            if template_name == "default":
+                print("  Default Template: default (Default)")
+            else:
+                print(f"  Default Template: {template_name} (Environment Variable)")
+        else:
+            print("  Default Template: default (Default)")
+
+        # Display language setting with description and source
         language_code = os.getenv("DECK_PROOFING_LANGUAGE")
         if language_code:
             languages = FormattingSupport.get_supported_languages()
             language_desc = languages.get(language_code, language_code)
-            print(f"  Proofing Language: {language_code} ({language_desc})")
+            if language_code == "en-AU":
+                print(f"  Proofing Language: {language_code} ({language_desc}) (Default)")
+            else:
+                print(
+                    f"  Proofing Language: {language_code} ({language_desc}) (Environment Variable)"
+                )
         else:
-            print("  Proofing Language: Not set (using system default)")
+            print("  Proofing Language: en-AU (English (Australia)) (Default)")
 
-        # Display font setting
+        # Display font setting with corrected message
         font_name = os.getenv("DECK_DEFAULT_FONT")
         if font_name:
-            print(f"  Default Font: {font_name}")
+            print(f"  Default Font: {font_name} (Environment Variable)")
         else:
-            print("  Default Font: Not set (using template default)")
+            print("  Default Font: Not set (using template fonts)")
 
     def list_supported_languages(self):
         """List all supported proofing languages"""
@@ -913,32 +949,13 @@ Perfect for **one-off** slides with *unique* requirements.
 
 
 def create_parser():
-    """Create command-line argument parser"""
+    """Create hierarchical command-line argument parser"""
     parser = argparse.ArgumentParser(
         prog="deckbuilder",
         description="Deckbuilder CLI - Intelligent PowerPoint presentation generation",
+        usage="deckbuilder [options] <command> <subcommand> [parameters]",
+        add_help=False,  # Custom help handling
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-Examples:
-  # Create presentation from markdown
-  deckbuilder create presentation.md
-  deckbuilder -t ~/templates -o ~/output create slides.md
-
-  # Template management
-  deckbuilder analyze default --verbose
-  deckbuilder validate default
-  deckbuilder document default --output template_docs.md
-
-  # Image generation
-  deckbuilder image 800 600 --filter grayscale --output placeholder.jpg
-  deckbuilder crop input.jpg 1920 1080 --save-steps
-
-  # Configuration and setup
-  deckbuilder config
-  deckbuilder templates
-  deckbuilder completion
-  deckbuilder init
-        """,
     )
 
     # Global arguments (apply to all commands)
@@ -957,30 +974,67 @@ Examples:
     parser.add_argument(
         "-f", "--font", metavar="FONT", help='Default font family (e.g., "Calibri", "Arial")'
     )
+    parser.add_argument("-h", "--help", action="store_true", help="Show help message")
 
-    subparsers = parser.add_subparsers(dest="command", help="Available commands")
+    subparsers = parser.add_subparsers(
+        dest="command", help="Available commands", metavar="<command>"
+    )
 
-    # Create presentation command
+    # Create presentation command (stays as top-level)
     create_parser = subparsers.add_parser(
-        "create", help="Create presentation from markdown or JSON file"
+        "create", help="Generate presentations from markdown or JSON", add_help=False
     )
     create_parser.add_argument("input_file", help="Input markdown (.md) or JSON (.json) file")
     create_parser.add_argument("--output", "-o", help="Output filename (without extension)")
     create_parser.add_argument("--template", "-t", help="Template name to use (default: 'default')")
+    create_parser.add_argument(
+        "-h", "--help", action="store_true", help="Show help for create command"
+    )
 
-    # Template analysis commands
-    analyze_parser = subparsers.add_parser("analyze", help="Analyze template structure")
+    # Template management commands (grouped)
+    template_parser = subparsers.add_parser(
+        "template", help="Manage PowerPoint templates and mappings", add_help=False
+    )
+    template_parser.add_argument(
+        "-h", "--help", action="store_true", help="Show help for template commands"
+    )
+    template_subs = template_parser.add_subparsers(
+        dest="template_command", help="Template subcommands", metavar="<subcommand>"
+    )
+
+    # Template analyze
+    analyze_parser = template_subs.add_parser(
+        "analyze", help="Analyze template structure and placeholders", add_help=False
+    )
     analyze_parser.add_argument("template", nargs="?", default="default", help="Template name")
     analyze_parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
+    analyze_parser.add_argument(
+        "-h", "--help", action="store_true", help="Show help for analyze command"
+    )
 
-    validate_parser = subparsers.add_parser("validate", help="Validate template and mappings")
+    # Template validate
+    validate_parser = template_subs.add_parser(
+        "validate", help="Validate template and JSON mappings", add_help=False
+    )
     validate_parser.add_argument("template", nargs="?", default="default", help="Template name")
+    validate_parser.add_argument(
+        "-h", "--help", action="store_true", help="Show help for validate command"
+    )
 
-    document_parser = subparsers.add_parser("document", help="Generate template documentation")
+    # Template document
+    document_parser = template_subs.add_parser(
+        "document", help="Generate comprehensive template documentation", add_help=False
+    )
     document_parser.add_argument("template", nargs="?", default="default", help="Template name")
     document_parser.add_argument("--output", "-o", help="Output documentation file")
+    document_parser.add_argument(
+        "-h", "--help", action="store_true", help="Show help for document command"
+    )
 
-    enhance_parser = subparsers.add_parser("enhance", help="Enhance template placeholders")
+    # Template enhance
+    enhance_parser = template_subs.add_parser(
+        "enhance", help="Enhance template with corrected placeholders", add_help=False
+    )
     enhance_parser.add_argument("template", nargs="?", default="default", help="Template name")
     enhance_parser.add_argument("--mapping", help="Custom mapping file")
     enhance_parser.add_argument("--no-backup", action="store_true", help="Skip backup creation")
@@ -990,67 +1044,417 @@ Examples:
         dest="use_conventions",
         help="Don't use naming conventions",
     )
+    enhance_parser.add_argument(
+        "-h", "--help", action="store_true", help="Show help for enhance command"
+    )
 
-    # PlaceKitten image generation
-    image_parser = subparsers.add_parser("image", help="Generate placeholder image")
-    image_parser.add_argument("width", type=int, help="Image width")
-    image_parser.add_argument("height", type=int, help="Image height")
-    image_parser.add_argument("--id", type=int, help="Specific kitten image ID (1-6)")
-    image_parser.add_argument("--filter", help="Filter to apply (grayscale, sepia, blur, etc.)")
-    image_parser.add_argument("--output", "-o", help="Output filename")
+    # Template list
+    list_parser = template_subs.add_parser(
+        "list", help="List all available templates", add_help=False
+    )
+    list_parser.add_argument("-h", "--help", action="store_true", help="Show help for list command")
 
-    # Smart crop command
-    crop_parser = subparsers.add_parser("crop", help="Apply smart cropping to image")
+    # Image processing commands (grouped)
+    image_parser = subparsers.add_parser(
+        "image", help="Process and generate images with PlaceKitten", add_help=False
+    )
+    image_parser.add_argument(
+        "-h", "--help", action="store_true", help="Show help for image commands"
+    )
+    image_subs = image_parser.add_subparsers(
+        dest="image_command", help="Image subcommands", metavar="<subcommand>"
+    )
+
+    # Image generate
+    generate_parser = image_subs.add_parser(
+        "generate", help="Generate PlaceKitten placeholder images", add_help=False
+    )
+    generate_parser.add_argument("width", type=int, help="Image width")
+    generate_parser.add_argument("height", type=int, help="Image height")
+    generate_parser.add_argument("--id", type=int, help="Specific kitten image ID (1-6)")
+    generate_parser.add_argument("--filter", help="Filter to apply (grayscale, sepia, blur, etc.)")
+    generate_parser.add_argument("--output", "-o", help="Output filename")
+    generate_parser.add_argument(
+        "-h", "--help", action="store_true", help="Show help for generate command"
+    )
+
+    # Image crop
+    crop_parser = image_subs.add_parser("crop", help="Smart crop existing images", add_help=False)
     crop_parser.add_argument("input_file", help="Input image file")
     crop_parser.add_argument("width", type=int, help="Target width")
     crop_parser.add_argument("height", type=int, help="Target height")
     crop_parser.add_argument("--save-steps", action="store_true", help="Save processing steps")
     crop_parser.add_argument("--output", "-o", help="Output filename")
+    crop_parser.add_argument("-h", "--help", action="store_true", help="Show help for crop command")
 
-    # Formatting and language commands
-    remap_parser = subparsers.add_parser(
-        "remap", help="Update language and/or font in PowerPoint presentation"
+    # Configuration and setup commands (grouped)
+    config_parser = subparsers.add_parser(
+        "config", help="Configuration, setup, and system information", add_help=False
     )
-    remap_parser.add_argument("input_file", help="Input PowerPoint (.pptx) file")
-    remap_parser.add_argument(
-        "-l", "--language", help="Language code to apply (e.g., en-US, en-AU)"
+    config_parser.add_argument(
+        "-h", "--help", action="store_true", help="Show help for config commands"
     )
-    remap_parser.add_argument(
-        "-f", "--font", help='Font family to apply (e.g., "Calibri", "Arial")'
+    config_subs = config_parser.add_subparsers(
+        dest="config_command", help="Configuration subcommands", metavar="<subcommand>"
     )
-    remap_parser.add_argument("--output", "-o", help="Output file path (default: update in place)")
-    remap_parser.add_argument("--no-backup", action="store_true", help="Skip backup creation")
 
-    subparsers.add_parser("languages", help="List all supported proofing languages")
+    # Config show
+    show_parser = config_subs.add_parser("show", help="Show current configuration", add_help=False)
+    show_parser.add_argument("-h", "--help", action="store_true", help="Show help for show command")
 
-    # Configuration commands
-    subparsers.add_parser("config", help="Show current configuration")
-    subparsers.add_parser("templates", help="List available templates")
-    subparsers.add_parser("completion", help="Show tab completion setup instructions")
+    # Config languages
+    languages_parser = config_subs.add_parser(
+        "languages", help="List supported languages", add_help=False
+    )
+    languages_parser.add_argument(
+        "-h", "--help", action="store_true", help="Show help for languages command"
+    )
 
-    # Init command
+    # Config completion
+    completion_parser = config_subs.add_parser(
+        "completion", help="Setup bash completion", add_help=False
+    )
+    completion_parser.add_argument(
+        "-h", "--help", action="store_true", help="Show help for completion command"
+    )
+
+    # Help command
+    help_parser = subparsers.add_parser(
+        "help", help="Show detailed help information", add_help=False
+    )
+    help_parser.add_argument("help_command", nargs="?", help="Command to show help for")
+    help_parser.add_argument("help_subcommand", nargs="?", help="Subcommand to show help for")
+
+    # Init command (back to top-level for easy first-time setup)
     init_parser = subparsers.add_parser(
-        "init", help="Initialize template folder with default files"
+        "init", help="Initialize template folder with default files", add_help=False
     )
     init_parser.add_argument(
         "path", nargs="?", default="./templates", help="Template folder path (default: ./templates)"
     )
+    init_parser.add_argument("-h", "--help", action="store_true", help="Show help for init command")
 
     return parser
 
 
+def show_main_help():
+    """Show main help message"""
+    print(
+        """usage: deckbuilder [options] <command> <subcommand> [parameters]
+
+Deckbuilder CLI - Intelligent PowerPoint presentation generation
+
+Commands:
+  create                    Generate presentations from markdown or JSON
+  template                  Manage PowerPoint templates and mappings
+  image                     Process and generate images with PlaceKitten
+  config                    Configuration and system information
+  init                      Initialize template folder with default files
+  help                      Show detailed help for commands
+
+Global Options:
+  -t, --templates PATH      Template folder path
+  -o, --output PATH         Output folder path
+  -l, --language LANG       Proofing language (en-AU, es-ES, etc.)
+  -f, --font FONT           Default font family
+  -h, --help                Show this help message
+
+Examples:
+  deckbuilder init                      # First-time setup
+  deckbuilder create presentation.md
+  deckbuilder template analyze default --verbose
+  deckbuilder image generate 800 600 --filter grayscale
+  deckbuilder config languages
+
+To see help for a specific command:
+  deckbuilder help <command>
+  deckbuilder <command> help
+"""
+    )
+
+
+def show_template_help():
+    """Show template command help"""
+    print(
+        """Template management commands:
+
+Usage: deckbuilder template <subcommand> [options]
+
+Subcommands:
+  analyze <name>           Analyze template structure and placeholders
+  validate <name>          Validate template and JSON mappings
+  document <name>          Generate comprehensive template documentation
+  enhance <name>           Enhance template with corrected placeholders
+  list                     List all available templates
+
+Examples:
+  deckbuilder template analyze default --verbose
+  deckbuilder template validate default
+  deckbuilder template document default --output docs.md
+  deckbuilder template enhance default --no-backup
+  deckbuilder template list
+
+For detailed help on a subcommand:
+  deckbuilder help template <subcommand>
+"""
+    )
+
+
+def show_image_help():
+    """Show image command help"""
+    print(
+        """Image processing commands:
+
+Usage: deckbuilder image <subcommand> [options]
+
+Subcommands:
+  generate <w> <h>         Generate PlaceKitten placeholder images
+  crop <file> <w> <h>      Smart crop existing images
+
+Examples:
+  deckbuilder image generate 800 600 --filter grayscale
+  deckbuilder image crop input.jpg 1920 1080 --save-steps
+
+For detailed help on a subcommand:
+  deckbuilder help image <subcommand>
+"""
+    )
+
+
+def show_config_help():
+    """Show config command help"""
+    print(
+        """Configuration and setup commands:
+
+Usage: deckbuilder config <subcommand> [options]
+
+Subcommands:
+  show                     Show current configuration
+  languages                List supported languages
+  completion               Setup bash completion
+
+Examples:
+  deckbuilder config show
+  deckbuilder config languages
+  deckbuilder config completion
+
+For detailed help on a subcommand:
+  deckbuilder help config <subcommand>
+"""
+    )
+
+
+def handle_help_command(args):
+    """Handle help command with contextual information"""
+    if not hasattr(args, "help_command") or not args.help_command:
+        show_main_help()
+        return
+
+    if args.help_command == "template":
+        if hasattr(args, "help_subcommand") and args.help_subcommand:
+            # Show specific template subcommand help
+            if args.help_subcommand == "analyze":
+                print("Analyze template structure and placeholders")
+                print("Usage: deckbuilder template analyze <name> [--verbose]")
+            elif args.help_subcommand == "validate":
+                print("Validate template and JSON mappings")
+                print("Usage: deckbuilder template validate <name>")
+            elif args.help_subcommand == "document":
+                print("Generate comprehensive template documentation")
+                print("Usage: deckbuilder template document <name> [--output file]")
+            elif args.help_subcommand == "enhance":
+                print("Enhance template with corrected placeholders")
+                print("Usage: deckbuilder template enhance <name> [options]")
+            elif args.help_subcommand == "list":
+                print("List all available templates")
+                print("Usage: deckbuilder template list")
+            else:
+                print(f"Unknown template subcommand: {args.help_subcommand}")
+        else:
+            show_template_help()
+    elif args.help_command == "image":
+        if hasattr(args, "help_subcommand") and args.help_subcommand:
+            if args.help_subcommand == "generate":
+                print("Generate PlaceKitten placeholder images")
+                print("Usage: deckbuilder image generate <width> <height> [options]")
+            elif args.help_subcommand == "crop":
+                print("Smart crop existing images")
+                print("Usage: deckbuilder image crop <file> <width> <height> [options]")
+            else:
+                print(f"Unknown image subcommand: {args.help_subcommand}")
+        else:
+            show_image_help()
+    elif args.help_command == "config":
+        if hasattr(args, "help_subcommand") and args.help_subcommand:
+            if args.help_subcommand == "show":
+                print("Show current configuration")
+                print("Usage: deckbuilder config show")
+            elif args.help_subcommand == "languages":
+                print("List supported languages")
+                print("Usage: deckbuilder config languages")
+            elif args.help_subcommand == "completion":
+                print("Setup bash completion")
+                print("Usage: deckbuilder config completion")
+            else:
+                print(f"Unknown config subcommand: {args.help_subcommand}")
+        else:
+            show_config_help()
+    elif args.help_command == "create":
+        print("Generate presentations from markdown or JSON")
+        print("Usage: deckbuilder create <file> [options]")
+        print("Options:")
+        print("  --output, -o       Output filename (without extension)")
+        print("  --template, -t     Template name to use")
+    elif args.help_command == "init":
+        print("Initialize template folder with default files")
+        print("Usage: deckbuilder init [path]")
+        print("Arguments:")
+        print("  path               Template folder path (default: ./templates)")
+    else:
+        print(f"Unknown command: {args.help_command}")
+        print("Available commands: create, template, image, config, init, help")
+
+
+def handle_template_command(cli, args):
+    """Handle template subcommands"""
+    if hasattr(args, "help") and args.help:
+        show_template_help()
+        return
+
+    if not hasattr(args, "template_command") or not args.template_command:
+        show_template_help()
+        return
+
+    if args.template_command == "analyze":
+        if hasattr(args, "help") and args.help:
+            print("Analyze template structure and placeholders")
+            print("Usage: deckbuilder template analyze <name> [--verbose]")
+            return
+        cli.analyze_template(args.template, verbose=args.verbose)
+    elif args.template_command == "validate":
+        if hasattr(args, "help") and args.help:
+            print("Validate template and JSON mappings")
+            print("Usage: deckbuilder template validate <name>")
+            return
+        cli.validate_template(args.template)
+    elif args.template_command == "document":
+        if hasattr(args, "help") and args.help:
+            print("Generate comprehensive template documentation")
+            print("Usage: deckbuilder template document <name> [--output file]")
+            return
+        cli.document_template(args.template, args.output)
+    elif args.template_command == "enhance":
+        if hasattr(args, "help") and args.help:
+            print("Enhance template with corrected placeholders")
+            print("Usage: deckbuilder template enhance <name> [options]")
+            return
+        cli.enhance_template(
+            template_name=args.template,
+            mapping_file=args.mapping,
+            no_backup=args.no_backup,
+            use_conventions=args.use_conventions,
+        )
+    elif args.template_command == "list":
+        if hasattr(args, "help") and args.help:
+            print("List all available templates")
+            print("Usage: deckbuilder template list")
+            return
+        cli.list_templates()
+    else:
+        print(f"Unknown template subcommand: {args.template_command}")
+        show_template_help()
+
+
+def handle_image_command(cli, args):
+    """Handle image subcommands"""
+    if hasattr(args, "help") and args.help:
+        show_image_help()
+        return
+
+    if not hasattr(args, "image_command") or not args.image_command:
+        show_image_help()
+        return
+
+    if args.image_command == "generate":
+        if hasattr(args, "help") and args.help:
+            print("Generate PlaceKitten placeholder images")
+            print("Usage: deckbuilder image generate <width> <height> [options]")
+            return
+        cli.generate_placeholder_image(
+            width=args.width,
+            height=args.height,
+            image_id=args.id,
+            filter_type=args.filter,
+            output_file=args.output,
+        )
+    elif args.image_command == "crop":
+        if hasattr(args, "help") and args.help:
+            print("Smart crop existing images")
+            print("Usage: deckbuilder image crop <file> <width> <height> [options]")
+            return
+        cli.smart_crop_image(
+            input_file=args.input_file,
+            width=args.width,
+            height=args.height,
+            save_steps=args.save_steps,
+            output_file=args.output,
+        )
+    else:
+        print(f"Unknown image subcommand: {args.image_command}")
+        show_image_help()
+
+
+def handle_config_command(cli, args):
+    """Handle config subcommands"""
+    if hasattr(args, "help") and args.help:
+        show_config_help()
+        return
+
+    if not hasattr(args, "config_command") or not args.config_command:
+        show_config_help()
+        return
+
+    if args.config_command == "show":
+        if hasattr(args, "help") and args.help:
+            print("Show current configuration")
+            print("Usage: deckbuilder config show")
+            return
+        cli.get_config()
+    elif args.config_command == "languages":
+        if hasattr(args, "help") and args.help:
+            print("List supported languages")
+            print("Usage: deckbuilder config languages")
+            return
+        cli.list_supported_languages()
+    elif args.config_command == "completion":
+        if hasattr(args, "help") and args.help:
+            print("Setup bash completion")
+            print("Usage: deckbuilder config completion")
+            return
+        cli.show_completion_help()
+    else:
+        print(f"Unknown config subcommand: {args.config_command}")
+        show_config_help()
+
+
 def main():
-    """Main CLI entry point"""
+    """Main CLI entry point with hierarchical command structure"""
     parser = create_parser()
     args = parser.parse_args()
 
-    if not args.command:
-        parser.print_help()
+    # Handle help flag or missing command
+    if (hasattr(args, "help") and args.help) or not args.command:
+        show_main_help()
+        return
+
+    # Handle help command specially
+    if args.command == "help":
+        handle_help_command(args)
         return
 
     # Initialize CLI with global arguments
-    # For image and crop commands, don't use global output path as it conflicts with file output
-    global_output_path = args.output if args.command not in ["image", "crop", "remap"] else None
+    # For image commands, don't use global output path as it conflicts with file output
+    global_output_path = args.output if args.command not in ["image"] else None
     cli = DeckbuilderCLI(
         templates_path=args.templates,
         output_path=global_output_path,
@@ -1059,70 +1463,30 @@ def main():
     )
 
     try:
-        # Route commands
+        # Route hierarchical commands
         if args.command == "create":
+            if hasattr(args, "help") and args.help:
+                print("Generate presentations from markdown or JSON")
+                print("Usage: deckbuilder create <file> [options]")
+                return
             cli.create_presentation(
                 input_file=args.input_file, output_name=args.output, template=args.template
             )
-
-        elif args.command == "analyze":
-            cli.analyze_template(args.template, verbose=args.verbose)
-
-        elif args.command == "validate":
-            cli.validate_template(args.template)
-
-        elif args.command == "document":
-            cli.document_template(args.template, args.output)
-
-        elif args.command == "enhance":
-            cli.enhance_template(
-                template_name=args.template,
-                mapping_file=args.mapping,
-                no_backup=args.no_backup,
-                use_conventions=args.use_conventions,
-            )
-
+        elif args.command == "template":
+            handle_template_command(cli, args)
         elif args.command == "image":
-            cli.generate_placeholder_image(
-                width=args.width,
-                height=args.height,
-                image_id=args.id,
-                filter_type=args.filter,
-                output_file=args.output,
-            )
-
-        elif args.command == "crop":
-            cli.smart_crop_image(
-                input_file=args.input_file,
-                width=args.width,
-                height=args.height,
-                save_steps=args.save_steps,
-                output_file=args.output,
-            )
-
-        elif args.command == "remap":
-            cli.remap_presentation(
-                input_file=args.input_file,
-                language_code=args.language,
-                font_name=args.font,
-                output_file=args.output,
-                create_backup=not args.no_backup,
-            )
-
-        elif args.command == "languages":
-            cli.list_supported_languages()
-
+            handle_image_command(cli, args)
         elif args.command == "config":
-            cli.get_config()
-
-        elif args.command == "templates":
-            cli.list_templates()
-
-        elif args.command == "completion":
-            cli.show_completion_help()
-
+            handle_config_command(cli, args)
         elif args.command == "init":
+            if hasattr(args, "help") and args.help:
+                print("Initialize template folder with default files")
+                print("Usage: deckbuilder init [path]")
+                return
             cli.init_templates(args.path)
+        else:
+            print(f"Unknown command: {args.command}")
+            show_main_help()
 
     except Exception as e:
         print(f"❌ Command failed: {e}")

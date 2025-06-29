@@ -156,14 +156,21 @@ Tasks are organized by phase and component.
 ### 🚀 Next Development Phases (Current Focus)
 
 #### HIGH PRIORITY: CLI UX Enhancement
-- [ ] **CLI Reorganization: Clean Hierarchical Command Structure** - 2025-06-29
-  - [ ] Transform messy flat CLI with 13 top-level commands to professional hierarchical structure  
-  - [ ] Implement `deckbuilder [options] <command> <subcommand> [parameters]` format
-  - [ ] Create comprehensive bash completion with multi-level tab completion
-  - [ ] Group related commands: `template`, `image`, `config` subcommands
-  - [ ] Design Document: [CLI_Reorganization.md](docs/Features/CLI_Reorganization.md)
-  - [ ] GitHub Issue: #10
-  - **Priority**: High - Significant UX improvement for professional CLI interface
+- [x] **CLI Reorganization: Clean Hierarchical Command Structure** - 2025-06-29 ✅ COMPLETED
+  - [x] Transform messy flat CLI with 13 top-level commands to professional hierarchical structure  
+  - [x] Implement `deckbuilder [options] <command> <subcommand> [parameters]` format
+  - [x] Create comprehensive bash completion with multi-level tab completion
+  - [x] Group related commands: `template`, `image`, `config` subcommands
+  - [x] Design Document: [CLI_Reorganization.md](docs/Features/CLI_Reorganization.md)
+  - [x] GitHub Issue: #10 - COMPLETED
+  - **Status**: ✅ COMPLETED - Professional hierarchical CLI structure implemented
+
+- [x] **Config Show Display Enhancement** - 2025-06-29 ✅ COMPLETED
+  - [x] Fix config show to display proper default values instead of "Not set"
+  - [x] Add source indicators: (Default), (Environment Variable), (CLI Argument)
+  - [x] Fix font message text: "using template fonts" instead of "template default"
+  - [x] GitHub Issue: #11 - COMPLETED
+  - **Status**: ✅ COMPLETED - Config display now shows proper defaults and source indicators
 
 #### URGENT: PlaceKitten CLI Bug Fix
 - [ ] **Fix PlaceKitten CLI Image Generation Bug**

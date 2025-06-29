@@ -121,7 +121,7 @@ This is a comprehensive Python library and MCP (Model Context Protocol) Server f
 
 ### 1. Feature Development Process
 ```
-Design → Plan Mode → Feature Documentation → Implementation → Testing → Documentation
+Design → Plan Mode → Feature Documentation → Create github issue → Implementation → Testing → Documentation → Commit → Push → Close issue as complete → Ask user to publish to PyPi or not.
 ```
 
 1. **Always design a feature first** and request plan-only mode

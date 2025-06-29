@@ -234,3 +234,13 @@ smart_crop_*.png
 
 # PlaceKitten test scripts and debug files
 tests/placekitten/debug_scaling.py
+
+# Prevent root directory pollution
+/examples/
+/template_output/
+/test_env/
+/*.md.backup
+/*.json.backup
+/*.tmp
+/cli_new.py
+/cli_backup.py
