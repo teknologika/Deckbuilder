@@ -1,10 +1,9 @@
 # 🎯 Deckbuilder
-
+[![PyPI version](https://badge.fury.io/py/deckbuilder@2x.png)](https://badge.fury.io/py/deckbuilder)
 [![Test Suite](https://github.com/teknologika/deckbuilder/actions/workflows/test.yml/badge.svg)](https://github.com/teknologika/deckbuilder/actions/workflows/test.yml)
 [![PlaceKitten Integrated](https://img.shields.io/badge/PlaceKitten-Integrated-blue)](src/placekitten/README.md)
 [![108 Tests Passing](https://img.shields.io/badge/Tests-108%20Passing-green)](#development)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![PyPI version](https://badge.fury.io/py/deckbuilder.svg)](https://badge.fury.io/py/deckbuilder)
 
 > **Transform LLMs from layout pickers into presentation consultants**
 
