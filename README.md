@@ -1,10 +1,10 @@
 # 🎯 Deckbuilder
 
-[![PyPI version](https://badge.fury.io/py/deckbuilder.svg)](https://badge.fury.io/py/deckbuilder)
 [![Test Suite](https://github.com/teknologika/deckbuilder/actions/workflows/test.yml/badge.svg)](https://github.com/teknologika/deckbuilder/actions/workflows/test.yml)
 [![PlaceKitten Integrated](https://img.shields.io/badge/PlaceKitten-Integrated-blue)](src/placekitten/README.md)
 [![108 Tests Passing](https://img.shields.io/badge/Tests-108%20Passing-green)](#development)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![PyPI version](https://badge.fury.io/py/deckbuilder.svg)](https://badge.fury.io/py/deckbuilder)
 
 > **Transform LLMs from layout pickers into presentation consultants**
 
@@ -39,7 +39,7 @@ Create complete PowerPoint presentations from JSON or Markdown with YAML frontma
 - **Global Arguments**: `-t/--templates` and `-o/--output` for custom paths
 - **Template Management**: Analyze, validate, and enhance PowerPoint templates
 
-### 🎯 **Content-First Intelligence - Currently under design **
+### 🎯 **Content-First Intelligence - Currently under design**
 Instead of asking "*what layouts exist?*", Deckbuilder will ask "*what do you want to communicate?*" This will transform the system from a layout picker into an intelligent presentation consultant.
 
 ## 🚀 Quick Start
