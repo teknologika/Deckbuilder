@@ -60,8 +60,9 @@ deckbuilder init
 # Create presentation from markdown
 deckbuilder create presentation.md
 
-# Create with custom language and font
-deckbuilder create presentation.md --language "Spanish (Spain)" --font "Arial"
+# Create with custom language and font (supports both formats)
+deckbuilder create presentation.md --language "es-ES" --font "Arial"
+deckbuilder create presentation.md --language "Spanish (Spain)" --font "Times New Roman"
 
 # View supported languages
 deckbuilder languages
@@ -93,7 +94,7 @@ Add to your Claude Desktop configuration:
         "DECK_TEMPLATE_FOLDER": "/Users/username/Documents/Deckbuilder/Templates",
         "DECK_TEMPLATE_NAME": "default",
         "DECK_OUTPUT_FOLDER": "/Users/username/Documents/Deckbuilder",
-        "DECK_PROOFING_LANGUAGE": "English (United States)",
+        "DECK_PROOFING_LANGUAGE": "en-AU",
         "DECK_DEFAULT_FONT": "Calibri"
       }
     }
@@ -102,8 +103,9 @@ Add to your Claude Desktop configuration:
 ```
 
 **New Environment Variables:**
-- `DECK_PROOFING_LANGUAGE`: Set proofing language for spell-check and grammar (20 languages supported)
+- `DECK_PROOFING_LANGUAGE`: Set proofing language for spell-check and grammar (accepts both "en-AU" and "English (Australia)" formats)
 - `DECK_DEFAULT_FONT`: Set default font family for all presentations
+- **Default Language**: Australian English (`en-AU`) if not specified
 
 ## 📝 Usage Examples
 
@@ -191,10 +193,10 @@ print(f"✅ Created: {result}")
 ## 🌍 Language & Font Support
 
 ### Supported Languages (20)
-Deckbuilder supports 20 proofing languages for spell-check and grammar:
+Deckbuilder supports 20 proofing languages for spell-check and grammar. You can use either locale codes (`en-AU`) or full names (`English (Australia)`):
 
 ```bash
-# View all supported languages
+# View all supported languages (shows both formats)
 deckbuilder languages
 ```
 
@@ -210,14 +212,16 @@ deckbuilder languages
 ### Font Customization
 
 ```bash
-# Set language and font globally
-export DECK_PROOFING_LANGUAGE="Spanish (Spain)"
+# Set language and font globally (supports both formats)
+export DECK_PROOFING_LANGUAGE="en-AU"           # Locale code format
+export DECK_PROOFING_LANGUAGE="English (Australia)"  # Full name format
 export DECK_DEFAULT_FONT="Arial"
 
-# Or use CLI arguments
-deckbuilder create presentation.md --language "French (France)" --font "Times New Roman"
+# Or use CLI arguments (both formats work)
+deckbuilder create presentation.md --language "fr-CA" --font "Times New Roman"
+deckbuilder create presentation.md --language "French (Canada)" --font "Arial"
 
-# Check current settings
+# Check current settings (shows locale codes and descriptions)
 deckbuilder config
 ```
 

@@ -83,8 +83,10 @@ class DeckbuilderCLI:
         if language:
             # 1. CLI argument has highest priority
             os.environ["DECK_PROOFING_LANGUAGE"] = language
-        # 2. Environment variable already set (keep existing)
-        # 3. No default language (use system default)
+        elif not os.getenv("DECK_PROOFING_LANGUAGE"):
+            # 2. Environment variable already set (skip)
+            # 3. Default language: Australian English
+            os.environ["DECK_PROOFING_LANGUAGE"] = "en-AU"
 
         # Font setting resolution priority
         if font:

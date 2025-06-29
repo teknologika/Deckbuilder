@@ -73,6 +73,30 @@ class FormattingSupport:
         """Initialize formatting support"""
         pass
 
+    # Language name to code mapping for backward compatibility
+    LANGUAGE_NAME_TO_CODE = {
+        "English (United States)": "en-US",
+        "English (Australia)": "en-AU",
+        "English (United Kingdom)": "en-GB",
+        "English (Canada)": "en-CA",
+        "English (New Zealand)": "en-NZ",
+        "English (South Africa)": "en-ZA",
+        "Spanish (Spain)": "es-ES",
+        "French (France)": "fr-FR",
+        "French (Canada)": "fr-CA",
+        "German (Germany)": "de-DE",
+        "Italian (Italy)": "it-IT",
+        "Portuguese (Portugal)": "pt-PT",
+        "Portuguese (Brazil)": "pt-BR",
+        "Dutch (Netherlands)": "nl-NL",
+        "Swedish (Sweden)": "sv-SE",
+        "Danish (Denmark)": "da-DK",
+        "Finnish (Finland)": "fi-FI",
+        "Russian (Russia)": "ru-RU",
+        "Japanese (Japan)": "ja-JP",
+        "Korean (South Korea)": "ko-KR",
+    }
+
     @classmethod
     def get_supported_languages(cls) -> Dict[str, str]:
         """
@@ -106,25 +130,51 @@ class FormattingSupport:
         return descriptions
 
     @classmethod
+    def normalize_language_input(cls, language_input: str) -> Optional[str]:
+        """
+        Normalize language input to standard locale code format.
+
+        Accepts both locale codes (en-AU) and full names (English (Australia)).
+
+        Args:
+            language_input: Language code or name
+
+        Returns:
+            Normalized locale code or None if not found
+        """
+        # Try direct code lookup first
+        if language_input in cls.LANGUAGE_IDS:
+            return language_input
+
+        # Try full name lookup
+        if language_input in cls.LANGUAGE_NAME_TO_CODE:
+            return cls.LANGUAGE_NAME_TO_CODE[language_input]
+
+        return None
+
+    @classmethod
     def validate_language_code(cls, language_code: str) -> Tuple[bool, Optional[str], List[str]]:
         """
         Validate language code and provide suggestions for invalid codes.
 
+        Accepts both locale codes (en-AU) and full names (English (Australia)).
+
         Args:
-            language_code: Language code to validate (e.g., 'en-US')
+            language_code: Language code or name to validate
 
         Returns:
             Tuple of (is_valid, error_message, suggestions)
         """
-        if language_code in cls.LANGUAGE_IDS:
+        # Try to normalize the input
+        normalized = cls.normalize_language_input(language_code)
+        if normalized:
             return True, None, []
 
-        # Generate suggestions for invalid codes
-        suggestions = get_close_matches(
-            language_code, list(cls.LANGUAGE_IDS.keys()), n=3, cutoff=0.6
-        )
+        # Generate suggestions for invalid codes from both formats
+        all_valid_inputs = list(cls.LANGUAGE_IDS.keys()) + list(cls.LANGUAGE_NAME_TO_CODE.keys())
+        suggestions = get_close_matches(language_code, all_valid_inputs, n=3, cutoff=0.6)
 
-        error_msg = f"Unsupported language code: '{language_code}'"
+        error_msg = f"Unsupported language: '{language_code}'"
         return False, error_msg, suggestions
 
     @classmethod
@@ -149,19 +199,23 @@ class FormattingSupport:
         warning_msg = f"Font '{font_name}' is not a common system font"
         return True, warning_msg, suggestions
 
-    def apply_language_to_run(self, run, language_code: str) -> bool:
+    def apply_language_to_run(self, run, language_input: str) -> bool:
         """
         Apply language setting to a text run.
 
+        Accepts both locale codes (en-AU) and full names (English (Australia)).
+
         Args:
             run: python-pptx Run object
-            language_code: Language code (e.g., 'en-US')
+            language_input: Language code or name (e.g., 'en-AU' or 'English (Australia)')
 
         Returns:
             True if language was applied successfully
         """
         try:
-            if language_code in self.LANGUAGE_IDS:
+            # Normalize input to locale code
+            language_code = self.normalize_language_input(language_input)
+            if language_code and language_code in self.LANGUAGE_IDS:
                 run.font.language_id = self.LANGUAGE_IDS[language_code]
                 return True
             return False
