@@ -215,6 +215,7 @@ tests/templates/
 tests/output/
 tests/deckbuilder/output/*
 temp/*
+tmp/
 
 # CLI output directory
 output/

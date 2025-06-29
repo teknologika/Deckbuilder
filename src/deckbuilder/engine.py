@@ -20,6 +20,24 @@ from .image_handler import ImageHandler
 from .placekitten_integration import PlaceKittenIntegration
 
 try:
+    from .formatting_support import FormattingSupport, get_default_language, get_default_font
+except ImportError:
+    # Fallback if formatting support is not available
+    class FormattingSupport:
+        def apply_language_to_run(self, run, language_code):
+            return False
+
+        def apply_font_to_run(self, run, font_name):
+            return False
+
+    def get_default_language():
+        return None
+
+    def get_default_font():
+        return None
+
+
+try:
     from .table_styles import TABLE_BORDER_STYLES, TABLE_HEADER_STYLES, TABLE_ROW_STYLES
 except ImportError:
     # Fallback values if modules don't exist
@@ -66,6 +84,11 @@ class Deckbuilder:
         self.output_folder = os.getenv("DECK_OUTPUT_FOLDER")
         self.prs = Presentation()
         self.layout_mapping = None
+
+        # Initialize formatting support
+        self.formatting_support = FormattingSupport()
+        self.default_language = get_default_language()
+        self.default_font = get_default_font()
 
         # Initialize image handling components with cache in output directory
         cache_dir = "temp/image_cache"  # Default fallback
@@ -690,6 +713,12 @@ class Deckbuilder:
                 run.font.italic = True
             if format_dict.get("underline"):
                 run.font.underline = True
+
+            # Apply default language and font settings
+            if self.default_language:
+                self.formatting_support.apply_language_to_run(run, self.default_language)
+            if self.default_font:
+                self.formatting_support.apply_font_to_run(run, self.default_font)
 
     def _apply_formatted_segments_to_shape(self, shape, segments):
         """Apply formatted text segments to a shape's text frame."""

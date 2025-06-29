@@ -24,6 +24,7 @@ try:
     # Try package imports first (for installed package)
     from deckbuilder.engine import Deckbuilder
     from deckbuilder.cli_tools import TemplateManager
+    from deckbuilder.formatting_support import FormattingSupport, print_supported_languages
     from placekitten import PlaceKitten
 except ImportError:
     # Fallback to development imports (when running from source)
@@ -33,16 +34,20 @@ except ImportError:
 
     from src.deckbuilder.engine import Deckbuilder  # noqa: E402
     from src.deckbuilder.cli_tools import TemplateManager  # noqa: E402
+    from src.deckbuilder.formatting_support import (
+        FormattingSupport,
+        print_supported_languages,
+    )  # noqa: E402
     from src.placekitten import PlaceKitten  # noqa: E402
 
 
 class DeckbuilderCLI:
     """Standalone Deckbuilder command-line interface"""
 
-    def __init__(self, templates_path=None, output_path=None):
-        self.setup_environment(templates_path, output_path)
+    def __init__(self, templates_path=None, output_path=None, language=None, font=None):
+        self.setup_environment(templates_path, output_path, language, font)
 
-    def setup_environment(self, templates_path=None, output_path=None):
+    def setup_environment(self, templates_path=None, output_path=None, language=None, font=None):
         """Setup environment variables with priority: CLI args > env vars > defaults"""
 
         # Template folder resolution priority
@@ -73,6 +78,20 @@ class DeckbuilderCLI:
         # Default template name
         if not os.getenv("DECK_TEMPLATE_NAME"):
             os.environ["DECK_TEMPLATE_NAME"] = "default"
+
+        # Language setting resolution priority
+        if language:
+            # 1. CLI argument has highest priority
+            os.environ["DECK_PROOFING_LANGUAGE"] = language
+        # 2. Environment variable already set (keep existing)
+        # 3. No default language (use system default)
+
+        # Font setting resolution priority
+        if font:
+            # 1. CLI argument has highest priority
+            os.environ["DECK_DEFAULT_FONT"] = font
+        # 2. Environment variable already set (keep existing)
+        # 3. No default font (use PowerPoint default)
 
     def _validate_templates_folder(self):
         """Validate templates folder exists and provide helpful error message"""
@@ -431,7 +450,7 @@ comparison:
     title: Agile Methodology
     content: "***Iterative*** development with frequent releases and **customer feedback**"
   right:
-    title: Waterfall Methodology  
+    title: Waterfall Methodology
     content: "___Sequential___ phases with **comprehensive planning** and *detailed documentation*"
 ---
 
@@ -465,7 +484,7 @@ columns:
 layout: Three Columns
 title: **Benefits** Overview
 columns:
-  - content: "**Fast processing** with optimized algorithms and ***sub-millisecond*** response times"
+  - content: "**Fast processing** with optimized algorithms and ***sub-millisecond*** response"
   - content: "*Enterprise-grade* security with ___SOC2___ and **GDPR** compliance"
   - content: "***Intuitive*** interface with **minimal** learning curve and *comprehensive* docs"
 ---
@@ -480,7 +499,7 @@ media:
   description: |
     PlaceKitten features:
     • **Automatic fallback** when images are missing
-    • *Professional grayscale* styling for business presentations  
+    • *Professional grayscale* styling for business presentations
     • ***Smart cropping*** with face detection
     • ___Consistent caching___ for performance
 ---
@@ -563,15 +582,15 @@ Perfect for **one-off** slides with *unique* requirements.
           },
           {
             "bullets": [
-              "**Markdown files** with structured frontmatter",
-              "**JSON files** with rich content structure", 
+              "**Markdown files** with frontmatter",
+              "**JSON files** with structure",
               "***Automatic PlaceKitten*** image fallbacks",
               "___Professional formatting___ with inline styles"
             ],
             "bullet_levels": [1, 1, 1, 1]
           },
           {
-            "paragraph": "This presentation demonstrates all **13 supported layouts** with examples."
+            "paragraph": "This presentation demonstrates all **13 layouts** with examples."
           }
         ]
       },
@@ -589,7 +608,7 @@ Perfect for **one-off** slides with *unique* requirements.
         "title": "Two Content Layout **Comparison**",
         "content_left_1": [
           "**Easy to write** and edit",
-          "*Version control* friendly", 
+          "*Version control* friendly",
           "___Human readable___ format"
         ],
         "content_right_1": [
@@ -602,19 +621,19 @@ Perfect for **one-off** slides with *unique* requirements.
         "type": "Comparison",
         "title": "Development **Approach** Comparison",
         "title_left_1": "Agile Methodology",
-        "content_left_1": "***Iterative*** development with frequent releases and **customer feedback**",
+        "content_left_1": "***Iterative*** development with **customer feedback**",
         "title_right_1": "Waterfall Methodology",
-        "content_right_1": "___Sequential___ phases with **comprehensive planning** and *detailed documentation*"
+        "content_right_1": "___Sequential___ phases with **planning** and *documentation*"
       },
       {
         "type": "Four Columns",
         "title": "Feature **Comparison** Matrix",
         "title_col1_1": "Performance",
-        "content_col1_1": "**Fast processing** with optimized algorithms and *sub-millisecond* response",
-        "title_col2_1": "Security", 
-        "content_col2_1": "***Enterprise-grade*** encryption with ___SOC2___ compliance",
+        "content_col1_1": "**Fast processing** with *sub-millisecond* response",
+        "title_col2_1": "Security",
+        "content_col2_1": "***Enterprise-grade*** encryption",
         "title_col3_1": "Usability",
-        "content_col3_1": "*Intuitive* interface with **minimal** learning curve",
+        "content_col3_1": "*Intuitive* interface",
         "title_col4_1": "Cost",
         "content_col4_1": "___Competitive___ pricing with **flexible** plans"
       },
@@ -624,20 +643,20 @@ Perfect for **one-off** slides with *unique* requirements.
         "title_col1_1": "Phase 1",
         "content_col1_1": "**Planning** and *requirements* gathering with ___stakeholder___ input",
         "title_col2_1": "Phase 2",
-        "content_col2_1": "***Development*** and *testing* with **continuous** integration", 
+        "content_col2_1": "***Development*** and *testing* with **continuous** integration",
         "title_col3_1": "Phase 3",
         "content_col3_1": "___Deployment___ and **monitoring** with *performance* tracking"
       },
       {
         "type": "Three Columns",
         "title": "**Benefits** Overview",
-        "content_col1_1": "**Fast processing** with optimized algorithms and ***sub-millisecond*** response times",
+        "content_col1_1": "**Fast processing** with ***sub-millisecond*** response",
         "content_col2_1": "*Enterprise-grade* security with ___SOC2___ and **GDPR** compliance",
-        "content_col3_1": "***Intuitive*** interface with **minimal** learning curve and *comprehensive* docs"
+        "content_col3_1": "***Intuitive*** interface with **minimal** learning curve"
       },
       {
         "type": "Picture with Caption",
-        "title": "**PlaceKitten** Fallback Demo", 
+        "title": "**PlaceKitten** Fallback Demo",
         "image_1": "assets/non_existent_image.png",
         "text_caption_1": "***Smart fallback*** with professional **grayscale** styling"
       },
@@ -650,7 +669,7 @@ Perfect for **one-off** slides with *unique* requirements.
       {
         "type": "table",
         "style": "dark_blue_white_text",
-        "row_style": "alternating_light_gray", 
+        "row_style": "alternating_light_gray",
         "border_style": "thin_gray",
         "title": "**Project Status** Table",
         "table": {
@@ -684,13 +703,13 @@ Perfect for **one-off** slides with *unique* requirements.
           {
             "bullets": [
               "**Primary content** with full formatting",
-              "*Secondary information* with emphasis", 
+              "*Secondary information* with emphasis",
               "***Important highlights*** for key points"
             ],
             "bullet_levels": [1, 1, 1]
           },
           {
-            "paragraph": "**Caption area**: Additional context with ___underlined___ text and **bold** emphasis."
+            "paragraph": "**Caption area**: Additional context with **bold** emphasis."
           }
         ]
       },
@@ -731,6 +750,135 @@ Perfect for **one-off** slides with *unique* requirements.
         print(f"  Template Folder: {os.getenv('DECK_TEMPLATE_FOLDER', 'Not set')}")
         print(f"  Output Folder: {os.getenv('DECK_OUTPUT_FOLDER', 'Not set')}")
         print(f"  Default Template: {os.getenv('DECK_TEMPLATE_NAME', 'Not set')}")
+
+        # Display language setting with description
+        language_code = os.getenv("DECK_PROOFING_LANGUAGE")
+        if language_code:
+            languages = FormattingSupport.get_supported_languages()
+            language_desc = languages.get(language_code, language_code)
+            print(f"  Proofing Language: {language_code} ({language_desc})")
+        else:
+            print("  Proofing Language: Not set (using system default)")
+
+        # Display font setting
+        font_name = os.getenv("DECK_DEFAULT_FONT")
+        if font_name:
+            print(f"  Default Font: {font_name}")
+        else:
+            print("  Default Font: Not set (using template default)")
+
+    def list_supported_languages(self):
+        """List all supported proofing languages"""
+        print_supported_languages()
+
+    def validate_language_and_font(
+        self, language_code: Optional[str] = None, font_name: Optional[str] = None
+    ) -> bool:
+        """
+        Validate language and font settings, showing helpful messages.
+
+        Returns:
+            True if all provided settings are valid
+        """
+        formatter = FormattingSupport()
+        valid = True
+
+        if language_code:
+            is_valid, error_msg, suggestions = formatter.validate_language_code(language_code)
+            if not is_valid:
+                print(f"❌ {error_msg}")
+                if suggestions:
+                    print(f"💡 Did you mean: {', '.join(suggestions)}?")
+                print("📋 Use 'deckbuilder languages' to see all supported languages")
+                valid = False
+
+        if font_name:
+            is_valid, warning_msg, suggestions = formatter.validate_font_name(font_name)
+            if warning_msg:
+                print(f"⚠️  {warning_msg}")
+                if suggestions:
+                    print(f"💡 Similar common fonts: {', '.join(suggestions)}")
+                print("ℹ️  Custom fonts will still be applied if available on the system")
+
+        return valid
+
+    def remap_presentation(
+        self,
+        input_file: str,
+        language_code: Optional[str] = None,
+        font_name: Optional[str] = None,
+        output_file: Optional[str] = None,
+        create_backup: bool = True,
+    ):
+        """
+        Remap language and/or font settings in an existing PowerPoint presentation.
+        Updates both master slides and content slides.
+
+        Args:
+            input_file: Path to input PowerPoint file
+            language_code: Optional language code to apply
+            font_name: Optional font name to apply
+            output_file: Optional output file path
+            create_backup: Whether to create backup file
+        """
+        input_path = Path(input_file)
+
+        if not input_path.exists():
+            print(f"❌ Input file not found: {input_file}")
+            return
+
+        if not input_path.suffix.lower() == ".pptx":
+            print(f"❌ File must be a PowerPoint file (.pptx): {input_file}")
+            return
+
+        # Validate settings
+        if not self.validate_language_and_font(language_code, font_name):
+            return
+
+        # Show what will be updated
+        updates = []
+        if language_code:
+            languages = FormattingSupport.get_supported_languages()
+            lang_desc = languages.get(language_code, language_code)
+            updates.append(f"language to {language_code} ({lang_desc})")
+        if font_name:
+            updates.append(f"font to '{font_name}'")
+
+        if not updates:
+            print("❌ No updates specified. Use --language or --font arguments.")
+            return
+
+        print(f"🔄 Updating {' and '.join(updates)} in: {input_file}")
+
+        try:
+            formatter = FormattingSupport()
+            result = formatter.update_presentation(
+                presentation_path=str(input_path),
+                language_code=language_code,
+                font_name=font_name,
+                output_path=output_file,
+                create_backup=create_backup,
+            )
+
+            if result["success"]:
+                print(f"✅ {result['message']}")
+                if result["backup_path"]:
+                    print(f"📁 Backup created: {result['backup_path']}")
+
+                stats = result["stats"]
+                print("📊 Processing Summary:")
+                print(f"   Master slides: {stats['master_slides_processed']}")
+                print(f"   Content slides: {stats['content_slides_processed']}")
+                print(f"   Text runs processed: {stats['total_runs_processed']}")
+                if language_code:
+                    print(f"   Language applied: {stats['total_language_applied']} runs")
+                if font_name:
+                    print(f"   Font applied: {stats['total_font_applied']} runs")
+            else:
+                print(f"❌ {result['error']}")
+
+        except Exception as e:
+            print(f"❌ Error processing presentation: {e}")
 
     def show_completion_help(self):
         """Show tab completion installation instructions"""
@@ -798,6 +946,15 @@ Examples:
     parser.add_argument(
         "-o", "--output", metavar="PATH", help="Output folder path (default: current directory)"
     )
+    parser.add_argument(
+        "-l",
+        "--language",
+        metavar="LANG",
+        help="Proofing language (e.g., en-US, en-AU)",
+    )
+    parser.add_argument(
+        "-f", "--font", metavar="FONT", help='Default font family (e.g., "Calibri", "Arial")'
+    )
 
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
@@ -848,6 +1005,22 @@ Examples:
     crop_parser.add_argument("--save-steps", action="store_true", help="Save processing steps")
     crop_parser.add_argument("--output", "-o", help="Output filename")
 
+    # Formatting and language commands
+    remap_parser = subparsers.add_parser(
+        "remap", help="Update language and/or font in PowerPoint presentation"
+    )
+    remap_parser.add_argument("input_file", help="Input PowerPoint (.pptx) file")
+    remap_parser.add_argument(
+        "-l", "--language", help="Language code to apply (e.g., en-US, en-AU)"
+    )
+    remap_parser.add_argument(
+        "-f", "--font", help='Font family to apply (e.g., "Calibri", "Arial")'
+    )
+    remap_parser.add_argument("--output", "-o", help="Output file path (default: update in place)")
+    remap_parser.add_argument("--no-backup", action="store_true", help="Skip backup creation")
+
+    subparsers.add_parser("languages", help="List all supported proofing languages")
+
     # Configuration commands
     subparsers.add_parser("config", help="Show current configuration")
     subparsers.add_parser("templates", help="List available templates")
@@ -875,8 +1048,13 @@ def main():
 
     # Initialize CLI with global arguments
     # For image and crop commands, don't use global output path as it conflicts with file output
-    global_output_path = args.output if args.command not in ["image", "crop"] else None
-    cli = DeckbuilderCLI(templates_path=args.templates, output_path=global_output_path)
+    global_output_path = args.output if args.command not in ["image", "crop", "remap"] else None
+    cli = DeckbuilderCLI(
+        templates_path=args.templates,
+        output_path=global_output_path,
+        language=getattr(args, "language", None),
+        font=getattr(args, "font", None),
+    )
 
     try:
         # Route commands
@@ -919,6 +1097,18 @@ def main():
                 save_steps=args.save_steps,
                 output_file=args.output,
             )
+
+        elif args.command == "remap":
+            cli.remap_presentation(
+                input_file=args.input_file,
+                language_code=args.language,
+                font_name=args.font,
+                output_file=args.output,
+                create_backup=not args.no_backup,
+            )
+
+        elif args.command == "languages":
+            cli.list_supported_languages()
 
         elif args.command == "config":
             cli.get_config()
