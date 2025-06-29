@@ -977,7 +977,7 @@ Perfect for **one-off** slides with *unique* requirements.
         print("1. Download the completion script:")
         completion_url = (
             "https://raw.githubusercontent.com/teknologika/deckbuilder/main/"
-            "deckbuilder-completion.bash"
+            "src/deckbuilder/deckbuilder-completion.bash"
         )
         print(f"   curl -o ~/.deckbuilder-completion.bash {completion_url}")
         print()
@@ -994,7 +994,7 @@ Perfect for **one-off** slides with *unique* requirements.
         print("   • Global flags: deckbuilder -<TAB>")
         print()
         print("For system-wide installation:")
-        print("   sudo curl -o /etc/bash_completion.d/deckbuilder")
+        print("   sudo curl -o /etc/bash_completion.d/deckbuilder \\")
         print(f"        {completion_url}")
 
 
