@@ -321,6 +321,13 @@ media:
   - Test PyPI validation followed by production release
   - Integration testing with real-world installation scenarios
 
+### 📋 Current Development Issues
+- **CLI UX Enhancement** - [GitHub Issue #10](https://github.com/teknologika/Deckbuilder/issues/10)
+  - Transform messy flat CLI to professional hierarchical command structure
+  - Implement comprehensive bash completion with multi-level tab completion
+  - Design: [CLI_Reorganization.md](docs/Features/CLI_Reorganization.md)
+  - Priority: High - Significant user experience improvement
+
 ### 📋 Future Enhancements
 - **Content Intelligence & Layout Expansion**
   - Convention-based naming system and standardized placeholder patterns

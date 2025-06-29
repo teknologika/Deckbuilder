@@ -155,6 +155,16 @@ Tasks are organized by phase and component.
 
 ### 🚀 Next Development Phases (Current Focus)
 
+#### HIGH PRIORITY: CLI UX Enhancement
+- [ ] **CLI Reorganization: Clean Hierarchical Command Structure** - 2025-06-29
+  - [ ] Transform messy flat CLI with 13 top-level commands to professional hierarchical structure  
+  - [ ] Implement `deckbuilder [options] <command> <subcommand> [parameters]` format
+  - [ ] Create comprehensive bash completion with multi-level tab completion
+  - [ ] Group related commands: `template`, `image`, `config` subcommands
+  - [ ] Design Document: [CLI_Reorganization.md](docs/Features/CLI_Reorganization.md)
+  - [ ] GitHub Issue: #10
+  - **Priority**: High - Significant UX improvement for professional CLI interface
+
 #### URGENT: PlaceKitten CLI Bug Fix
 - [ ] **Fix PlaceKitten CLI Image Generation Bug**
   - [ ] PlaceKitten CLI commands creating directories instead of image files
