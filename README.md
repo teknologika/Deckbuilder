@@ -8,7 +8,11 @@
 
 > **Transform LLMs from layout pickers into presentation consultants**
 
-Deckbuilder is a powerful Python library and MCP (Model Context Protocol) server for intelligent PowerPoint presentation generation. Built with a **content-first design philosophy**, Deckbuilder transforms how AI creates presentations by focusing on *what you want to communicate* rather than just *what layouts exist*.
+Deckbuilder is a powerful Python library, Command Line, and MCP (Model Context Protocol) server for PowerPoint presentation generation.
+
+Decknuilder currently supports JSON and Frontmatter formatted Markdown for content. Any slide template can be mapped using JSON with template support being progressivley added to Markdown.
+
+The MCP server is being enhanced to be with a **content-first design philosophy**, Deckbuilder's MCP server will transform how AI creates presentations by focusing on *what you want to communicate* rather than just *what layouts exist*.
 
 ## ✨ Key Features
 
@@ -22,7 +26,7 @@ Create complete PowerPoint presentations from JSON or Markdown with YAML frontma
 - **50+ Business Layouts**: Progressive library of professional presentation templates
 
 ### 🖼️ **Smart Image Processing** 
-- **PlaceKitten Integration**: Professional placeholder generation with computer vision
+- **Placekitten Generation**: Professional placeholder generation with computer vision
 - **Intelligent Fallbacks**: Automatic handling of missing/invalid images
 - **Smart Cropping**: Face detection and rule-of-thirds composition
 - **Professional Filters**: 10+ effects optimized for business presentations
@@ -35,8 +39,8 @@ Create complete PowerPoint presentations from JSON or Markdown with YAML frontma
 - **Global Arguments**: `-t/--templates` and `-o/--output` for custom paths
 - **Template Management**: Analyze, validate, and enhance PowerPoint templates
 
-### 🎯 **Content-First Intelligence**
-Instead of asking "*what layouts exist?*", Deckbuilder asks "*what do you want to communicate?*" This transforms the system from a layout picker into an intelligent presentation consultant.
+### 🎯 **Content-First Intelligence - Currently under design **
+Instead of asking "*what layouts exist?*", Deckbuilder will ask "*what do you want to communicate?*" This will transform the system from a layout picker into an intelligent presentation consultant.
 
 ## 🚀 Quick Start
 
@@ -49,7 +53,7 @@ pip install deckbuilder
 ### CLI Usage (Standalone)
 
 ```bash
-# Initialize templates (one-time setup)
+# Initialize templates (one-time setup) This will create the default template and mappint JSON.
 deckbuilder init
 
 # Create presentation from markdown
@@ -208,14 +212,14 @@ placeholder = (pk.generate(1920, 1080, image_id=1)
 │           │                                         │
 ├───────────┴─────────────────────────────────────────┤
 │                Content Intelligence                 │
-│  ┌─────────────────┐        �┌────────────────────┐  │
+│  ┌─────────────────┐        ┌────────────────────┐  │
 │  │  Layout         │        │   PlaceKitten      │  │
-│  │  Intelligence   │◄──────►│   Processing       │  │
+│  │  Intelligence   │        │   Processing       │  │
 │  └─────────────────┘        └────────────────────┘  │
 └─────────────────────────────────────────────────────┘
 ```
 
-## 🎨 Supported Layouts
+## 🎨 Supported Markdown Layouts
 
 ### ✅ Currently Implemented
 - **Title Slide** - Opening slide with title and subtitle
@@ -239,7 +243,7 @@ See [Supported Templates](docs/Features/SupportedTemplates.md) for complete road
 
 ### Prerequisites
 - Python 3.11+
-- Virtual environment (recommended)
+- Virtual environments are recommended.
 
 ### Development Install
 
@@ -275,6 +279,7 @@ pytest tests/
 ## 📚 Documentation
 
 - **[PLANNING.md](PLANNING.md)** - Project architecture and design principles
+- **[TASK.md](TASK.md)** - Current to-do list and planned features
 - **[API Documentation](docs/API.md)** - Complete API reference
 - **[Feature Specifications](docs/Features/)** - Detailed feature documentation
 - **[PlaceKitten Library](src/placekitten/README.md)** - Image processing documentation
@@ -286,7 +291,8 @@ pytest tests/
 - **python-pptx** for PowerPoint generation and template manipulation
 - **PyYAML** for structured frontmatter processing
 - **OpenCV + Pillow** for computer vision and image processing
-- **pytest** with 108 comprehensive tests including image integration
+- **pytest** for unit testing
+- **Anthropic Claude** - for most of the development gruntwork :-)
 
 ## 📋 Troubleshooting
 
@@ -316,7 +322,7 @@ Apache License 2.0 - See [LICENSE](LICENSE) file for details.
 
 <div align="center">
 
-**Built with ❤️ for intelligent presentation generation**
+**Built with ❤️ for intelligent presentation generation - Copyright Bruce McLeod**
 
 [🚀 Get Started](#quick-start) • [📖 Documentation](docs/) • [🐛 Report Issues](https://github.com/teknologika/deckbuilder/issues)
 
