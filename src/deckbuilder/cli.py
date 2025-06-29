@@ -200,16 +200,16 @@ class DeckbuilderCLI:
         pk = PlaceKitten()
 
         try:
-            # Generate image with optional parameters
-            image = pk.generate(
-                width=width, height=height, image_id=image_id, filter_type=filter_type
-            )
-
             # Set output filename
             if not output_file:
                 filter_suffix = f"_{filter_type}" if filter_type else ""
                 id_suffix = f"_id{image_id}" if image_id else ""
                 output_file = f"placeholder_{width}x{height}{id_suffix}{filter_suffix}.jpg"
+
+            # Generate image with optional parameters
+            image = pk.generate(
+                width=width, height=height, image_id=image_id, filter_type=filter_type
+            )
 
             # Save image
             result = image.save(output_file)
@@ -311,10 +311,59 @@ class DeckbuilderCLI:
                 print("❌ No template files found to copy")
                 return
 
-            # Success message
-            print(f"✅ Template folder created at {target_path}")
-            print(f"📁 Copied: {', '.join(files_copied)}")
-            print()
+            # Generate documentation and examples
+            print("📝 Generating documentation and examples...")
+
+            try:
+                # Try relative import first (for package usage)
+                try:
+                    from .cli_tools import DocumentationGenerator
+                except ImportError:
+                    # Fallback to absolute import (for direct script execution)
+                    import sys
+
+                    current_dir = Path(__file__).parent
+                    sys.path.insert(0, str(current_dir))
+                    from cli_tools import DocumentationGenerator
+                doc_gen = DocumentationGenerator(template_folder=str(target_path))
+
+                # Generate Getting_Started.md
+                doc_gen.generate_getting_started(output_path=target_path / "Getting_Started.md")
+
+                # Create examples folder
+                examples_path = target_path / "examples"
+                examples_path.mkdir(exist_ok=True)
+
+                # Generate enhanced test files
+                self._generate_enhanced_test_files(examples_path, str(target_path))
+
+                generated_files = [
+                    "Getting_Started.md",
+                    "examples/test_presentation.md",
+                    "examples/test_presentation.json",
+                ]
+
+                print("✅ Template folder created at", target_path)
+                print("📁 Copied:", ", ".join(files_copied))
+                print("📝 Generated documentation:")
+                for file in generated_files:
+                    print(f"   - {file}")
+                print()
+
+                # Enhanced success messaging
+                print("🚀 Next steps:")
+                print("   1. Read: Getting_Started.md")
+                print("   2. Try: deckbuilder create examples/test_presentation.md")
+                print(
+                    "   3. Compare: Both example files show the same content in different formats"
+                )
+                print()
+
+            except ImportError as e:
+                print(f"⚠️  Could not generate documentation: {e}")
+                print("✅ Template folder created at", target_path)
+                print("📁 Copied:", ", ".join(files_copied))
+                print()
 
             # Environment variable guidance
             print("💡 To make this permanent, add to your .bash_profile:")
@@ -323,12 +372,358 @@ class DeckbuilderCLI:
             print('export DECK_TEMPLATE_NAME="default"')
             print()
             print("Then reload: source ~/.bash_profile")
-            print()
-            print("🚀 Ready to use! Try: deckbuilder create example.md")
 
         except Exception as e:
             print(f"❌ Error setting up templates: {e}")
             print("💡 Make sure you have write permissions to the target directory")
+
+    def _generate_enhanced_test_files(self, examples_path, template_folder):
+        """Generate enhanced test_presentation.md and test_presentation.json files"""
+
+        # Enhanced Markdown file with all implemented layouts
+        markdown_content = """---
+layout: Title Slide
+---
+# **Deckbuilder Test Presentation**
+## Comprehensive examples of all supported layouts with *formatting*
+
+---
+layout: Title and Content
+---
+# Introduction: **What is Deckbuilder?**
+
+Deckbuilder creates professional PowerPoint presentations from:
+- **Markdown files** with structured frontmatter
+- **JSON files** with rich content structure
+- ***Automatic PlaceKitten*** image fallbacks
+- ___Professional formatting___ with inline styles
+
+This presentation demonstrates all **13 supported layouts** with examples.
+
+---
+layout: Section Header
+---
+# Section: **Layout Demonstrations**
+
+The following slides showcase each layout type with practical examples.
+
+---
+layout: Two Content
+title: Two Content Layout **Comparison**
+sections:
+  - title: Markdown Benefits
+    content:
+      - "**Easy to write** and edit"
+      - "*Version control* friendly"
+      - "___Human readable___ format"
+  - title: JSON Benefits
+    content:
+      - "**Programmatic** generation"
+      - "*Rich structure* support"
+      - "___Automation___ ready"
+---
+
+---
+layout: Comparison
+title: Development **Approach** Comparison
+comparison:
+  left:
+    title: Agile Methodology
+    content: "***Iterative*** development with frequent releases and **customer feedback**"
+  right:
+    title: Waterfall Methodology  
+    content: "___Sequential___ phases with **comprehensive planning** and *detailed documentation*"
+---
+
+---
+layout: Four Columns
+title: Feature **Comparison** Matrix
+columns:
+  - title: Performance
+    content: "**Fast processing** with optimized algorithms and *sub-millisecond* response"
+  - title: Security
+    content: "***Enterprise-grade*** encryption with ___SOC2___ compliance"
+  - title: Usability
+    content: "*Intuitive* interface with **minimal** learning curve"
+  - title: Cost
+    content: "___Competitive___ pricing with **flexible** plans"
+---
+
+---
+layout: Three Columns With Titles
+title: **Implementation** Phases
+columns:
+  - title: Phase 1
+    content: "**Planning** and *requirements* gathering with ___stakeholder___ input"
+  - title: Phase 2
+    content: "***Development*** and *testing* with **continuous** integration"
+  - title: Phase 3
+    content: "___Deployment___ and **monitoring** with *performance* tracking"
+---
+
+---
+layout: Three Columns
+title: **Benefits** Overview
+columns:
+  - content: "**Fast processing** with optimized algorithms and ***sub-millisecond*** response times"
+  - content: "*Enterprise-grade* security with ___SOC2___ and **GDPR** compliance"
+  - content: "***Intuitive*** interface with **minimal** learning curve and *comprehensive* docs"
+---
+
+---
+layout: Picture with Caption
+title: **PlaceKitten** Fallback Demo
+media:
+  image_path: "assets/non_existent_image.png"  # Triggers fallback
+  alt_text: "Professional placeholder image with smart cropping"
+  caption: "***Smart fallback*** with professional **grayscale** styling"
+  description: |
+    PlaceKitten features:
+    • **Automatic fallback** when images are missing
+    • *Professional grayscale* styling for business presentations  
+    • ***Smart cropping*** with face detection
+    • ___Consistent caching___ for performance
+---
+
+---
+layout: Picture with Caption
+title: **Valid Image** Processing
+media:
+  image_path: "src/placekitten/images/ACuteKitten-1.png"  # Valid image
+  alt_text: "Cute kitten demonstrating image processing pipeline"
+  caption: "Direct image processing with ***optimization***"
+  description: |
+    Image processing includes:
+    • **Automatic resizing** to placeholder dimensions
+    • *Format optimization* for PowerPoint compatibility
+    • ***Quality preservation*** with compression
+    • ___Error handling___ with graceful fallbacks
+---
+
+---
+layout: table
+style: dark_blue_white_text
+row_style: alternating_light_gray
+border_style: thin_gray
+---
+# **Project Status** Table
+
+| **Component** | *Status* | ___Priority___ | **Owner** |
+| Core Engine | ***Complete*** | *High* | **Development** |
+| PlaceKitten | **Complete** | ___Medium___ | *Engineering* |
+| Documentation | ***In Progress*** | **High** | ___Technical Writing___ |
+| Testing | *Complete* | **Medium** | ***QA Team*** |
+
+---
+layout: Title Only
+---
+# **Title Only** Layout: *Simple* and ___Clean___
+
+---
+layout: Content with Caption
+---
+# **Content with Caption** Layout
+
+## Main Content Area
+This layout demonstrates:
+- **Primary content** with full formatting
+- *Secondary information* with emphasis
+- ***Important highlights*** for key points
+
+**Caption area**: Additional context with ___underlined___ text and **bold** emphasis.
+
+---
+layout: Blank
+---
+# **Blank Layout** for Custom Content
+
+This layout provides ***maximum flexibility*** for:
+- **Custom designs** and layouts
+- *Creative presentations* with unique formatting
+- ___Special content___ that doesn't fit standard templates
+
+Perfect for **one-off** slides with *unique* requirements.
+"""
+
+        # Enhanced JSON file with corresponding content
+        json_content = """{
+  "presentation": {
+    "slides": [
+      {
+        "type": "Title Slide",
+        "title": "**Deckbuilder Test Presentation**",
+        "subtitle": "Comprehensive examples of all supported layouts with *formatting*"
+      },
+      {
+        "type": "Title and Content",
+        "title": "Introduction: **What is Deckbuilder?**",
+        "rich_content": [
+          {
+            "paragraph": "Deckbuilder creates professional PowerPoint presentations from:"
+          },
+          {
+            "bullets": [
+              "**Markdown files** with structured frontmatter",
+              "**JSON files** with rich content structure", 
+              "***Automatic PlaceKitten*** image fallbacks",
+              "___Professional formatting___ with inline styles"
+            ],
+            "bullet_levels": [1, 1, 1, 1]
+          },
+          {
+            "paragraph": "This presentation demonstrates all **13 supported layouts** with examples."
+          }
+        ]
+      },
+      {
+        "type": "Section Header",
+        "title": "Section: **Layout Demonstrations**",
+        "rich_content": [
+          {
+            "paragraph": "The following slides showcase each layout type with practical examples."
+          }
+        ]
+      },
+      {
+        "type": "Two Content",
+        "title": "Two Content Layout **Comparison**",
+        "content_left_1": [
+          "**Easy to write** and edit",
+          "*Version control* friendly", 
+          "___Human readable___ format"
+        ],
+        "content_right_1": [
+          "**Programmatic** generation",
+          "*Rich structure* support",
+          "___Automation___ ready"
+        ]
+      },
+      {
+        "type": "Comparison",
+        "title": "Development **Approach** Comparison",
+        "title_left_1": "Agile Methodology",
+        "content_left_1": "***Iterative*** development with frequent releases and **customer feedback**",
+        "title_right_1": "Waterfall Methodology",
+        "content_right_1": "___Sequential___ phases with **comprehensive planning** and *detailed documentation*"
+      },
+      {
+        "type": "Four Columns",
+        "title": "Feature **Comparison** Matrix",
+        "title_col1_1": "Performance",
+        "content_col1_1": "**Fast processing** with optimized algorithms and *sub-millisecond* response",
+        "title_col2_1": "Security", 
+        "content_col2_1": "***Enterprise-grade*** encryption with ___SOC2___ compliance",
+        "title_col3_1": "Usability",
+        "content_col3_1": "*Intuitive* interface with **minimal** learning curve",
+        "title_col4_1": "Cost",
+        "content_col4_1": "___Competitive___ pricing with **flexible** plans"
+      },
+      {
+        "type": "Three Columns With Titles",
+        "title": "**Implementation** Phases",
+        "title_col1_1": "Phase 1",
+        "content_col1_1": "**Planning** and *requirements* gathering with ___stakeholder___ input",
+        "title_col2_1": "Phase 2",
+        "content_col2_1": "***Development*** and *testing* with **continuous** integration", 
+        "title_col3_1": "Phase 3",
+        "content_col3_1": "___Deployment___ and **monitoring** with *performance* tracking"
+      },
+      {
+        "type": "Three Columns",
+        "title": "**Benefits** Overview",
+        "content_col1_1": "**Fast processing** with optimized algorithms and ***sub-millisecond*** response times",
+        "content_col2_1": "*Enterprise-grade* security with ___SOC2___ and **GDPR** compliance",
+        "content_col3_1": "***Intuitive*** interface with **minimal** learning curve and *comprehensive* docs"
+      },
+      {
+        "type": "Picture with Caption",
+        "title": "**PlaceKitten** Fallback Demo", 
+        "image_1": "assets/non_existent_image.png",
+        "text_caption_1": "***Smart fallback*** with professional **grayscale** styling"
+      },
+      {
+        "type": "Picture with Caption",
+        "title": "**Valid Image** Processing",
+        "image_1": "src/placekitten/images/ACuteKitten-2.png",
+        "text_caption_1": "Direct image processing with ***optimization***"
+      },
+      {
+        "type": "table",
+        "style": "dark_blue_white_text",
+        "row_style": "alternating_light_gray", 
+        "border_style": "thin_gray",
+        "title": "**Project Status** Table",
+        "table": {
+          "data": [
+            ["**Component**", "*Status*", "___Priority___", "**Owner**"],
+            ["Core Engine", "***Complete***", "*High*", "**Development**"],
+            ["PlaceKitten", "**Complete**", "___Medium___", "*Engineering*"],
+            ["Documentation", "***In Progress***", "**High**", "___Technical Writing___"],
+            ["Testing", "*Complete*", "**Medium**", "***QA Team***"]
+          ],
+          "header_style": "dark_blue_white_text",
+          "row_style": "alternating_light_gray",
+          "border_style": "thin_gray"
+        }
+      },
+      {
+        "type": "Title Only",
+        "title": "**Title Only** Layout: *Simple* and ___Clean___"
+      },
+      {
+        "type": "Content with Caption",
+        "title": "**Content with Caption** Layout",
+        "rich_content": [
+          {
+            "heading": "Main Content Area",
+            "level": 2
+          },
+          {
+            "paragraph": "This layout demonstrates:"
+          },
+          {
+            "bullets": [
+              "**Primary content** with full formatting",
+              "*Secondary information* with emphasis", 
+              "***Important highlights*** for key points"
+            ],
+            "bullet_levels": [1, 1, 1]
+          },
+          {
+            "paragraph": "**Caption area**: Additional context with ___underlined___ text and **bold** emphasis."
+          }
+        ]
+      },
+      {
+        "type": "Blank",
+        "title": "**Blank Layout** for Custom Content",
+        "rich_content": [
+          {
+            "paragraph": "This layout provides ***maximum flexibility*** for:"
+          },
+          {
+            "bullets": [
+              "**Custom designs** and layouts",
+              "*Creative presentations* with unique formatting",
+              "___Special content___ that doesn't fit standard templates"
+            ],
+            "bullet_levels": [1, 1, 1]
+          },
+          {
+            "paragraph": "Perfect for **one-off** slides with *unique* requirements."
+          }
+        ]
+      }
+    ]
+  }
+}"""
+
+        # Write the files
+        with open(examples_path / "test_presentation.md", "w", encoding="utf-8") as f:
+            f.write(markdown_content)
+
+        with open(examples_path / "test_presentation.json", "w", encoding="utf-8") as f:
+            f.write(json_content)
 
     def get_config(self):
         """Display current configuration"""
@@ -479,7 +874,9 @@ def main():
         return
 
     # Initialize CLI with global arguments
-    cli = DeckbuilderCLI(templates_path=args.templates, output_path=args.output)
+    # For image and crop commands, don't use global output path as it conflicts with file output
+    global_output_path = args.output if args.command not in ["image", "crop"] else None
+    cli = DeckbuilderCLI(templates_path=args.templates, output_path=global_output_path)
 
     try:
         # Route commands
