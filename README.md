@@ -19,6 +19,8 @@ Create complete PowerPoint presentations from JSON or Markdown with YAML frontma
 
 ### 🎨 **Rich Content Support**
 - **Advanced Formatting**: `**bold**`, `*italic*`, `___underline___`, `***bold italic***`
+- **International Support**: 20 proofing languages including English, Spanish, French, German, Chinese, Japanese
+- **Typography Control**: Custom font families with global `-f/--font` argument
 - **Mixed Content**: Seamlessly combine headings, paragraphs, and bullet points
 - **Professional Tables**: Custom styling with themes and colors
 - **50+ Business Layouts**: Progressive library of professional presentation templates
@@ -34,7 +36,8 @@ Create complete PowerPoint presentations from JSON or Markdown with YAML frontma
 - **One-Command Setup**: `deckbuilder init` creates templates and configuration
 - **Smart Defaults**: Intuitive file paths and environment resolution
 - **Tab Completion**: Bash completion for commands, templates, and files
-- **Global Arguments**: `-t/--templates` and `-o/--output` for custom paths
+- **Global Arguments**: `-t/--templates`, `-o/--output`, `-l/--language`, `-f/--font` for complete customization
+- **Language Support**: `deckbuilder languages` lists 20 supported proofing languages
 - **Template Management**: Analyze, validate, and enhance PowerPoint templates
 
 ### 🎯 **Content-First Intelligence - Currently under design**
@@ -51,11 +54,17 @@ pip install deckbuilder
 ### CLI Usage (Standalone)
 
 ```bash
-# Initialize templates (one-time setup) This will create the default template and mappint JSON.
+# Initialize templates (one-time setup) This will create the default template and mapping JSON.
 deckbuilder init
 
 # Create presentation from markdown
 deckbuilder create presentation.md
+
+# Create with custom language and font
+deckbuilder create presentation.md --language "Spanish (Spain)" --font "Arial"
+
+# View supported languages
+deckbuilder languages
 
 # Template management
 deckbuilder analyze default --verbose
@@ -63,6 +72,9 @@ deckbuilder templates
 
 # Image generation
 deckbuilder image 800 600 --filter grayscale
+
+# View current configuration
+deckbuilder config
 
 # Get help
 deckbuilder --help
@@ -80,12 +92,18 @@ Add to your Claude Desktop configuration:
       "env": {
         "DECK_TEMPLATE_FOLDER": "/Users/username/Documents/Deckbuilder/Templates",
         "DECK_TEMPLATE_NAME": "default",
-        "DECK_OUTPUT_FOLDER": "/Users/username/Documents/Deckbuilder"
+        "DECK_OUTPUT_FOLDER": "/Users/username/Documents/Deckbuilder",
+        "DECK_PROOFING_LANGUAGE": "English (United States)",
+        "DECK_DEFAULT_FONT": "Calibri"
       }
     }
   }
 }
 ```
+
+**New Environment Variables:**
+- `DECK_PROOFING_LANGUAGE`: Set proofing language for spell-check and grammar (20 languages supported)
+- `DECK_DEFAULT_FONT`: Set default font family for all presentations
 
 ## 📝 Usage Examples
 
@@ -168,6 +186,39 @@ result = db.create_presentation(
 )
 
 print(f"✅ Created: {result}")
+```
+
+## 🌍 Language & Font Support
+
+### Supported Languages (20)
+Deckbuilder supports 20 proofing languages for spell-check and grammar:
+
+```bash
+# View all supported languages
+deckbuilder languages
+```
+
+**Available Languages:**
+- English (United States, United Kingdom, Canada, Australia)
+- Spanish (Spain, Mexico, Latin America)
+- French (France, Canada)
+- German (Germany, Austria, Switzerland)
+- Italian, Portuguese (Brazil, Portugal)
+- Chinese (Simplified, Traditional), Japanese, Korean
+- Dutch, Russian, Arabic
+
+### Font Customization
+
+```bash
+# Set language and font globally
+export DECK_PROOFING_LANGUAGE="Spanish (Spain)"
+export DECK_DEFAULT_FONT="Arial"
+
+# Or use CLI arguments
+deckbuilder create presentation.md --language "French (France)" --font "Times New Roman"
+
+# Check current settings
+deckbuilder config
 ```
 
 ## 🖼️ PlaceKitten Image Processing
