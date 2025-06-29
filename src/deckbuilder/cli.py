@@ -25,6 +25,7 @@ try:
     from deckbuilder.engine import Deckbuilder
     from deckbuilder.cli_tools import TemplateManager
     from deckbuilder.formatting_support import FormattingSupport, print_supported_languages
+    from deckbuilder.path_manager import path_manager
     from placekitten import PlaceKitten
 except ImportError:
     # Fallback to development imports (when running from source)
@@ -38,6 +39,7 @@ except ImportError:
         FormattingSupport,
         print_supported_languages,
     )  # noqa: E402
+    from src.deckbuilder.path_manager import path_manager  # noqa: E402
     from src.placekitten import PlaceKitten  # noqa: E402
 
 
@@ -56,13 +58,9 @@ class DeckbuilderCLI:
             os.environ["DECK_TEMPLATE_FOLDER"] = str(Path(templates_path).resolve())
         elif not os.getenv("DECK_TEMPLATE_FOLDER"):
             # 2. Environment variable already set (skip)
-            # 3. Default location: ./templates/
+            # 3. Default location: ./templates/ (lowercase)
             default_templates = Path.cwd() / "templates"
-            if default_templates.exists():
-                os.environ["DECK_TEMPLATE_FOLDER"] = str(default_templates)
-            else:
-                # Will trigger error message in commands that need templates
-                pass
+            os.environ["DECK_TEMPLATE_FOLDER"] = str(default_templates)
 
         # Output folder resolution priority
         if output_path:
@@ -103,6 +101,52 @@ class DeckbuilderCLI:
             print("💡 Run 'deckbuilder init' to create template folder and copy default files")
             return False
         return True
+
+    def _convert_json_to_markdown(self, json_data: dict) -> str:
+        """Convert JSON slide data to markdown format with frontmatter"""
+        markdown_lines = []
+        
+        # Handle structured JSON format
+        if "presentation" in json_data and "slides" in json_data["presentation"]:
+            slides = json_data["presentation"]["slides"]
+        elif isinstance(json_data, list):
+            slides = json_data
+        else:
+            slides = [json_data]
+        
+        for slide in slides:
+            markdown_lines.append("---")
+            
+            # Add layout
+            slide_type = slide.get("type", slide.get("layout", "Title and Content"))
+            markdown_lines.append(f"layout: {slide_type}")
+            
+            # Add title
+            if "title" in slide:
+                markdown_lines.append(f"title: {slide['title']}")
+            
+            # Add content based on slide type
+            if "content" in slide:
+                if isinstance(slide["content"], list):
+                    content = "\n".join([f"  • {item}" for item in slide["content"]])
+                else:
+                    content = slide["content"]
+                markdown_lines.append(f"content: |\n  {content}")
+            
+            # Handle specific layout fields
+            for key, value in slide.items():
+                if key not in ["type", "layout", "title", "content"]:
+                    if isinstance(value, dict):
+                        markdown_lines.append(f"{key}:")
+                        for subkey, subvalue in value.items():
+                            markdown_lines.append(f"  {subkey}: {subvalue}")
+                    else:
+                        markdown_lines.append(f"{key}: {value}")
+            
+            markdown_lines.append("---")
+            markdown_lines.append("")  # Empty line between slides
+        
+        return "\n".join(markdown_lines)
 
     def _get_available_templates(self):
         """Get list of available templates with error handling"""
@@ -157,10 +201,15 @@ class DeckbuilderCLI:
                     markdown_content=content, fileName=output_name
                 )
             elif input_path.suffix.lower() == ".json":
-                # Process JSON file
+                # Process JSON file - convert to markdown format first
                 with open(input_path, "r", encoding="utf-8") as f:
                     json_data = json.load(f)
-                result = db.create_presentation(json_data=json_data, fileName=output_name)
+                
+                # Convert JSON to markdown for processing
+                markdown_content = self._convert_json_to_markdown(json_data)
+                result = db.create_presentation_from_markdown(
+                    markdown_content=markdown_content, fileName=output_name
+                )
             else:
                 raise ValueError(
                     f"Unsupported file format: {input_path.suffix}. "
@@ -308,15 +357,16 @@ class DeckbuilderCLI:
         target_path.mkdir(parents=True, exist_ok=True)
 
         try:
-            # Find the package assets (development structure)
-            assets_path = Path(__file__).parent.parent.parent / "assets" / "templates"
-            if assets_path.exists():
-                source_pptx = assets_path / "default.pptx"
-                source_json = assets_path / "default.json"
-            else:
+            # Use centralized path manager to locate assets
+            if not path_manager.validate_assets_exist():
                 print("❌ Could not locate template assets")
                 print("💡 Default templates not found in package")
+                print(f"💡 Expected location: {path_manager.get_assets_templates_path()}")
                 return
+            
+            assets_path = path_manager.get_assets_templates_path()
+            source_pptx = assets_path / "default.pptx"
+            source_json = assets_path / "default.json"
 
             # Copy template files
             files_copied = []
@@ -975,6 +1025,7 @@ def create_parser():
         "-f", "--font", metavar="FONT", help='Default font family (e.g., "Calibri", "Arial")'
     )
     parser.add_argument("-h", "--help", action="store_true", help="Show help message")
+    parser.add_argument("-V", "--version", action="store_true", help="Show version information")
 
     subparsers = parser.add_subparsers(
         dest="command", help="Available commands", metavar="<command>"
@@ -1441,6 +1492,13 @@ def main():
     """Main CLI entry point with hierarchical command structure"""
     parser = create_parser()
     args = parser.parse_args()
+
+    # Handle version flag
+    if hasattr(args, "version") and args.version:
+        version = path_manager.get_version()
+        print(f"Deckbuilder CLI v{version}")
+        print("Intelligent PowerPoint presentation generation")
+        return
 
     # Handle help flag or missing command
     if (hasattr(args, "help") and args.help) or not args.command:
