@@ -95,9 +95,9 @@ class DeckbuilderCLI:
 
     def _validate_templates_folder(self):
         """Validate templates folder exists and provide helpful error message"""
-        template_folder = os.getenv("DECK_TEMPLATE_FOLDER")
-        if not template_folder or not Path(template_folder).exists():
-            print("❌ Template folder not found: ./templates/")
+        if not path_manager.validate_template_folder_exists():
+            template_folder = path_manager.get_template_folder()
+            print(f"❌ Template folder not found: {template_folder}")
             print("💡 Run 'deckbuilder init' to create template folder and copy default files")
             return False
         return True

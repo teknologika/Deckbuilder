@@ -30,24 +30,28 @@ class TemplateManager:
     """Command-line template management utilities"""
 
     def __init__(self, template_folder=None, output_folder=None):
-        # Use command-line arguments or sensible defaults
+        # Use command-line arguments, environment variables, or sensible defaults
         if template_folder:
             self.template_folder = template_folder
         else:
-            # Default: look for assets/templates relative to current directory
-            current_dir = Path.cwd()
-            if (current_dir / "assets" / "templates").exists():
-                self.template_folder = str(current_dir / "assets" / "templates")
+            # Use environment variable first (set by CLI setup_environment)
+            env_template_folder = os.getenv("DECK_TEMPLATE_FOLDER")
+            if env_template_folder:
+                self.template_folder = env_template_folder
             else:
-                # Try from project root
-                project_root = Path(__file__).parent.parent.parent
-                self.template_folder = str(project_root / "assets" / "templates")
+                # Fallback: default template folder in current directory
+                self.template_folder = str(Path.cwd() / "templates")
 
         if output_folder:
             self.output_folder = output_folder
         else:
-            # Default: create output folder in current directory
-            self.output_folder = str(Path.cwd() / "template_output")
+            # Use environment variable first (set by CLI setup_environment)
+            env_output_folder = os.getenv("DECK_OUTPUT_FOLDER")
+            if env_output_folder:
+                self.output_folder = env_output_folder
+            else:
+                # Fallback: current directory
+                self.output_folder = str(Path.cwd())
 
         # Ensure folders exist
         os.makedirs(self.output_folder, exist_ok=True)
