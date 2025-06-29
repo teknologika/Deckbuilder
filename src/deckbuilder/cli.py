@@ -800,11 +800,12 @@ Perfect for **one-off** slides with *unique* requirements.
         """Display current configuration with proper defaults and source indicators"""
         print("🔧 Deckbuilder Configuration:")
 
-        # Template folder with source indication
-        template_folder = os.getenv("DECK_TEMPLATE_FOLDER")
-        if template_folder:
+        # Template folder with source indication  
+        template_folder = path_manager.get_template_folder()
+        env_template_folder = os.getenv("DECK_TEMPLATE_FOLDER")
+        if env_template_folder:
             # Check if it's the default path to determine source
-            default_path = str(Path.cwd() / "templates")
+            default_path = Path.cwd() / "templates"
             if template_folder == default_path:
                 print("  Template Folder: ./templates (Default)")
             else:
@@ -813,10 +814,11 @@ Perfect for **one-off** slides with *unique* requirements.
             print("  Template Folder: ./templates (Default)")
 
         # Output folder with source indication
-        output_folder = os.getenv("DECK_OUTPUT_FOLDER")
-        if output_folder:
+        output_folder = path_manager.get_output_folder()
+        env_output_folder = os.getenv("DECK_OUTPUT_FOLDER")
+        if env_output_folder:
             # Check if it's the current directory to determine source
-            current_dir = str(Path.cwd())
+            current_dir = Path.cwd()
             if output_folder == current_dir:
                 print("  Output Folder: . (Default)")
             else:
@@ -825,8 +827,9 @@ Perfect for **one-off** slides with *unique* requirements.
             print("  Output Folder: . (Default)")
 
         # Default template with source indication
-        template_name = os.getenv("DECK_TEMPLATE_NAME")
-        if template_name:
+        template_name = path_manager.get_template_name()
+        env_template_name = os.getenv("DECK_TEMPLATE_NAME")
+        if env_template_name:
             if template_name == "default":
                 print("  Default Template: default (Default)")
             else:

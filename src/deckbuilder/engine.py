@@ -18,6 +18,7 @@ from .placeholder_types import (
 )
 from .image_handler import ImageHandler
 from .placekitten_integration import PlaceKittenIntegration
+from .path_manager import path_manager
 
 try:
     from .formatting_support import FormattingSupport, get_default_language, get_default_font
@@ -79,9 +80,9 @@ def singleton(cls):
 @singleton
 class Deckbuilder:
     def __init__(self):
-        self.template_path = os.getenv("DECK_TEMPLATE_FOLDER")
-        self.template_name = os.getenv("DECK_TEMPLATE_NAME")
-        self.output_folder = os.getenv("DECK_OUTPUT_FOLDER")
+        self.template_path = str(path_manager.get_template_folder())
+        self.template_name = path_manager.get_template_name()
+        self.output_folder = str(path_manager.get_output_folder())
         self.prs = Presentation()
         self.layout_mapping = None
 
@@ -91,9 +92,7 @@ class Deckbuilder:
         self.default_font = get_default_font()
 
         # Initialize image handling components with cache in output directory
-        cache_dir = "temp/image_cache"  # Default fallback
-        if self.output_folder:
-            cache_dir = os.path.join(self.output_folder, "tmp", "image_cache")
+        cache_dir = str(path_manager.get_output_folder() / "tmp" / "image_cache")
         self.image_handler = ImageHandler(cache_dir)
         self.placekitten = PlaceKittenIntegration(self.image_handler)
 

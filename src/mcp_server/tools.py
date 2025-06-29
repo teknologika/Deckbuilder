@@ -1,16 +1,22 @@
 import json
 import os
+import sys
+from pathlib import Path
 from typing import Dict, Optional
 
 from pptx import Presentation
+
+# Add the parent directory to Python path for imports
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from deckbuilder.path_manager import path_manager
 
 
 class TemplateAnalyzer:
     """Analyzes PowerPoint templates to extract raw layout and placeholder information."""
 
     def __init__(self):
-        self.template_path = os.getenv("DECK_TEMPLATE_FOLDER")
-        self.output_folder = os.getenv("DECK_OUTPUT_FOLDER")
+        self.template_path = str(path_manager.get_template_folder())
+        self.output_folder = str(path_manager.get_output_folder())
 
     def analyze_pptx_template(self, template_name: str) -> Dict:
         """
@@ -26,11 +32,11 @@ class TemplateAnalyzer:
         if not template_name.endswith(".pptx"):
             template_name += ".pptx"
 
-        # Build template path
-        if not self.template_path:
-            raise RuntimeError("DECK_TEMPLATE_FOLDER environment variable not set")
+        # Build template path using PathManager
+        if not path_manager.validate_template_folder_exists():
+            raise RuntimeError(f"Template folder not found: {self.template_path}")
 
-        template_path = os.path.join(self.template_path, template_name)
+        template_path = str(path_manager.get_template_file_path(template_name))
 
         if not os.path.exists(template_path):
             raise FileNotFoundError(f"Template file not found: {template_path}")
