@@ -123,7 +123,8 @@ class PathManager:
             from importlib.metadata import version
 
             return version("deckbuilder")
-        except Exception:
+        except Exception:  # nosec B110
+            # Package not installed or metadata unavailable, try pyproject.toml
             pass
 
         # Try to get from pyproject.toml
@@ -135,7 +136,8 @@ class PathManager:
                 with open(pyproject_path, "rb") as f:
                     data = tomllib.load(f)
                     return data.get("project", {}).get("version", "unknown")
-        except Exception:
+        except Exception:  # nosec B110
+            # pyproject.toml not available or invalid, use fallback
             pass
 
         # Fallback version

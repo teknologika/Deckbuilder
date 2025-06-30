@@ -287,3 +287,110 @@ def save_json_file(path: Path, data: Dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
+
+
+@pytest.fixture
+def cli_temp_env():
+    """Mock environment for CLI tests that forces all output to temporary directories."""
+    # Create temporary directories
+    temp_base = tempfile.mkdtemp(prefix="deckbuilder_cli_test_")
+    templates_dir = Path(temp_base) / "templates"
+    output_dir = Path(temp_base) / "output"
+
+    templates_dir.mkdir(parents=True, exist_ok=True)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    # Store original environment
+    original_env = os.environ.copy()
+
+    # Set test environment variables to force CLI to use temp directories
+    test_env = {
+        "DECK_TEMPLATE_FOLDER": str(templates_dir),
+        "DECK_OUTPUT_FOLDER": str(output_dir),
+        "DECK_TEMPLATE_NAME": "default",
+        "DECK_PROOFING_LANGUAGE": "en-AU",
+    }
+
+    for key, value in test_env.items():
+        os.environ[key] = value
+
+    yield {
+        "temp_base": temp_base,
+        "templates_dir": templates_dir,
+        "output_dir": output_dir,
+        "env": test_env,
+    }
+
+    # Restore original environment
+    os.environ.clear()
+    os.environ.update(original_env)
+
+    # Clean up temp directory
+    shutil.rmtree(temp_base, ignore_errors=True)
+
+
+@pytest.fixture(autouse=True)
+def prevent_root_pollution():
+    """Automatically detect and clean up any files created in project root during tests."""
+    project_root = Path(__file__).parent.parent
+
+    # Get list of files before test
+    before_files = set()
+    if project_root.exists():
+        before_files = {
+            f.name
+            for f in project_root.iterdir()
+            if f.is_file()
+            and not f.name.startswith(".")
+            and f.suffix in [".pptx", ".json", ".md", ".txt"]
+            and not f.name.startswith("README")
+            and not f.name.startswith("LICENSE")
+            and not f.name.startswith("pyproject")
+            and not f.name.startswith("setup")
+        }
+
+    yield
+
+    # Get list of files after test
+    after_files = set()
+    if project_root.exists():
+        after_files = {
+            f.name
+            for f in project_root.iterdir()
+            if f.is_file()
+            and not f.name.startswith(".")
+            and f.suffix in [".pptx", ".json", ".md", ".txt"]
+            and not f.name.startswith("README")
+            and not f.name.startswith("LICENSE")
+            and not f.name.startswith("pyproject")
+            and not f.name.startswith("setup")
+        }
+
+    # Clean up any new files created during test
+    new_files = after_files - before_files
+    for file_name in new_files:
+        file_path = project_root / file_name
+        if file_path.exists():
+            try:
+                file_path.unlink()
+                print(f"Warning: Cleaned up test file created in root: {file_name}")
+            except OSError:
+                pass  # File might already be deleted
+
+    # Clean up any directories that look like test outputs
+    test_dirs = [
+        "test_output_md",
+        "test_output_json",
+        "from_markdown",
+        "from_json",
+        "golden_md_test",
+        "golden_json_test",
+    ]
+    for dir_name in test_dirs:
+        dir_path = project_root / dir_name
+        if dir_path.exists() and dir_path.is_dir():
+            try:
+                shutil.rmtree(dir_path)
+                print(f"Warning: Cleaned up test directory created in root: {dir_name}")
+            except OSError:
+                pass  # Directory might already be deleted

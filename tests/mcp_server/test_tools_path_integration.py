@@ -6,23 +6,23 @@ Tests that the MCP server tools properly use PathManager
 for template analysis and path resolution.
 """
 
-import pytest
-
-pytest.skip("Skipping MCP server tests for v1.0.2b2 commit", allow_module_level=True)
-
 import os
 import tempfile
-import pytest
+import sys
 from pathlib import Path
 from unittest.mock import patch, MagicMock
 
-import sys
+import pytest
 
 # Add the src directory to the path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 
-from mcp_server.tools import TemplateAnalyzer  # noqa: E402
-from deckbuilder.path_manager import path_manager  # noqa: E402
+try:
+    from mcp_server.tools import TemplateAnalyzer  # noqa: E402
+    from deckbuilder.path_manager import path_manager  # noqa: E402
+except ImportError:
+    # Skip these tests if mcp_server can't be imported
+    pytest.skip("MCP server module not available", allow_module_level=True)
 
 
 class TestMCPToolsPathManagerIntegration:

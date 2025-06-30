@@ -86,8 +86,9 @@ class TemplateAnalyzer:
                 try:
                     if hasattr(layout, "name") and layout.name:
                         layout_name = layout.name
-                except Exception:
-                    pass  # Keep fallback name
+                except Exception:  # nosec B110
+                    # Layout name unavailable, keep fallback name
+                    pass
 
                 layouts[layout_name] = layout_info
 
@@ -121,8 +122,9 @@ class TemplateAnalyzer:
                     elif hasattr(shape.placeholder_format, "type"):
                         placeholder_type = shape.placeholder_format.type
                         placeholder_info = f"type_{placeholder_type}"
-                except Exception:
-                    pass  # Keep default name if we can't get more info
+                except Exception:  # nosec B110
+                    # Shape properties unavailable, keep default name
+                    pass
 
                 placeholders[str(placeholder_idx)] = placeholder_info
 
@@ -342,7 +344,10 @@ class TemplateAnalyzer:
             )
 
         if len(content_placeholders) < 2:
-            msg = "Comparison layout should have at least 2 content placeholders for left/right content"
+            msg = (
+                "Comparison layout should have at least 2 content placeholders "
+                "for left/right content"
+            )
             errors.append(msg)
 
     def _validate_global_consistency(

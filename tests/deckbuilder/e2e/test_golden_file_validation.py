@@ -148,9 +148,7 @@ class TestGoldenFileValidation:
             # Find the actual output file (CLI creates a subdirectory with the output name)
             search_dirs = [
                 Path(temp_dir),
-                Path.cwd(),
-                Path.cwd() / "test_output_md",  # CLI creates subdirectory
-                Path(temp_dir) / "test_output_md",  # or in temp dir subdirectory
+                Path(temp_dir) / "test_output_md",  # CLI creates subdirectory in temp
             ]
             pptx_files = []
 
@@ -161,7 +159,11 @@ class TestGoldenFileValidation:
 
             assert (
                 len(pptx_files) > 0
-            ), f"No output file found in {[str(d) for d in search_dirs]}\nSearched files: {[list(d.glob('*.pptx')) if d.exists() else 'DIR_NOT_EXISTS' for d in search_dirs]}\nSTDOUT: {result.stdout}"
+            ), (
+                f"No output file found in {[str(d) for d in search_dirs]}\n"
+                f"Searched files: {[list(d.glob('*.pptx')) if d.exists() else 'DIR_NOT_EXISTS' for d in search_dirs]}\n"
+                f"STDOUT: {result.stdout}"
+            )
 
             output_path = pptx_files[0]  # Use the first (and likely only) match
 
@@ -217,9 +219,7 @@ class TestGoldenFileValidation:
             # Find the actual output file (CLI creates a subdirectory with the output name)
             search_dirs = [
                 Path(temp_dir),
-                Path.cwd(),
-                Path.cwd() / "test_output_json",  # CLI creates subdirectory
-                Path(temp_dir) / "test_output_json",  # or in temp dir subdirectory
+                Path(temp_dir) / "test_output_json",  # CLI creates subdirectory in temp
             ]
             pptx_files = []
 
@@ -230,7 +230,11 @@ class TestGoldenFileValidation:
 
             assert (
                 len(pptx_files) > 0
-            ), f"No output file found in {[str(d) for d in search_dirs]}\nSearched files: {[list(d.glob('*.pptx')) if d.exists() else 'DIR_NOT_EXISTS' for d in search_dirs]}\nSTDOUT: {result.stdout}\nSTDERR: {result.stderr}"
+            ), (
+                f"No output file found in {[str(d) for d in search_dirs]}\n"
+                f"Searched files: {[list(d.glob('*.pptx')) if d.exists() else 'DIR_NOT_EXISTS' for d in search_dirs]}\n"
+                f"STDOUT: {result.stdout}\nSTDERR: {result.stderr}"
+            )
 
             output_path = pptx_files[0]  # Use the first (and likely only) match
 
@@ -256,7 +260,7 @@ class TestGoldenFileValidation:
                 ],
                 check=True,
                 env=env,
-                cwd=self.project_root,
+                cwd=temp_dir,  # Run from temp directory
             )
 
             subprocess.run(
@@ -270,15 +274,14 @@ class TestGoldenFileValidation:
                 ],
                 check=True,
                 env=env,
-                cwd=self.project_root,
+                cwd=temp_dir,  # Run from temp directory
             )
 
             # Find the actual output files (CLI creates subdirectories)
             search_dirs = [
                 Path(temp_dir),
-                Path.cwd(),
-                Path.cwd() / "from_markdown",
-                Path.cwd() / "from_json",
+                Path(temp_dir) / "from_markdown",
+                Path(temp_dir) / "from_json",
             ]
 
             md_files = []
@@ -401,7 +404,7 @@ class TestGoldenFileValidation:
             ["python", str(self.project_root / "src" / "deckbuilder" / "cli.py"), "--version"],
             capture_output=True,
             text=True,
-            cwd=self.project_root,
+            cwd=self.project_root,  # Keep root for version command
         )
 
         assert result.returncode == 0, f"Version command failed: {result.stderr}"
@@ -417,7 +420,7 @@ class TestGoldenFileValidation:
             capture_output=True,
             text=True,
             env=env,
-            cwd=self.project_root,
+            cwd=self.project_root,  # Keep root for config command
         )
 
         assert result.returncode == 0, f"Config show failed: {result.stderr}"
@@ -440,7 +443,7 @@ class TestGoldenFileValidation:
             capture_output=True,
             text=True,
             env=env,
-            cwd=self.project_root,
+            cwd=self.project_root,  # Keep root for template list command
         )
 
         assert result.returncode == 0, f"Template list failed: {result.stderr}"
@@ -470,7 +473,7 @@ class TestGoldenFileValidation:
                 capture_output=True,
                 text=True,
                 env=env,
-                cwd=self.project_root,
+                cwd=temp_dir,  # Run from temp directory
             )
 
             json_result = subprocess.run(
@@ -485,7 +488,7 @@ class TestGoldenFileValidation:
                 capture_output=True,
                 text=True,
                 env=env,
-                cwd=self.project_root,
+                cwd=temp_dir,  # Run from temp directory
             )
 
             # Both should succeed
@@ -499,9 +502,8 @@ class TestGoldenFileValidation:
             # Find and validate the actual output files (CLI creates subdirectories)
             search_dirs = [
                 Path(temp_dir),
-                Path.cwd(),
-                Path.cwd() / "golden_md_test",
-                Path.cwd() / "golden_json_test",
+                Path(temp_dir) / "golden_md_test",
+                Path(temp_dir) / "golden_json_test",
             ]
 
             md_files = []

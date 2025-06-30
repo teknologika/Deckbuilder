@@ -177,9 +177,11 @@ class TemplateManager:
             # Check structured frontmatter support (placeholder for now)
             structured_status = "⏳"  # Would check structured_frontmatter.py
 
-            table_rows.append(
-                f"| {layout_name} | {index} | {placeholder_count} | {structured_status} | {mapping_status} |"
+            row = (
+                f"| {layout_name} | {index} | {placeholder_count} | "
+                f"{structured_status} | {mapping_status} |"
             )
+            table_rows.append(row)
 
         # Generate detailed layout specifications
         detailed_layouts = []
@@ -288,7 +290,8 @@ layout: Title Slide
 ```
 
 ---
-*Generated automatically by Deckbuilder Template Manager on {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}*
+*Generated automatically by Deckbuilder Template Manager on \
+{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}*
 """
 
         return doc_content
@@ -424,7 +427,10 @@ layout: Title Slide
                 if not os.path.exists(mapping_file):
                     return {
                         "status": "error",
-                        "error": f"Mapping file not found: {mapping_file}. Run 'analyze' first to generate mapping.",
+                        "error": (
+                            f"Mapping file not found: {mapping_file}. "
+                            "Run 'analyze' first to generate mapping."
+                        ),
                     }
 
             # Create backup if requested
@@ -447,9 +453,9 @@ layout: Title Slide
 
             if modifications["modified_count"] > 0:
                 print("✅ Enhancement complete!")
-                print(
-                    f"   📊 Modified {modifications['modified_count']} placeholders across {modifications['layout_count']} layouts"
-                )
+                modified_count = modifications["modified_count"]
+                layout_count = modifications["layout_count"]
+                print(f"   📊 Modified {modified_count} placeholders across {layout_count} layouts")
 
                 if "enhanced_template_path" in modifications:
                     print(
@@ -523,7 +529,7 @@ layout: Title Slide
             for placeholder in slide_master.placeholders:
                 placeholder_idx = str(placeholder.placeholder_format.idx)
                 # Try to find this placeholder in any layout mapping
-                for layout_name, layout_info in layouts_mapping.items():
+                for _layout_name, layout_info in layouts_mapping.items():
                     placeholder_mapping = layout_info.get("placeholders", {})
                     if placeholder_idx in placeholder_mapping:
                         new_name = placeholder_mapping[placeholder_idx]
@@ -583,13 +589,17 @@ layout: Title Slide
                                 }
                             )
                         else:
-                            modifications["issues"].append(
-                                f"Cannot modify placeholder {placeholder_idx} in {layout_name} - unsupported structure"
+                            error_msg = (
+                                f"Cannot modify placeholder {placeholder_idx} in {layout_name} - "
+                                "unsupported structure"
                             )
+                            modifications["issues"].append(error_msg)
                     except Exception as e:
-                        modifications["issues"].append(
-                            f"Failed to modify placeholder {placeholder_idx} in {layout_name}: {str(e)}"
+                        error_msg = (
+                            f"Failed to modify placeholder {placeholder_idx} in {layout_name}: "
+                            f"{str(e)}"
                         )
+                        modifications["issues"].append(error_msg)
 
         # Save modified presentation with .g.pptx extension
         try:
@@ -856,7 +866,9 @@ columns:
 }""",
             },
             "Picture with Caption": {
-                "description": "Media slides with image and caption (includes PlaceKitten fallback)",
+                "description": (
+                    "Media slides with image and caption (includes PlaceKitten fallback)"
+                ),
                 "complexity": "advanced",
                 "frontmatter_example": """---
 layout: Picture with Caption
@@ -984,7 +996,8 @@ border_style: thin_gray
 
         content = f"""# Getting Started with Deckbuilder
 
-Welcome to Deckbuilder! This guide will help you create professional PowerPoint presentations from Markdown or JSON files.
+Welcome to Deckbuilder! This guide will help you create professional PowerPoint "
+"presentations from Markdown or JSON files.
 
 ## Quick Start (3 Steps)
 
@@ -1040,7 +1053,8 @@ Your template currently supports **{layout_count} layouts**. Here's how to use e
         content += """## Advanced Features
 
 ### PlaceKitten Image Support
-When images are missing or invalid, Deckbuilder automatically generates professional placeholder images:
+When images are missing or invalid, Deckbuilder automatically generates professional "
+"placeholder images:
 - **Grayscale styling** for business presentations
 - **Smart cropping** with face detection and rule-of-thirds composition
 - **Automatic caching** for performance optimization
@@ -1139,11 +1153,13 @@ deckbuilder templates
 
 ## Next Steps
 
-1. **Explore the examples**: Study `examples/test_presentation.md` and `examples/test_presentation.json`
+1. **Explore the examples**: Study `examples/test_presentation.md` and "
+"   `examples/test_presentation.json`
 2. **Try different layouts**: Experiment with the {layout_count} supported layouts
 3. **Add your content**: Replace example content with your own
 4. **Customize styling**: Explore table styles and formatting options
-5. **Share your presentations**: Generated `.pptx` files work in PowerPoint, LibreOffice, and Google Slides
+5. **Share your presentations**: Generated `.pptx` files work in PowerPoint, "
+"   LibreOffice, and Google Slides
 
 ## Advanced Usage
 

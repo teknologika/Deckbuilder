@@ -422,7 +422,7 @@ class NamingConvention:
             placeholders = layout_info.get("placeholders", {})
             converted_placeholders = {}
 
-            for idx, current_name in placeholders.items():
+            for idx, _current_name in placeholders.items():
                 context = PlaceholderContext(
                     layout_name=layout_name,
                     placeholder_idx=idx,
@@ -497,7 +497,10 @@ class NamingConvention:
     def _follows_convention_format(self, placeholder_name: str) -> bool:
         """Check if placeholder name follows convention format"""
         # Convention format: {ContentType}_{Position}_{Index} or {ContentType}_{Index}
-        pattern = r"^(title|subtitle|content|text|image|number|date|footer|slide_number)_([a-z0-9]+_)?\d+$"
+        pattern = (
+            r"^(title|subtitle|content|text|image|number|date|footer|slide_number)_"
+            r"([a-z0-9]+_)?\d+$"
+        )
         return bool(re.match(pattern, placeholder_name.lower()))
 
     def _extract_naming_pattern(self, placeholder_name: str) -> str:
