@@ -15,8 +15,11 @@ from unittest.mock import patch, MagicMock
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from src.mcp_server.tools import TemplateAnalyzer
-from src.deckbuilder.path_manager import path_manager
+# Add the src directory to the path for imports
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
+
+from mcp_server.tools import TemplateAnalyzer
+from deckbuilder.path_manager import path_manager
 
 
 class TestMCPToolsPathManagerIntegration:
@@ -82,7 +85,7 @@ class TestMCPToolsPathManagerIntegration:
             
             with patch.object(path_manager, 'validate_template_folder_exists', return_value=True), \
                  patch.object(path_manager, 'get_template_file_path') as mock_file_path, \
-                 patch('src.mcp_server.tools.os.path.exists', return_value=False):
+                 patch('mcp_server.tools.os.path.exists', return_value=False):
                 
                 mock_file_path.return_value = Path("/templates/test.pptx")
                 
@@ -92,7 +95,7 @@ class TestMCPToolsPathManagerIntegration:
                 # Should call PathManager to get template file path
                 mock_file_path.assert_called_once_with("test.pptx")
 
-    @patch('src.mcp_server.tools.Presentation')
+    @patch('mcp_server.tools.Presentation')
     def test_analyze_pptx_template_successful_analysis(self, mock_presentation):
         """Test successful template analysis uses correct paths"""
         with patch.object(path_manager, 'get_template_folder', return_value=Path("/templates")), \
@@ -107,7 +110,7 @@ class TestMCPToolsPathManagerIntegration:
             
             with patch.object(path_manager, 'validate_template_folder_exists', return_value=True), \
                  patch.object(path_manager, 'get_template_file_path') as mock_file_path, \
-                 patch('src.mcp_server.tools.os.path.exists', return_value=True):
+                 patch('mcp_server.tools.os.path.exists', return_value=True):
                 
                 mock_file_path.return_value = Path("/templates/test.pptx")
                 
@@ -126,7 +129,7 @@ class TestMCPToolsPathManagerIntegration:
             
             with patch.object(path_manager, 'validate_template_folder_exists', return_value=True), \
                  patch.object(path_manager, 'get_template_file_path') as mock_file_path, \
-                 patch('src.mcp_server.tools.os.path.exists', return_value=False):
+                 patch('mcp_server.tools.os.path.exists', return_value=False):
                 
                 mock_file_path.return_value = Path("/templates/test.pptx")
                 
@@ -172,7 +175,7 @@ class TestMCPToolsErrorHandling:
             
             with patch.object(path_manager, 'validate_template_folder_exists', return_value=True), \
                  patch.object(path_manager, 'get_template_file_path', return_value=Path("/templates/missing.pptx")), \
-                 patch('src.mcp_server.tools.os.path.exists', return_value=False):
+                 patch('mcp_server.tools.os.path.exists', return_value=False):
                 
                 with pytest.raises(FileNotFoundError) as exc_info:
                     analyzer.analyze_pptx_template("missing")
@@ -253,8 +256,8 @@ class TestMCPToolsRealWorldScenarios:
                 mock_validate.return_value = True
                 mock_file_path.return_value = Path("/templates/test.pptx")
                 
-                with patch('src.mcp_server.tools.os.path.exists', return_value=True), \
-                     patch('src.mcp_server.tools.Presentation') as mock_prs:
+                with patch('mcp_server.tools.os.path.exists', return_value=True), \
+                     patch('mcp_server.tools.Presentation') as mock_prs:
                     
                     mock_prs.return_value.slide_layouts = []
                     
