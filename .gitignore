@@ -236,11 +236,14 @@ smart_crop_*.png
 tests/placekitten/debug_scaling.py
 
 # Prevent root directory pollution
+/templates/
 /examples/
 /template_output/
 /test_env/
 /*.md.backup
 /*.json.backup
 /*.tmp
+/*.pptx
+/*.json
 /cli_new.py
 /cli_backup.py

@@ -6,7 +6,6 @@ Ensures that only approved directories and files exist in the project root,
 preventing test outputs and temporary files from being committed.
 """
 
-import os
 import sys
 from pathlib import Path
 
@@ -16,12 +15,12 @@ def get_allowed_items():
     return {
         # Core project files
         ".git",
-        ".gitignore", 
+        ".gitignore",
         ".pre-commit-config.yaml",
         "LICENSE",
         "README.md",
         "CLAUDE.md",
-        "PLANNING.md", 
+        "PLANNING.md",
         "TASK.md",
         "MANIFEST.in",
         "pyproject.toml",
@@ -31,7 +30,6 @@ def get_allowed_items():
         "uv.lock",
         "run_server.sh",
         "Deckbuilder.code-workspace",
-        
         # Development/CI files
         ".github/",
         ".coverage",
@@ -40,24 +38,20 @@ def get_allowed_items():
         ".claude/",
         ".mypy_cache/",
         ".DS_Store",
-        
         # Core directories
         "src/",
         "tests/",
         "docs/",
         "assets/",
-        "templates/",
         "output/",  # Official output directory
-        "temp/",    # Official temp directory
-        "build/",   # Build artifacts
-        "dist/",    # Distribution artifacts
-        "scripts/", # Utility scripts
-        
+        "temp/",  # Official temp directory
+        "build/",  # Build artifacts
+        "dist/",  # Distribution artifacts
+        "scripts/",  # Utility scripts
         # Python build artifacts
         "src/deckbuilder.egg-info/",
         ".pytest_cache/",
         "__pycache__/",
-        
         # IDE/Editor files
         ".vscode/",
         ".idea/",
@@ -71,13 +65,21 @@ def check_for_pollution():
     """Check for unauthorized files/directories in project root."""
     project_root = Path(__file__).parent.parent
     allowed_items = get_allowed_items()
-    
+
+    # Common pollution patterns to specifically flag (for future use)
+    # pollution_patterns = {
+    #     "templates/": "Templates should be in assets/templates/, not project root",
+    #     "tmp/": "Use proper test directories or tempfile",
+    #     "*.pptx": "PowerPoint files should be in tests/output/ or temp directories",
+    #     "*.json": "JSON files should be in appropriate subdirectories",
+    # }
+
     pollution_found = []
-    
+
     for item in project_root.iterdir():
         item_name = item.name
         item_path = f"{item_name}/" if item.is_dir() else item_name
-        
+
         # Check if item is allowed
         if item_path not in allowed_items and item_name not in allowed_items:
             # Check for glob patterns (like *.swp)
@@ -85,28 +87,29 @@ def check_for_pollution():
             for allowed in allowed_items:
                 if "*" in allowed:
                     import fnmatch
+
                     if fnmatch.fnmatch(item_name, allowed):
                         is_allowed = True
                         break
-            
+
             if not is_allowed:
                 pollution_found.append(item_path)
-    
+
     return pollution_found
 
 
 def main():
     """Main function to run pollution check."""
     pollution = check_for_pollution()
-    
+
     if pollution:
         print("❌ ROOT DIRECTORY POLLUTION DETECTED!")
         print("The following unauthorized files/directories were found in project root:")
         print()
-        
+
         for item in sorted(pollution):
             print(f"  🚫 {item}")
-        
+
         print()
         print("💡 SOLUTION:")
         print("  - Remove test output files and temporary directories")
@@ -117,7 +120,7 @@ def main():
         print("🧹 CLEANUP COMMAND:")
         print("  rm -rf " + " ".join(pollution))
         print()
-        
+
         return 1
     else:
         print("✅ Root directory is clean - no pollution detected")
