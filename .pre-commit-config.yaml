@@ -54,6 +54,12 @@ repos:
   # Testing with coverage threshold
   - repo: local
     hooks:
+      - id: check-root-pollution
+        name: Check for root directory pollution
+        entry: python scripts/check_root_pollution.py
+        language: python
+        pass_filenames: false
+        always_run: true
       - id: pytest
         name: pytest with coverage
         entry: pytest --cov=src --cov-report=term-missing --cov-fail-under=10

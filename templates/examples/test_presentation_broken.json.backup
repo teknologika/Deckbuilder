@@ -61,96 +61,58 @@
       {
         "type": "Comparison",
         "title": "Development **Approach** Comparison",
-        "comparison": {
-          "left": {
-            "title": "Agile Methodology",
-            "content": "***Iterative*** development with **customer feedback**"
-          },
-          "right": {
-            "title": "Waterfall Methodology",
-            "content": "___Sequential___ phases with **planning** and *documentation*"
-          }
-        }
+        "title_left_1": "Agile Methodology",
+        "content_left_1": "***Iterative*** development with **customer feedback**",
+        "title_right_1": "Waterfall Methodology",
+        "content_right_1": "___Sequential___ phases with **planning** and *documentation*"
       },
       {
         "type": "Four Columns",
         "title": "Feature **Comparison** Matrix",
-        "columns": [
-          {
-            "title": "Performance",
-            "content": "**Fast processing** with *sub-millisecond* response"
-          },
-          {
-            "title": "Security",
-            "content": "***Enterprise-grade*** encryption"
-          },
-          {
-            "title": "Usability",
-            "content": "*Intuitive* interface"
-          },
-          {
-            "title": "Cost",
-            "content": "___Competitive___ pricing with **flexible** plans"
-          }
-        ]
+        "title_col1_1": "Performance",
+        "content_col1_1": "**Fast processing** with *sub-millisecond* response",
+        "title_col2_1": "Security",
+        "content_col2_1": "***Enterprise-grade*** encryption",
+        "title_col3_1": "Usability",
+        "content_col3_1": "*Intuitive* interface",
+        "title_col4_1": "Cost",
+        "content_col4_1": "___Competitive___ pricing with **flexible** plans"
       },
       {
         "type": "Three Columns With Titles",
         "title": "**Implementation** Phases",
-        "columns": [
-          {
-            "title": "Phase 1",
-            "content": "**Planning** and *requirements* gathering with ___stakeholder___ input"
-          },
-          {
-            "title": "Phase 2",
-            "content": "***Development*** and *testing* with **continuous** integration"
-          },
-          {
-            "title": "Phase 3",
-            "content": "___Deployment___ and **monitoring** with *performance* tracking"
-          }
-        ]
+        "title_col1_1": "Phase 1",
+        "content_col1_1": "**Planning** and *requirements* gathering with ___stakeholder___ input",
+        "title_col2_1": "Phase 2",
+        "content_col2_1": "***Development*** and *testing* with **continuous** integration",
+        "title_col3_1": "Phase 3",
+        "content_col3_1": "___Deployment___ and **monitoring** with *performance* tracking"
       },
       {
         "type": "Three Columns",
         "title": "**Benefits** Overview",
-        "columns": [
-          {
-            "content": "**Fast processing** with ***sub-millisecond*** response"
-          },
-          {
-            "content": "*Enterprise-grade* security with ___SOC2___ and **GDPR** compliance"
-          },
-          {
-            "content": "***Intuitive*** interface with **minimal** learning curve"
-          }
-        ]
+        "content_col1_1": "**Fast processing** with ***sub-millisecond*** response",
+        "content_col2_1": "*Enterprise-grade* security with ___SOC2___ and **GDPR** compliance",
+        "content_col3_1": "***Intuitive*** interface with **minimal** learning curve"
       },
       {
         "type": "Picture with Caption",
         "title": "**PlaceKitten** Fallback Demo",
-        "media": {
-          "image_path": "assets/non_existent_image.png",
-          "alt_text": "Professional placeholder image with smart cropping",
-          "caption": "***Smart fallback*** with professional **grayscale** styling"
-        }
+        "image_1": "assets/non_existent_image.png",
+        "text_caption_1": "***Smart fallback*** with professional **grayscale** styling"
       },
       {
         "type": "Picture with Caption",
         "title": "**Valid Image** Processing",
-        "media": {
-          "image_path": "src/placekitten/images/ACuteKitten-1.png",
-          "alt_text": "Cute kitten demonstrating image processing pipeline",
-          "caption": "Direct image processing with ***optimization***"
-        }
+        "image_1": "src/placekitten/images/ACuteKitten-2.png",
+        "text_caption_1": "Direct image processing with ***optimization***"
       },
       {
         "type": "table",
-        "title": "**Project Status** Table",
         "style": "dark_blue_white_text",
         "row_style": "alternating_light_gray",
         "border_style": "thin_gray",
+        "title": "**Project Status** Table",
         "table": {
           "data": [
             ["**Component**", "*Status*", "___Priority___", "**Owner**"],

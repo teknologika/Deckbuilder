@@ -104,8 +104,10 @@ class DeckbuilderCLI:
 
     def _convert_json_to_markdown(self, json_data: dict) -> str:
         """Convert JSON slide data to markdown format with frontmatter"""
+        import yaml
+
         markdown_lines = []
-        
+
         # Handle structured JSON format
         if "presentation" in json_data and "slides" in json_data["presentation"]:
             slides = json_data["presentation"]["slides"]
@@ -113,18 +115,18 @@ class DeckbuilderCLI:
             slides = json_data
         else:
             slides = [json_data]
-        
+
         for slide in slides:
             markdown_lines.append("---")
-            
+
             # Add layout
             slide_type = slide.get("type", slide.get("layout", "Title and Content"))
             markdown_lines.append(f"layout: {slide_type}")
-            
+
             # Add title
             if "title" in slide:
                 markdown_lines.append(f"title: {slide['title']}")
-            
+
             # Add content based on slide type
             if "content" in slide:
                 if isinstance(slide["content"], list):
@@ -132,20 +134,25 @@ class DeckbuilderCLI:
                 else:
                     content = slide["content"]
                 markdown_lines.append(f"content: |\n  {content}")
-            
-            # Handle specific layout fields
+
+            # Handle specific layout fields with proper YAML serialization
             for key, value in slide.items():
                 if key not in ["type", "layout", "title", "content"]:
-                    if isinstance(value, dict):
-                        markdown_lines.append(f"{key}:")
-                        for subkey, subvalue in value.items():
-                            markdown_lines.append(f"  {subkey}: {subvalue}")
+                    if isinstance(value, (dict, list)):
+                        # Use YAML to properly serialize complex structures
+                        yaml_str = yaml.dump(
+                            {key: value}, default_flow_style=False, allow_unicode=True
+                        )
+                        # Remove the outer braces and add proper indentation
+                        yaml_lines = yaml_str.strip().split("\n")
+                        for yaml_line in yaml_lines:
+                            markdown_lines.append(yaml_line)
                     else:
                         markdown_lines.append(f"{key}: {value}")
-            
+
             markdown_lines.append("---")
             markdown_lines.append("")  # Empty line between slides
-        
+
         return "\n".join(markdown_lines)
 
     def _get_available_templates(self):
@@ -204,7 +211,7 @@ class DeckbuilderCLI:
                 # Process JSON file - convert to markdown format first
                 with open(input_path, "r", encoding="utf-8") as f:
                     json_data = json.load(f)
-                
+
                 # Convert JSON to markdown for processing
                 markdown_content = self._convert_json_to_markdown(json_data)
                 result = db.create_presentation_from_markdown(
@@ -363,7 +370,7 @@ class DeckbuilderCLI:
                 print("💡 Default templates not found in package")
                 print(f"💡 Expected location: {path_manager.get_assets_templates_path()}")
                 return
-            
+
             assets_path = path_manager.get_assets_templates_path()
             source_pptx = assets_path / "default.pptx"
             source_json = assets_path / "default.json"
@@ -800,7 +807,7 @@ Perfect for **one-off** slides with *unique* requirements.
         """Display current configuration with proper defaults and source indicators"""
         print("🔧 Deckbuilder Configuration:")
 
-        # Template folder with source indication  
+        # Template folder with source indication
         template_folder = path_manager.get_template_folder()
         env_template_folder = os.getenv("DECK_TEMPLATE_FOLDER")
         if env_template_folder:
