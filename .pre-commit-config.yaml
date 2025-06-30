@@ -60,11 +60,17 @@ repos:
         language: python
         pass_filenames: false
         always_run: true
+      - id: check-no-os-environ
+        name: Prevent os.environ usage
+        entry: python scripts/check_no_os_environ.py
+        language: python
+        pass_filenames: false
+        always_run: true
       - id: pytest
         name: pytest with coverage
         entry: pytest --cov=src --cov-report=term-missing --cov-fail-under=10
         language: python
-        language_version: python3.13
+        language_version: python3.12
         additional_dependencies: [pytest-cov, PyYAML, python-pptx, pydantic, numpy, opencv-python, pillow]
         pass_filenames: false
         always_run: true

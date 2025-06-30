@@ -74,12 +74,11 @@ class TemplateManager:
         print(f"📂 Output folder: {self.output_folder}")
 
         try:
-            # Set environment variables for the analyzer
-            os.environ["DECK_TEMPLATE_FOLDER"] = self.template_folder
-            os.environ["DECK_OUTPUT_FOLDER"] = self.output_folder
-
-            # Create analyzer instance with current environment
+            # Create analyzer instance with explicit paths instead of environment variables
             analyzer = TemplateAnalyzer()
+            # Override analyzer paths with our explicit values
+            analyzer.template_path = self.template_folder
+            analyzer.output_folder = self.output_folder
 
             # Run analysis
             result = analyzer.analyze_pptx_template(template_name)

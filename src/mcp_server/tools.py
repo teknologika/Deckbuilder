@@ -8,7 +8,7 @@ from pptx import Presentation
 
 # Add the parent directory to Python path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from deckbuilder.path_manager import path_manager
+from deckbuilder.path_manager import path_manager  # noqa: E402
 
 
 class TemplateAnalyzer:
@@ -306,15 +306,17 @@ class TemplateAnalyzer:
 
             # Check for proper sequential numbering
             if title_nums and title_nums != list(range(1, len(title_nums) + 1)):
+                expected_nums = list(range(1, len(title_nums) + 1))
                 warnings.append(
-                    f"Column numbers not sequential: {title_nums} (expected: {list(range(1, len(title_nums) + 1))})"
+                    f"Column numbers not sequential: {title_nums} (expected: {expected_nums})"
                 )
 
         # Check for proper content numbering in content-only layouts
         elif content_cols:
             if content_nums != list(range(1, len(content_nums) + 1)):
+                expected_nums = list(range(1, len(content_nums) + 1))
                 warnings.append(
-                    f"Column numbers not sequential: {content_nums} (expected: {list(range(1, len(content_nums) + 1))})"
+                    f"Column numbers not sequential: {content_nums} (expected: {expected_nums})"
                 )
 
     def _validate_comparison_layout(
@@ -340,9 +342,8 @@ class TemplateAnalyzer:
             )
 
         if len(content_placeholders) < 2:
-            errors.append(
-                "Comparison layout should have at least 2 content placeholders for left/right content"
-            )
+            msg = "Comparison layout should have at least 2 content placeholders for left/right content"
+            errors.append(msg)
 
     def _validate_global_consistency(
         self, all_placeholder_names: list, validation_results: Dict, layouts: Dict = None

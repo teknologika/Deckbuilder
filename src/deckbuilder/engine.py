@@ -296,6 +296,12 @@ class Deckbuilder:
         Args:
             slide_data: Dictionary containing slide information
         """
+        # Type validation: ensure slide_data is a dictionary
+        if not isinstance(slide_data, dict):
+            raise TypeError(
+                f"slide_data must be a dictionary, got {type(slide_data).__name__}: {slide_data}"
+            )
+
         # Track slide index for consistent image selection
         self._current_slide_index = getattr(self, "_current_slide_index", 0) + 1
 
@@ -1386,6 +1392,12 @@ class Deckbuilder:
 
     def _auto_parse_json_formatting(self, slide_data):
         """Auto-parse inline formatting in JSON slide data."""
+        # Type validation: ensure slide_data is a dictionary
+        if not isinstance(slide_data, dict):
+            raise TypeError(
+                f"slide_data must be a dictionary, got {type(slide_data).__name__}: {slide_data}"
+            )
+
         # Create a copy to avoid modifying original
         processed_data = slide_data.copy()
 

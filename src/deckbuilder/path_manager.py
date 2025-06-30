@@ -47,8 +47,8 @@ class PathManager:
         if template_folder:
             return Path(template_folder).resolve()
 
-        # Default to lowercase 'templates' in current working directory
-        return Path.cwd() / "templates"
+        # Default to package assets/templates instead of current directory
+        return self.get_assets_templates_path()
 
     def get_output_folder(self) -> Path:
         """Get the current output folder from environment or default"""
@@ -139,7 +139,7 @@ class PathManager:
             pass
 
         # Fallback version
-        return "1.0.1"
+        return "1.0.2b2"
 
 
 # Global instance for consistent usage across the codebase

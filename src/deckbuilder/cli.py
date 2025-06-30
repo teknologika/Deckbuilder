@@ -47,51 +47,11 @@ class DeckbuilderCLI:
     """Standalone Deckbuilder command-line interface"""
 
     def __init__(self, templates_path=None, output_path=None, language=None, font=None):
-        self.setup_environment(templates_path, output_path, language, font)
-
-    def setup_environment(self, templates_path=None, output_path=None, language=None, font=None):
-        """Setup environment variables with priority: CLI args > env vars > defaults"""
-
-        # Template folder resolution priority
-        if templates_path:
-            # 1. CLI argument has highest priority
-            os.environ["DECK_TEMPLATE_FOLDER"] = str(Path(templates_path).resolve())
-        elif not os.getenv("DECK_TEMPLATE_FOLDER"):
-            # 2. Environment variable already set (skip)
-            # 3. Default location: ./templates/ (lowercase)
-            default_templates = Path.cwd() / "templates"
-            os.environ["DECK_TEMPLATE_FOLDER"] = str(default_templates)
-
-        # Output folder resolution priority
-        if output_path:
-            # 1. CLI argument has highest priority
-            output_folder = Path(output_path)
-            output_folder.mkdir(parents=True, exist_ok=True)
-            os.environ["DECK_OUTPUT_FOLDER"] = str(output_folder.resolve())
-        elif not os.getenv("DECK_OUTPUT_FOLDER"):
-            # 2. Environment variable already set (skip)
-            # 3. Default location: current directory
-            os.environ["DECK_OUTPUT_FOLDER"] = str(Path.cwd())
-
-        # Default template name
-        if not os.getenv("DECK_TEMPLATE_NAME"):
-            os.environ["DECK_TEMPLATE_NAME"] = "default"
-
-        # Language setting resolution priority
-        if language:
-            # 1. CLI argument has highest priority
-            os.environ["DECK_PROOFING_LANGUAGE"] = language
-        elif not os.getenv("DECK_PROOFING_LANGUAGE"):
-            # 2. Environment variable already set (skip)
-            # 3. Default language: Australian English
-            os.environ["DECK_PROOFING_LANGUAGE"] = "en-AU"
-
-        # Font setting resolution priority
-        if font:
-            # 1. CLI argument has highest priority
-            os.environ["DECK_DEFAULT_FONT"] = font
-        # 2. Environment variable already set (keep existing)
-        # 3. No default font (use PowerPoint default)
+        """Initialize CLI with explicit parameters instead of environment variables"""
+        self.templates_path = Path(templates_path) if templates_path else None
+        self.output_path = Path(output_path) if output_path else None
+        self.language = language
+        self.font = font
 
     def _validate_templates_folder(self):
         """Validate templates folder exists and provide helpful error message"""
@@ -193,9 +153,8 @@ class DeckbuilderCLI:
         if not output_name:
             output_name = input_path.stem
 
-        # Set template if provided
-        if template:
-            os.environ["DECK_TEMPLATE_NAME"] = template
+        # Use default template if none provided
+        template_name = template or "default"
 
         # Initialize Deckbuilder
         db = Deckbuilder()
@@ -205,7 +164,7 @@ class DeckbuilderCLI:
                 # Process markdown file
                 content = input_path.read_text(encoding="utf-8")
                 result = db.create_presentation_from_markdown(
-                    markdown_content=content, fileName=output_name
+                    markdown_content=content, fileName=output_name, templateName=template_name
                 )
             elif input_path.suffix.lower() == ".json":
                 # Process JSON file - convert to markdown format first
@@ -215,7 +174,9 @@ class DeckbuilderCLI:
                 # Convert JSON to markdown for processing
                 markdown_content = self._convert_json_to_markdown(json_data)
                 result = db.create_presentation_from_markdown(
-                    markdown_content=markdown_content, fileName=output_name
+                    markdown_content=markdown_content,
+                    fileName=output_name,
+                    templateName=template_name,
                 )
             else:
                 raise ValueError(
@@ -223,6 +184,10 @@ class DeckbuilderCLI:
                     "Supported formats: .md, .json"
                 )
 
+            # Check if result indicates an error
+            if result and "Error creating presentation from markdown:" in result:
+                print(f"❌ {result}")
+                raise RuntimeError(result)
             print(f"✅ Presentation created successfully: {result}")
             return result
 
