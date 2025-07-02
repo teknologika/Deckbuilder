@@ -8,13 +8,38 @@ to eliminate inconsistent path handling across the codebase.
 
 import os
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Literal
 
 
 class PathManager:
-    """Centralized path management for Deckbuilder assets and templates"""
+    """Context-aware centralized path management for Deckbuilder
 
-    def __init__(self):
+    Supports different path resolution strategies based on usage context:
+    - CLI: template args > env vars > current dir, output always current dir
+    - MCP: env vars > failure (no fallbacks)
+    - Library: constructor args > env vars > current dir
+    """
+
+    def __init__(
+        self,
+        context: Literal["cli", "mcp", "library"] = "library",
+        template_folder: Optional[str] = None,
+        output_folder: Optional[str] = None,
+        template_name: Optional[str] = None,
+    ):
+        """
+        Initialize PathManager with context-aware behavior
+
+        Args:
+            context: Usage context (cli, mcp, library)
+            template_folder: Explicit template folder path (overrides env vars)
+            output_folder: Explicit output folder path (overrides env vars)
+            template_name: Explicit template name (overrides env vars)
+        """
+        self._context = context
+        self._template_folder = template_folder
+        self._output_folder = output_folder
+        self._template_name = template_name
         self._cache = {}
 
     def get_project_root(self) -> Path:
@@ -42,26 +67,85 @@ class PathManager:
         return self.get_project_root() / "assets" / "templates"
 
     def get_template_folder(self) -> Path:
-        """Get the current template folder from environment or default"""
-        template_folder = os.getenv("DECK_TEMPLATE_FOLDER")
-        if template_folder:
-            return Path(template_folder).resolve()
+        """Get template folder based on context-aware precedence rules"""
 
-        # Default to package assets/templates instead of current directory
-        return self.get_assets_templates_path()
+        # CLI Context: explicit args > env vars > current directory
+        if self._context == "cli":
+            if self._template_folder:
+                return Path(self._template_folder).resolve()
+
+            env_folder = os.getenv("DECK_TEMPLATE_FOLDER")
+            if env_folder:
+                return Path(env_folder).resolve()
+
+            # CLI defaults to current directory
+            return Path.cwd()
+
+        # MCP Context: env vars > failure (no fallbacks)
+        elif self._context == "mcp":
+            env_folder = os.getenv("DECK_TEMPLATE_FOLDER")
+            if env_folder:
+                return Path(env_folder).resolve()
+
+            # MCP requires explicit configuration
+            raise ValueError(
+                "MCP context requires DECK_TEMPLATE_FOLDER environment variable to be set"
+            )
+
+        # Library Context: constructor args > env vars > current directory
+        else:  # library
+            if self._template_folder:
+                return Path(self._template_folder).resolve()
+
+            env_folder = os.getenv("DECK_TEMPLATE_FOLDER")
+            if env_folder:
+                return Path(env_folder).resolve()
+
+            # Library defaults to current directory
+            return Path.cwd()
 
     def get_output_folder(self) -> Path:
-        """Get the current output folder from environment or default"""
-        output_folder = os.getenv("DECK_OUTPUT_FOLDER")
-        if output_folder:
-            return Path(output_folder).resolve()
+        """Get output folder based on context-aware precedence rules"""
 
-        # Default to current working directory
-        return Path.cwd()
+        # CLI Context: always current directory (no args, no env vars)
+        if self._context == "cli":
+            return Path.cwd()
+
+        # MCP Context: env vars > failure (no fallbacks)
+        elif self._context == "mcp":
+            env_folder = os.getenv("DECK_OUTPUT_FOLDER")
+            if env_folder:
+                return Path(env_folder).resolve()
+
+            # MCP requires explicit configuration
+            raise ValueError(
+                "MCP context requires DECK_OUTPUT_FOLDER environment variable to be set"
+            )
+
+        # Library Context: constructor args > env vars > current directory
+        else:  # library
+            if self._output_folder:
+                return Path(self._output_folder).resolve()
+
+            env_folder = os.getenv("DECK_OUTPUT_FOLDER")
+            if env_folder:
+                return Path(env_folder).resolve()
+
+            # Library defaults to current directory
+            return Path.cwd()
 
     def get_template_name(self) -> str:
-        """Get the current template name from environment or default"""
-        return os.getenv("DECK_TEMPLATE_NAME", "default")
+        """Get template name based on context-aware precedence rules"""
+
+        # All contexts: explicit args > env vars > "default"
+        if self._template_name:
+            return self._template_name
+
+        env_name = os.getenv("DECK_TEMPLATE_NAME")
+        if env_name:
+            return env_name
+
+        return "default"
 
     def get_template_file_path(self, template_name: Optional[str] = None) -> Path:
         """Get the full path to a template .pptx file"""
@@ -144,5 +228,30 @@ class PathManager:
         return "1.0.2b2"
 
 
-# Global instance for consistent usage across the codebase
-path_manager = PathManager()
+# Factory functions for different contexts
+def create_cli_path_manager(template_folder: Optional[str] = None) -> PathManager:
+    """Create PathManager for CLI usage (template args > env > current dir, output current dir)"""
+    return PathManager(context="cli", template_folder=template_folder)
+
+
+def create_mcp_path_manager() -> PathManager:
+    """Create PathManager for MCP usage (env vars > failure)"""
+    return PathManager(context="mcp")
+
+
+def create_library_path_manager(
+    template_folder: Optional[str] = None,
+    output_folder: Optional[str] = None,
+    template_name: Optional[str] = None,
+) -> PathManager:
+    """Create PathManager for library usage (args > env > current dir)"""
+    return PathManager(
+        context="library",
+        template_folder=template_folder,
+        output_folder=output_folder,
+        template_name=template_name,
+    )
+
+
+# Global instance for backward compatibility (library context)
+path_manager = PathManager(context="library")

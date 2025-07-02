@@ -18,7 +18,7 @@ from .placeholder_types import (
 )
 from .image_handler import ImageHandler
 from .placekitten_integration import PlaceKittenIntegration
-from .path_manager import path_manager
+from .path_manager import path_manager, PathManager
 
 try:
     from .formatting_support import FormattingSupport, get_default_language, get_default_font
@@ -79,10 +79,13 @@ def singleton(cls):
 
 @singleton
 class Deckbuilder:
-    def __init__(self):
-        self.template_path = str(path_manager.get_template_folder())
-        self.template_name = path_manager.get_template_name()
-        self.output_folder = str(path_manager.get_output_folder())
+    def __init__(self, path_manager_instance: PathManager = None):
+        # Use provided path manager or default global instance
+        self._path_manager = path_manager_instance or path_manager
+
+        self.template_path = str(self._path_manager.get_template_folder())
+        self.template_name = self._path_manager.get_template_name()
+        self.output_folder = str(self._path_manager.get_output_folder())
         self.prs = Presentation()
         self.layout_mapping = None
 
@@ -92,7 +95,7 @@ class Deckbuilder:
         self.default_font = get_default_font()
 
         # Initialize image handling components with cache in output directory
-        cache_dir = str(path_manager.get_output_folder() / "tmp" / "image_cache")
+        cache_dir = str(self._path_manager.get_output_folder() / "tmp" / "image_cache")
         self.image_handler = ImageHandler(cache_dir)
         self.placekitten = PlaceKittenIntegration(self.image_handler)
 
@@ -1582,5 +1585,8 @@ class Deckbuilder:
 
 
 def get_deckbuilder_client():
-    # Return singleton instance of Deckbuilder
-    return Deckbuilder()
+    # Return Deckbuilder instance with MCP context
+    from .path_manager import create_mcp_path_manager
+
+    Deckbuilder.reset()  # Clear any existing singleton
+    return Deckbuilder(path_manager_instance=create_mcp_path_manager())

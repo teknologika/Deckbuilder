@@ -23,9 +23,9 @@ The Deckbuilder CLI provides a standalone command-line interface for presentatio
 
 ### Template Folder Resolution Priority
 
-1. **CLI Global Flag** (`-t/--templates PATH`) - Highest priority
+1. **CLI Argument** (`--template-folder PATH`) - Highest priority
    ```bash
-   deckbuilder -t ~/my-templates create slides.md
+   deckbuilder --template-folder ~/my-templates create slides.md
    ```
 
 2. **Environment Variable** (`DECK_TEMPLATE_FOLDER`) - If set
@@ -33,7 +33,7 @@ The Deckbuilder CLI provides a standalone command-line interface for presentatio
    export DECK_TEMPLATE_FOLDER="/home/user/templates"
    ```
 
-3. **Default Location** (`./templates/`) - Fallback
+3. **Default Location** (`./templates/`) - Current directory fallback
    ```bash
    # Looks for templates in current directory
    deckbuilder create slides.md
@@ -47,23 +47,18 @@ The Deckbuilder CLI provides a standalone command-line interface for presentatio
 
 ### Output Folder Resolution Priority
 
-1. **CLI Global Flag** (`-o/--output PATH`) - Highest priority
-   ```bash
-   deckbuilder -o ~/presentations create slides.md
-   ```
+**CLI Context: Always outputs to current directory for predictable local development**
 
-2. **Environment Variable** (`DECK_OUTPUT_FOLDER`) - If set
+1. **Current Directory** (`.`) - CLI always uses current directory
    ```bash
-   export DECK_OUTPUT_FOLDER="/home/user/output"
-   ```
-
-3. **Default Location** (`.`) - Current directory fallback
-   ```bash
-   # Saves presentation in current directory
+   # Always saves in current directory for local development workflow
    deckbuilder create slides.md
    ```
 
-4. **Auto-create** - Creates output folder if needed
+2. **Context-Aware Behavior** - Different contexts have different precedence rules:
+   - **CLI Context**: Always current directory (overrides env vars)
+   - **MCP Context**: Environment variables required, no fallbacks
+   - **Library Context**: Constructor args > env vars > current directory
 
 ## Command Structure
 
@@ -73,22 +68,29 @@ The Deckbuilder CLI provides a standalone command-line interface for presentatio
 deckbuilder [GLOBAL_OPTIONS] COMMAND [COMMAND_OPTIONS]
 
 Global Options:
-  -t, --templates PATH    Template folder path
-  -o, --output PATH      Output folder path
-  -h, --help            Show help message
-  --version             Show version
+  --template-folder PATH    Template folder path (overrides env vars)
+  -l, --language LANG      Proofing language (e.g., "en-AU" or "English (Australia)")
+  -f, --font FONT          Default font family (e.g., "Arial", "Times New Roman")
+  -h, --help              Show help message
+  --version               Show version
 ```
 
-### Simplified Command Arguments
+### Context-Aware Architecture
 
-**Before (Complex):**
-```bash
-deckbuilder create slides.md --template-folder ~/templates --output-folder ~/output
-```
+**CLI Context Behavior:**
+- Template folder: CLI args > env vars > current directory
+- Output folder: Always current directory (predictable local development)
+- Language/Font: CLI args > env vars > defaults
 
-**After (Simple):**
 ```bash
-deckbuilder -t ~/templates -o ~/output create slides.md
+# Use custom template folder (CLI arg overrides env vars)
+deckbuilder --template-folder ~/templates create slides.md
+
+# Set language and font globally
+deckbuilder --language "es-ES" --font "Arial" create slides.md
+
+# Always outputs to current directory for local development
+deckbuilder create slides.md  # outputs to ./presentation_name.pptx
 ```
 
 ## Init Command Specification
@@ -247,52 +249,81 @@ source ~/.bash_profile
 # Initialize templates in current directory
 deckbuilder init
 
-# Create presentation from markdown
+# Create presentation from markdown (outputs to current directory)
 deckbuilder create slides.md
 
-# Create with custom output name
-deckbuilder create slides.md -o "My Presentation"
+# Create with custom output name (still in current directory)
+deckbuilder create slides.md --output "My_Presentation"
 
-# Use different template
-deckbuilder create slides.md --template business-slides
+# Use different template folder
+deckbuilder --template-folder ~/my-templates create slides.md
+
+# Set language and font
+deckbuilder --language "fr-CA" --font "Times New Roman" create slides.md
 ```
 
 ### Advanced Usage
 
 ```bash
-# Use custom template and output folders
-deckbuilder -t ~/templates -o ~/presentations create slides.md
+# Use custom template folder with language/font settings
+deckbuilder --template-folder ~/templates --language "es-ES" --font "Arial" create slides.md
 
 # Template management
-deckbuilder analyze default --verbose
-deckbuilder validate business-slides
-deckbuilder document default --output template-docs.md
+deckbuilder template analyze default --verbose
+deckbuilder template validate business-slides
+deckbuilder template document default
 
 # Image generation
-deckbuilder image 1920 1080 --filter grayscale
-deckbuilder crop photo.jpg 800 600 --save-steps
+deckbuilder image generate 1920 1080 --filter grayscale
 ```
 
 ### Configuration and Info
 
 ```bash
-# Show current configuration
-deckbuilder config
+# Show current configuration (shows path sources and current settings)
+deckbuilder config show
+
+# List all supported languages
+deckbuilder config languages
 
 # List available templates
-deckbuilder templates
+deckbuilder template list
 
 # Show help for specific command
 deckbuilder create --help
 ```
 
+## Context-Aware Path Management (✅ COMPLETED)
+
+### Three Context Types
+The Deckbuilder architecture now supports three distinct contexts with different path resolution behaviors:
+
+1. **CLI Context** - Local development focused
+   - Template folder: CLI args > env vars > current directory
+   - Output folder: Always current directory (predictable local workflow)
+   - Language/Font: CLI args > env vars > defaults
+
+2. **MCP Context** - Server environment focused  
+   - Template folder: Environment variables required (no fallbacks)
+   - Output folder: Environment variables required (no fallbacks)
+   - Language/Font: Environment variables > defaults
+
+3. **Library Context** - Programmatic usage focused
+   - Template folder: Constructor args > env vars > current directory
+   - Output folder: Constructor args > env vars > current directory
+   - Language/Font: Constructor args > env vars > defaults
+
+### Anti-Pattern Fixed
+- ❌ **Before**: CLI set environment variables globally
+- ✅ **After**: Each context uses appropriate path resolution without side effects
+
 ## Implementation Roadmap
 
-### Phase 1: Core Logic Improvements
-- [ ] Update environment resolution priority logic
-- [ ] Simplify global arguments (`-t`, `-o`)
-- [ ] Improve error messages with actionable suggestions
-- [ ] Add comprehensive help text
+### Phase 1: Core Logic Improvements ✅ COMPLETED
+- [x] Update environment resolution priority logic
+- [x] Implement context-aware path management
+- [x] Add language and font support
+- [x] Improve error messages with actionable suggestions
 
 ### Phase 2: Init Command
 - [ ] Implement `deckbuilder init [PATH]` command

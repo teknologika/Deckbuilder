@@ -34,10 +34,11 @@ Create complete PowerPoint presentations from JSON or Markdown with YAML frontma
 
 ### ⚡ **Enhanced CLI Experience**
 - **One-Command Setup**: `deckbuilder init` creates templates and configuration
-- **Smart Defaults**: Intuitive file paths and environment resolution
+- **Context-Aware Paths**: CLI args > env vars > current directory precedence
+- **Always Local Output**: CLI outputs to current directory for predictable local development
 - **Tab Completion**: Bash completion for commands, templates, and files
-- **Global Arguments**: `-t/--templates`, `-o/--output`, `-l/--language`, `-f/--font` for complete customization
-- **Language Support**: `deckbuilder languages` lists 20 supported proofing languages
+- **Global Arguments**: `-t/--template-folder`, `-l/--language`, `-f/--font` for complete customization
+- **Language Support**: `deckbuilder config languages` lists 20 supported proofing languages
 - **Template Management**: Analyze, validate, and enhance PowerPoint templates
 
 ### 🎯 **Content-First Intelligence - Currently under design**
@@ -57,25 +58,28 @@ pip install deckbuilder
 # Initialize templates (one-time setup) This will create the default template and mapping JSON.
 deckbuilder init
 
-# Create presentation from markdown
+# Create presentation from markdown (outputs to current directory)
 deckbuilder create presentation.md
+
+# Use custom template folder (CLI arg overrides env vars)
+deckbuilder --template-folder /custom/templates create presentation.md
 
 # Create with custom language and font (supports both formats)
 deckbuilder create presentation.md --language "es-ES" --font "Arial"
 deckbuilder create presentation.md --language "Spanish (Spain)" --font "Times New Roman"
 
 # View supported languages
-deckbuilder languages
+deckbuilder config languages
 
 # Template management
-deckbuilder analyze default --verbose
-deckbuilder templates
+deckbuilder template analyze default --verbose
+deckbuilder template list
 
 # Image generation
-deckbuilder image 800 600 --filter grayscale
+deckbuilder image generate 800 600 --filter grayscale
 
-# View current configuration
-deckbuilder config
+# View current configuration (shows path sources)
+deckbuilder config show
 
 # Get help
 deckbuilder --help

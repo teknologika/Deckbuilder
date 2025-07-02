@@ -25,7 +25,7 @@ try:
     from deckbuilder.engine import Deckbuilder
     from deckbuilder.cli_tools import TemplateManager
     from deckbuilder.formatting_support import FormattingSupport, print_supported_languages
-    from deckbuilder.path_manager import path_manager
+    from deckbuilder.path_manager import create_cli_path_manager
     from placekitten import PlaceKitten
 except ImportError:
     # Fallback to development imports (when running from source)
@@ -39,24 +39,24 @@ except ImportError:
         FormattingSupport,
         print_supported_languages,
     )  # noqa: E402
-    from src.deckbuilder.path_manager import path_manager  # noqa: E402
+    from src.deckbuilder.path_manager import create_cli_path_manager  # noqa: E402
     from src.placekitten import PlaceKitten  # noqa: E402
 
 
 class DeckbuilderCLI:
     """Standalone Deckbuilder command-line interface"""
 
-    def __init__(self, templates_path=None, output_path=None, language=None, font=None):
-        """Initialize CLI with explicit parameters instead of environment variables"""
-        self.templates_path = Path(templates_path) if templates_path else None
-        self.output_path = Path(output_path) if output_path else None
+    def __init__(self, template_folder=None, language=None, font=None):
+        """Initialize CLI with template folder for CLI context"""
+        # Create CLI-specific path manager
+        self.path_manager = create_cli_path_manager(template_folder=template_folder)
         self.language = language
         self.font = font
 
     def _validate_templates_folder(self):
         """Validate templates folder exists and provide helpful error message"""
-        if not path_manager.validate_template_folder_exists():
-            template_folder = path_manager.get_template_folder()
+        if not self.path_manager.validate_template_folder_exists():
+            template_folder = self.path_manager.get_template_folder()
             print(f"❌ Template folder not found: {template_folder}")
             print("💡 Run 'deckbuilder init' to create template folder and copy default files")
             return False
@@ -156,8 +156,9 @@ class DeckbuilderCLI:
         # Use default template if none provided
         template_name = template or "default"
 
-        # Initialize Deckbuilder
-        db = Deckbuilder()
+        # Reset singleton and create fresh instance with CLI path manager
+        Deckbuilder.reset()
+        db = Deckbuilder(path_manager_instance=self.path_manager)
 
         try:
             if input_path.suffix.lower() == ".md":
@@ -329,14 +330,16 @@ class DeckbuilderCLI:
         target_path.mkdir(parents=True, exist_ok=True)
 
         try:
-            # Use centralized path manager to locate assets
-            if not path_manager.validate_assets_exist():
+            # Use global path manager to locate package assets
+            from deckbuilder.path_manager import path_manager as global_pm
+
+            if not global_pm.validate_assets_exist():
                 print("❌ Could not locate template assets")
                 print("💡 Default templates not found in package")
-                print(f"💡 Expected location: {path_manager.get_assets_templates_path()}")
+                print(f"💡 Expected location: {global_pm.get_assets_templates_path()}")
                 return
 
-            assets_path = path_manager.get_assets_templates_path()
+            assets_path = global_pm.get_assets_templates_path()
             source_pptx = assets_path / "default.pptx"
             source_json = assets_path / "default.json"
 
@@ -773,20 +776,21 @@ Perfect for **one-off** slides with *unique* requirements.
         print("🔧 Deckbuilder Configuration:")
 
         # Template folder with source indication
-        template_folder = path_manager.get_template_folder()
+        template_folder = self.path_manager.get_template_folder()
         env_template_folder = os.getenv("DECK_TEMPLATE_FOLDER")
-        if env_template_folder:
-            # Check if it's the default path to determine source
-            default_path = Path.cwd() / "templates"
-            if template_folder == default_path:
-                print("  Template Folder: ./templates (Default)")
-            else:
-                print(f"  Template Folder: {template_folder} (Environment Variable)")
+
+        if self.path_manager._template_folder:
+            # CLI argument provided
+            print(f"  Template Folder: {template_folder} (CLI Argument)")
+        elif env_template_folder:
+            # Environment variable set
+            print(f"  Template Folder: {template_folder} (Environment Variable)")
         else:
-            print("  Template Folder: ./templates (Default)")
+            # Default fallback
+            print(f"  Template Folder: {template_folder} (Default)")
 
         # Output folder with source indication
-        output_folder = path_manager.get_output_folder()
+        output_folder = self.path_manager.get_output_folder()
         env_output_folder = os.getenv("DECK_OUTPUT_FOLDER")
         if env_output_folder:
             # Check if it's the current directory to determine source
@@ -799,7 +803,7 @@ Perfect for **one-off** slides with *unique* requirements.
             print("  Output Folder: . (Default)")
 
         # Default template with source indication
-        template_name = path_manager.get_template_name()
+        template_name = self.path_manager.get_template_name()
         env_template_name = os.getenv("DECK_TEMPLATE_NAME")
         if env_template_name:
             if template_name == "default":
@@ -985,10 +989,10 @@ def create_parser():
 
     # Global arguments (apply to all commands)
     parser.add_argument(
-        "-t", "--templates", metavar="PATH", help="Template folder path (default: ./templates/)"
-    )
-    parser.add_argument(
-        "-o", "--output", metavar="PATH", help="Output folder path (default: current directory)"
+        "-t",
+        "--template-folder",
+        metavar="PATH",
+        help="Template folder path (default: env var or current dir)",
     )
     parser.add_argument(
         "-l",
@@ -1179,11 +1183,10 @@ Commands:
   help                      Show detailed help for commands
 
 Global Options:
-  -t, --templates PATH      Template folder path
-  -o, --output PATH         Output folder path
-  -l, --language LANG       Proofing language (en-AU, es-ES, etc.)
-  -f, --font FONT           Default font family
-  -h, --help                Show this help message
+  -t, --template-folder PATH Template folder path (default: env var or current dir)
+  -l, --language LANG        Proofing language (en-AU, es-ES, etc.)
+  -f, --font FONT            Default font family
+  -h, --help                 Show this help message
 
 Examples:
   deckbuilder init                      # First-time setup
@@ -1470,6 +1473,9 @@ def main():
 
     # Handle version flag
     if hasattr(args, "version") and args.version:
+        # Create a temporary path manager for version info
+        from deckbuilder.path_manager import path_manager
+
         version = path_manager.get_version()
         print(f"Deckbuilder CLI v{version}")
         print("Intelligent PowerPoint presentation generation")
@@ -1486,11 +1492,8 @@ def main():
         return
 
     # Initialize CLI with global arguments
-    # For image commands, don't use global output path as it conflicts with file output
-    global_output_path = args.output if args.command not in ["image"] else None
     cli = DeckbuilderCLI(
-        templates_path=args.templates,
-        output_path=global_output_path,
+        template_folder=getattr(args, "template_folder", None),
         language=getattr(args, "language", None),
         font=getattr(args, "font", None),
     )
