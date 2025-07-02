@@ -1588,5 +1588,4 @@ def get_deckbuilder_client():
     # Return Deckbuilder instance with MCP context
     from .path_manager import create_mcp_path_manager
 
-    Deckbuilder.reset()  # Clear any existing singleton
     return Deckbuilder(path_manager_instance=create_mcp_path_manager())
