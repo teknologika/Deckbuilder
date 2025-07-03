@@ -50,6 +50,9 @@ def deckbuilder_with_env(test_output_dir):
         original_env[key] = os.environ.get(key)
         os.environ[key] = value
 
+    # Reset singleton to pick up new environment variables
+    Deckbuilder.reset()
+
     deck = Deckbuilder()
 
     yield deck
