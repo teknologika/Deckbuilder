@@ -33,13 +33,17 @@ Create complete PowerPoint presentations from JSON or Markdown with YAML frontma
 - **Performance Optimized**: <2s generation, intelligent caching
 
 ### ⚡ **Enhanced CLI Experience**
+- **Professional Hierarchical Interface**: Clean command structure (`deckbuilder <command> <subcommand>`)
 - **One-Command Setup**: `deckbuilder init` creates templates and configuration
 - **Context-Aware Paths**: CLI args > env vars > current directory precedence
 - **Always Local Output**: CLI outputs to current directory for predictable local development
-- **Tab Completion**: Bash completion for commands, templates, and files
 - **Global Arguments**: `-t/--template-folder`, `-l/--language`, `-f/--font` for complete customization
-- **Language Support**: `deckbuilder config languages` lists 20 supported proofing languages
-- **Template Management**: Analyze, validate, and enhance PowerPoint templates
+- **Comprehensive Command Structure**:
+  - `deckbuilder template` → analyze, validate, document, enhance, list
+  - `deckbuilder config` → show, languages, completion
+  - `deckbuilder image` → generate, crop
+  - `deckbuilder remap` → update existing PowerPoint files with language/font changes
+- **Template Management**: Analyze, validate, and enhance PowerPoint templates with detailed validation
 
 ### 🎯 **Content-First Intelligence - Currently under design**
 Instead of asking "*what layouts exist?*", Deckbuilder will ask "*what do you want to communicate?*" This will transform the system from a layout picker into an intelligent presentation consultant.
@@ -73,10 +77,15 @@ deckbuilder config languages
 
 # Template management
 deckbuilder template analyze default --verbose
+deckbuilder template validate default
 deckbuilder template list
 
-# Image generation
+# Image generation  
 deckbuilder image generate 800 600 --filter grayscale
+deckbuilder image crop image.jpg 800 600
+
+# Language and font remapping for existing PowerPoint files
+deckbuilder remap existing.pptx --language en-US --font Arial
 
 # View current configuration (shows path sources)
 deckbuilder config show
@@ -201,7 +210,7 @@ Deckbuilder supports 20 proofing languages for spell-check and grammar. You can 
 
 ```bash
 # View all supported languages (shows both formats)
-deckbuilder languages
+deckbuilder config languages
 ```
 
 **Available Languages:**
@@ -226,7 +235,7 @@ deckbuilder create presentation.md --language "fr-CA" --font "Times New Roman"
 deckbuilder create presentation.md --language "French (Canada)" --font "Arial"
 
 # Check current settings (shows locale codes and descriptions)
-deckbuilder config
+deckbuilder config show
 ```
 
 ## 🖼️ PlaceKitten Image Processing
