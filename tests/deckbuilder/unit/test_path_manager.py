@@ -274,12 +274,13 @@ class TestPathManager:
         pm = PathManager()
         version = pm.get_version()
 
-        # Should fallback to hardcoded version (currently 1.0.2b2 in development)
+        # Should fallback to hardcoded version (currently 1.0.2 in production)
         assert version in [
             "1.0.1",
             "1.0.0b3",
             "1.0.2b1",
             "1.0.2b2",
+            "1.0.2",
         ]  # Allow both development and release versions
 
     def test_singleton_path_manager(self):
