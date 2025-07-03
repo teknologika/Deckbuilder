@@ -914,15 +914,15 @@ Perfect for **one-off** slides with *unique* requirements.
 
         if not input_path.exists():
             print(f"❌ Input file not found: {input_file}")
-            return
+            return False
 
         if not input_path.suffix.lower() == ".pptx":
             print(f"❌ File must be a PowerPoint file (.pptx): {input_file}")
-            return
+            return False
 
         # Validate settings
         if not self.validate_language_and_font(language_code, font_name):
-            return
+            return False
 
         # Show what will be updated
         updates = []
@@ -935,7 +935,7 @@ Perfect for **one-off** slides with *unique* requirements.
 
         if not updates:
             print("❌ No updates specified. Use --language or --font arguments.")
-            return
+            return False
 
         print(f"🔄 Updating {' and '.join(updates)} in: {input_file}")
 
@@ -963,11 +963,14 @@ Perfect for **one-off** slides with *unique* requirements.
                     print(f"   Language applied: {stats['total_language_applied']} runs")
                 if font_name:
                     print(f"   Font applied: {stats['total_font_applied']} runs")
+                return True
             else:
                 print(f"❌ {result['error']}")
+                return False
 
         except Exception as e:
             print(f"❌ Error processing presentation: {e}")
+            return False
 
     def show_completion_help(self):
         """Show tab completion installation instructions"""
@@ -1170,6 +1173,25 @@ def create_parser():
         "-h", "--help", action="store_true", help="Show help for completion command"
     )
 
+    # Remap command (update existing PowerPoint presentations)
+    remap_parser = subparsers.add_parser(
+        "remap", help="Update language and font settings in existing PowerPoint files", add_help=False
+    )
+    remap_parser.add_argument("input_file", help="Input PowerPoint (.pptx) file to update")
+    remap_parser.add_argument(
+        "--language", "-l", metavar="LANG", help="Language code to apply (e.g., en-US, en-AU, es-ES)"
+    )
+    remap_parser.add_argument(
+        "--font", "-f", metavar="FONT", help="Font family to apply (e.g., Calibri, Arial)"
+    )
+    remap_parser.add_argument(
+        "--output", "-o", metavar="FILE", help="Output file path (default: overwrite input)"
+    )
+    remap_parser.add_argument(
+        "--no-backup", action="store_true", help="Skip creating backup file"
+    )
+    remap_parser.add_argument("-h", "--help", action="store_true", help="Show help for remap command")
+
     # Help command
     help_parser = subparsers.add_parser(
         "help", help="Show detailed help information", add_help=False
@@ -1201,6 +1223,7 @@ Commands:
   template                  Manage PowerPoint templates and mappings
   image                     Process and generate images with PlaceKitten
   config                    Configuration and system information
+  remap                     Update language and font settings in existing PowerPoint files
   init                      Initialize template folder with default files
   help                      Show detailed help for commands
 
@@ -1361,9 +1384,22 @@ def handle_help_command(args):
         print("Usage: deckbuilder init [path]")
         print("Arguments:")
         print("  path               Template folder path (default: ./templates)")
+    elif args.help_command == "remap":
+        print("Update language and font settings in existing PowerPoint files")
+        print("Usage: deckbuilder remap <file.pptx> [options]")
+        print("Arguments:")
+        print("  input_file         PowerPoint file (.pptx) to update")
+        print("Options:")
+        print("  --language, -l     Language code (e.g., en-US, en-AU, es-ES)")
+        print("  --font, -f         Font family (e.g., Calibri, Arial)")
+        print("  --output, -o       Output file path (default: overwrite input)")
+        print("  --no-backup        Skip creating backup file")
+        print("Examples:")
+        print("  deckbuilder remap presentation.pptx --language en-US")
+        print("  deckbuilder remap slides.pptx --font Arial --output new_slides.pptx")
     else:
         print(f"Unknown command: {args.help_command}")
-        print("Available commands: create, template, image, config, init, help")
+        print("Available commands: create, template, image, config, remap, init, help")
 
 
 def handle_template_command(cli, args):
@@ -1542,6 +1578,25 @@ def main():
                 print("Usage: deckbuilder init [path]")
                 return
             cli.init_templates(args.path)
+        elif args.command == "remap":
+            if hasattr(args, "help") and args.help:
+                print("Update language and font settings in existing PowerPoint files")
+                print("Usage: deckbuilder remap <file.pptx> [options]")
+                print("Options:")
+                print("  --language, -l LANG  Language code (e.g., en-US, en-AU, es-ES)")
+                print("  --font, -f FONT      Font family (e.g., Calibri, Arial)")
+                print("  --output, -o FILE    Output file path (default: overwrite input)")
+                print("  --no-backup          Skip creating backup file")
+                return
+            success = cli.remap_presentation(
+                input_file=args.input_file,
+                language_code=getattr(args, "language", None),
+                font_name=getattr(args, "font", None),
+                output_file=getattr(args, "output", None),
+                create_backup=not getattr(args, "no_backup", False),
+            )
+            if not success:
+                sys.exit(1)
         else:
             print(f"Unknown command: {args.command}")
             show_main_help()
