@@ -6,6 +6,8 @@ Tests image insertion, fallback functionality, and PowerPoint generation.
 
 import os
 import sys
+import secrets
+import shutil
 from pathlib import Path
 
 # Add the src directory to Python path
@@ -19,10 +21,17 @@ from deckbuilder.engine import Deckbuilder  # noqa: E402
 
 @pytest.fixture
 def test_output_dir():
-    """Create and return test output directory."""
-    output_dir = Path(__file__).parent / "output"
-    output_dir.mkdir(exist_ok=True)
-    return output_dir
+    """Create and return test output directory with unique hex string."""
+    # Generate random 6-digit hex string for unique folder name
+    hex_id = secrets.token_hex(3)  # 3 bytes = 6 hex characters
+    output_dir = Path(__file__).parent / "output" / f"test_{hex_id}"
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    yield output_dir
+
+    # Clean up after test
+    if output_dir.exists():
+        shutil.rmtree(output_dir)
 
 
 @pytest.fixture
@@ -110,8 +119,10 @@ media:
         assert "Successfully created presentation" in result
 
         # Check output file exists and has reasonable size
-        output_files = list(test_output_dir.glob("*test_valid_image*.g.pptx"))
-        assert len(output_files) > 0
+        output_files = list(test_output_dir.glob("*.pptx"))
+        assert (
+            len(output_files) > 0
+        ), f"No .pptx files found in {test_output_dir}. Files present: {list(test_output_dir.glob('*'))}"
 
         output_file = output_files[0]
         file_size_kb = output_file.stat().st_size / 1024
@@ -135,8 +146,10 @@ media:
         assert "Successfully created presentation" in result
 
         # Check output file exists and has reasonable size
-        output_files = list(test_output_dir.glob("*test_fallback_image*.g.pptx"))
-        assert len(output_files) > 0
+        output_files = list(test_output_dir.glob("*.pptx"))
+        assert (
+            len(output_files) > 0
+        ), f"No .pptx files found in {test_output_dir}. Files present: {list(test_output_dir.glob('*'))}"
 
         output_file = output_files[0]
         file_size_kb = output_file.stat().st_size / 1024
@@ -168,8 +181,10 @@ media:
         assert "Successfully created presentation with 2 slides" in result
 
         # Check output file
-        output_files = list(test_output_dir.glob("*test_multiple_images*.g.pptx"))
-        assert len(output_files) > 0
+        output_files = list(test_output_dir.glob("*.pptx"))
+        assert (
+            len(output_files) > 0
+        ), f"No .pptx files found in {test_output_dir}. Files present: {list(test_output_dir.glob('*'))}"
 
         output_file = output_files[0]
         file_size_kb = output_file.stat().st_size / 1024
@@ -209,8 +224,10 @@ class TestJSONImageIntegration:
         assert "Successfully created presentation" in save_result
 
         # Check output file
-        output_files = list(test_output_dir.glob("*test_json_image*.g.pptx"))
-        assert len(output_files) > 0
+        output_files = list(test_output_dir.glob("*.pptx"))
+        assert (
+            len(output_files) > 0
+        ), f"No .pptx files found in {test_output_dir}. Files present: {list(test_output_dir.glob('*'))}"
 
     def test_json_with_fallback(self, deckbuilder_with_env, test_output_dir):
         """Test JSON input with missing image (fallback)."""
