@@ -7,10 +7,10 @@ to replace functionality from test_tools.py with proper pytest structure.
 
 import os
 import sys
-import json
 import tempfile
 from pathlib import Path
 from unittest.mock import patch, MagicMock
+import shutil
 
 import pytest
 
@@ -22,9 +22,11 @@ HAS_MCP_TOOLS = False
 try:
     from mcp_server.tools import analyze_pptx_template  # noqa: E402
     from deckbuilder.engine import get_deckbuilder_client  # noqa: E402
+
     HAS_MCP_TOOLS = True
 except ImportError as e:
     print(f"Import error: {e}")
+
     # Create mock functions to avoid NameError
     def analyze_pptx_template(template_name):
         return {"mock": True}
@@ -36,30 +38,34 @@ except ImportError as e:
 @pytest.fixture
 def mock_deckbuilder_env():
     """Mock environment variables for deckbuilder with cleanup."""
-    templates_dir = Path(__file__).parent.parent.parent / "fixtures" / "sample_templates"
-    output_dir = Path(__file__).parent.parent.parent / "fixtures" / "test_outputs"
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_path = Path(temp_dir)
+        templates_dir = temp_path / "templates"
+        output_dir = temp_path / "outputs"
+        templates_dir.mkdir(parents=True, exist_ok=True)
+        output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Ensure directories exist
-    templates_dir.mkdir(parents=True, exist_ok=True)
-    output_dir.mkdir(parents=True, exist_ok=True)
+        project_root = Path(__file__).parent.parent.parent.parent
+        source_template_dir = project_root / "assets" / "templates"
 
-    original_env = os.environ.copy()
+        # Copy real template files to the temp directory
+        for file_name in ["default.pptx", "default.json"]:
+            source_file = source_template_dir / file_name
+            if source_file.exists():
+                shutil.copy(source_file, templates_dir / file_name)
 
-    # Set test environment variables
-    test_env = {
-        "DECK_TEMPLATE_FOLDER": str(templates_dir),
-        "DECK_OUTPUT_FOLDER": str(output_dir),
-        "DECK_TEMPLATE_NAME": "default",
-    }
+        original_env = os.environ.copy()
+        test_env = {
+            "DECK_TEMPLATE_FOLDER": str(templates_dir),
+            "DECK_OUTPUT_FOLDER": str(output_dir),
+            "DECK_TEMPLATE_NAME": "default",
+        }
+        os.environ.update(test_env)
 
-    for key, value in test_env.items():
-        os.environ[key] = value
+        yield {"templates_dir": templates_dir, "output_dir": output_dir}
 
-    yield {"templates_dir": templates_dir, "output_dir": output_dir}
-
-    # Restore original environment
-    os.environ.clear()
-    os.environ.update(original_env)
+        os.environ.clear()
+        os.environ.update(original_env)
 
 
 @pytest.fixture
@@ -138,29 +144,16 @@ class TestMCPToolsIntegration:
 
     def test_template_analysis_tool(self, mock_deckbuilder_env):
         """Test the analyze_pptx_template MCP tool."""
-        # This is a mock test since we don't have actual template files
-        # In a real environment, this would test against actual template files
+        result = analyze_pptx_template("default")
 
-        with patch('mcp_server.tools.analyze_pptx_template') as mock_analyze:
-            mock_analyze.return_value = {
-                "template_info": {"name": "Test Template", "version": "1.0"},
-                "layouts": {
-                    "Title Slide": {
-                        "index": 0,
-                        "placeholders": {"0": "title_top_1", "1": "subtitle_1"}
-                    }
-                }
-            }
+        assert result is not None
+        assert "template_info" in result
+        assert "layouts" in result
 
-            result = analyze_pptx_template("default")
-
-            assert result is not None
-            assert "template_info" in result
-            assert "layouts" in result
-            mock_analyze.assert_called_once_with("default")
-
-    @patch('deckbuilder.engine.Deckbuilder')
-    def test_presentation_creation_from_json(self, mock_deckbuilder_class, mock_deckbuilder_env, sample_test_data):
+    @patch("deckbuilder.engine.Deckbuilder")
+    def test_presentation_creation_from_json(
+        self, mock_deckbuilder_class, mock_deckbuilder_env, sample_test_data
+    ):
         """Test creating a presentation from JSON data."""
         # Mock the deckbuilder instance
         mock_deck = MagicMock()
@@ -195,15 +188,19 @@ class TestMCPToolsIntegration:
         assert mock_deck.add_slide_from_json.call_count == 2
         mock_deck.write_presentation.assert_called_once_with("test_json")
 
-    @patch('deckbuilder.engine.Deckbuilder')
-    def test_presentation_creation_from_markdown(self, mock_deckbuilder_class, mock_deckbuilder_env, sample_markdown_content):
+    @patch("deckbuilder.engine.Deckbuilder")
+    def test_presentation_creation_from_markdown(
+        self, mock_deckbuilder_class, mock_deckbuilder_env, sample_markdown_content
+    ):
         """Test creating a presentation from markdown with structured frontmatter."""
         # Mock the deckbuilder instance
         mock_deck = MagicMock()
         mock_deckbuilder_class.return_value = mock_deck
 
         # Mock successful operation
-        mock_deck.create_presentation_from_markdown.return_value = "✓ Presentation created from markdown successfully"
+        mock_deck.create_presentation_from_markdown.return_value = (
+            "✓ Presentation created from markdown successfully"
+        )
 
         # Test the workflow
         deck = get_deckbuilder_client()
@@ -212,7 +209,7 @@ class TestMCPToolsIntegration:
         result = deck.create_presentation_from_markdown(
             markdown_content=sample_markdown_content,
             fileName="test_markdown",
-            templateName="default"
+            templateName="default",
         )
 
         assert "successfully" in result.lower()
@@ -221,7 +218,7 @@ class TestMCPToolsIntegration:
         mock_deck.create_presentation_from_markdown.assert_called_once_with(
             markdown_content=sample_markdown_content,
             fileName="test_markdown",
-            templateName="default"
+            templateName="default",
         )
 
     def test_atomic_test_isolation(self, mock_deckbuilder_env):
@@ -238,7 +235,7 @@ class TestMCPToolsIntegration:
         assert templates_dir.exists()
         assert output_dir.exists()
 
-    @patch('deckbuilder.engine.Deckbuilder')
+    @patch("deckbuilder.engine.Deckbuilder")
     def test_error_handling_missing_template(self, mock_deckbuilder_class, mock_deckbuilder_env):
         """Test error handling when template is missing."""
         # Mock the deckbuilder instance to raise an error
@@ -252,7 +249,7 @@ class TestMCPToolsIntegration:
         with pytest.raises(FileNotFoundError):
             deck.create_presentation("nonexistent_template", "test")
 
-    @patch('deckbuilder.engine.Deckbuilder')
+    @patch("deckbuilder.engine.Deckbuilder")
     def test_error_handling_invalid_slide_data(self, mock_deckbuilder_class, mock_deckbuilder_env):
         """Test error handling when slide data is invalid."""
         # Mock the deckbuilder instance

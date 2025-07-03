@@ -92,7 +92,7 @@ class PathManager:
                 "MCP context requires DECK_TEMPLATE_FOLDER environment variable to be set"
             )
 
-        # Library Context: constructor args > env vars > current directory
+        # Library Context: constructor args > env vars > assets/templates
         else:  # library
             if self._template_folder:
                 return Path(self._template_folder).resolve()
@@ -101,8 +101,8 @@ class PathManager:
             if env_folder:
                 return Path(env_folder).resolve()
 
-            # Library defaults to current directory
-            return Path.cwd()
+            # Library defaults to package assets/templates
+            return self.get_assets_templates_path()
 
     def get_output_folder(self) -> Path:
         """Get output folder based on context-aware precedence rules"""

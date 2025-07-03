@@ -66,17 +66,39 @@ class DeckbuilderCLI:
         """Convert JSON slide data to markdown format with frontmatter"""
         import yaml
 
+        # Type validation: ensure json_data is a dictionary or list
+        if isinstance(json_data, str):
+            raise TypeError(
+                f"json_data must be a dictionary or list, got string: {json_data[:100]}..."
+            )
+        if not isinstance(json_data, (dict, list)):
+            raise TypeError(
+                f"json_data must be a dictionary or list, got {type(json_data).__name__}: {json_data}"
+            )
+
         markdown_lines = []
 
         # Handle structured JSON format
-        if "presentation" in json_data and "slides" in json_data["presentation"]:
+        if (
+            isinstance(json_data, dict)
+            and "presentation" in json_data
+            and "slides" in json_data["presentation"]
+        ):
             slides = json_data["presentation"]["slides"]
         elif isinstance(json_data, list):
             slides = json_data
-        else:
+        elif isinstance(json_data, dict):
             slides = [json_data]
+        else:
+            raise TypeError(f"Unexpected json_data format: {type(json_data).__name__}")
 
         for slide in slides:
+            # Type validation for each slide
+            if not isinstance(slide, dict):
+                raise TypeError(
+                    f"Each slide must be a dictionary, got {type(slide).__name__}: {slide}"
+                )
+
             markdown_lines.append("---")
 
             # Add layout

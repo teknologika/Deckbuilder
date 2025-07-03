@@ -126,220 +126,65 @@ class TestGoldenFileValidation:
         for expected_type in expected_types:
             assert expected_type in slide_types, f"Slide type '{expected_type}' not found in JSON"
 
+    def _run_cli_and_validate(
+        self, input_file: Path, output_name: str, temp_dir: str, source_type: str
+    ):
+        """Helper to run CLI and validate output."""
+        env = os.environ.copy()
+        env["DECK_TEMPLATE_FOLDER"] = str(self.templates_dir)
+        env["DECK_OUTPUT_FOLDER"] = temp_dir
+
+        result = subprocess.run(
+            [
+                "python",
+                str(self.project_root / "src" / "deckbuilder" / "cli.py"),
+                "create",
+                str(input_file),
+                "--output",
+                output_name,
+            ],
+            capture_output=True,
+            text=True,
+            cwd=temp_dir,
+            env=env,
+        )
+
+        assert (
+            result.returncode == 0
+        ), f"CLI failed for {source_type}:\nSTDOUT: {result.stdout}\nSTDERR: {result.stderr}"
+
+        search_dirs = [Path(temp_dir), Path(temp_dir) / output_name]
+        pptx_files = []
+        for search_dir in search_dirs:
+            if search_dir.exists():
+                pptx_files.extend(search_dir.glob(f"{output_name}*.pptx"))
+                pptx_files.extend(search_dir.glob("*.pptx"))
+
+        assert len(pptx_files) > 0, f"No output file found for {source_type} in {search_dirs}"
+
+        output_path = pptx_files[0]
+        self._validate_powerpoint_content(output_path, source_type)
+        return output_path
+
     def test_cli_generates_presentation_from_markdown(self):
         """Test CLI can generate PowerPoint from golden markdown file"""
         with tempfile.TemporaryDirectory() as temp_dir:
-            # Set up environment to use temp directories
-            env = os.environ.copy()
-            env["DECK_TEMPLATE_FOLDER"] = str(self.templates_dir)
-            env["DECK_OUTPUT_FOLDER"] = temp_dir
-
-            # Use the CLI directly with absolute paths
-            result = subprocess.run(
-                [
-                    "python",
-                    str(self.project_root / "src" / "deckbuilder" / "cli.py"),
-                    "create",
-                    str(self.golden_md),
-                    "--output",
-                    "test_output_md",
-                ],
-                capture_output=True,
-                text=True,
-                cwd=temp_dir,
-                env=env,
-            )
-
-            # Check if CLI supports --output-dir flag or if we need to modify approach
-            if result.returncode != 0 and "--output-dir" in result.stderr:
-                # CLI doesn't support --output-dir, use environment variable approach
-                env = os.environ.copy()
-                env["DECK_TEMPLATE_FOLDER"] = str(self.templates_dir)
-                env["DECK_OUTPUT_FOLDER"] = temp_dir
-
-                result = subprocess.run(
-                    [
-                        "python",
-                        str(self.project_root / "src" / "deckbuilder" / "cli.py"),
-                        "create",
-                        str(self.golden_md),
-                        "--output",
-                        "test_output_md",
-                    ],
-                    capture_output=True,
-                    text=True,
-                    env=env,
-                    cwd=temp_dir,
-                )
-
-            assert (
-                result.returncode == 0
-            ), f"CLI failed:\nSTDOUT: {result.stdout}\nSTDERR: {result.stderr}"
-
-            # Find the actual output file (CLI creates a subdirectory with the output name)
-            search_dirs = [
-                Path(temp_dir),
-                Path(temp_dir) / "test_output_md",  # CLI creates subdirectory in temp
-            ]
-            pptx_files = []
-
-            for search_dir in search_dirs:
-                if search_dir.exists():
-                    pptx_files.extend(search_dir.glob("test_output_md*.pptx"))
-                    pptx_files.extend(search_dir.glob("*.pptx"))  # any pptx file in output dir
-
-            search_results = [
-                list(d.glob("*.pptx")) if d.exists() else "DIR_NOT_EXISTS" for d in search_dirs
-            ]
-            assert len(pptx_files) > 0, (
-                f"No output file found in {[str(d) for d in search_dirs]}\n"
-                f"Searched files: {search_results}\n"
-                f"STDOUT: {result.stdout}"
-            )
-
-            output_path = pptx_files[0]  # Use the first (and likely only) match
-
-            # Validate the generated PowerPoint file
-            self._validate_powerpoint_content(output_path, "markdown")
+            self._run_cli_and_validate(self.golden_md, "test_output_md", temp_dir, "markdown")
 
     def test_cli_generates_presentation_from_json(self):
         """Test CLI can generate PowerPoint from golden JSON file"""
         with tempfile.TemporaryDirectory() as temp_dir:
-            # Use the CLI directly with the --output-dir flag to override output location
-            result = subprocess.run(
-                [
-                    "python",
-                    str(self.project_root / "src" / "deckbuilder" / "cli.py"),
-                    "create",
-                    str(self.golden_json),
-                    "--output",
-                    "test_output_json",
-                    "--output-dir",
-                    temp_dir,
-                ],
-                capture_output=True,
-                text=True,
-                cwd=temp_dir,
-            )
-
-            # Check if CLI supports --output-dir flag or if we need to modify approach
-            if result.returncode != 0 and "--output-dir" in result.stderr:
-                # CLI doesn't support --output-dir, use environment variable approach
-                env = os.environ.copy()
-                env["DECK_TEMPLATE_FOLDER"] = str(self.templates_dir)
-                env["DECK_OUTPUT_FOLDER"] = temp_dir
-
-                result = subprocess.run(
-                    [
-                        "python",
-                        str(self.project_root / "src" / "deckbuilder" / "cli.py"),
-                        "create",
-                        str(self.golden_json),
-                        "--output",
-                        "test_output_json",
-                    ],
-                    capture_output=True,
-                    text=True,
-                    env=env,
-                    cwd=temp_dir,
-                )
-
-            assert (
-                result.returncode == 0
-            ), f"CLI failed:\nSTDOUT: {result.stdout}\nSTDERR: {result.stderr}"
-
-            # Find the actual output file (CLI creates a subdirectory with the output name)
-            search_dirs = [
-                Path(temp_dir),
-                Path(temp_dir) / "test_output_json",  # CLI creates subdirectory in temp
-            ]
-            pptx_files = []
-
-            for search_dir in search_dirs:
-                if search_dir.exists():
-                    pptx_files.extend(search_dir.glob("test_output_json*.pptx"))
-                    pptx_files.extend(search_dir.glob("*.pptx"))  # any pptx file in output dir
-
-            search_results = [
-                list(d.glob("*.pptx")) if d.exists() else "DIR_NOT_EXISTS" for d in search_dirs
-            ]
-            assert len(pptx_files) > 0, (
-                f"No output file found in {[str(d) for d in search_dirs]}\n"
-                f"Searched files: {search_results}\n"
-                f"STDOUT: {result.stdout}\nSTDERR: {result.stderr}"
-            )
-
-            output_path = pptx_files[0]  # Use the first (and likely only) match
-
-            # Validate the generated PowerPoint file
-            self._validate_powerpoint_content(output_path, "json")
+            self._run_cli_and_validate(self.golden_json, "test_output_json", temp_dir, "json")
 
     def test_markdown_and_json_produce_similar_content(self):
         """Test that markdown and JSON golden files produce presentations with similar content"""
         with tempfile.TemporaryDirectory() as temp_dir:
-            env = os.environ.copy()
-            env["DECK_TEMPLATE_FOLDER"] = str(self.templates_dir)
-            env["DECK_OUTPUT_FOLDER"] = temp_dir
-
-            # Generate both presentations
-            subprocess.run(
-                [
-                    "python",
-                    str(self.project_root / "src" / "deckbuilder" / "cli.py"),
-                    "create",
-                    str(self.golden_md),
-                    "--output",
-                    "from_markdown",
-                ],
-                check=True,
-                env=env,
-                cwd=temp_dir,  # Run from temp directory
+            md_output = self._run_cli_and_validate(
+                self.golden_md, "from_markdown", temp_dir, "markdown"
             )
-
-            subprocess.run(
-                [
-                    "python",
-                    str(self.project_root / "src" / "deckbuilder" / "cli.py"),
-                    "create",
-                    str(self.golden_json),
-                    "--output",
-                    "from_json",
-                ],
-                check=True,
-                env=env,
-                cwd=temp_dir,  # Run from temp directory
+            json_output = self._run_cli_and_validate(
+                self.golden_json, "from_json", temp_dir, "json"
             )
-
-            # Find the actual output files (CLI creates subdirectories)
-            search_dirs = [
-                Path(temp_dir),
-                Path(temp_dir) / "from_markdown",
-                Path(temp_dir) / "from_json",
-            ]
-
-            md_files = []
-            json_files = []
-
-            for search_dir in search_dirs:
-                if search_dir.exists():
-                    md_files.extend(search_dir.glob("from_markdown*.pptx"))
-                    md_files.extend(
-                        search_dir.glob("*.pptx") if "from_markdown" in str(search_dir) else []
-                    )
-                    json_files.extend(search_dir.glob("from_json*.pptx"))
-                    json_files.extend(
-                        search_dir.glob("*.pptx") if "from_json" in str(search_dir) else []
-                    )
-
-            assert (
-                len(md_files) > 0
-            ), f"No markdown output file found in {[str(d) for d in search_dirs]}"
-            assert (
-                len(json_files) > 0
-            ), f"No JSON output file found in {[str(d) for d in search_dirs]}"
-
-            md_output = md_files[0]
-            json_output = json_files[0]
 
             # Compare slide counts
             md_prs = Presentation(str(md_output))
@@ -491,77 +336,12 @@ class TestGoldenFileValidation:
 
         # Generate presentations from both golden files
         with tempfile.TemporaryDirectory() as temp_dir:
-            env = os.environ.copy()
-            env["DECK_TEMPLATE_FOLDER"] = str(self.templates_dir)
-            env["DECK_OUTPUT_FOLDER"] = temp_dir
-
-            # Test both files can be processed without errors
-            md_result = subprocess.run(
-                [
-                    "python",
-                    str(self.project_root / "src" / "deckbuilder" / "cli.py"),
-                    "create",
-                    str(self.golden_md),
-                    "--output",
-                    "golden_md_test",
-                ],
-                capture_output=True,
-                text=True,
-                env=env,
-                cwd=temp_dir,  # Run from temp directory
+            md_output = self._run_cli_and_validate(
+                self.golden_md, "golden_md_test", temp_dir, "markdown"
             )
-
-            json_result = subprocess.run(
-                [
-                    "python",
-                    str(self.project_root / "src" / "deckbuilder" / "cli.py"),
-                    "create",
-                    str(self.golden_json),
-                    "--output",
-                    "golden_json_test",
-                ],
-                capture_output=True,
-                text=True,
-                env=env,
-                cwd=temp_dir,  # Run from temp directory
+            json_output = self._run_cli_and_validate(
+                self.golden_json, "golden_json_test", temp_dir, "json"
             )
-
-            # Both should succeed
-            assert (
-                md_result.returncode == 0
-            ), f"Golden markdown processing failed: {md_result.stderr}"
-            assert (
-                json_result.returncode == 0
-            ), f"Golden JSON processing failed: {json_result.stderr}"
-
-            # Find and validate the actual output files (CLI creates subdirectories)
-            search_dirs = [
-                Path(temp_dir),
-                Path(temp_dir) / "golden_md_test",
-                Path(temp_dir) / "golden_json_test",
-            ]
-
-            md_files = []
-            json_files = []
-
-            for search_dir in search_dirs:
-                if search_dir.exists():
-                    md_files.extend(search_dir.glob("golden_md_test*.pptx"))
-                    md_files.extend(
-                        search_dir.glob("*.pptx") if "golden_md_test" in str(search_dir) else []
-                    )
-                    json_files.extend(search_dir.glob("golden_json_test*.pptx"))
-                    json_files.extend(
-                        search_dir.glob("*.pptx") if "golden_json_test" in str(search_dir) else []
-                    )
-
-            assert len(md_files) > 0, f"Golden MD file not found in {[str(d) for d in search_dirs]}"
-            assert (
-                len(json_files) > 0
-            ), f"Golden JSON file not found in {[str(d) for d in search_dirs]}"
-
-            md_output = md_files[0]
-            json_output = json_files[0]
 
             assert (
                 md_output.stat().st_size > 10000

@@ -96,13 +96,29 @@ class ContentOptimizationEngine:
         }
 
     def _clean_content(self, content: str) -> str:
-        """Clean and normalize the input content."""
+        """Clean and normalize the input content.
+        The _clean_content method is intended to standardize and clean raw input content.
+           Its specific goals are:
+
+           1. Normalize Whitespace: It removes leading/trailing whitespace from the
+           entire content and collapses multiple newline characters followed by
+           whitespace into a single double newline, aiming to reduce "excessive" whitespace.
+
+           2. Normalize Quotes: It replaces various Unicode or "smart" quote characters
+           (both single and double) with their standard ASCII equivalents.
+
+           3. Remove em dashes.
+
+        """
         # Remove excessive whitespace
         cleaned = re.sub(r"\n\s*\n", "\n\n", content.strip())
 
         # Normalize quotes
         cleaned = re.sub(r'["""]', '"', cleaned)
         cleaned = re.sub(r"[''']", "'", cleaned)
+
+        # Normalize em dashes to hyphens
+        cleaned = re.sub(r"—", "-", cleaned)
 
         return cleaned
 

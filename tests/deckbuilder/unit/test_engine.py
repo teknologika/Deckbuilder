@@ -125,12 +125,13 @@ class TestDeckbuilderEngine:
         # Clear all environment variables and singleton instances
         Deckbuilder.reset()
 
-        # Should still initialize with None values
+        # Should still initialize with library context defaults (not None)
         deckbuilder = Deckbuilder()
 
-        assert deckbuilder.template_path is None
-        assert deckbuilder.template_name is None
-        assert deckbuilder.output_folder is None
+        # Library context provides current directory defaults when env vars missing
+        assert deckbuilder.template_path is not None
+        assert deckbuilder.template_name == "default"  # Default template name
+        assert deckbuilder.output_folder is not None
 
     def test_template_name_default_handling(self, mock_deckbuilder_env):
         """Test default template name handling."""

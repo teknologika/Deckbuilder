@@ -293,7 +293,8 @@ class TestErrorHandling:
         assert deck.template_path is not None
         assert deck.template_name == "default"
         assert deck.output_folder is not None
-        assert "templates" in deck.template_path
+        # Check that template_path is a valid directory path (context-aware behavior)
+        assert Path(deck.template_path).exists()
 
     def test_invalid_layout(self, deckbuilder_with_env):
         """Test handling of invalid layout names."""

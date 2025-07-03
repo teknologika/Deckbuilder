@@ -109,7 +109,7 @@ class ContentAnalyzer:
         """Extract key messages from user input using pattern matching."""
         # Look for metrics, percentages, numbers
         metrics = re.findall(
-            r"\d+%|\$[\d,]+|\d+[\w\s]*(?:growth|increase|decrease|revenue|users|customers)",
+            r"\d+%\s*\w*|\$[\d,]+|\d+[\w\s]*(?:growth|increase|decrease|revenue|users|customers)",
             user_input.lower(),
         )
 
@@ -189,7 +189,9 @@ class ContentAnalyzer:
             "need",
         ]
 
-        has_success = has_word_pattern(success_patterns, input_lower)
+        has_success = has_word_pattern(success_patterns, input_lower) or re.search(
+            r"\d+%", input_lower
+        )
         has_challenge = has_word_pattern(challenge_patterns, input_lower)
         has_solution = has_word_pattern(solution_patterns, input_lower)
 
