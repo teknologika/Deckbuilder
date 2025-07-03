@@ -95,7 +95,7 @@ class Deckbuilder:
         self.default_font = get_default_font()
 
         # Initialize image handling components with cache in output directory
-        cache_dir = str(self._path_manager.get_output_folder() / "tmp" / "image_cache")
+        cache_dir = str(self._path_manager.get_output_folder() / "temp" / "image_cache")
         self.image_handler = ImageHandler(cache_dir)
         self.placekitten = PlaceKittenIntegration(self.image_handler)
 
