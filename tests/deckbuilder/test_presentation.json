@@ -45,16 +45,25 @@
       },
       {
         "type": "Two Content",
+        "layout": "Two Content",
         "title": "Two Content Layout Test",
-        "content_left_1": [
-          "**Feature A** details",
-          "*Feature B* information",
-          "***Critical*** updates"
-        ],
-        "content_right_1": [
-          "___Important___ notices",
-          "**Security** measures",
-          "*Performance* metrics"
+        "sections": [
+          {
+            "title": "Left Side Content",
+            "content": [
+              "**Feature A** details",
+              "*Feature B* information",
+              "***Critical*** updates"
+            ]
+          },
+          {
+            "title": "Right Side Content",
+            "content": [
+              "___Important___ notices",
+              "**Security** measures",
+              "*Performance* metrics"
+            ]
+          }
         ],
         "rich_content": [
           {
@@ -64,15 +73,26 @@
       },
       {
         "type": "Four Columns",
+        "layout": "Four Columns",
         "title": "Four Column Layout **Comprehensive** Test",
-        "title_col1_1": "Performance",
-        "title_col2_1": "Security",
-        "title_col3_1": "Usability",
-        "title_col4_1": "Cost",
-        "content_col1_1": "**Fast processing** with optimized algorithms and *sub-millisecond* response times",
-        "content_col2_1": "***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance",
-        "content_col3_1": "*Intuitive* interface with **minimal** learning curve and comprehensive docs",
-        "content_col4_1": "___Transparent___ pricing with **flexible** plans and *proven* ROI",
+        "columns": [
+          {
+            "title": "Performance",
+            "content": "**Fast processing** with optimized algorithms and *sub-millisecond* response times"
+          },
+          {
+            "title": "Security",
+            "content": "***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance"
+          },
+          {
+            "title": "Usability",
+            "content": "*Intuitive* interface with **minimal** learning curve and comprehensive docs"
+          },
+          {
+            "title": "Cost",
+            "content": "___Transparent___ pricing with **flexible** plans and *proven* ROI"
+          }
+        ],
         "rich_content": [
           {
             "paragraph": "Content from Four Columns structured frontmatter above."
