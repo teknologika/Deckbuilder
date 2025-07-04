@@ -52,12 +52,12 @@
         "type": "Two Content",
         "layout": "Two Content",
         "title": "Two Content Layout Test",
-        "content_left_1": [
+        "content_left": [
           "**Feature A** details",
           "*Feature B* information",
           "***Critical*** updates"
         ],
-        "content_right_1": [
+        "content_right": [
           "___Important___ notices",
           "**Security** measures",
           "*Performance* metrics"
@@ -67,10 +67,10 @@
         "type": "Comparison",
         "layout": "Comparison",
         "title": "Comparison Layout **Full** Test",
-        "title_left_1": "Option A Benefits",
-        "content_left_1": "**Cost effective** solution with *rapid* deployment and ***proven*** technology",
-        "title_right_1": "Option B Benefits",
-        "content_right_1": "___Advanced___ features with **future-proof** architecture and *scalable* design"
+        "title_left": "Option A Benefits",
+        "content_left": "**Cost effective** solution with *rapid* deployment and ***proven*** technology",
+        "title_right": "Option B Benefits",
+        "content_right": "___Advanced___ features with **future-proof** architecture and *scalable* design"
       },
       {
         "type": "Title Only",
@@ -111,67 +111,67 @@
             "bullet_levels": [1, 1, 1]
           }
         ],
-        "text_caption_1": "Caption area with ___formatted___ text and **emphasis**."
+        "text_caption": "Caption area with ___formatted___ text and **emphasis**."
       },
       {
         "type": "Picture with Caption",
         "layout": "Picture with Caption",
         "title": "Picture Layout **Test**",
         "image_1": "placeholder_image.jpg",
-        "text_caption_1": "Picture placeholder with ***formatted*** captions and *enhanced* presentation features"
+        "text_caption": "Picture placeholder with ***formatted*** captions and *enhanced* presentation features"
       },
       {
         "type": "Title and Vertical Text",
         "layout": "Title and Vertical Text",
         "title": "**Vertical Text** Layout Test",
-        "content_1": "This layout demonstrates vertical text capabilities with **formatted** content and *enhanced* presentation features for ___specialized___ content."
+        "content": "This layout demonstrates vertical text capabilities with **formatted** content and *enhanced* presentation features for ___specialized___ content."
       },
       {
         "type": "Vertical Title and Text",
         "layout": "Vertical Title and Text",
-        "title_top_1": "Vertical Title Layout",
-        "content_1": "This layout demonstrates vertical title and text capabilities with **formatted** content and *enhanced* presentation features for ___specialized___ content."
+        "title_top": "Vertical Title Layout",
+        "content": "This layout demonstrates vertical title and text capabilities with **formatted** content and *enhanced* presentation features for ___specialized___ content."
       },
       {
         "type": "Three Columns With Titles",
         "layout": "Three Columns With Titles",
         "title": "Three Column Layout **With Titles** Test",
-        "title_col1_1": "Performance",
-        "content_col1_1": "**Fast processing** with optimized algorithms",
-        "title_col2_1": "Security",
-        "content_col2_1": "***Enterprise-grade*** encryption with ___SOC2___ compliance",
-        "title_col3_1": "Usability",
-        "content_col3_1": "*Intuitive* interface with **minimal** learning curve"
+        "title_col1": "Performance",
+        "content_col1": "**Fast processing** with optimized algorithms",
+        "title_col2": "Security",
+        "content_col2": "***Enterprise-grade*** encryption with ___SOC2___ compliance",
+        "title_col3": "Usability",
+        "content_col3": "*Intuitive* interface with **minimal** learning curve"
       },
       {
         "type": "Three Columns",
         "layout": "Three Columns",
         "title": "Three Column Layout **Without Titles** Test",
-        "content_col1_1": "**Fast processing** with optimized algorithms and *sub-millisecond* response times",
-        "content_col2_1": "***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance",
-        "content_col3_1": "*Intuitive* interface with **minimal** learning curve and comprehensive docs"
+        "content_col1": "**Fast processing** with optimized algorithms and *sub-millisecond* response times",
+        "content_col2": "***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance",
+        "content_col3": "*Intuitive* interface with **minimal** learning curve and comprehensive docs"
       },
       {
         "type": "Four Columns With Titles",
         "layout": "Four Columns With Titles",
         "title": "Four Column Layout **With Titles** Test",
-        "title_col1_1": "Performance",
-        "content_col1_1": "**Fast processing** with optimized algorithms",
-        "title_col2_1": "Security",
-        "content_col2_1": "***Enterprise-grade*** encryption with ___SOC2___ compliance",
-        "title_col3_1": "Usability",
-        "content_col3_1": "*Intuitive* interface with **minimal** learning curve",
-        "title_col4_1": "Cost",
-        "content_col4_1": "___Transparent___ pricing with **flexible** plans"
+        "title_col1": "Performance",
+        "content_col1": "**Fast processing** with optimized algorithms",
+        "title_col2": "Security",
+        "content_col2": "***Enterprise-grade*** encryption with ___SOC2___ compliance",
+        "title_col3": "Usability",
+        "content_col3": "*Intuitive* interface with **minimal** learning curve",
+        "title_col4": "Cost",
+        "content_col4": "___Transparent___ pricing with **flexible** plans"
       },
       {
         "type": "Four Columns",
         "layout": "Four Columns",
         "title": "Four Column Layout **Without Titles** Test",
-        "content_col1_1": "**Fast processing** with optimized algorithms and *sub-millisecond* response times",
-        "content_col2_1": "***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance",
-        "content_col3_1": "*Intuitive* interface with **minimal** learning curve and comprehensive docs",
-        "content_col4_1": "___Transparent___ pricing with **flexible** plans and *proven* ROI"
+        "content_col1": "**Fast processing** with optimized algorithms and *sub-millisecond* response times",
+        "content_col2": "***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance",
+        "content_col3": "*Intuitive* interface with **minimal** learning curve and comprehensive docs",
+        "content_col4": "___Transparent___ pricing with **flexible** plans and *proven* ROI"
       },
       {
         "type": "Agenda, 6 Textboxes",
@@ -215,7 +215,7 @@
         "type": "Big Number",
         "layout": "Big Number",
         "title": "**42%**",
-        "content_1": "Improvement in *performance* with ___new___ architecture"
+        "content": "Improvement in *performance* with ___new___ architecture"
       },
       {
         "type": "SWOT Analysis",

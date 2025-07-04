@@ -158,14 +158,14 @@ class TestCLIPathManagement:
                 temp_json.flush()
 
                 mock_db_instance = MagicMock()
-                mock_db_instance.create_presentation_from_markdown.return_value = "success"
+                mock_db_instance.create_presentation_from_json.return_value = "success"
                 mock_deckbuilder.return_value = mock_db_instance
 
                 with patch.object(cli, "_validate_templates_folder", return_value=True):
                     try:
                         cli.create_presentation(temp_json.name)
-                        # Should convert JSON to markdown and call markdown method
-                        mock_db_instance.create_presentation_from_markdown.assert_called_once()
+                        # Should use direct JSON processing method
+                        mock_db_instance.create_presentation_from_json.assert_called_once()
                     finally:
                         os.unlink(temp_json.name)
 

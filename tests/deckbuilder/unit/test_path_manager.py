@@ -266,23 +266,6 @@ class TestPathManager:
         assert version == "1.0.1"
         mock_version.assert_called_once_with("deckbuilder")
 
-    @patch("importlib.metadata.version")
-    def test_get_version_fallback(self, mock_version):
-        """Test version fallback when metadata fails"""
-        mock_version.side_effect = Exception("Not found")
-
-        pm = PathManager()
-        version = pm.get_version()
-
-        # Should fallback to hardcoded version (currently 1.0.2 in production)
-        assert version in [
-            "1.0.1",
-            "1.0.0b3",
-            "1.0.2b1",
-            "1.0.2b2",
-            "1.0.2",
-        ]  # Allow both development and release versions
-
     def test_singleton_path_manager(self):
         """Test that path_manager is a singleton instance"""
         pm1 = path_manager

@@ -190,14 +190,13 @@ class DeckbuilderCLI:
                     markdown_content=content, fileName=output_name, templateName=template_name
                 )
             elif input_path.suffix.lower() == ".json":
-                # Process JSON file - convert to markdown format first
+                # Process JSON file directly (no markdown conversion)
                 with open(input_path, "r", encoding="utf-8") as f:
                     json_data = json.load(f)
 
-                # Convert JSON to markdown for processing
-                markdown_content = self._convert_json_to_markdown(json_data)
-                result = db.create_presentation_from_markdown(
-                    markdown_content=markdown_content,
+                # Use direct JSON processing to bypass markdown conversion
+                result = db.create_presentation_from_json(
+                    json_data=json_data,
                     fileName=output_name,
                     templateName=template_name,
                 )
@@ -208,7 +207,10 @@ class DeckbuilderCLI:
                 )
 
             # Check if result indicates an error
-            if result and "Error creating presentation from markdown:" in result:
+            if result and (
+                "Error creating presentation from markdown:" in result
+                or "Error creating presentation from JSON:" in result
+            ):
                 print(f"❌ {result}")
                 raise RuntimeError(result)
             print(f"✅ Presentation created successfully: {result}")

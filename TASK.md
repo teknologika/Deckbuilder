@@ -172,6 +172,90 @@ Tasks are organized by phase and component.
   - [x] GitHub Issue: #11 - COMPLETED
   - **Status**: ✅ COMPLETED - Config display now shows proper defaults and source indicators
 
+#### 🚨 CRITICAL: Content Mapping Failures (v1.0.2 Discovery)
+
+**Status**: Critical production issues discovered during v1.0.2 validation - Core functionality broken
+
+- [x] **JSON Complex Field Mapping Broken** - [GitHub Issue #26](https://github.com/teknologika/Deckbuilder/issues/26) ✅ COMPLETED
+  - [x] `content_left_1`, `content_right_1`, etc. not being placed in PowerPoint slides
+  - [x] Template mapping works correctly, but content processing pipeline fails
+  - [x] Multi-column layouts (Two Content, Four Columns, Comparison) affected
+  - [x] **Root Cause**: Input processing pipeline broken, not template or core engine
+  - **Priority**: Critical - Core functionality completely broken
+
+#### 🚨 CRITICAL: Rich Content Rendering Bug - [GitHub Issue #33](https://github.com/teknologika/Deckbuilder/issues/33)
+
+**Status**: Critical content rendering issue - Rich content displaying as JSON strings instead of formatted PowerPoint elements
+
+- [ ] **Phase 1: Enhanced Content Detection** - Fix `_add_simple_content_to_placeholder()` detection
+  - [ ] Improve rich content structure detection in `_add_simple_content_to_placeholder()`
+  - [ ] Ensure rich content objects are processed by rich content handlers instead of being converted to strings
+  - [ ] Fix content type priority order: rich content blocks → formatted segments → plain text
+  - [ ] Add debug logging to track content processing pipeline decisions
+
+- [ ] **Phase 2: Rich Content Processing Pipeline** - Fix PowerPoint element rendering
+  - [ ] Fix `_add_rich_content_blocks_to_placeholder()` method to properly render content blocks
+  - [ ] Ensure rich content blocks generate actual PowerPoint paragraphs and runs with formatting
+  - [ ] Fix bullet point rendering for different indent levels (level 0, 1, 2)
+  - [ ] Test all rich content types: headings, paragraphs, bullets with multiple levels
+
+- [ ] **Phase 3: Content Type Priority System** - Fix handoff from content_formatting to PowerPoint
+  - [ ] Ensure content_formatting.py output is properly consumed by PowerPoint rendering
+  - [ ] Fix detection logic to identify when content_formatting has processed content vs raw content
+  - [ ] Implement proper fallback chain: rich content → formatted content → plain text
+  - [ ] Verify all content types are handled by appropriate rendering methods
+
+- [ ] **Phase 4: Enhanced Content Validation** - Comprehensive testing for all rich content types
+  - [ ] Create comprehensive validation tests that read actual PowerPoint content
+  - [ ] Test all rich content block types with python-pptx content extraction
+  - [ ] Validate bullet point levels and formatting in generated presentations
+  - [ ] Test comprehensive layouts file with all content rendering scenarios
+
+**Root Cause**: Rich content blocks are being converted to string representations instead of being processed by rich content handlers, causing JSON-like text to appear in slides instead of properly formatted PowerPoint elements.
+
+- [ ] **Markdown Frontmatter Title Mapping Broken** - [GitHub Issue #27](https://github.com/teknologika/Deckbuilder/issues/27)
+  - [ ] YAML frontmatter titles not appearing in generated PowerPoint slides
+  - [ ] Affects primary input format (Markdown with structured frontmatter)
+  - [ ] Simple title slides and content slides both affected
+  - [ ] **Root Cause**: Schema validation or YAML processing pipeline issue
+  - **Priority**: Critical - Primary input format broken
+
+- [ ] **Image Placeholders Not Being Inserted** - [GitHub Issue #29](https://github.com/teknologika/Deckbuilder/issues/29)
+  - [ ] **REGRESSION**: Previously working functionality now completely broken
+  - [ ] PlaceKitten integration not placing images in PowerPoint placeholders
+  - [ ] Picture with Caption layouts generating slides without images
+  - [ ] **Root Cause**: PlaceKitten integration pipeline disconnected from PowerPoint generation
+  - **Priority**: Critical - Loss of existing functionality
+
+- [ ] **Images Being Scaled Instead of Intelligently Cropped** - [GitHub Issue #30](https://github.com/teknologika/Deckbuilder/issues/30)
+  - [ ] Should use smart cropping algorithms, not basic scaling
+  - [ ] Professional presentation quality compromised
+  - [ ] Computer vision pipeline not being utilized
+  - **Priority**: High - Quality improvement needed
+
+#### 🧪 Testing Philosophy Revolution - [GitHub Issue #28](https://github.com/teknologika/Deckbuilder/issues/28)
+
+**Critical Lesson**: 157/157 passing tests gave false confidence while core functionality was broken
+
+- [x] **Document Content-First Testing Philosophy** - Added to PLANNING.md ✅ COMPLETED
+  - [x] The False Confidence Problem: Tests passed while output was broken
+  - [x] Traditional vs Content-First Testing comparison
+  - [x] Root cause analysis and prevention strategies
+  - [x] Architectural lessons learned and development guidelines
+
+- [ ] **Implement Content-First Testing Framework**
+  - [ ] **Content Validation Tests**: Read actual PowerPoint files to verify content placement
+  - [ ] **Field Mapping Tests**: Validate complex layout placeholders (content_left_1, etc.)
+  - [ ] **End-to-End Workflow Tests**: Complete input → output validation
+  - [ ] **Regression Prevention Suite**: Automated validation of previously working features
+
+- [ ] **Diagnostic Testing Implementation**
+  - [x] Create `/tests/deckbuilder/e2e/test_pipeline_diagnostics.py` ✅ COMPLETED
+  - [ ] Run diagnostic tests to isolate template vs content generation issues
+  - [ ] Validate simple content mapping (titles, basic content)
+  - [ ] Test complex field mappings (multi-column layouts)
+  - [ ] Verify Markdown frontmatter processing pipeline
+
 #### URGENT: PlaceKitten CLI Bug Fix
 - [ ] **Fix PlaceKitten CLI Image Generation Bug**
   - [ ] PlaceKitten CLI commands creating directories instead of image files
@@ -293,35 +377,60 @@ Tasks are organized by phase and component.
 
 ## Progress Tracking
 
-**Current Sprint**: Documentation Cleanup & CLI Tools Development (Phase A & B)
-**Next Priority**: Standalone CLI tools and PyPI package preparation
-**Completed**: 
+### 🚨 CRITICAL STATE: v1.0.2 Content Mapping Failures
+
+**Current Priority**: EMERGENCY - Fix critical production issues discovered during v1.0.2 validation
+
+**Critical Issues (Production Blocking)**:
+- ❌ **JSON Complex Field Mapping**: content_left_1, content_right_1 not placed in slides
+- ❌ **Markdown Frontmatter Titles**: YAML titles not appearing in PowerPoint
+- ❌ **Image Insertion Regression**: Previously working PlaceKitten integration broken  
+- ❌ **False Test Confidence**: 157/157 tests passed while core functionality failed
+
+**Emergency Response Plan**:
+1. 🚨 **Fix Content Mapping Pipeline**: Restore JSON and Markdown processing
+2. 🚨 **Fix Image Insertion Regression**: Restore PlaceKitten PowerPoint integration  
+3. 🧪 **Implement Content-First Testing**: Prevent future false confidence
+4. 🔄 **Regression Testing Suite**: Validate all existing functionality
+
+### Discovery & Documentation ✅ COMPLETED
+- [x] **GitHub Issues Created**: All 5 critical issues documented (#26, #27, #28, #29, #30)
+- [x] **PLANNING.md Updated**: Content-first testing philosophy and lessons learned documented
+- [x] **TASK.md Updated**: Critical issues prioritized and aligned with GitHub issues
+- [x] **Root Cause Analysis**: Template mapping works, core engine works, input processing broken
+
+### Next Critical Tasks
+1. **Fix JSON Complex Field Mapping** (Issue #26) - Restore multi-column layout functionality
+2. **Fix Markdown Frontmatter Processing** (Issue #27) - Restore primary input format  
+3. **Fix Image Insertion Regression** (Issue #29) - Restore PlaceKitten integration
+4. **Implement Content-First Testing** (Issue #28) - Prevent future false confidence
+
+**Previously Completed**: 
 - ✅ Template Management System - CLI tools, documentation, and validation systems
 - ✅ PlaceKitten Library - Complete image processing with filters and smart cropping
-- ✅ PlaceKitten-Deckbuilder Integration - Smart fallback system with professional styling
-- ✅ Comprehensive Testing - 108 tests including image integration and fallback validation
+- ⚠️ PlaceKitten-Deckbuilder Integration - **REGRESSION: Integration broken**
+- ⚠️ Comprehensive Testing - **FALSE CONFIDENCE: Tests don't validate content**
 - ✅ MCP Server Integration - Full image support documentation and USER CONTENT POLICY
 - ✅ Code Quality & CI/CD - All formatting and linting issues resolved
 
-**Current Focus (2025-06-28)**:
-- 🎯 Documentation cleanup: Update planning documents and create comprehensive guides
-- 🎯 PlaceKitten API documentation with examples and integration patterns
-- 🎯 Standalone CLI development separate from MCP server for local usage
-- 🎯 Package preparation for PyPI distribution and publication
-
-**Development Goals**:
-- **Complete Documentation**: Comprehensive guides for all features and capabilities
-- **Standalone CLI**: Independent command-line tools for local development and testing
-- **PyPI Package**: Professional distribution with `pip install deckbuilder` support
-- **User Experience**: Simplified workflows for both CLI and MCP server usage
+**Current Focus (2025-07-03)**:
+- 🚨 **EMERGENCY**: Fix critical content mapping failures in production
+- 🧪 **Testing Revolution**: Implement content-first testing to prevent future issues
+- 🔄 **Regression Prevention**: Ensure previously working features stay working
+- 📋 **Issue Tracking**: Systematic resolution of all GitHub issues
 
 **Architecture Status**: 
-- ✅ **MCP Server**: Fully functional with image support and enhanced tools
-- ✅ **PlaceKitten Library**: Complete computer vision pipeline with intelligent cropping
-- ✅ **Image Integration**: Smart fallback system with professional styling
-- 🚧 **CLI Tools**: Template analysis exists, needs standalone presentation generation
-- 🚧 **Package Distribution**: Needs PyPI optimization and publication
+- ✅ **Template Mapping**: Works perfectly - JSON structure correctly identifies layouts
+- ✅ **Core PowerPoint Engine**: Works correctly - When data reaches it, slides generate properly  
+- ❌ **Input Processing Pipelines**: BROKEN - JSON and Markdown preprocessing fails
+- ❌ **Content Placement**: BROKEN - Complex field names not recognized
+- ❌ **Image Integration**: REGRESSION - Previously working functionality lost
 
-**Blockers**: None identified
-**Target Completion**: Phases A, B, C - Complete CLI tools and PyPI package
-**Last Updated**: 2025-06-28
+**Critical Blockers**: 
+- **Content mapping completely broken** - Users cannot generate functional presentations
+- **Primary input formats broken** - Both JSON and Markdown affected
+- **Image functionality lost** - Regression in previously working features
+
+**Emergency Timeline**: Fix critical issues before any new development
+**Target Completion**: Restore v1.0.2 to functional state, then implement prevention measures
+**Last Updated**: 2025-07-03
