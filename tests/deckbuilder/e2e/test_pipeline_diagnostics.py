@@ -190,7 +190,7 @@ class TestContentGenerationDiagnostics:
             title_found = "TEST TITLE" in slide_text_combined
             subtitle_found = "TEST SUBTITLE" in slide_text_combined
 
-            print(f"\nSIMPLE CONTENT MAPPING TEST:")
+            print("\nSIMPLE CONTENT MAPPING TEST:")
             print(f"Generated file: {pptx_files[0].name}")
             print(f"Slide text found: {slide_text}")
             print(f"Title found: {'✅' if title_found else '❌'}")
@@ -272,7 +272,7 @@ class TestContentGenerationDiagnostics:
                                 formatting_found = True
                                 break
 
-            print(f"\nFORMATTING MAPPING TEST:")
+            print("\nFORMATTING MAPPING TEST:")
             print(f"Content found: {'✅' if content_found else '❌'}")
             print(f"Formatting found: {'✅' if formatting_found else '❌'}")
 
@@ -322,7 +322,7 @@ class TestContentGenerationDiagnostics:
                 cwd=temp_dir,
             )
 
-            print(f"\nMULTI-COLUMN MAPPING TEST:")
+            print("\nMULTI-COLUMN MAPPING TEST:")
             print(f"CLI return code: {result.returncode}")
             if result.stdout:
                 print(f"CLI output: {result.stdout}")
@@ -416,7 +416,7 @@ subtitle: MARKDOWN TEST SUBTITLE
                 cwd=temp_dir,
             )
 
-            print(f"\nMARKDOWN TITLE SLIDE TEST:")
+            print("\nMARKDOWN TITLE SLIDE TEST:")
             print(f"CLI return code: {result.returncode}")
             if result.stdout:
                 print(f"CLI output: {result.stdout}")
@@ -457,7 +457,7 @@ title: Four Column Markdown Test
 columns:
   - title: Column 1 Title
     content: "Column 1 content text"
-  - title: Column 2 Title  
+  - title: Column 2 Title
     content: "Column 2 content text"
   - title: Column 3 Title
     content: "Column 3 content text"
@@ -497,7 +497,7 @@ This slide should have four columns with titles and content.
                 cwd=temp_dir,
             )
 
-            print(f"\nMARKDOWN FOUR COLUMNS TEST:")
+            print("\nMARKDOWN FOUR COLUMNS TEST:")
             print(f"CLI return code: {result.returncode}")
             if result.stdout:
                 print(f"CLI output: {result.stdout}")
@@ -588,7 +588,7 @@ This slide should have left and right comparison content.
                 cwd=temp_dir,
             )
 
-            print(f"\nMARKDOWN COMPARISON TEST:")
+            print("\nMARKDOWN COMPARISON TEST:")
             print(f"CLI return code: {result.returncode}")
             if result.stdout:
                 print(f"CLI output: {result.stdout}")
