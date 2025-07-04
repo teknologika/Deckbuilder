@@ -9,6 +9,8 @@ This addresses the critical issue where tests pass but slides are blank.
 """
 
 import json
+import secrets
+import shutil
 import sys
 import tempfile
 from pathlib import Path
@@ -28,6 +30,13 @@ class TestActualSlideContentValidation:
     def setup_method(self):
         """Setup for each test"""
         self.temp_dir = tempfile.mkdtemp()
+
+    def _create_unique_test_dir(self) -> Path:
+        """Create unique test directory with random 6-character hex string."""
+        hex_id = secrets.token_hex(3)  # 3 bytes = 6 hex characters
+        test_dir = Path(self.temp_dir) / f"test_{hex_id}"
+        test_dir.mkdir(parents=True, exist_ok=True)
+        return test_dir
 
     def teardown_method(self):
         """Cleanup after each test"""
@@ -118,19 +127,26 @@ class TestActualSlideContentValidation:
         with open(json_file, "w") as f:
             json.dump(json_data, f)
 
-        # Generate presentation using engine directly
-        db = Deckbuilder()
-        result = db.create_presentation_from_json(
-            json_data=json_data, fileName="simple_test", templateName="default"
-        )
+        # Generate presentation using engine directly in unique directory
+        test_dir = self._create_unique_test_dir()
+        import os
+        original_cwd = os.getcwd()
+        try:
+            os.chdir(test_dir)
+            db = Deckbuilder()
+            result = db.create_presentation_from_json(
+                json_data=json_data, fileName="simple_test", templateName="default"
+            )
 
-        # Find generated file - look for timestamped version
-        output_files = list(Path(".").glob("simple_test*.pptx"))
-        if not output_files:
-            output_files = list(Path(".").glob("simple_test*.g.pptx"))
-        assert len(output_files) > 0, f"No output file generated. Result: {result}"
+            # Find generated file - look for .g.pptx first (what engine creates)
+            output_files = list(Path(".").glob("*.g.pptx"))
+            if not output_files:
+                output_files = list(Path(".").glob("*.pptx"))
+            assert len(output_files) > 0, f"No output file generated. Result: {result}. Files in dir: {list(Path('.').iterdir())}"
 
-        pptx_path = output_files[0]
+            pptx_path = output_files[0].absolute()
+        finally:
+            os.chdir(original_cwd)
 
         # Define expected content
         expected_content = {
@@ -158,8 +174,7 @@ class TestActualSlideContentValidation:
             for error in validation["errors"]:
                 print(f"  - {error}")
 
-        # Clean up
-        pptx_path.unlink()
+        # File will be cleaned up with temp directory
 
         # Assertions
         assert (
@@ -192,19 +207,26 @@ class TestActualSlideContentValidation:
             }
         }
 
-        # Generate presentation
-        db = Deckbuilder()
-        result = db.create_presentation_from_json(
-            json_data=json_data, fileName="semantic_test", templateName="default"
-        )
+        # Generate presentation in unique directory
+        test_dir = self._create_unique_test_dir()
+        import os
+        original_cwd = os.getcwd()
+        try:
+            os.chdir(test_dir)
+            db = Deckbuilder()
+            result = db.create_presentation_from_json(
+                json_data=json_data, fileName="semantic_test", templateName="default"
+            )
 
-        # Find generated file - look for timestamped version
-        output_files = list(Path(".").glob("semantic_test*.pptx"))
-        if not output_files:
-            output_files = list(Path(".").glob("semantic_test*.g.pptx"))
-        assert len(output_files) > 0, f"No output file generated. Result: {result}"
+            # Find generated file - look for timestamped version
+            output_files = list(Path(".").glob("semantic_test*.pptx"))
+            if not output_files:
+                output_files = list(Path(".").glob("semantic_test*.g.pptx"))
+            assert len(output_files) > 0, f"No output file generated. Result: {result}"
 
-        pptx_path = output_files[0]
+            pptx_path = output_files[0].absolute()
+        finally:
+            os.chdir(original_cwd)
 
         # Define expected content
         expected_content = {
@@ -225,8 +247,7 @@ class TestActualSlideContentValidation:
             if slide_data["missing_expected"]:
                 print(f"❌ Missing: {slide_data['missing_expected']}")
 
-        # Clean up
-        pptx_path.unlink()
+        # File will be cleaned up with temp directory
 
         # Assertions
         assert (
@@ -256,19 +277,26 @@ class TestActualSlideContentValidation:
             }
         }
 
-        # Generate presentation
-        db = Deckbuilder()
-        result = db.create_presentation_from_json(
-            json_data=json_data, fileName="rich_content_test", templateName="default"
-        )
+        # Generate presentation in unique directory
+        test_dir = self._create_unique_test_dir()
+        import os
+        original_cwd = os.getcwd()
+        try:
+            os.chdir(test_dir)
+            db = Deckbuilder()
+            result = db.create_presentation_from_json(
+                json_data=json_data, fileName="rich_content_test", templateName="default"
+            )
 
-        # Find generated file - look for timestamped version
-        output_files = list(Path(".").glob("rich_content_test*.pptx"))
-        if not output_files:
-            output_files = list(Path(".").glob("rich_content_test*.g.pptx"))
-        assert len(output_files) > 0, f"No output file generated. Result: {result}"
+            # Find generated file - look for timestamped version
+            output_files = list(Path(".").glob("rich_content_test*.pptx"))
+            if not output_files:
+                output_files = list(Path(".").glob("rich_content_test*.g.pptx"))
+            assert len(output_files) > 0, f"No output file generated. Result: {result}"
 
-        pptx_path = output_files[0]
+            pptx_path = output_files[0].absolute()
+        finally:
+            os.chdir(original_cwd)
 
         # Define expected content
         expected_content = {
@@ -291,8 +319,7 @@ class TestActualSlideContentValidation:
             if slide_data["missing_expected"]:
                 print(f"❌ Missing: {slide_data['missing_expected']}")
 
-        # Clean up
-        pptx_path.unlink()
+        # File will be cleaned up with temp directory
 
         # Assertions
         assert (
@@ -312,19 +339,26 @@ class TestActualSlideContentValidation:
         with open(golden_json_path, "r") as f:
             json_data = json.load(f)
 
-        # Generate presentation
-        db = Deckbuilder()
-        result = db.create_presentation_from_json(
-            json_data=json_data, fileName="comprehensive_test", templateName="default"
-        )
+        # Generate presentation in unique directory
+        test_dir = self._create_unique_test_dir()
+        import os
+        original_cwd = os.getcwd()
+        try:
+            os.chdir(test_dir)
+            db = Deckbuilder()
+            result = db.create_presentation_from_json(
+                json_data=json_data, fileName="comprehensive_test", templateName="default"
+            )
 
-        # Find generated file - look for timestamped version
-        output_files = list(Path(".").glob("comprehensive_test*.pptx"))
-        if not output_files:
-            output_files = list(Path(".").glob("comprehensive_test*.g.pptx"))
-        assert len(output_files) > 0, f"No output file generated. Result: {result}"
+            # Find generated file - look for timestamped version
+            output_files = list(Path(".").glob("comprehensive_test*.pptx"))
+            if not output_files:
+                output_files = list(Path(".").glob("comprehensive_test*.g.pptx"))
+            assert len(output_files) > 0, f"No output file generated. Result: {result}"
 
-        pptx_path = output_files[0]
+            pptx_path = output_files[0].absolute()
+        finally:
+            os.chdir(original_cwd)
         prs = Presentation(str(pptx_path))
 
         print("\n📊 COMPREHENSIVE LAYOUTS VALIDATION:")
@@ -356,8 +390,7 @@ class TestActualSlideContentValidation:
                 blank_slides += 1
                 print(f"❌ Slide {i + 1}: NO CONTENT")
 
-        # Clean up
-        pptx_path.unlink()
+        # File will be cleaned up with temp directory
 
         # The comprehensive layouts should have content on most slides
         assert (

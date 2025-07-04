@@ -1177,11 +1177,16 @@ def create_parser():
 
     # Remap command (update existing PowerPoint presentations)
     remap_parser = subparsers.add_parser(
-        "remap", help="Update language and font settings in existing PowerPoint files", add_help=False
+        "remap",
+        help="Update language and font settings in existing PowerPoint files",
+        add_help=False,
     )
     remap_parser.add_argument("input_file", help="Input PowerPoint (.pptx) file to update")
     remap_parser.add_argument(
-        "--language", "-l", metavar="LANG", help="Language code to apply (e.g., en-US, en-AU, es-ES)"
+        "--language",
+        "-l",
+        metavar="LANG",
+        help="Language code to apply (e.g., en-US, en-AU, es-ES)",
     )
     remap_parser.add_argument(
         "--font", "-f", metavar="FONT", help="Font family to apply (e.g., Calibri, Arial)"
@@ -1189,10 +1194,10 @@ def create_parser():
     remap_parser.add_argument(
         "--output", "-o", metavar="FILE", help="Output file path (default: overwrite input)"
     )
+    remap_parser.add_argument("--no-backup", action="store_true", help="Skip creating backup file")
     remap_parser.add_argument(
-        "--no-backup", action="store_true", help="Skip creating backup file"
+        "-h", "--help", action="store_true", help="Show help for remap command"
     )
-    remap_parser.add_argument("-h", "--help", action="store_true", help="Show help for remap command")
 
     # Help command
     help_parser = subparsers.add_parser(
