@@ -1,41 +1,86 @@
 {
-  "slides": [
-    {
-      "layout": "Title Slide",
-      "placeholders": {
-        "title": "**Test Presentation** with *Inline* Formatting",
-        "subtitle": "Testing all ___placeholders___ and **formatting** capabilities"
-      }
-    },
-    {
-      "layout": "Title and Content",
-      "placeholders": {
-        "title": "Content Slide with **Bold** and *Italic*"
-      },
-      "content": [
+    "slides": [
         {
-          "type": "heading",
-          "level": 2,
-          "text": "Overview"
+            "layout": "Title Slide",
+            "style": "default_style",
+            "placeholders": {"title": "**Comprehensive** Layout *Testing*"},
+            "content": [
+                {
+                    "type": "heading",
+                    "level": 2,
+                    "text": "Demonstrating ___19 layouts___ with **professional** formatting",
+                }
+            ],
         },
         {
-          "type": "paragraph",
-          "text": "This section demonstrates content slides with various formatting options."
+            "layout": "Title and Content",
+            "style": "default_style",
+            "placeholders": {"title": "Rich Content with **Professional** *Formatting*"},
+            "content": [
+                {"type": "heading", "level": 2, "text": "Deckbuilder Features"},
+                {
+                    "type": "paragraph",
+                    "text": "Deckbuilder delivers intelligent presentation generation with comprehensive formatting support.",
+                },
+                {
+                    "type": "bullets",
+                    "items": [
+                        {"level": 1, "text": "**Content-first** design philosophy"},
+                        {"level": 1, "text": "*Semantic* layout recommendations"},
+                        {"level": 1, "text": "***Advanced*** template management"},
+                        {"level": 1, "text": "___Professional___ formatting preservation"},
+                    ],
+                },
+                {
+                    "type": "paragraph",
+                    "text": "Transform your ideas into polished presentations with **automated** *intelligence* and ___consistent___ styling.",
+                },
+            ],
         },
         {
-          "type": "bullets",
-          "items": [
-            { "level": 1, "text": "First bullet point with **bold text**" },
-            { "level": 1, "text": "Second point with *italic text*" },
-            { "level": 1, "text": "Third point with ***bold and italic***" },
-            { "level": 1, "text": "Fourth point with ___underlined text___" }
-          ]
+            "layout": "Two Content",
+            "style": "default_style",
+            "placeholders": {
+                "title": "Side-by-Side **Comparison**",
+                "content_left": "**Features**\n- Smart detection\n- Auto formatting\n- Template management",
+                "content_right": "**Benefits**\n- Save time\n- Professional output\n- Consistent branding",
+            },
+            "content": [],
         },
         {
-          "type": "paragraph",
-          "text": "Additional paragraph with **mixed** *formatting* and ___underlines___."
-        }
-      ]
-    }
-  ]
+            "layout": "Four Columns With Titles",
+            "style": "default_style",
+            "placeholders": {
+                "title": "Feature **Comparison** Matrix",
+                "title_col1": "Performance",
+                "content_col1": "**Fast processing** with optimized algorithms",
+                "title_col2": "Security",
+                "content_col2": "***Enterprise-grade*** encryption with ___compliance___",
+                "title_col3": "Usability",
+                "content_col3": "*Intuitive* interface with **minimal** learning curve",
+                "title_col4": "Cost",
+                "content_col4": "___Transparent___ pricing with **flexible** plans",
+            },
+            "content": [],
+        },
+        {
+            "layout": "Title and Content",
+            "style": "default_style",
+            "placeholders": {"title": "Table Example with **Formatted** Content"},
+            "content": [
+                {
+                    "type": "table",
+                    "style": "dark_blue_white_text",
+                    "border_style": "thin_gray",
+                    "header": ["**Feature**", "*Status*", "___Priority___"],
+                    "rows": [
+                        ["Authentication", "**Complete**", "*High*"],
+                        ["User Management", "***In Progress***", "___Medium___"],
+                        ["Reporting", "*Planned*", "**Low**"],
+                        ["API Integration", "___Blocked___", "***Critical***"],
+                    ],
+                }
+            ],
+        },
+    ]
 }

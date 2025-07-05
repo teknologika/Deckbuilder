@@ -2,9 +2,11 @@ import yaml
 import re
 from typing import Dict, Any, List, Optional, Union
 
-
 import json
 from pathlib import Path
+
+from .template_manager import TemplateManager
+
 
 class StructuredFrontmatterRegistry:
     """Registry of structured frontmatter patterns for different layout types."""
@@ -24,10 +26,14 @@ class StructuredFrontmatterRegistry:
                     if layout_name:
                         # Convert string placeholders back to type objects for validation
                         if "yaml_pattern" in pattern_data:
-                            pattern_data["yaml_pattern"] = self._convert_str_to_type(pattern_data["yaml_pattern"])
+                            pattern_data["yaml_pattern"] = self._convert_str_to_type(
+                                pattern_data["yaml_pattern"]
+                            )
                         all_patterns[layout_name] = pattern_data
                     else:
-                        print(f"Warning: Skipping {json_file} due to missing 'layout' in 'yaml_pattern'.")
+                        print(
+                            f"Warning: Skipping {json_file} due to missing 'layout' in 'yaml_pattern'."
+                        )
             except json.JSONDecodeError as e:
                 print(f"Error decoding JSON from {json_file}: {e}")
             except Exception as e:
@@ -279,7 +285,9 @@ class StructuredFrontmatterConverter:
 
 class FrontmatterConverter(StructuredFrontmatterConverter):
     """Converter to be used in the new converter module"""
+
     pass
+
 
 def markdown_to_canonical_json(markdown_content: str) -> Dict[str, Any]:
     """
@@ -289,7 +297,7 @@ def markdown_to_canonical_json(markdown_content: str) -> Dict[str, Any]:
     # 1. Split content into slides using "---" as a delimiter for both frontmatter and content
     # This regex handles cases where there might be leading/trailing newlines around the ---.
     # It also ensures that the first block is treated as frontmatter if it starts with ---
-    blocks = re.split(r'''^---\s*$\n''', markdown_content, flags=re.MULTILINE)
+    blocks = re.split(r"""^---\s*$\n""", markdown_content, flags=re.MULTILINE)
 
     canonical_slides = []
 
@@ -297,13 +305,13 @@ def markdown_to_canonical_json(markdown_content: str) -> Dict[str, Any]:
     # Or it's the content if there's no frontmatter
     start_index = 0
     if blocks and not blocks[0].strip() and len(blocks) > 1:
-        start_index = 1 # Skip the initial empty block if frontmatter exists
+        start_index = 1  # Skip the initial empty block if frontmatter exists
 
     for i in range(start_index, len(blocks), 2):
         frontmatter_raw = blocks[i].strip()
-        body_raw = blocks[i+1].strip() if (i+1) < len(blocks) else ""
+        body_raw = blocks[i + 1].strip() if (i + 1) < len(blocks) else ""
 
-        frontmatter = yaml.safe_load(frontmatter_raw) or {} # Ensure frontmatter is a dict
+        frontmatter = yaml.safe_load(frontmatter_raw) or {}  # Ensure frontmatter is a dict
 
         # 3. Use FrontmatterConverter to handle structured frontmatter
         converter = FrontmatterConverter()
@@ -311,10 +319,12 @@ def markdown_to_canonical_json(markdown_content: str) -> Dict[str, Any]:
 
         # Initialize Canonical Slide Object with layout from placeholder_mappings
         slide_obj = {
-            "layout": placeholder_mappings.get("type", "Title and Content"), # Use 'type' from converted mappings
+            "layout": placeholder_mappings.get(
+                "type", "Title and Content"
+            ),  # Use 'type' from converted mappings
             "style": frontmatter.get("style", "default_style"),
             "placeholders": placeholder_mappings,
-            "content": []
+            "content": [],
         }
 
         # Remove 'type' from placeholders as it's now in 'layout'
@@ -326,34 +336,25 @@ def markdown_to_canonical_json(markdown_content: str) -> Dict[str, Any]:
         # and converting them into the structured `content` array.
         # e.g., lines starting with '#' become 'heading' objects.
         # e.g., lines starting with '-' become 'bullets' objects.
-        
-        lines = body_raw.strip().split('\n')
+
+        lines = body_raw.strip().split("\n")
         for line in lines:
-            if line.startswith('#'):
-                level = len(line.split(' ')[0])
-                slide_obj["content"].append({
-                    "type": "heading",
-                    "level": level,
-                    "text": line.lstrip('# ')
-                })
-            elif line.startswith('-'):
+            if line.startswith("#"):
+                level = len(line.split(" ")[0])
+                slide_obj["content"].append(
+                    {"type": "heading", "level": level, "text": line.lstrip("# ")}
+                )
+            elif line.startswith("-"):
                 # This is a simplified bullet implementation. A more robust
                 # implementation would group consecutive bullet points.
-                slide_obj["content"].append({
-                    "type": "bullets",
-                    "items": [{
-                        "level": 1,
-                        "text": line.lstrip('- ')
-                    }]
-                })
-            elif '|' in line:
+                slide_obj["content"].append(
+                    {"type": "bullets", "items": [{"level": 1, "text": line.lstrip("- ")}]}
+                )
+            elif "|" in line:
                 # This is a simplified table implementation.
-                pass # Table parsing will be implemented later
+                pass  # Table parsing will be implemented later
             else:
-                slide_obj["content"].append({
-                    "type": "paragraph",
-                    "text": line
-                })
+                slide_obj["content"].append({"type": "paragraph", "text": line})
 
         canonical_slides.append(slide_obj)
 

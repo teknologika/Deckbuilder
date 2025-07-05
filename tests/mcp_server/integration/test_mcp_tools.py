@@ -154,39 +154,41 @@ class TestMCPToolsIntegration:
     def test_presentation_creation_from_json(
         self, mock_deckbuilder_class, mock_deckbuilder_env, sample_test_data
     ):
-        """Test creating a presentation from JSON data."""
+        """Test creating a presentation from canonical JSON data."""
         # Mock the deckbuilder instance
         mock_deck = MagicMock()
         mock_deckbuilder_class.return_value = mock_deck
 
         # Mock successful operations
-        mock_deck.create_presentation.return_value = "✓ Presentation created successfully"
-        mock_deck.add_slide_from_json.return_value = "✓ Slide added successfully"
-        mock_deck.write_presentation.return_value = "✓ Presentation saved successfully"
+        mock_deck.create_presentation.return_value = (
+            "✓ Presentation created successfully with 2 slides"
+        )
+
+        # Convert legacy format to canonical format
+        canonical_data = {"slides": []}
+        for slide_data in sample_test_data["presentation"]["slides"]:
+            canonical_slide = {
+                "layout": slide_data.get("type", "Title and Content"),
+                "placeholders": {
+                    key: value for key, value in slide_data.items() if key not in ["type", "layout"]
+                },
+                "content": [],
+            }
+            canonical_data["slides"].append(canonical_slide)
 
         # Test the workflow
         deck = get_deckbuilder_client()
 
-        # Create presentation
-        result = deck.create_presentation("default", "test_json")
-        assert "successfully" in result.lower()
-
-        # Add slides
-        slide_count = 0
-        for slide_data in sample_test_data["presentation"]["slides"]:
-            result = deck.add_slide_from_json(slide_data)
-            slide_count += 1
-            assert "successfully" in result.lower()
-
-        # Save presentation
-        result = deck.write_presentation("test_json")
+        # Create presentation using canonical format
+        result = deck.create_presentation(
+            presentation_data=canonical_data, fileName="test_json", templateName="default"
+        )
         assert "successfully" in result.lower()
 
         # Verify calls
-        assert slide_count == 2
-        mock_deck.create_presentation.assert_called_once_with("default", "test_json")
-        assert mock_deck.add_slide_from_json.call_count == 2
-        mock_deck.write_presentation.assert_called_once_with("test_json")
+        mock_deck.create_presentation.assert_called_once_with(
+            presentation_data=canonical_data, fileName="test_json", templateName="default"
+        )
 
     @patch("deckbuilder.engine.Deckbuilder")
     def test_presentation_creation_from_markdown(
@@ -198,28 +200,42 @@ class TestMCPToolsIntegration:
         mock_deckbuilder_class.return_value = mock_deck
 
         # Mock successful operation
-        mock_deck.create_presentation_from_markdown.return_value = (
-            "✓ Presentation created from markdown successfully"
+        mock_deck.create_presentation.return_value = (
+            "✓ Presentation created from canonical JSON successfully"
         )
 
-        # Test the workflow
+        # Test the workflow with mocked converter
         deck = get_deckbuilder_client()
 
-        # Create presentation from markdown
-        result = deck.create_presentation_from_markdown(
-            markdown_content=sample_markdown_content,
-            fileName="test_markdown",
-            templateName="default",
-        )
+        with patch("deckbuilder.converter.markdown_to_canonical_json") as mock_converter:
+            # Mock converter to return canonical JSON format
+            mock_converter.return_value = {
+                "slides": [
+                    {
+                        "layout": "Four Columns With Titles",
+                        "placeholders": {"title": "Feature Comparison"},
+                        "content": [],
+                    }
+                ]
+            }
 
-        assert "successfully" in result.lower()
+            # Create presentation from markdown (using canonical pipeline)
+            canonical_data = mock_converter(sample_markdown_content)
+            result = deck.create_presentation(
+                presentation_data=canonical_data,
+                fileName="test_markdown",
+                templateName="default",
+            )
 
-        # Verify call
-        mock_deck.create_presentation_from_markdown.assert_called_once_with(
-            markdown_content=sample_markdown_content,
-            fileName="test_markdown",
-            templateName="default",
-        )
+            assert "successfully" in result.lower()
+
+            # Verify calls
+            mock_converter.assert_called_once_with(sample_markdown_content)
+            mock_deck.create_presentation.assert_called_once_with(
+                presentation_data=canonical_data,
+                fileName="test_markdown",
+                templateName="default",
+            )
 
     def test_atomic_test_isolation(self, mock_deckbuilder_env):
         """Test that tests are properly isolated and atomic."""

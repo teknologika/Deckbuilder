@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+from typing import Dict, Any
 from pptx import Presentation
 
 from .path_manager import path_manager, PathManager
@@ -47,9 +48,7 @@ class Deckbuilder:
         template_name = self._path_manager.get_template_name() or "default"
         self.template_manager.check_template_exists(template_name)
 
-    def create_presentation(
-        self, templateName: str = "default", fileName: str = "Sample_Presentation"
-    ) -> str:
+    def _initialize_presentation(self, templateName: str = "default") -> None:
         # Prepare template and get path and layout mapping
         template_path, layout_mapping = self.template_manager.prepare_template(templateName)
 
@@ -65,7 +64,54 @@ class Deckbuilder:
 
         self.presentation_builder.clear_slides(self.prs)
 
-        return f"Creating presentation: {fileName}"
+    def create_presentation(
+        self,
+        presentation_data: Dict[str, Any],
+        fileName: str = "Sample_Presentation",
+        templateName: str = "default",
+    ) -> str:
+        """
+        Creates a presentation from the canonical JSON data model.
+        Only accepts canonical format: {"slides": [{"layout": "...", "placeholders": {...}, "content": [...]}]}
+        """
+        self._initialize_presentation(templateName)
+
+        # Strict validation for canonical JSON format only
+        if not isinstance(presentation_data, dict):
+            raise ValueError("Input must be a dictionary containing canonical JSON data.")
+
+        if "slides" not in presentation_data:
+            raise ValueError("Canonical JSON data must contain a 'slides' array at root level.")
+
+        if not isinstance(presentation_data["slides"], list):
+            raise ValueError("'slides' must be an array of slide objects.")
+
+        if len(presentation_data["slides"]) == 0:
+            raise ValueError("At least one slide is required.")
+
+        # Validate each slide has required canonical structure
+        for i, slide_data in enumerate(presentation_data["slides"]):
+            if not isinstance(slide_data, dict):
+                raise ValueError(f"Slide {i+1} must be a dictionary.")
+
+            if "layout" not in slide_data:
+                raise ValueError(f"Slide {i+1} must have a 'layout' field.")
+
+            # Ensure canonical structure exists (placeholders and content are optional but must be correct types)
+            if "placeholders" in slide_data and not isinstance(slide_data["placeholders"], dict):
+                raise ValueError(f"Slide {i+1} 'placeholders' must be a dictionary.")
+
+            if "content" in slide_data and not isinstance(slide_data["content"], list):
+                raise ValueError(f"Slide {i+1} 'content' must be an array.")
+
+        # Process slides using canonical format
+        for slide_data in presentation_data["slides"]:
+            self.presentation_builder.add_slide(self.prs, slide_data)
+
+        # Automatically save the presentation to disk after creation
+        write_result = self.write_presentation(fileName)
+
+        return f"Successfully created presentation with {len(presentation_data['slides'])} slides. {write_result}"
 
     def write_presentation(self, fileName: str = "Sample_Presentation") -> str:
         """Writes the generated presentation to disk with ISO timestamp."""
@@ -86,164 +132,6 @@ class Deckbuilder:
         self.prs.save(output_file)
 
         return f"Successfully created presentation: {os.path.basename(output_file)}"
-
-    def add_slide_from_json(self, json_data) -> str:
-        """
-        Add a slide to the presentation using JSON data.
-
-        Args:
-            json_data: JSON string or dictionary containing slide data
-
-        Returns:
-            Success message
-        """
-        try:
-            # Handle both string and dictionary inputs
-            if isinstance(json_data, str):
-                # Parse JSON data - handle potential double encoding
-                data = json.loads(json_data)
-
-                # If the result is still a string, parse it again
-                if isinstance(data, str):
-                    data = json.loads(data)
-            else:
-                # Already a dictionary
-                data = json_data
-
-            # Handle different JSON formats
-            if "slides" in data:
-                # Multiple slides format
-                for slide_data in data["slides"]:
-                    self.presentation_builder.add_slide(self.prs, slide_data)
-            elif "presentation" in data and "slides" in data["presentation"]:
-                # Presentation wrapper format
-                for slide_data in data["presentation"]["slides"]:
-                    self.presentation_builder.add_slide(self.prs, slide_data)
-            else:
-                # Single slide format
-                self.presentation_builder.add_slide(self.prs, data)
-
-            return "Successfully added slide(s) from JSON data"
-
-        except json.JSONDecodeError as e:
-            return f"Error parsing JSON: {str(e)}"
-        except Exception as e:
-            return f"Error adding slide: {str(e)}"
-
-    def _add_slide(self, slide_data: dict):
-        """
-        DEPRECATED: Use presentation_builder.add_slide instead.
-        This method is kept for backwards compatibility.
-        """
-        return self.presentation_builder.add_slide(self.prs, slide_data)
-
-    def create_presentation_from_markdown(
-        self,
-        markdown_content: str,
-        fileName: str = "Sample_Presentation",
-        templateName: str = "default",
-    ) -> str:
-        """Create presentation from formatted markdown with frontmatter"""
-        try:
-            slides = self.content_processor.parse_markdown_with_frontmatter(markdown_content)
-
-            # Create presentation
-            self.create_presentation(templateName, fileName)
-
-            # Add all slides to the presentation
-            for slide_data in slides:
-                self.presentation_builder.add_slide(self.prs, slide_data)
-
-            # Automatically save the presentation to disk after creation
-            write_result = self.write_presentation(fileName)
-
-            return (
-                f"Successfully created presentation with {len(slides)} slides from markdown. "
-                f"{write_result}"
-            )
-        except Exception as e:
-            return f"Error creating presentation from markdown: {str(e)}"
-
-    def create_presentation_from_json(
-        self,
-        json_data: dict,
-        fileName: str = "Sample_Presentation",
-        templateName: str = "default",
-    ) -> str:
-        """
-        Create presentation directly from JSON data without markdown conversion.
-
-        This method bypasses the markdown structured frontmatter pipeline entirely,
-        allowing direct JSON processing with semantic field names.
-
-        Args:
-            json_data: JSON presentation data with slides
-            fileName: Output file name
-            templateName: Template to use
-
-        Returns:
-            Success message with slide count and file path
-        """
-        try:
-            # Import the universal formatting module
-            from .content_formatting import content_formatter
-
-            # Validate JSON structure
-            if not isinstance(json_data, dict):
-                raise ValueError(f"JSON data must be a dictionary, got {type(json_data).__name__}")
-
-            if "presentation" not in json_data:
-                raise ValueError("JSON must contain 'presentation' key")
-
-            presentation_data = json_data["presentation"]
-            if "slides" not in presentation_data:
-                raise ValueError("Presentation data must contain 'slides' array")
-
-            slides_data = presentation_data["slides"]
-            if not isinstance(slides_data, list):
-                raise ValueError("Slides must be an array")
-
-            # Create presentation
-            self.create_presentation(templateName, fileName)
-
-            # Process each slide with direct formatting
-            processed_slides = []
-            for slide_data in slides_data:
-                if not isinstance(slide_data, dict):
-                    raise ValueError(
-                        f"Each slide must be a dictionary, got {type(slide_data).__name__}"
-                    )
-
-                # Apply universal formatting to slide data
-                formatted_slide = content_formatter.format_slide_data(slide_data)
-                processed_slides.append(formatted_slide)
-
-                # Add slide using direct field mapping (no markdown conversion)
-                self.presentation_builder.add_slide_with_direct_mapping(self.prs, formatted_slide)
-
-            # Automatically save the presentation to disk after creation
-            write_result = self.write_presentation(fileName)
-
-            return (
-                f"Successfully created presentation with {len(processed_slides)} slides from JSON. "
-                f"{write_result}"
-            )
-        except Exception as e:
-            return f"Error creating presentation from JSON: {str(e)}"
-
-    def _add_slide_with_direct_mapping(self, slide_data: dict):
-        """
-        DEPRECATED: Use presentation_builder.add_slide_with_direct_mapping instead.
-        This method is kept for backwards compatibility.
-        """
-        return self.presentation_builder.add_slide_with_direct_mapping(self.prs, slide_data)
-
-    def parse_markdown_with_frontmatter(self, markdown_content: str) -> list:
-        """
-        DEPRECATED: Use content_processor.parse_markdown_with_frontmatter instead.
-        This method is kept for backwards compatibility.
-        """
-        return self.content_processor.parse_markdown_with_frontmatter(markdown_content)
 
 
 def get_deckbuilder_client():

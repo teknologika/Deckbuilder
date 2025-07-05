@@ -6,120 +6,80 @@ The Deckbuilder server provides a streamlined MCP (Model Context Protocol) inter
 
 ## MCP Tools
 
-### `create_presentation`
-Creates a complete PowerPoint presentation from JSON data with automatic saving.
 
-**Parameters:**
-- `json_data` (string): JSON string containing complete presentation data with all slides
-- `fileName` (string): Output filename (default: "Sample_Presentation")
-- `templateName` (string): Template to use (default: "default")
 
-**Returns:** Success message with filename and save confirmation
-
-**JSON Schema:**
+**Canonical JSON Schema:**
 ```json
 {
-  "presentation": {
-    "slides": [
-      {
-        "type": "title",
-        "title": "**Main Title** with *formatting*",
-        "subtitle": "Subtitle with ___underline___"
+  "slides": [
+    {
+      "layout": "Title Slide",
+      "style": "default_style",
+      "placeholders": {
+        "title": "This is the Title",
+        "subtitle": "This is the subtitle"
       },
-      {
-        "type": "content",
-        "title": "Content Slide",
-        "content": [
-          "**Bold** bullet point",
-          "*Italic* text with ___underline___",
-          "***Bold italic*** combination"
-        ]
-      },
-      {
-        "type": "table",
-        "title": "Table Example",
-        "table": {
-          "header_style": "dark_blue_white_text",
-          "row_style": "alternating_light_gray",
-          "data": [
-            ["**Header 1**", "*Header 2*", "___Header 3___"],
-            ["Data 1", "Data 2", "Data 3"]
+      "content": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "A Formatted **Heading**"
+        },
+        {
+          "type": "paragraph",
+          "text": "This is a paragraph with *italic* and ___underline___."
+        },
+        {
+          "type": "bullets",
+          "items": [
+            { "level": 1, "text": "First bullet" },
+            { "level": 2, "text": "Second-level bullet" }
           ]
+        },
+        {
+          "type": "table",
+          "style": "dark_blue_white_text",
+          "border_style": "thin_gray",
+          "header": ["Header 1", "Header 2"],
+          "rows": [
+            ["Cell 1.1", "Cell 1.2"],
+            ["Cell 2.1", "Cell 2.2"]
+          ]
+        },
+        {
+          "type": "image",
+          "path": "path/to/image.png",
+          "caption": "An image caption",
+          "alt_text": "Accessibility text"
         }
-      }
-    ]
-  }
+      ]
+    }
+  ]
 }
 ```
 
-**Supported Slide Types:**
-- `title`: Title slide with title and subtitle
-- `content`: Content slide with rich text, bullets, headings
-- `table`: Table slide with full styling support
-- All PowerPoint layout types supported via template mapping
+**Key Design Points of Canonical JSON:**
+-   **`slides` array:** The root object contains a single `slides` array.
+-   **`layout`:** A mandatory string specifying the slide layout from the template.
+-   **`placeholders`:** A key-value map for direct placeholder replacement (e.g., `title`, `subtitle`, `body`). This is for simple content.
+-   **`content` array:** A structured list of content blocks for the main content area of a slide. This allows for rich, mixed content.
+-   **Explicit `type` in content blocks:** Each object in the `content` array has a `type` (`heading`, `paragraph`, `bullets`, `table`, `image`) to remove ambiguity.
+-   **Inline Formatting:** All `text` fields throughout the model are strings that will be processed by the existing `content_formatting.py` module to handle `**bold**`, `*italic*`, etc.
 
-**Inline Formatting Support:**
+**Supported Content Block Types:**
+- `heading`: Headings with specified level.
+- `paragraph`: Standard text paragraphs.
+- `bullets`: Bulleted lists with support for nesting.
+- `table`: Tables with header and row data.
+- `image`: Images with path, caption, and alt text.
+
+**Inline Formatting Support (within `text` fields):**
 - `**bold**` - Bold text
 - `*italic*` - Italic text
 - `___underline___` - Underlined text
 - `***bold italic***` - Combined bold and italic
 - `***___all three___***` - Bold, italic, and underlined
 
-### `create_presentation_from_markdown`
-Creates complete presentations from markdown with frontmatter and automatic saving.
-
-**Parameters:**
-- `markdown_content` (string): Markdown with YAML frontmatter slide definitions
-- `fileName` (string): Output filename (default: "Sample_Presentation")
-- `templateName` (string): Template to use (default: "default")
-
-**Returns:** Success message with slide count and save confirmation
-
-**Markdown Format:**
-```markdown
----
-layout: title
----
-# **Main Title** with *Formatting*
-## Subtitle with ___underline___
-
----
-layout: content
----
-# Content Slide Title
-
-## Section Heading
-This section demonstrates rich content with formatting.
-
-- **Bold** bullet point
-- *Italic* text with ___underline___
-- ***Bold italic*** combination
-
-Additional paragraph with **mixed** *formatting*.
-
----
-layout: table
-style: dark_blue_white_text
-row_style: alternating_light_gray
----
-# Table Slide Title
-
-| **Header 1** | *Header 2* | ___Header 3___ |
-| Data 1 | Data 2 | Data 3 |
-| More data | More data | More data |
-```
-
-**Supported Layouts:**
-- `title`: Title slide with title and subtitle
-- `content`: Content slide with rich text support (headings, paragraphs, bullets)
-- `table`: Table slide with styling options
-- All template-specific layout names
-
-**Table Styling Options:**
-- `style`: Header style (dark_blue_white_text, light_blue_dark_text, etc.)
-- `row_style`: Row style (alternating_light_gray, solid_white, etc.)
-- `border_style`: Border style (thin_gray, thick_gray, no_borders, etc.)
-- `custom_colors`: Custom color overrides (header_bg, header_text, alt_row, border_color)
 
 ## Template System
 

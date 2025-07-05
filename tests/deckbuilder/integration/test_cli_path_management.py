@@ -133,16 +133,29 @@ class TestCLIPathManagement:
                 temp_md.flush()
 
                 mock_db_instance = MagicMock()
-                mock_db_instance.create_presentation_from_markdown.return_value = "success"
+                mock_db_instance.create_presentation.return_value = "success"
                 mock_deckbuilder.return_value = mock_db_instance
 
                 with (
                     patch.object(cli, "_validate_templates_folder", return_value=True),
                     patch("pathlib.Path.exists", return_value=True),
+                    patch("src.deckbuilder.cli.converter") as mock_converter,
                 ):
+                    # Mock converter to return canonical JSON format
+                    mock_converter.markdown_to_canonical_json.return_value = {
+                        "slides": [
+                            {
+                                "layout": "Title Slide",
+                                "placeholders": {"title": "Test"},
+                                "content": [],
+                            }
+                        ]
+                    }
+
                     try:
                         cli.create_presentation(temp_md.name)
-                        mock_db_instance.create_presentation_from_markdown.assert_called_once()
+                        mock_converter.markdown_to_canonical_json.assert_called_once()
+                        mock_db_instance.create_presentation.assert_called_once()
                     finally:
                         os.unlink(temp_md.name)
 
@@ -155,13 +168,14 @@ class TestCLIPathManagement:
             with tempfile.NamedTemporaryFile(
                 mode="w", suffix=".json", delete=False, dir=temp_dir
             ) as temp_json:
+                # Write canonical JSON format
                 temp_json.write(
-                    '{"presentation": {"slides": [{"type": "Title Slide", "title": "Test"}]}}'
+                    '{"slides": [{"layout": "Title Slide", "placeholders": {"title": "Test"}, "content": []}]}'
                 )
                 temp_json.flush()
 
                 mock_db_instance = MagicMock()
-                mock_db_instance.create_presentation_from_json.return_value = "success"
+                mock_db_instance.create_presentation.return_value = "success"
                 mock_deckbuilder.return_value = mock_db_instance
 
                 with (
@@ -170,40 +184,10 @@ class TestCLIPathManagement:
                 ):
                     try:
                         cli.create_presentation(temp_json.name)
-                        # Should use direct JSON processing method
-                        mock_db_instance.create_presentation_from_json.assert_called_once()
+                        # Should use canonical JSON processing method
+                        mock_db_instance.create_presentation.assert_called_once()
                     finally:
                         os.unlink(temp_json.name)
-
-    def test_json_to_markdown_conversion(self):
-        """Test JSON to markdown conversion for complex data"""
-        cli = DeckbuilderCLI()
-
-        json_data = {
-            "presentation": {
-                "slides": [
-                    {
-                        "type": "Title Slide",
-                        "title": "Test Presentation",
-                        "subtitle": "Test Subtitle",
-                    },
-                    {
-                        "type": "Title and Content",
-                        "title": "Content Slide",
-                        "content": ["Item 1", "Item 2", "Item 3"],
-                    },
-                ]
-            }
-        }
-
-        markdown = cli._convert_json_to_markdown(json_data)
-
-        # Should contain proper frontmatter
-        assert "layout: Title Slide" in markdown
-        assert "title: Test Presentation" in markdown
-        assert "subtitle: Test Subtitle" in markdown
-        assert "layout: Title and Content" in markdown
-        assert "• Item 1" in markdown
 
 
 class TestCLIVersionHandling:

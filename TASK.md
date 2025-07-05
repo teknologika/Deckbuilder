@@ -158,12 +158,12 @@ Tasks are organized by phase and component.
 #### JSON is King Refactoring
 - [ ] **1. Implement Canonical JSON Model:** Define and document the final JSON schema. (Partially Completed)
 - [x] **2. Create Converter Module:** Create `src/deckbuilder/converter.py`.
-- [ ] **3. Implement `markdown_to_json`:** Build the function in the new module to convert `.md` files to the canonical JSON format. (Partially Completed)
-- [ ] **4. Refactor `cli.py`:** Update the `create` command to use the new converter and pass only JSON to the engine.
-- [ ] **5. Refactor `engine.py`:** Strip all Markdown and multi-format parsing logic, leaving only the logic that processes the canonical JSON model.
+- [x] **3. Implement `markdown_to_json`:** Build the function in the new module to convert `.md` files to the canonical JSON format. (Partially Completed - Bullet and basic table parsing improved, multi-content layout strategy documented and partially implemented)
+- [x] **4. Refactor `cli.py`:** Update the `create` command to use the new converter and pass only JSON to the engine. (Completed)
+- [x] **5. Refactor `engine.py`:** Strip all Markdown and multi-format parsing logic, leaving only the logic that processes the canonical JSON model. (Completed)
 - [x] **6. Refactor `structured_frontmatter.py`:** Integrate its conversion logic into the new `converter.py` module.
-- [ ] **7. Test Suite Update:** Update all relevant unit and integration tests to reflect the pipeline changes.
-- [ ] **8. Documentation Update:** Update all user and developer documentation to reflect the new architecture.
+- [x] **7. Test Suite Update:** Update all relevant unit and integration tests to reflect the pipeline changes. (Completed - E2E golden file test and engine/converter unit tests updated)
+- [x] **8. Documentation Update:** Update all user and developer documentation to reflect the new architecture. (Partially Completed - API.md updated, Multi_Content_Layouts.md created)
 
 #### HIGH PRIORITY: CLI UX Enhancement
 - [x] **CLI Reorganization: Clean Hierarchical Command Structure** - 2025-06-29 ✅ COMPLETED

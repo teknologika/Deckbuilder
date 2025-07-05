@@ -78,8 +78,28 @@ class TestActualSlideContentValidation:
     ) -> Path:
         """Helper method to generate presentation and return path to generated file."""
         deck = deckbuilder_with_env
-        result = deck.create_presentation_from_json(
-            json_data=json_data, fileName=filename, templateName="default"
+
+        # Convert legacy format to canonical format if needed
+        if "presentation" in json_data and "slides" in json_data["presentation"]:
+            # Legacy format - convert to canonical
+            canonical_data = {"slides": []}
+            for slide_data in json_data["presentation"]["slides"]:
+                canonical_slide = {
+                    "layout": slide_data.get("type", "Title and Content"),
+                    "placeholders": {
+                        key: value
+                        for key, value in slide_data.items()
+                        if key not in ["type", "layout"]
+                    },
+                    "content": [],
+                }
+                canonical_data["slides"].append(canonical_slide)
+        else:
+            # Already canonical format
+            canonical_data = json_data
+
+        result = deck.create_presentation(
+            presentation_data=canonical_data, fileName=filename, templateName="default"
         )
 
         # Find generated file - look for .g.pptx first (what engine creates)

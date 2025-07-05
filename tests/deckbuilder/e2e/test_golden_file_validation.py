@@ -178,17 +178,37 @@ class TestGoldenFileValidation:
             self._run_cli_and_validate(self.golden_json, "test_output_json", temp_dir, "json")
 
     def test_markdown_conversion_matches_canonical_json(self):
-        """Test that markdown conversion produces the same output as the canonical JSON."""
+        """
+        Test that markdown conversion produces the same output as the canonical JSON.
+        This test ensures that the `converter.py` module correctly transforms Markdown
+        into the canonical JSON model, which then produces an identical PowerPoint
+        output to a presentation generated directly from the canonical JSON fixture.
+
+        NOTE: The `canonical_presentation.json` fixture must be kept up-to-date
+        with the expected output of the `converter.py` module. If changes are made
+        to the Markdown parsing logic, this JSON file may need to be regenerated
+        or manually updated to reflect the new expected output.
+        """
         with tempfile.TemporaryDirectory() as temp_dir:
-            md_output = self._run_cli_and_validate(
+            # Generate presentation from the golden Markdown file
+            md_output_pptx = self._run_cli_and_validate(
                 self.golden_md, "from_markdown", temp_dir, "markdown"
             )
-            canonical_json_file = self.project_root / "tests" / "deckbuilder" / "fixtures" / "canonical_presentation.json"
-            json_output = self._run_cli_and_validate(
+
+            # Generate presentation from the canonical JSON fixture
+            canonical_json_file = (
+                self.project_root
+                / "tests"
+                / "deckbuilder"
+                / "fixtures"
+                / "canonical_presentation.json"
+            )
+            json_output_pptx = self._run_cli_and_validate(
                 canonical_json_file, "from_json", temp_dir, "json"
             )
 
-            self.compare_presentations(md_output, json_output)
+            # Compare the two generated presentations
+            self.compare_presentations(md_output_pptx, json_output_pptx)
 
     def compare_presentations(self, prs1_path, prs2_path):
         """Compare two presentations for equality."""
