@@ -46,7 +46,7 @@ class TestCLIPathManagement:
             cli = DeckbuilderCLI()
 
             # CLI context defaults
-            assert str(cli.path_manager.get_template_folder()) == str(Path.cwd())
+            assert str(cli.path_manager.get_template_folder()) == str(Path.cwd() / "templates")
             assert str(cli.path_manager.get_output_folder()) == str(Path.cwd())
             assert cli.path_manager.get_template_name() == "default"
 
@@ -136,7 +136,10 @@ class TestCLIPathManagement:
                 mock_db_instance.create_presentation_from_markdown.return_value = "success"
                 mock_deckbuilder.return_value = mock_db_instance
 
-                with patch.object(cli, "_validate_templates_folder", return_value=True):
+                with (
+                    patch.object(cli, "_validate_templates_folder", return_value=True),
+                    patch("pathlib.Path.exists", return_value=True),
+                ):
                     try:
                         cli.create_presentation(temp_md.name)
                         mock_db_instance.create_presentation_from_markdown.assert_called_once()
@@ -161,7 +164,10 @@ class TestCLIPathManagement:
                 mock_db_instance.create_presentation_from_json.return_value = "success"
                 mock_deckbuilder.return_value = mock_db_instance
 
-                with patch.object(cli, "_validate_templates_folder", return_value=True):
+                with (
+                    patch.object(cli, "_validate_templates_folder", return_value=True),
+                    patch("pathlib.Path.exists", return_value=True),
+                ):
                     try:
                         cli.create_presentation(temp_json.name)
                         # Should use direct JSON processing method
@@ -243,7 +249,10 @@ class TestCLIErrorHandling:
                 temp_file.write("test content")
                 temp_file.flush()
 
-                with patch.object(cli, "_validate_templates_folder", return_value=True):
+                with (
+                    patch.object(cli, "_validate_templates_folder", return_value=True),
+                    patch("pathlib.Path.exists", return_value=True),
+                ):
                     try:
                         with pytest.raises(ValueError, match="Unsupported file format"):
                             cli.create_presentation(temp_file.name)

@@ -1,88 +1,88 @@
 ---
 layout: Title Slide
 ---
-# **Comprehensive Layout Test** with *Inline* Formatting
-## Testing all ___19 layouts___ and **formatting** capabilities
+# **Deckbuilder: Intelligent PowerPoint Generation** © Bruce McLeod
+## Showcasing all ___19 layouts___ with **professional** *formatting* capabilities
 
 ---
 layout: Title and Content
 ---
-# Content Slide with **Bold** and *Italic*
+# Rich Content with **Professional** *Formatting*
 
-## Overview
-This section demonstrates content slides with various formatting options.
+## Deckbuilder Features
+Deckbuilder delivers intelligent presentation generation with comprehensive formatting support.
 
-- First bullet point with **bold text**
-- Second point with *italic text*
-- Third point with ***bold and italic***
-- Fourth point with ___underlined text___
+- **Content-first** design philosophy
+- *Semantic* layout recommendations
+- ***Advanced*** template management
+- ___Professional___ formatting preservation
 
-Additional paragraph with **mixed** *formatting* and ___underlines___.
+Transform your ideas into polished presentations with **automated** *intelligence* and ___consistent___ styling.
 
 ---
 layout: Section Header
 ---
-# Section Break: **Testing** *Complete*
+# **Deckbuilder** *Capabilities*
 
-This section demonstrates ___section header___ layout with **formatting** and serves as a divider between major topics.
+Comprehensive presentation intelligence with ___professional___ **layout** automation for streamlined content creation.
 
 ---
 layout: Two Content
-title: Two Content Layout Test
+title: Deckbuilder **Core** Features
 sections:
-  - title: Left Side Content
+  - title: Content Intelligence
     content:
-      - "**Feature A** details"
-      - "*Feature B* information"
-      - "***Critical*** updates"
-  - title: Right Side Content
+      - "**Semantic** layout detection"
+      - "*Automatic* content optimization"
+      - "***Smart*** placeholder mapping"
+  - title: Professional Output
     content:
-      - "___Important___ notices"
-      - "**Security** measures"
-      - "*Performance* metrics"
+      - "___Enterprise-grade___ presentations"
+      - "**Consistent** branding"
+      - "*Polished* formatting"
 ---
 
-Content from Two Content structured frontmatter above.
+Intelligent presentation generation with automated content placement and professional styling.
 
 ---
 layout: Comparison
-title: Comparison Layout **Full** Test
+title: Deckbuilder **Advantage** Analysis
 comparison:
   left:
-    title: Option A Benefits
-    content: "**Cost effective** solution with *rapid* deployment and ***proven*** technology"
+    title: Traditional Approach
+    content: "**Manual** slide creation with *time-consuming* layout decisions and ***inconsistent*** formatting"
   right:
-    title: Option B Benefits
-    content: "___Advanced___ features with **future-proof** architecture and *scalable* design"
+    title: Deckbuilder Solution
+    content: "___Intelligent___ automation with **content-first** design and *professional* output quality"
 ---
 
-Content from Comparison structured frontmatter above.
+Automated presentation intelligence delivers superior results compared to traditional manual approaches.
 
 ---
 layout: Title Only
 ---
-# Title Only Layout: **Bold** *Italic* ___Underline___
+# Deckbuilder: **Intelligent** *Presentation* ___Generation___
 
 ---
 layout: Blank
 ---
-# Blank Layout Test
+# Content-First Design Philosophy
 
-This tests the blank layout with minimal structure and **formatted** content.
+Deckbuilder transforms presentation creation through **intelligent** content analysis and automated layout selection.
 
 ---
 layout: Content with Caption
 ---
-# Content with Caption Test
+# Advanced Layout Capabilities
 
-## Main Content
-This layout demonstrates content with caption functionality:
+## Professional Features
+Deckbuilder provides sophisticated layout management with intelligent content placement:
 
-- **Primary** content area
-- *Secondary* information
-- ***Important*** notes
+- **Template** analysis and optimization
+- *Automatic* placeholder detection
+- ***Semantic*** content mapping
 
-Caption area with ___formatted___ text and **emphasis**.
+Enterprise-grade presentation generation with ___professional___ output and **consistent** formatting.
 
 ---
 layout: Picture with Caption

@@ -13,6 +13,7 @@ This ensures our test data stays current and catches regressions in template map
 """
 
 import os
+import shutil
 import subprocess
 import tempfile
 import pytest
@@ -378,33 +379,53 @@ class TestCLIErrorHandling:
 
     def test_cli_handles_invalid_file_format(self):
         """Test CLI properly handles invalid file formats"""
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False) as temp_file:
-            temp_file.write("This is not a valid format")
-            temp_file.flush()
+        # Create temporary templates directory for this test
+        with tempfile.TemporaryDirectory() as temp_dir:
+            templates_dir = Path(temp_dir) / "templates"
+            templates_dir.mkdir()
 
-            try:
-                result = subprocess.run(
-                    [
-                        "python",
-                        str(self.project_root / "src" / "deckbuilder" / "cli.py"),
-                        "create",
-                        temp_file.name,
-                    ],
-                    capture_output=True,
-                    text=True,
-                    cwd=self.project_root,
-                )
+            # Copy template files to temp directory
+            source_template = (
+                self.project_root / "src" / "deckbuilder" / "assets" / "templates" / "default.pptx"
+            )
+            source_json = (
+                self.project_root / "src" / "deckbuilder" / "assets" / "templates" / "default.json"
+            )
 
-                assert result.returncode != 0, "CLI should fail with unsupported format"
-                assert (
-                    "unsupported" in result.stderr.lower()
-                    or "format" in result.stderr.lower()
-                    or "unsupported" in result.stdout.lower()
-                    or "format" in result.stdout.lower()
-                )
+            if source_template.exists():
+                shutil.copy(source_template, templates_dir / "default.pptx")
+            if source_json.exists():
+                shutil.copy(source_json, templates_dir / "default.json")
 
-            finally:
-                os.unlink(temp_file.name)
+            with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False) as temp_file:
+                temp_file.write("This is not a valid format")
+                temp_file.flush()
+
+                try:
+                    result = subprocess.run(
+                        [
+                            "python",
+                            str(self.project_root / "src" / "deckbuilder" / "cli.py"),
+                            "--template-folder",
+                            str(templates_dir),
+                            "create",
+                            temp_file.name,
+                        ],
+                        capture_output=True,
+                        text=True,
+                        cwd=self.project_root,
+                    )
+
+                    assert result.returncode != 0, "CLI should fail with unsupported format"
+                    assert (
+                        "unsupported" in result.stderr.lower()
+                        or "format" in result.stderr.lower()
+                        or "unsupported" in result.stdout.lower()
+                        or "format" in result.stdout.lower()
+                    )
+
+                finally:
+                    os.unlink(temp_file.name)
 
     def test_cli_handles_missing_templates_folder(self):
         """Test CLI properly handles missing templates folder"""
