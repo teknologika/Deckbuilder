@@ -1,9 +1,0 @@
-For MCP tool usage, copy this escaped JSON string:
-
-{"presentation":{"slides":[{"type":"Title Slide","title":"**Simple Test Presentation**","subtitle":"Easy example for *MCP tool* usage"},{"type":"Title and Content","title":"Key Benefits","content":["**Fast** and reliable processing","*Easy* to use interface","***Comprehensive*** feature set"]},{"type":"table","title":"Status Overview","table":{"header_style":"dark_blue_white_text","row_style":"alternating_light_gray","data":[["**Feature**","*Status*"],["Core Engine","**Complete**"],["UI Design","***In Progress***"],["Testing","*Planned*"]]}}]}}
-
-Usage:
-Tool: create_presentation
-Parameters:
-- json_data: {"presentation":{"slides":[{"type":"Title Slide","title":"**Simple Test Presentation**","subtitle":"Easy example for *MCP tool* usage"},{"type":"Title and Content","title":"Key Benefits","content":["**Fast** and reliable processing","*Easy* to use interface","***Comprehensive*** feature set"]},{"type":"table","title":"Status Overview","table":{"header_style":"dark_blue_white_text","row_style":"alternating_light_gray","data":[["**Feature**","*Status*"],["Core Engine","**Complete**"],["UI Design","***In Progress***"],["Testing","*Planned*"]]}}]}}
-- fileName: SimpleTest

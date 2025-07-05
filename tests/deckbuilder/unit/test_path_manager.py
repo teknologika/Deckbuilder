@@ -38,8 +38,17 @@ class TestPathManager:
         assets_path = pm.get_assets_templates_path()
 
         assert isinstance(assets_path, Path)
-        expected = pm.get_project_root() / "assets" / "templates"
-        assert assets_path == expected
+        # Should prefer package location over project root
+        expected_package = (
+            Path(__file__).parent.parent.parent.parent
+            / "src"
+            / "deckbuilder"
+            / "assets"
+            / "templates"
+        )
+        expected_project = pm.get_project_root() / "assets" / "templates"
+        # Either package location or project root fallback should be returned
+        assert assets_path == expected_package or assets_path == expected_project
 
     @patch.dict(os.environ, {}, clear=True)
     def test_get_template_folder_default(self):
@@ -298,7 +307,8 @@ class TestPathManagerIntegration:
 
         # Should find the actual Deckbuilder project
         assert (root / "src" / "deckbuilder").exists()
-        assert (root / "assets" / "templates").exists()
+        # Assets are now under src/deckbuilder/assets/templates
+        assert (root / "src" / "deckbuilder" / "assets" / "templates").exists()
 
     def test_real_assets_validation(self):
         """Test assets validation with real filesystem"""

@@ -17,7 +17,7 @@ recursive-include src/placekitten/images *.png *.jpg *.jpeg
 include src/placekitten/README.md
 
 # Include template assets
-recursive-include assets/templates *.pptx *.json
+recursive-include src/deckbuilder/assets/templates *.pptx *.json
 
 # Include layout intelligence data
 include src/deckbuilder/layout_intelligence.json
