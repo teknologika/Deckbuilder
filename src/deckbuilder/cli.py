@@ -1008,7 +1008,7 @@ def create_parser():
     """Create hierarchical command-line argument parser"""
     parser = argparse.ArgumentParser(
         prog="deckbuilder",
-        description="Deckbuilder CLI - Intelligent PowerPoint presentation generation",
+        description="Deckbuilder CLI - Intelligent PowerPoint presentation generation © Bruce McLeod",
         usage="deckbuilder [options] <command> <subcommand> [parameters]",
         add_help=False,  # Custom help handling
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -1223,7 +1223,7 @@ def show_main_help():
     print(
         """usage: deckbuilder [options] <command> <subcommand> [parameters]
 
-Deckbuilder CLI - Intelligent PowerPoint presentation generation
+Deckbuilder CLI - Intelligent PowerPoint presentation generation © Bruce McLeod
 
 Commands:
   create                    Generate presentations from markdown or JSON
@@ -1543,7 +1543,7 @@ def main():
 
         version = path_manager.get_version()
         print(f"Deckbuilder CLI v{version}")
-        print("Intelligent PowerPoint presentation generation")
+        print("Intelligent PowerPoint presentation generation © Bruce McLeod")
         return
 
     # Handle help flag or missing command
