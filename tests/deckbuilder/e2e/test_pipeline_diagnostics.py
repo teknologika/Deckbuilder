@@ -28,7 +28,7 @@ class TestTemplateMappingDiagnostics:
     def setup_method(self):
         """Setup for each test"""
         self.project_root = Path(__file__).parent.parent.parent.parent
-        self.template_folder = self.project_root / "assets" / "templates"
+        self.template_folder = self.project_root / "src" / "deckbuilder" / "assets" / "templates"
         self.template_pptx = self.template_folder / "default.pptx"
         self.template_json = self.template_folder / "default.json"
 
@@ -149,7 +149,7 @@ class TestContentGenerationDiagnostics:
 
             # Generate PowerPoint
             env = os.environ.copy()
-            env["DECK_TEMPLATE_FOLDER"] = str(self.project_root / "assets" / "templates")
+            env["DECK_TEMPLATE_FOLDER"] = str(self.template_folder)
             env["DECK_OUTPUT_FOLDER"] = temp_dir
 
             result = subprocess.run(
@@ -225,7 +225,7 @@ class TestContentGenerationDiagnostics:
 
             # Generate PowerPoint
             env = os.environ.copy()
-            env["DECK_TEMPLATE_FOLDER"] = str(self.project_root / "assets" / "templates")
+            env["DECK_TEMPLATE_FOLDER"] = str(self.template_folder)
             env["DECK_OUTPUT_FOLDER"] = temp_dir
 
             result = subprocess.run(
@@ -304,7 +304,7 @@ class TestContentGenerationDiagnostics:
 
             # Generate PowerPoint
             env = os.environ.copy()
-            env["DECK_TEMPLATE_FOLDER"] = str(self.project_root / "assets" / "templates")
+            env["DECK_TEMPLATE_FOLDER"] = str(self.template_folder)
             env["DECK_OUTPUT_FOLDER"] = temp_dir
 
             result = subprocess.run(
@@ -398,7 +398,7 @@ subtitle: MARKDOWN TEST SUBTITLE
 
             # Generate PowerPoint
             env = os.environ.copy()
-            env["DECK_TEMPLATE_FOLDER"] = str(self.project_root / "assets" / "templates")
+            env["DECK_TEMPLATE_FOLDER"] = str(self.template_folder)
             env["DECK_OUTPUT_FOLDER"] = temp_dir
 
             result = subprocess.run(
@@ -479,7 +479,7 @@ This slide should have four columns with titles and content.
 
             # Generate PowerPoint
             env = os.environ.copy()
-            env["DECK_TEMPLATE_FOLDER"] = str(self.project_root / "assets" / "templates")
+            env["DECK_TEMPLATE_FOLDER"] = str(self.template_folder)
             env["DECK_OUTPUT_FOLDER"] = temp_dir
 
             result = subprocess.run(
@@ -570,7 +570,7 @@ This slide should have left and right comparison content.
 
             # Generate PowerPoint
             env = os.environ.copy()
-            env["DECK_TEMPLATE_FOLDER"] = str(self.project_root / "assets" / "templates")
+            env["DECK_TEMPLATE_FOLDER"] = str(self.template_folder)
             env["DECK_OUTPUT_FOLDER"] = temp_dir
 
             result = subprocess.run(

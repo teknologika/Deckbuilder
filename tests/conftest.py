@@ -30,6 +30,31 @@ def test_data_dir():
 
 
 @pytest.fixture(scope="session")
+def asset_paths():
+    """Centralized asset paths for consistent test access."""
+    project_root = Path(__file__).parent.parent
+    return {
+        "project_root": project_root,
+        "assets_dir": project_root / "src" / "deckbuilder" / "assets",
+        "templates_dir": project_root / "src" / "deckbuilder" / "assets" / "templates",
+        "default_pptx": project_root
+        / "src"
+        / "deckbuilder"
+        / "assets"
+        / "templates"
+        / "default.pptx",
+        "default_json": project_root
+        / "src"
+        / "deckbuilder"
+        / "assets"
+        / "templates"
+        / "default.json",
+        # Legacy template env var path for backward compatibility in some tests
+        "template_env_path": str(project_root / "src" / "deckbuilder" / "assets" / "templates"),
+    }
+
+
+@pytest.fixture(scope="session")
 def temp_dir():
     """Temporary directory for test files."""
     temp_dir = tempfile.mkdtemp(prefix="deckbuilder_test_")

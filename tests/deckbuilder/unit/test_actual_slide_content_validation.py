@@ -45,7 +45,7 @@ def deckbuilder_with_env(test_output_dir):
     # Set required environment variables
     original_env = {}
     env_vars = {
-        "DECK_TEMPLATE_FOLDER": str(project_root / "assets" / "templates"),
+        "DECK_TEMPLATE_FOLDER": str(project_root / "src" / "deckbuilder" / "assets" / "templates"),
         "DECK_TEMPLATE_NAME": "default",
         "DECK_OUTPUT_FOLDER": str(test_output_dir),
     }

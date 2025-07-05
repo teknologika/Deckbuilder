@@ -30,6 +30,9 @@ class TestJSONFieldMappingCorrect:
     def setup_method(self):
         """Setup for each test"""
         self.project_root = Path(__file__).parent.parent.parent.parent
+        self.template_env_path = str(
+            self.project_root / "src" / "deckbuilder" / "assets" / "templates"
+        )
         self.temp_dir = None
 
     def teardown_method(self):
@@ -66,7 +69,7 @@ class TestJSONFieldMappingCorrect:
 
             # Generate PowerPoint
             env = os.environ.copy()
-            env["DECK_TEMPLATE_FOLDER"] = str(self.project_root / "assets" / "templates")
+            env["DECK_TEMPLATE_FOLDER"] = self.template_env_path
             env["DECK_OUTPUT_FOLDER"] = temp_dir
 
             result = subprocess.run(
@@ -150,7 +153,7 @@ class TestJSONFieldMappingCorrect:
                 json.dump(json_data, f)
 
             env = os.environ.copy()
-            env["DECK_TEMPLATE_FOLDER"] = str(self.project_root / "assets" / "templates")
+            env["DECK_TEMPLATE_FOLDER"] = self.template_env_path
             env["DECK_OUTPUT_FOLDER"] = temp_dir
 
             result = subprocess.run(
@@ -252,7 +255,7 @@ class TestJSONFieldMappingCorrect:
                 json.dump(json_data, f)
 
             env = os.environ.copy()
-            env["DECK_TEMPLATE_FOLDER"] = str(self.project_root / "assets" / "templates")
+            env["DECK_TEMPLATE_FOLDER"] = self.template_env_path
             env["DECK_OUTPUT_FOLDER"] = temp_dir
 
             result = subprocess.run(
@@ -333,7 +336,7 @@ class TestJSONFieldMappingCorrect:
                 json.dump(json_data, f)
 
             env = os.environ.copy()
-            env["DECK_TEMPLATE_FOLDER"] = str(self.project_root / "assets" / "templates")
+            env["DECK_TEMPLATE_FOLDER"] = self.template_env_path
             env["DECK_OUTPUT_FOLDER"] = temp_dir
 
             result = subprocess.run(

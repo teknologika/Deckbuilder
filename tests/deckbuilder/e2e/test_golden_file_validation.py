@@ -59,7 +59,7 @@ class TestGoldenFileValidation:
     def _initialize_temp_templates(self):
         """Initialize templates in temp directory without polluting root"""
         # Copy assets from project to temp templates
-        assets_templates = self.project_root / "assets" / "templates"
+        assets_templates = self.project_root / "src" / "deckbuilder" / "assets" / "templates"
 
         # Create templates structure
         self.templates_dir.mkdir(parents=True, exist_ok=True)

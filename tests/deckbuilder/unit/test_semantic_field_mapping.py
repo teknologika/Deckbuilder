@@ -25,7 +25,9 @@ class TestSemanticFieldMapping:
     def setup_method(self):
         """Setup for each test"""
         self.project_root = Path(__file__).parent.parent.parent.parent
-        self.template_path = self.project_root / "assets" / "templates" / "default.json"
+        self.template_path = (
+            self.project_root / "src" / "deckbuilder" / "assets" / "templates" / "default.json"
+        )
 
     def test_template_has_semantic_two_content_fields(self):
         """Test that Two Content layout has semantic field names"""
