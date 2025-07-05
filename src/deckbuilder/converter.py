@@ -5,7 +5,7 @@ from typing import Dict, Any, List, Optional, Union
 import json
 from pathlib import Path
 
-from .template_manager import TemplateManager
+# from .template_manager import TemplateManage
 
 
 class StructuredFrontmatterRegistry:

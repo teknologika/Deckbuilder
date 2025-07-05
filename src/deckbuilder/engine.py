@@ -1,4 +1,4 @@
-import json
+#import json
 from datetime import datetime
 from typing import Dict, Any
 from pptx import Presentation
@@ -92,17 +92,17 @@ class Deckbuilder:
         # Validate each slide has required canonical structure
         for i, slide_data in enumerate(presentation_data["slides"]):
             if not isinstance(slide_data, dict):
-                raise ValueError(f"Slide {i+1} must be a dictionary.")
+                raise ValueError(f"Slide {i + 1} must be a dictionary.")
 
             if "layout" not in slide_data:
-                raise ValueError(f"Slide {i+1} must have a 'layout' field.")
+                raise ValueError(f"Slide {i + 1} must have a 'layout' field.")
 
             # Ensure canonical structure exists (placeholders and content are optional but must be correct types)
             if "placeholders" in slide_data and not isinstance(slide_data["placeholders"], dict):
-                raise ValueError(f"Slide {i+1} 'placeholders' must be a dictionary.")
+                raise ValueError(f"Slide {i + 1} 'placeholders' must be a dictionary.")
 
             if "content" in slide_data and not isinstance(slide_data["content"], list):
-                raise ValueError(f"Slide {i+1} 'content' must be an array.")
+                raise ValueError(f"Slide {i + 1} 'content' must be an array.")
 
         # Process slides using canonical format
         for slide_data in presentation_data["slides"]:

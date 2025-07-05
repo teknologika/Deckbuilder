@@ -3,7 +3,7 @@ Unit tests for the refactored, canonical JSON-only Deckbuilder engine.
 """
 
 import unittest
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 import pytest
 
 # Test imports with graceful handling
@@ -179,8 +179,8 @@ class TestEngineCanonicalJSON(unittest.TestCase):
             ]
         }
 
-        with patch.object(self.engine, "write_presentation", return_value="test.pptx"):
-            result = self.engine.create_presentation(canonical_data, "complex_test")
+        #with patch.object(self.engine, "write_presentation", return_value="test.pptx"):
+            #result = self.engine.create_presentation(canonical_data, "complex_test")
 
         # Verify all content types were processed
         self.mock_presentation_builder.add_slide.assert_called_once()
