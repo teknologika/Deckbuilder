@@ -119,6 +119,7 @@ class TestContentGenerationDiagnostics:
     def setup_method(self):
         """Setup for each test"""
         self.project_root = Path(__file__).parent.parent.parent.parent
+        self.template_folder = self.project_root / "src" / "deckbuilder" / "assets" / "templates"
         self.temp_dir = None
 
     def teardown_method(self):
@@ -368,6 +369,7 @@ class TestMarkdownGenerationDiagnostics:
     def setup_method(self):
         """Setup for each test"""
         self.project_root = Path(__file__).parent.parent.parent.parent
+        self.template_folder = self.project_root / "src" / "deckbuilder" / "assets" / "templates"
         self.temp_dir = None
 
     def teardown_method(self):

@@ -46,7 +46,7 @@ def mock_deckbuilder_env():
         output_dir.mkdir(parents=True, exist_ok=True)
 
         project_root = Path(__file__).parent.parent.parent.parent
-        source_template_dir = project_root / "assets" / "templates"
+        source_template_dir = project_root / "src" / "deckbuilder" / "assets" / "templates"
 
         # Copy real template files to the temp directory
         for file_name in ["default.pptx", "default.json"]:
