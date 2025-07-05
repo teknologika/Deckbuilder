@@ -72,6 +72,32 @@ class PathManager:
         # Fallback to project root (for development)
         return self.get_project_root() / "assets" / "templates"
 
+    def get_master_presentation_files_path(self) -> Path:
+        """Get the path to master presentation files (source of truth for examples and tests)"""
+        # Try package location first (for installed package)
+        package_assets = Path(__file__).parent / "assets"
+        if package_assets.exists():
+            return package_assets
+        # Fallback to project root (for development)
+        return self.get_project_root() / "src" / "deckbuilder" / "assets"
+
+    def get_master_presentation_files(self) -> tuple[Path, Path]:
+        """Get paths to master presentation files (source of truth) for consistent access across all code"""
+        assets_path = self.get_master_presentation_files_path()
+        return (
+            assets_path / "master_default_presentation.md",
+            assets_path / "master_default_presentation.json",
+        )
+
+    def get_test_files(self) -> tuple[Path, Path]:
+        """Get paths to test files (copies of master files for testing)"""
+        project_root = self.get_project_root()
+        test_dir = project_root / "tests" / "deckbuilder"
+        return (
+            test_dir / "test_comprehensive_layouts.md",
+            test_dir / "test_comprehensive_layouts.json",
+        )
+
     def get_template_folder(self) -> Path:
         """Get template folder based on context-aware precedence rules"""
 
@@ -84,8 +110,8 @@ class PathManager:
             if env_folder:
                 return Path(env_folder).resolve()
 
-            # CLI defaults to current directory
-            return Path.cwd()
+            # CLI defaults to current directory (per design specification)
+            return Path.cwd() / "templates"
 
         # MCP Context: env vars > failure (no fallbacks)
         elif self._context == "mcp":

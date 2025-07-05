@@ -81,7 +81,8 @@ where = ["src"]
 "deckbuilder" = [
     "layout_intelligence.json",
     "assets/templates/*.pptx",
-    "assets/templates/*.json"
+    "assets/templates/*.json",
+    "assets/master_default_presentation.*"
 ]
 "placekitten" = ["images/*", "README.md"]
 "*" = ["*.json", "*.md"]

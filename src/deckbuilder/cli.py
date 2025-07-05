@@ -178,6 +178,26 @@ class DeckbuilderCLI:
         # Use default template if none provided
         template_name = template or "default"
 
+        # Show template selection feedback
+        template_folder = self.path_manager.get_template_folder()
+        template_file = self.path_manager.get_template_file_path(template_name)
+        mapping_file = self.path_manager.get_template_json_path(template_name)
+
+        print(f"Using template: {template_name}.pptx from {template_folder}")
+
+        # Check if template files exist and report status
+        if template_file.exists():
+            print(f"Template file: {template_file.name} ✓ Found")
+        else:
+            print(f"✗ Template file not found: {template_file}")
+            print("Run 'deckbuilder init' to create template folder with default files")
+            return
+
+        if mapping_file.exists():
+            print(f"Mapping file: {mapping_file.name} ✓ Found")
+        else:
+            print(f"Mapping file not found: {mapping_file.name} (will use fallback detection)")
+
         # Reset singleton and create fresh instance with CLI path manager
         Deckbuilder.reset()
         db = Deckbuilder(path_manager_instance=self.path_manager)
@@ -186,6 +206,7 @@ class DeckbuilderCLI:
             if input_path.suffix.lower() == ".md":
                 # Process markdown file
                 content = input_path.read_text(encoding="utf-8")
+                print(f"Processing markdown file: {input_path.name}")
                 result = db.create_presentation_from_markdown(
                     markdown_content=content, fileName=output_name, templateName=template_name
                 )
@@ -194,6 +215,7 @@ class DeckbuilderCLI:
                 with open(input_path, "r", encoding="utf-8") as f:
                     json_data = json.load(f)
 
+                print(f"Processing JSON file: {input_path.name}")
                 # Use direct JSON processing to bypass markdown conversion
                 result = db.create_presentation_from_json(
                     json_data=json_data,
@@ -211,13 +233,13 @@ class DeckbuilderCLI:
                 "Error creating presentation from markdown:" in result
                 or "Error creating presentation from JSON:" in result
             ):
-                print(f"❌ {result}")
+                print(f"✗ {result}")
                 raise RuntimeError(result)
-            print(f"✅ Presentation created successfully: {result}")
+            print(f"✓ Presentation created successfully: {result}")
             return result
 
         except Exception as e:
-            print(f"❌ Error creating presentation: {e}")
+            print(f"✗ Error creating presentation: {e}")
             raise
 
     def analyze_template(self, template_name: str = "default", verbose: bool = False):
@@ -409,9 +431,9 @@ class DeckbuilderCLI:
                     "example_presentation.json",
                 ]
 
-                print("✅ Template folder created at", target_path)
-                print("📁 Copied:", ", ".join(files_copied))
-                print("📝 Generated documentation:")
+                print("Template folder created at", target_path)
+                print("Copied:", ", ".join(files_copied))
+                print("Generated documentation:")
                 for file in generated_files:
                     print(f"   - {file}")
                 print()
@@ -426,9 +448,9 @@ class DeckbuilderCLI:
                 print()
 
             except ImportError as e:
-                print(f"⚠️  Could not generate documentation: {e}")
-                print("✅ Template folder created at", target_path)
-                print("📁 Copied:", ", ".join(files_copied))
+                print(f"Could not generate documentation: {e}")
+                print("Template folder created at", target_path)
+                print("Copied:", ", ".join(files_copied))
                 print()
 
             # Environment variable guidance
@@ -440,44 +462,42 @@ class DeckbuilderCLI:
             print("Then reload: source ~/.bash_profile")
 
         except Exception as e:
-            print(f"❌ Error setting up templates: {e}")
+            print(f"Error setting up templates: {e}")
             print("💡 Make sure you have write permissions to the target directory")
 
     def _copy_golden_files_as_examples(self, target_path):
-        """Copy comprehensive golden test files as examples with example_ prefix"""
+        """Copy master presentation files as examples with example_ prefix"""
         import json
-        from pathlib import Path
+        from deckbuilder.path_manager import path_manager
 
-        # Get project root to locate golden files
-        project_root = Path(__file__).parent.parent.parent
-        golden_md = project_root / "tests" / "deckbuilder" / "test_comprehensive_layouts.md"
-        golden_json = project_root / "tests" / "deckbuilder" / "test_comprehensive_layouts.json"
+        # Use centralized path management for master files (source of truth)
+        master_md, master_json = path_manager.get_master_presentation_files()
 
         # Update title in markdown content to showcase Deckbuilder
-        if golden_md.exists():
-            content = golden_md.read_text()
-            # Replace first title with Deckbuilder showcase title
+        if master_md.exists():
+            content = master_md.read_text()
+            # Replace test title with showcase title
             updated_content = content.replace(
                 "# **Comprehensive Layout Test** with *Inline* Formatting\n## Testing all ___19 layouts___ and **formatting** capabilities",
                 "# **Deckbuilder: Intelligent PowerPoint Generation** © Bruce McLeod\n## Showcasing all ___19 layouts___ with **professional** *formatting* capabilities",
             )
-
             # Write to target as example_presentation.md
             with open(target_path / "example_presentation.md", "w", encoding="utf-8") as f:
                 f.write(updated_content)
 
         # Update title in JSON content to showcase Deckbuilder
-        if golden_json.exists():
-            with open(golden_json, "r", encoding="utf-8") as f:
+        if master_json.exists():
+            with open(master_json, "r", encoding="utf-8") as f:
                 json_data = json.load(f)
 
-            # Update first slide title
+            # Update first slide title if it exists
             if json_data.get("presentation", {}).get("slides"):
                 first_slide = json_data["presentation"]["slides"][0]
                 if first_slide.get("type") == "Title Slide":
                     first_slide["title"] = (
                         "**Deckbuilder: Intelligent PowerPoint Generation** © Bruce McLeod"
                     )
+                    # Update subtitle/rich_content if it exists
                     if "rich_content" in first_slide and first_slide["rich_content"]:
                         first_slide["rich_content"][0][
                             "heading"
