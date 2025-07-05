@@ -1,0 +1,23 @@
+{
+    "structure_type": "media",
+    "description": "Media slide with image placeholder and caption text",
+    "yaml_pattern": {
+        "layout": "Picture with Caption",
+        "title": "str",
+        "media": {
+            "image_path": "str",
+            "alt_text": "str",
+            "caption": "str",
+            "description": "str"
+        }
+    },
+    "mapping_rules": {
+        "title": "title",
+        "media.image_path": "image_1",
+        "media.alt_text": "alt_text_1",
+        "media.caption": "text_caption_1",
+        "media.description": "content_1"
+    },
+    "validation": {"required_fields": ["title", "media"]},
+    "example": "---\n                layout: Picture with Caption\n                title: System Architecture\n                media:\n                  image_path: \"assets/architecture_diagram.png\"\n                  alt_text: \"System architecture overview\"\n                  caption: High-level system architecture diagram\n                  description: |\n                    Main components include:\n                    • Frontend: React-based interface\n                    • API: RESTful services\n                    • Database: PostgreSQL with Redis\n                ---"
+}

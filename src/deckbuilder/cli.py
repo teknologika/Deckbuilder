@@ -62,80 +62,7 @@ class DeckbuilderCLI:
             return False
         return True
 
-    def _convert_json_to_markdown(self, json_data: dict) -> str:
-        """Convert JSON slide data to markdown format with frontmatter"""
-        import yaml
-
-        # Type validation: ensure json_data is a dictionary or list
-        if isinstance(json_data, str):
-            raise TypeError(
-                f"json_data must be a dictionary or list, got string: {json_data[:100]}..."
-            )
-        if not isinstance(json_data, (dict, list)):
-            raise TypeError(
-                f"json_data must be a dictionary or list, got {type(json_data).__name__}: {json_data}"
-            )
-
-        markdown_lines = []
-
-        # Handle structured JSON format
-        if (
-            isinstance(json_data, dict)
-            and "presentation" in json_data
-            and "slides" in json_data["presentation"]
-        ):
-            slides = json_data["presentation"]["slides"]
-        elif isinstance(json_data, list):
-            slides = json_data
-        elif isinstance(json_data, dict):
-            slides = [json_data]
-        else:
-            raise TypeError(f"Unexpected json_data format: {type(json_data).__name__}")
-
-        for slide in slides:
-            # Type validation for each slide
-            if not isinstance(slide, dict):
-                raise TypeError(
-                    f"Each slide must be a dictionary, got {type(slide).__name__}: {slide}"
-                )
-
-            markdown_lines.append("---")
-
-            # Add layout
-            slide_type = slide.get("type", slide.get("layout", "Title and Content"))
-            markdown_lines.append(f"layout: {slide_type}")
-
-            # Add title
-            if "title" in slide:
-                markdown_lines.append(f"title: {slide['title']}")
-
-            # Add content based on slide type
-            if "content" in slide:
-                if isinstance(slide["content"], list):
-                    content = "\n".join([f"  • {item}" for item in slide["content"]])
-                else:
-                    content = slide["content"]
-                markdown_lines.append(f"content: |\n  {content}")
-
-            # Handle specific layout fields with proper YAML serialization
-            for key, value in slide.items():
-                if key not in ["type", "layout", "title", "content"]:
-                    if isinstance(value, (dict, list)):
-                        # Use YAML to properly serialize complex structures
-                        yaml_str = yaml.dump(
-                            {key: value}, default_flow_style=False, allow_unicode=True
-                        )
-                        # Remove the outer braces and add proper indentation
-                        yaml_lines = yaml_str.strip().split("\n")
-                        for yaml_line in yaml_lines:
-                            markdown_lines.append(yaml_line)
-                    else:
-                        markdown_lines.append(f"{key}: {value}")
-
-            markdown_lines.append("---")
-            markdown_lines.append("")  # Empty line between slides
-
-        return "\n".join(markdown_lines)
+    
 
     def _get_available_templates(self):
         """Get list of available templates with error handling"""
@@ -203,30 +130,29 @@ class DeckbuilderCLI:
         db = Deckbuilder(path_manager_instance=self.path_manager)
 
         try:
+            presentation_data = {}
             if input_path.suffix.lower() == ".md":
+                from . import converter
                 # Process markdown file
                 content = input_path.read_text(encoding="utf-8")
                 print(f"Processing markdown file: {input_path.name}")
-                result = db.create_presentation_from_markdown(
-                    markdown_content=content, fileName=output_name, templateName=template_name
-                )
+                presentation_data = converter.markdown_to_canonical_json(content)
             elif input_path.suffix.lower() == ".json":
-                # Process JSON file directly (no markdown conversion)
+                # Process JSON file directly
                 with open(input_path, "r", encoding="utf-8") as f:
-                    json_data = json.load(f)
-
+                    presentation_data = json.load(f)
                 print(f"Processing JSON file: {input_path.name}")
-                # Use direct JSON processing to bypass markdown conversion
-                result = db.create_presentation_from_json(
-                    json_data=json_data,
-                    fileName=output_name,
-                    templateName=template_name,
-                )
             else:
                 raise ValueError(
                     f"Unsupported file format: {input_path.suffix}. "
                     "Supported formats: .md, .json"
                 )
+
+            result = db.create_presentation(
+                presentation_data=presentation_data,
+                fileName=output_name,
+                templateName=template_name,
+            )
 
             # Check if result indicates an error
             if result and (

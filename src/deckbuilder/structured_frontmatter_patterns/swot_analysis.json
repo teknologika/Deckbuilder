@@ -1,0 +1,23 @@
+{
+    "structure_type": "analysis",
+    "description": "SWOT analysis layout with four quadrants",
+    "yaml_pattern": {
+        "layout": "SWOT Analysis",
+        "title": "str",
+        "swot": {
+            "strengths": "str",
+            "weaknesses": "str",
+            "opportunities": "str",
+            "threats": "str"
+        }
+    },
+    "mapping_rules": {
+        "title": "title",
+        "swot.strengths": "content_1",
+        "swot.weaknesses": "content_2",
+        "swot.opportunities": "content_3",
+        "swot.threats": "content_4"
+    },
+    "validation": {"required_fields": ["title", "swot"]},
+    "example": "---\n                layout: SWOT Analysis\n                title: Strategic Analysis\n                swot:\n                  strengths: Strong market position\n                  weaknesses: Limited resources\n                  opportunities: New markets\n                  threats: Competition\n                ---"
+}

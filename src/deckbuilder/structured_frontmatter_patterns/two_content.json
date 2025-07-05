@@ -1,0 +1,22 @@
+{
+    "structure_type": "sections",
+    "description": "Side-by-side layout with two content areas",
+    "yaml_pattern": {
+        "layout": "Two Content",
+        "title": "str",
+        "sections": [{"title": "str", "content": ["str"]}]
+    },
+    "mapping_rules": {
+        "title": "title",
+        "sections[0].title": "title_left_1",
+        "sections[0].content": "content_left_1",
+        "sections[1].title": "title_right_1",
+        "sections[1].content": "content_right_1"
+    },
+    "validation": {
+        "required_fields": ["title", "sections"],
+        "min_sections": 2,
+        "max_sections": 2
+    },
+    "example": "---\n                layout: Two Content\n                title: Before and After\n                sections:\n                  - title: Current State\n                    content:\n                      - Manual processes\n                      - Time-consuming workflows\n                  - title: Future State\n                    content:\n                      - Automated systems\n                      - Streamlined operations\n                ---"
+}

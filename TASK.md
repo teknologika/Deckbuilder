@@ -155,6 +155,16 @@ Tasks are organized by phase and component.
 
 ### 🚀 Next Development Phases (Current Focus)
 
+#### JSON is King Refactoring
+- [ ] **1. Implement Canonical JSON Model:** Define and document the final JSON schema. (Partially Completed)
+- [x] **2. Create Converter Module:** Create `src/deckbuilder/converter.py`.
+- [ ] **3. Implement `markdown_to_json`:** Build the function in the new module to convert `.md` files to the canonical JSON format. (Partially Completed)
+- [ ] **4. Refactor `cli.py`:** Update the `create` command to use the new converter and pass only JSON to the engine.
+- [ ] **5. Refactor `engine.py`:** Strip all Markdown and multi-format parsing logic, leaving only the logic that processes the canonical JSON model.
+- [x] **6. Refactor `structured_frontmatter.py`:** Integrate its conversion logic into the new `converter.py` module.
+- [ ] **7. Test Suite Update:** Update all relevant unit and integration tests to reflect the pipeline changes.
+- [ ] **8. Documentation Update:** Update all user and developer documentation to reflect the new architecture.
+
 #### HIGH PRIORITY: CLI UX Enhancement
 - [x] **CLI Reorganization: Clean Hierarchical Command Structure** - 2025-06-29 ✅ COMPLETED
   - [x] Transform messy flat CLI with 13 top-level commands to professional hierarchical structure  
@@ -176,62 +186,18 @@ Tasks are organized by phase and component.
 
 **Status**: Critical production issues discovered during v1.0.2 validation - Core functionality broken
 
-- [x] **JSON Complex Field Mapping Broken** - [GitHub Issue #26](https://github.com/teknologika/Deckbuilder/issues/26) ✅ COMPLETED
+- [x] **JSON Complex Field Mapping Broken** - [GitHub Issue #26](https://github.teknologika/Deckbuilder/issues/26) ✅ COMPLETED
   - [x] `content_left_1`, `content_right_1`, etc. not being placed in PowerPoint slides
   - [x] Template mapping works correctly, but content processing pipeline fails
   - [x] Multi-column layouts (Two Content, Four Columns, Comparison) affected
   - [x] **Root Cause**: Input processing pipeline broken, not template or core engine
   - **Priority**: Critical - Core functionality completely broken
 
+
+
 #### 🚨 CRITICAL: Rich Content Rendering Bug - [GitHub Issue #33](https://github.com/teknologika/Deckbuilder/issues/33)
 
 **Status**: Critical content rendering issue - Rich content displaying as JSON strings instead of formatted PowerPoint elements
-
-- [ ] **Phase 1: Enhanced Content Detection** - Fix `_add_simple_content_to_placeholder()` detection
-  - [ ] Improve rich content structure detection in `_add_simple_content_to_placeholder()`
-  - [ ] Ensure rich content objects are processed by rich content handlers instead of being converted to strings
-  - [ ] Fix content type priority order: rich content blocks → formatted segments → plain text
-  - [ ] Add debug logging to track content processing pipeline decisions
-
-- [ ] **Phase 2: Rich Content Processing Pipeline** - Fix PowerPoint element rendering
-  - [ ] Fix `_add_rich_content_blocks_to_placeholder()` method to properly render content blocks
-  - [ ] Ensure rich content blocks generate actual PowerPoint paragraphs and runs with formatting
-  - [ ] Fix bullet point rendering for different indent levels (level 0, 1, 2)
-  - [ ] Test all rich content types: headings, paragraphs, bullets with multiple levels
-
-- [ ] **Phase 3: Content Type Priority System** - Fix handoff from content_formatting to PowerPoint
-  - [ ] Ensure content_formatting.py output is properly consumed by PowerPoint rendering
-  - [ ] Fix detection logic to identify when content_formatting has processed content vs raw content
-  - [ ] Implement proper fallback chain: rich content → formatted content → plain text
-  - [ ] Verify all content types are handled by appropriate rendering methods
-
-- [ ] **Phase 4: Enhanced Content Validation** - Comprehensive testing for all rich content types
-  - [ ] Create comprehensive validation tests that read actual PowerPoint content
-  - [ ] Test all rich content block types with python-pptx content extraction
-  - [ ] Validate bullet point levels and formatting in generated presentations
-  - [ ] Test comprehensive layouts file with all content rendering scenarios
-
-**Root Cause**: Rich content blocks are being converted to string representations instead of being processed by rich content handlers, causing JSON-like text to appear in slides instead of properly formatted PowerPoint elements.
-
-- [ ] **Markdown Frontmatter Title Mapping Broken** - [GitHub Issue #27](https://github.com/teknologika/Deckbuilder/issues/27)
-  - [ ] YAML frontmatter titles not appearing in generated PowerPoint slides
-  - [ ] Affects primary input format (Markdown with structured frontmatter)
-  - [ ] Simple title slides and content slides both affected
-  - [ ] **Root Cause**: Schema validation or YAML processing pipeline issue
-  - **Priority**: Critical - Primary input format broken
-
-- [ ] **Image Placeholders Not Being Inserted** - [GitHub Issue #29](https://github.com/teknologika/Deckbuilder/issues/29)
-  - [ ] **REGRESSION**: Previously working functionality now completely broken
-  - [ ] PlaceKitten integration not placing images in PowerPoint placeholders
-  - [ ] Picture with Caption layouts generating slides without images
-  - [ ] **Root Cause**: PlaceKitten integration pipeline disconnected from PowerPoint generation
-  - **Priority**: Critical - Loss of existing functionality
-
-- [ ] **Images Being Scaled Instead of Intelligently Cropped** - [GitHub Issue #30](https://github.com/teknologika/Deckbuilder/issues/30)
-  - [ ] Should use smart cropping algorithms, not basic scaling
-  - [ ] Professional presentation quality compromised
-  - [ ] Computer vision pipeline not being utilized
-  - **Priority**: High - Quality improvement needed
 
 #### 🧪 Testing Philosophy Revolution - [GitHub Issue #28](https://github.com/teknologika/Deckbuilder/issues/28)
 
@@ -434,3 +400,4 @@ Tasks are organized by phase and component.
 **Emergency Timeline**: Fix critical issues before any new development
 **Target Completion**: Restore v1.0.2 to functional state, then implement prevention measures
 **Last Updated**: 2025-07-03
+

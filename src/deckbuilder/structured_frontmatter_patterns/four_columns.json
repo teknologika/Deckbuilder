@@ -1,0 +1,22 @@
+{
+    "structure_type": "columns",
+    "description": "Four-column layout with content only (no titles)",
+    "yaml_pattern": {
+        "layout": "Four Columns",
+        "title": "str",
+        "columns": [{"content": "str"}]
+    },
+    "mapping_rules": {
+        "title": "title",
+        "columns[0].content": "content_col1",
+        "columns[1].content": "content_col2",
+        "columns[2].content": "content_col3",
+        "columns[3].content": "content_col4"
+    },
+    "validation": {
+        "min_columns": 1,
+        "max_columns": 4,
+        "required_fields": ["title", "columns"]
+    },
+    "example": "---\nlayout: Four Columns\ntitle: Complete Feature Set\ncolumns:\n  - content: Fast processing with optimized algorithms and sub-millisecond response times\n  - content: Enterprise-grade encryption with SOC2 and GDPR compliance\n  - content: Intuitive interface with minimal learning curve and comprehensive docs\n  - content: Transparent pricing with flexible plans and proven ROI\n---"
+}

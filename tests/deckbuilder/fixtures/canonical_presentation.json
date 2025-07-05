@@ -1,0 +1,41 @@
+{
+  "slides": [
+    {
+      "layout": "Title Slide",
+      "placeholders": {
+        "title": "**Test Presentation** with *Inline* Formatting",
+        "subtitle": "Testing all ___placeholders___ and **formatting** capabilities"
+      }
+    },
+    {
+      "layout": "Title and Content",
+      "placeholders": {
+        "title": "Content Slide with **Bold** and *Italic*"
+      },
+      "content": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Overview"
+        },
+        {
+          "type": "paragraph",
+          "text": "This section demonstrates content slides with various formatting options."
+        },
+        {
+          "type": "bullets",
+          "items": [
+            { "level": 1, "text": "First bullet point with **bold text**" },
+            { "level": 1, "text": "Second point with *italic text*" },
+            { "level": 1, "text": "Third point with ***bold and italic***" },
+            { "level": 1, "text": "Fourth point with ___underlined text___" }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Additional paragraph with **mixed** *formatting* and ___underlines___."
+        }
+      ]
+    }
+  ]
+}

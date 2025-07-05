@@ -1,0 +1,24 @@
+{
+    "structure_type": "comparison",
+    "description": "Side-by-side comparison layout for contrasting two options",
+    "yaml_pattern": {
+        "layout": "Comparison",
+        "title": "str",
+        "comparison": {
+            "left": {"title": "str", "content": "str"},
+            "right": {"title": "str", "content": "str"}
+        }
+    },
+    "mapping_rules": {
+        "title": "title",
+        "comparison.left.title": "title_left_1",
+        "comparison.left.content": "content_left_1",
+        "comparison.right.title": "title_right_1",
+        "comparison.right.content": "content_right_1"
+    },
+    "validation": {
+        "required_fields": ["title", "comparison"],
+        "required_comparison_fields": ["left", "right"]
+    },
+    "example": "---\nlayout: Comparison\ntitle: Solution Analysis\ncomparison:\n  left:\n    title: Traditional Approach\n    content: Proven reliability with established workflows\n  right:\n    title: Modern Solution\n    content: Advanced features with improved efficiency\n---"
+}

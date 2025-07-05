@@ -1,0 +1,26 @@
+{
+    "structure_type": "columns",
+    "description": "Four-column comparison layout with individual titles and content",
+    "yaml_pattern": {
+        "layout": "Four Columns With Titles",
+        "title": "str",
+        "columns": [{"title": "str", "content": "str"}]
+    },
+    "mapping_rules": {
+        "title": "title",
+        "columns[0].title": "title_col1",
+        "columns[0].content": "content_col1",
+        "columns[1].title": "title_col2",
+        "columns[1].content": "content_col2",
+        "columns[2].title": "title_col3",
+        "columns[2].content": "content_col3",
+        "columns[3].title": "title_col4",
+        "columns[3].content": "content_col4"
+    },
+    "validation": {
+        "min_columns": 1,
+        "max_columns": 4,
+        "required_fields": ["title", "columns"]
+    },
+    "example": "---\n                layout: Four Columns\n                title: Feature Comparison\n                columns:\n                  - title: Performance\n                    content: Fast processing with optimized algorithms\n                  - title: Security\n                    content: Enterprise-grade encryption and compliance\n                  - title: Usability\n                    content: Intuitive interface with minimal learning curve\n                  - title: Cost\n                    content: Competitive pricing with flexible plans\n                ---"
+}

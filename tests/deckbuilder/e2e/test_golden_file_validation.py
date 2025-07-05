@@ -177,41 +177,32 @@ class TestGoldenFileValidation:
         with tempfile.TemporaryDirectory() as temp_dir:
             self._run_cli_and_validate(self.golden_json, "test_output_json", temp_dir, "json")
 
-    def test_markdown_and_json_produce_similar_content(self):
-        """Test that markdown and JSON golden files produce presentations with similar content"""
+    def test_markdown_conversion_matches_canonical_json(self):
+        """Test that markdown conversion produces the same output as the canonical JSON."""
         with tempfile.TemporaryDirectory() as temp_dir:
             md_output = self._run_cli_and_validate(
                 self.golden_md, "from_markdown", temp_dir, "markdown"
             )
+            canonical_json_file = self.project_root / "tests" / "deckbuilder" / "fixtures" / "canonical_presentation.json"
             json_output = self._run_cli_and_validate(
-                self.golden_json, "from_json", temp_dir, "json"
+                canonical_json_file, "from_json", temp_dir, "json"
             )
 
-            # Compare slide counts
-            md_prs = Presentation(str(md_output))
-            json_prs = Presentation(str(json_output))
+            self.compare_presentations(md_output, json_output)
 
-            # Both should have multiple slides
-            assert (
-                len(md_prs.slides) > 3
-            ), f"Markdown presentation has too few slides: {len(md_prs.slides)}"
-            assert (
-                len(json_prs.slides) > 3
-            ), f"JSON presentation has too few slides: {len(json_prs.slides)}"
+    def compare_presentations(self, prs1_path, prs2_path):
+        """Compare two presentations for equality."""
+        prs1 = Presentation(str(prs1_path))
+        prs2 = Presentation(str(prs2_path))
 
-            # Both should have title slides
-            md_first_slide = md_prs.slides[0]
-            json_first_slide = json_prs.slides[0]
+        assert len(prs1.slides) == len(prs2.slides)
 
-            md_title = self._extract_slide_title(md_first_slide)
-            json_title = self._extract_slide_title(json_first_slide)
-
-            assert (
-                "Test" in md_title or "Comprehensive" in md_title
-            ), f"Expected test title in markdown title, got: {md_title}"
-            assert (
-                "Test" in json_title or "Comprehensive" in json_title
-            ), f"Expected test title in JSON title, got: {json_title}"
+        for i, (slide1, slide2) in enumerate(zip(prs1.slides, prs2.slides)):
+            assert len(slide1.shapes) == len(slide2.shapes), f"Slide {i} shape count differs"
+            for j, (shape1, shape2) in enumerate(zip(slide1.shapes, slide2.shapes)):
+                assert shape1.shape_type == shape2.shape_type, f"Slide {i}, Shape {j} type differs"
+                if hasattr(shape1, "text") and hasattr(shape2, "text"):
+                    assert shape1.text == shape2.text, f"Slide {i}, Shape {j} text differs"
 
     def _validate_powerpoint_content(self, pptx_path: Path, source_type: str):
         """Validate that PowerPoint file contains expected content"""
