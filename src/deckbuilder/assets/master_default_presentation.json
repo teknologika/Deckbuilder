@@ -10,45 +10,65 @@
                 {
                     "type": "heading",
                     "level": 2,
-                    "text": "Showcasing all ___19 layouts___ with **professional** *formatting* capabilities",
+                    "text": "Showcasing all ___19 layouts___ with **professional** *formatting* capabilities"
                 }
-            ],
+            ]
         },
         {
             "layout": "Title and Content",
             "style": "default_style",
-            "placeholders": {"title": "Rich Content with **Professional** *Formatting*"},
+            "placeholders": {
+                "title": "Rich Content with **Professional** *Formatting*"
+            },
             "content": [
-                {"type": "heading", "level": 2, "text": "Deckbuilder Features"},
+                {
+                    "type": "heading",
+                    "level": 2,
+                    "text": "Deckbuilder Features"
+                },
                 {
                     "type": "paragraph",
-                    "text": "Deckbuilder delivers intelligent presentation generation with comprehensive formatting support.",
+                    "text": "Deckbuilder delivers intelligent presentation generation with comprehensive formatting support."
                 },
                 {
                     "type": "bullets",
                     "items": [
-                        {"level": 1, "text": "**Content-first** design philosophy"},
-                        {"level": 1, "text": "*Semantic* layout recommendations"},
-                        {"level": 1, "text": "***Advanced*** template management"},
-                        {"level": 1, "text": "___Professional___ formatting preservation"},
-                    ],
+                        {
+                            "level": 1,
+                            "text": "**Content-first** design philosophy"
+                        },
+                        {
+                            "level": 1,
+                            "text": "*Semantic* layout recommendations"
+                        },
+                        {
+                            "level": 1,
+                            "text": "***Advanced*** template management"
+                        },
+                        {
+                            "level": 1,
+                            "text": "___Professional___ formatting preservation"
+                        }
+                    ]
                 },
                 {
                     "type": "paragraph",
-                    "text": "Transform your ideas into polished presentations with **automated** *intelligence* and ___consistent___ styling.",
-                },
-            ],
+                    "text": "Transform your ideas into polished presentations with **automated** *intelligence* and ___consistent___ styling."
+                }
+            ]
         },
         {
             "layout": "Section Header",
             "style": "default_style",
-            "placeholders": {"title": "**Deckbuilder** *Capabilities*"},
+            "placeholders": {
+                "title": "**Deckbuilder** *Capabilities*"
+            },
             "content": [
                 {
                     "type": "paragraph",
-                    "text": "Comprehensive presentation intelligence with ___professional___ **layout** automation for streamlined content creation.",
+                    "text": "Comprehensive presentation intelligence with ___professional___ **layout** automation for streamlined content creation."
                 }
-            ],
+            ]
         },
         {
             "layout": "Two Content",
@@ -56,9 +76,9 @@
             "placeholders": {
                 "title": "Deckbuilder **Core** Features",
                 "content_left": "**Semantic** layout detection\n*Automatic* content optimization\n***Smart*** placeholder mapping",
-                "content_right": "___Enterprise-grade___ presentations\n**Consistent** branding\n*Polished* formatting",
+                "content_right": "___Enterprise-grade___ presentations\n**Consistent** branding\n*Polished* formatting"
             },
-            "content": [],
+            "content": []
         },
         {
             "layout": "Comparison",
@@ -68,9 +88,9 @@
                 "title_left": "Traditional Approach",
                 "content_left": "**Manual** slide creation with *time-consuming* layout decisions and ***inconsistent*** formatting",
                 "title_right": "Deckbuilder Solution",
-                "content_right": "___Intelligent___ automation with **content-first** design and *professional* output quality",
+                "content_right": "___Intelligent___ automation with **content-first** design and *professional* output quality"
             },
-            "content": [],
+            "content": []
         },
         {
             "layout": "Title Only",
@@ -78,42 +98,59 @@
             "placeholders": {
                 "title": "Deckbuilder: **Intelligent** *Presentation* ___Generation___"
             },
-            "content": [],
+            "content": []
         },
         {
             "layout": "Blank",
             "style": "default_style",
             "placeholders": {},
             "content": [
-                {"type": "heading", "level": 1, "text": "Content-First Design Philosophy"},
+                {
+                    "type": "heading",
+                    "level": 1,
+                    "text": "Content-First Design Philosophy"
+                },
                 {
                     "type": "paragraph",
-                    "text": "Deckbuilder transforms presentation creation through **intelligent** content analysis and automated layout selection.",
-                },
-            ],
+                    "text": "Deckbuilder transforms presentation creation through **intelligent** content analysis and automated layout selection."
+                }
+            ]
         },
         {
             "layout": "Content with Caption",
             "style": "default_style",
             "placeholders": {
                 "title": "Advanced Layout Capabilities",
-                "text_caption": "Enterprise-grade presentation generation with ___professional___ output and **consistent** formatting.",
+                "text_caption": "Enterprise-grade presentation generation with ___professional___ output and **consistent** formatting."
             },
             "content": [
-                {"type": "heading", "level": 2, "text": "Professional Features"},
+                {
+                    "type": "heading",
+                    "level": 2,
+                    "text": "Professional Features"
+                },
                 {
                     "type": "paragraph",
-                    "text": "Deckbuilder provides sophisticated layout management with intelligent content placement:",
+                    "text": "Deckbuilder provides sophisticated layout management with intelligent content placement:"
                 },
                 {
                     "type": "bullets",
                     "items": [
-                        {"level": 1, "text": "**Template** analysis and optimization"},
-                        {"level": 1, "text": "*Automatic* placeholder detection"},
-                        {"level": 1, "text": "***Semantic*** content mapping"},
-                    ],
-                },
-            ],
+                        {
+                            "level": 1,
+                            "text": "**Template** analysis and optimization"
+                        },
+                        {
+                            "level": 1,
+                            "text": "*Automatic* placeholder detection"
+                        },
+                        {
+                            "level": 1,
+                            "text": "***Semantic*** content mapping"
+                        }
+                    ]
+                }
+            ]
         },
         {
             "layout": "Picture with Caption",
@@ -121,27 +158,27 @@
             "placeholders": {
                 "title": "Picture Layout **Test**",
                 "image_1": "placeholder_image.jpg",
-                "text_caption": "Picture placeholder with ***formatted*** captions",
+                "text_caption": "Picture placeholder with ***formatted*** captions"
             },
-            "content": [],
+            "content": []
         },
         {
             "layout": "Title and Vertical Text",
             "style": "default_style",
             "placeholders": {
                 "title": "**Vertical Text** Layout Test",
-                "content": "This layout demonstrates vertical text capabilities with **formatted** content and *enhanced* presentation features for ___specialized___ content.",
+                "content": "This layout demonstrates vertical text capabilities with **formatted** content and *enhanced* presentation features for ___specialized___ content."
             },
-            "content": [],
+            "content": []
         },
         {
             "layout": "Vertical Title and Text",
             "style": "default_style",
             "placeholders": {
                 "title_top": "Vertical Title Layout",
-                "content": "This layout demonstrates vertical title and text capabilities with **formatted** content and *enhanced* presentation features for ___specialized___ content.",
+                "content": "This layout demonstrates vertical title and text capabilities with **formatted** content and *enhanced* presentation features for ___specialized___ content."
             },
-            "content": [],
+            "content": []
         },
         {
             "layout": "Three Columns With Titles",
@@ -153,9 +190,9 @@
                 "title_col2": "Security",
                 "content_col2": "***Enterprise-grade*** encryption with ___SOC2___ compliance",
                 "title_col3": "Usability",
-                "content_col3": "*Intuitive* interface with **minimal** learning curve",
+                "content_col3": "*Intuitive* interface with **minimal** learning curve"
             },
-            "content": [],
+            "content": []
         },
         {
             "layout": "Three Columns",
@@ -164,9 +201,9 @@
                 "title": "Three Column Layout **Without Titles** Test",
                 "content_col1": "**Fast processing** with optimized algorithms and *sub-millisecond* response times",
                 "content_col2": "***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance",
-                "content_col3": "*Intuitive* interface with **minimal** learning curve and comprehensive docs",
+                "content_col3": "*Intuitive* interface with **minimal** learning curve and comprehensive docs"
             },
-            "content": [],
+            "content": []
         },
         {
             "layout": "Four Columns With Titles",
@@ -180,9 +217,9 @@
                 "title_col3": "Usability",
                 "content_col3": "*Intuitive* interface with **minimal** learning curve",
                 "title_col4": "Cost",
-                "content_col4": "___Transparent___ pricing with **flexible** plans",
+                "content_col4": "___Transparent___ pricing with **flexible** plans"
             },
-            "content": [],
+            "content": []
         },
         {
             "layout": "Four Columns",
@@ -192,9 +229,9 @@
                 "content_col1": "**Fast processing** with optimized algorithms and *sub-millisecond* response times",
                 "content_col2": "***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance",
                 "content_col3": "*Intuitive* interface with **minimal** learning curve and comprehensive docs",
-                "content_col4": "___Transparent___ pricing with **flexible** plans and *proven* ROI",
+                "content_col4": "___Transparent___ pricing with **flexible** plans and *proven* ROI"
             },
-            "content": [],
+            "content": []
         },
         {
             "layout": "Agenda, 6 Textboxes",
@@ -212,9 +249,9 @@
                 "number_item5_1": "05",
                 "content_item5_1": "**Strategic** initiatives overview",
                 "number_item6_1": "06",
-                "content_item6_1": "*Q&A* session and next steps",
+                "content_item6_1": "*Q&A* session and next steps"
             },
-            "content": [],
+            "content": []
         },
         {
             "layout": "Title and 6-item Lists",
@@ -236,18 +273,18 @@
                 "content_item5_1": "*Monitoring*",
                 "content_24": "06",
                 "content_23": "***Support***",
-                "content_25": "**Documentation**",
+                "content_25": "**Documentation**"
             },
-            "content": [],
+            "content": []
         },
         {
             "layout": "Big Number",
             "style": "default_style",
             "placeholders": {
                 "title": "**42%**",
-                "content": "Improvement in *performance* with ___new___ architecture",
+                "content": "Improvement in *performance* with ___new___ architecture"
             },
-            "content": [],
+            "content": []
         },
         {
             "layout": "SWOT Analysis",
@@ -257,28 +294,50 @@
                 "content_16": "**Strong** market position with *proven* technology",
                 "content_17": "___Limited___ geographic presence and **high** costs",
                 "content_18": "*Emerging* markets and ***digital*** transformation",
-                "content_19": "**Competition** and ___regulatory___ changes",
+                "content_19": "**Competition** and ___regulatory___ changes"
             },
-            "content": [],
+            "content": []
         },
         {
             "layout": "Title and Content",
             "style": "default_style",
-            "placeholders": {"title": "Table Slide with **Formatted** Content"},
+            "placeholders": {
+                "title": "Table Slide with **Formatted** Content"
+            },
             "content": [
                 {
                     "type": "table",
                     "style": "dark_blue_white_text",
                     "border_style": "thin_gray",
-                    "header": ["**Feature**", "*Status*", "___Priority___"],
-                    "rows": [
-                        ["Authentication", "**Complete**", "*High*"],
-                        ["User Management", "***In Progress***", "___Medium___"],
-                        ["Reporting", "*Planned*", "**Low**"],
-                        ["API Integration", "___Blocked___", "***Critical***"],
+                    "header": [
+                        "**Feature**",
+                        "*Status*",
+                        "___Priority___"
                     ],
+                    "rows": [
+                        [
+                            "Authentication",
+                            "**Complete**",
+                            "*High*"
+                        ],
+                        [
+                            "User Management",
+                            "***In Progress***",
+                            "___Medium___"
+                        ],
+                        [
+                            "Reporting",
+                            "*Planned*",
+                            "**Low**"
+                        ],
+                        [
+                            "API Integration",
+                            "___Blocked___",
+                            "***Critical***"
+                        ]
+                    ]
                 }
-            ],
-        },
+            ]
+        }
     ]
 }
