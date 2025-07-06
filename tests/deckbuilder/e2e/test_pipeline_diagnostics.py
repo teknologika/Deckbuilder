@@ -131,13 +131,15 @@ class TestContentGenerationDiagnostics:
 
     def test_simple_title_slide_content_mapping(self):
         """Test simple title slide content is mapped correctly"""
-        # Create minimal JSON input
+        # Create minimal canonical JSON input
         simple_json = {
-            "presentation": {
-                "slides": [
-                    {"type": "Title Slide", "title": "TEST TITLE", "subtitle": "TEST SUBTITLE"}
-                ]
-            }
+            "slides": [
+                {
+                    "layout": "Title Slide",
+                    "placeholders": {"title": "TEST TITLE", "subtitle": "TEST SUBTITLE"},
+                    "content": []
+                }
+            ]
         }
 
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -205,15 +207,18 @@ class TestContentGenerationDiagnostics:
     def test_content_with_formatting_mapping(self):
         """Test formatted content is mapped correctly"""
         formatted_json = {
-            "presentation": {
-                "slides": [
-                    {
-                        "type": "Title and Content",
-                        "title": "**Bold Title** Test",
-                        "content": "This is *italic* and **bold** text",
-                    }
-                ]
-            }
+            "slides": [
+                {
+                    "layout": "Title and Content",
+                    "placeholders": {"title": "**Bold Title** Test"},
+                    "content": [
+                        {
+                            "type": "paragraph",
+                            "text": "This is *italic* and **bold** text"
+                        }
+                    ]
+                }
+            ]
         }
 
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -256,9 +261,11 @@ class TestContentGenerationDiagnostics:
             # Check for content and formatting
             content_found = False
             formatting_found = False
+            all_text = []
 
             for shape in slide.shapes:
-                if hasattr(shape, "text_frame"):
+                if hasattr(shape, "text_frame") and shape.text_frame.text.strip():
+                    all_text.append(shape.text_frame.text.strip())
                     # Check if content text is present
                     if (
                         "italic" in shape.text_frame.text.lower()
@@ -274,6 +281,7 @@ class TestContentGenerationDiagnostics:
                                 break
 
             print("\nFORMATTING MAPPING TEST:")
+            print(f"All slide text found: {all_text}")
             print(f"Content found: {'✅' if content_found else '❌'}")
             print(f"Formatting found: {'✅' if formatting_found else '❌'}")
 
@@ -283,16 +291,31 @@ class TestContentGenerationDiagnostics:
     def test_multi_column_content_mapping(self):
         """Test multi-column layout content mapping"""
         column_json = {
-            "presentation": {
-                "slides": [
-                    {
-                        "type": "Two Content",
-                        "title": "Two Column Test",
-                        "content_left": ["Left Column Item 1", "Left Column Item 2"],
-                        "content_right": ["Right Column Item 1", "Right Column Item 2"],
-                    }
-                ]
-            }
+            "slides": [
+                {
+                    "layout": "Two Content",
+                    "placeholders": {"title": "Two Column Test"},
+                    "content": [
+                        {
+                            "type": "columns",
+                            "columns": [
+                                {
+                                    "content": [
+                                        {"type": "paragraph", "text": "Left Column Item 1"},
+                                        {"type": "paragraph", "text": "Left Column Item 2"}
+                                    ]
+                                },
+                                {
+                                    "content": [
+                                        {"type": "paragraph", "text": "Right Column Item 1"},
+                                        {"type": "paragraph", "text": "Right Column Item 2"}
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
         }
 
         with tempfile.TemporaryDirectory() as temp_dir:

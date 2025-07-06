@@ -45,18 +45,33 @@ class TestJSONFieldMappingCorrect:
     def test_semantic_field_names_two_content(self):
         """Test Two Content layout with semantic field names (content_left, content_right)"""
 
-        # CORRECT expected JSON structure
+        # CORRECT expected canonical JSON structure
         json_data = {
-            "presentation": {
-                "slides": [
-                    {
-                        "type": "Two Content",
-                        "title": "Two Content Test",
-                        "content_left": ["Left item 1", "Left item 2"],
-                        "content_right": ["Right item 1", "Right item 2"],
-                    }
-                ]
-            }
+            "slides": [
+                {
+                    "layout": "Two Content",
+                    "placeholders": {"title": "Two Content Test"},
+                    "content": [
+                        {
+                            "type": "columns",
+                            "columns": [
+                                {
+                                    "content": [
+                                        {"type": "paragraph", "text": "Left item 1"},
+                                        {"type": "paragraph", "text": "Left item 2"}
+                                    ]
+                                },
+                                {
+                                    "content": [
+                                        {"type": "paragraph", "text": "Right item 1"},
+                                        {"type": "paragraph", "text": "Right item 2"}
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
         }
 
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -129,20 +144,41 @@ class TestJSONFieldMappingCorrect:
     def test_semantic_field_names_four_columns(self):
         """Test Four Columns layout with semantic field names (content_col1, content_col2, etc.)"""
 
-        # CORRECT expected JSON structure
+        # CORRECT expected canonical JSON structure
         json_data = {
-            "presentation": {
-                "slides": [
-                    {
-                        "type": "Four Columns",
-                        "title": "Four Columns Test",
-                        "content_col1": "Column 1 content",
-                        "content_col2": "Column 2 content",
-                        "content_col3": "Column 3 content",
-                        "content_col4": "Column 4 content",
-                    }
-                ]
-            }
+            "slides": [
+                {
+                    "layout": "Four Columns",
+                    "placeholders": {"title": "Four Columns Test"},
+                    "content": [
+                        {
+                            "type": "columns",
+                            "columns": [
+                                {
+                                    "content": [
+                                        {"type": "paragraph", "text": "Column 1 content"}
+                                    ]
+                                },
+                                {
+                                    "content": [
+                                        {"type": "paragraph", "text": "Column 2 content"}
+                                    ]
+                                },
+                                {
+                                    "content": [
+                                        {"type": "paragraph", "text": "Column 3 content"}
+                                    ]
+                                },
+                                {
+                                    "content": [
+                                        {"type": "paragraph", "text": "Column 4 content"}
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
         }
 
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -214,37 +250,49 @@ class TestJSONFieldMappingCorrect:
     def test_all_formatting_types_preserved(self):
         """Test that ALL formatting types are preserved in JSON processing"""
 
-        # CORRECT: All formatting types should work
+        # CORRECT: All formatting types should work in canonical JSON format
         json_data = {
-            "presentation": {
-                "slides": [
-                    {
-                        "type": "Title and Content",
-                        "title": "**Formatting** Test with *All* Types",
-                        "rich_content": [
-                            {"heading": "**Bold** Heading", "level": 2},
-                            {"paragraph": "Paragraph with *italic* and ___underline___ text."},
-                            {
-                                "bullets": [
-                                    "***Bold italic*** bullet",
-                                    "Regular bullet with **bold** text",
-                                    "Another with ___underlines___",
-                                ],
-                                "bullet_levels": [1, 1, 1],
-                            },
-                        ],
-                    },
-                    {
-                        "type": "Two Content",
-                        "title": "Formatted **Two** Content",
-                        "content_left": ["**Bold** left item", "*Italic* left item"],
-                        "content_right": [
-                            "___Underlined___ right item",
-                            "***Bold italic*** right item",
-                        ],
-                    },
-                ]
-            }
+            "slides": [
+                {
+                    "layout": "Title and Content",
+                    "placeholders": {"title": "**Formatting** Test with *All* Types"},
+                    "content": [
+                        {"type": "heading", "level": 2, "text": "**Bold** Heading"},
+                        {"type": "paragraph", "text": "Paragraph with *italic* and ___underline___ text."},
+                        {
+                            "type": "bullets",
+                            "items": [
+                                {"level": 1, "text": "***Bold italic*** bullet"},
+                                {"level": 1, "text": "Regular bullet with **bold** text"},
+                                {"level": 1, "text": "Another with ___underlines___"}
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "layout": "Two Content",
+                    "placeholders": {"title": "Formatted **Two** Content"},
+                    "content": [
+                        {
+                            "type": "columns",
+                            "columns": [
+                                {
+                                    "content": [
+                                        {"type": "paragraph", "text": "**Bold** left item"},
+                                        {"type": "paragraph", "text": "*Italic* left item"}
+                                    ]
+                                },
+                                {
+                                    "content": [
+                                        {"type": "paragraph", "text": "___Underlined___ right item"},
+                                        {"type": "paragraph", "text": "***Bold italic*** right item"}
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
         }
 
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -314,18 +362,31 @@ class TestJSONFieldMappingCorrect:
     def test_no_markdown_conversion_errors(self):
         """Test that JSON processing doesn't produce markdown conversion errors"""
 
-        # This should NOT produce "Missing required field" errors
+        # This should NOT produce "Missing required field" errors - canonical JSON format
         json_data = {
-            "presentation": {
-                "slides": [
-                    {
-                        "type": "Two Content",
-                        "title": "No Conversion Errors Test",
-                        "content_left": "Left content",
-                        "content_right": "Right content",
-                    }
-                ]
-            }
+            "slides": [
+                {
+                    "layout": "Two Content",
+                    "placeholders": {"title": "No Conversion Errors Test"},
+                    "content": [
+                        {
+                            "type": "columns",
+                            "columns": [
+                                {
+                                    "content": [
+                                        {"type": "paragraph", "text": "Left content"}
+                                    ]
+                                },
+                                {
+                                    "content": [
+                                        {"type": "paragraph", "text": "Right content"}
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
         }
 
         with tempfile.TemporaryDirectory() as temp_dir:
