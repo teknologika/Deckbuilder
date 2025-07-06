@@ -1,0 +1,270 @@
+{
+  "template_info": {
+    "name": "Default",
+    "version": "1.0"
+  },
+  "layouts": {
+    "Title Slide": {
+      "index": 0,
+      "placeholders": {
+        "0": "title_top",
+        "1": "subtitle",
+        "10": "date_footer",
+        "11": "footer_footer",
+        "12": "slide_number_footer"
+      }
+    },
+    "Title and Content": {
+      "index": 1,
+      "placeholders": {
+        "0": "title_top",
+        "1": "content",
+        "10": "date_footer",
+        "11": "footer_footer",
+        "12": "slide_number_footer"
+      }
+    },
+    "Section Header": {
+      "index": 2,
+      "placeholders": {
+        "0": "title_top",
+        "1": "text",
+        "10": "date_footer",
+        "11": "footer_footer",
+        "12": "slide_number_footer"
+      }
+    },
+    "Two Content": {
+      "index": 3,
+      "placeholders": {
+        "0": "title_top",
+        "1": "content_left",
+        "2": "content_right",
+        "10": "date_footer",
+        "11": "footer_footer",
+        "12": "slide_number_footer"
+      }
+    },
+    "Comparison": {
+      "index": 4,
+      "placeholders": {
+        "0": "title_top_1",
+        "1": "title_left",
+        "2": "content_left",
+        "3": "title_right",
+        "4": "content_right",
+        "10": "date_footer_1",
+        "11": "footer_footer_1",
+        "12": "slide_number_footer_1"
+      }
+    },
+    "Title Only": {
+      "index": 5,
+      "placeholders": {
+        "0": "title_top_1",
+        "10": "date_footer_1",
+        "11": "footer_footer_1",
+        "12": "slide_number_footer_1"
+      }
+    },
+    "Blank": {
+      "index": 6,
+      "placeholders": {
+        "10": "date_footer_1",
+        "11": "footer_footer_1",
+        "12": "slide_number_footer_1"
+      }
+    },
+    "Content with Caption": {
+      "index": 7,
+      "placeholders": {
+        "0": "title_top_1",
+        "1": "content_1",
+        "2": "text_caption_1",
+        "10": "date_footer_1",
+        "11": "footer_footer_1",
+        "12": "slide_number_footer_1"
+      }
+    },
+    "Picture with Caption": {
+      "index": 8,
+      "placeholders": {
+        "0": "title_top_1",
+        "1": "image_1",
+        "2": "text_caption_1",
+        "10": "date_footer_1",
+        "11": "footer_footer_1",
+        "12": "slide_number_footer_1"
+      }
+    },
+    "Title and Vertical Text": {
+      "index": 9,
+      "placeholders": {
+        "0": "title_top_1",
+        "1": "content_1",
+        "10": "date_footer_1",
+        "11": "footer_footer_1",
+        "12": "slide_number_footer_1"
+      }
+    },
+    "Vertical Title and Text": {
+      "index": 10,
+      "placeholders": {
+        "0": "title_top_1",
+        "1": "content_1",
+        "10": "date_footer_1",
+        "11": "footer_footer_1",
+        "12": "slide_number_footer_1"
+      }
+    },
+    "Three Columns With Titles": {
+      "index": 11,
+      "placeholders": {
+        "0": "title_top_1",
+        "13": "title_col1",
+        "14": "content_col1",
+        "15": "title_col2",
+        "16": "content_col2",
+        "17": "title_col3",
+        "18": "content_col3",
+        "10": "date_footer_1",
+        "11": "footer_footer_1",
+        "12": "slide_number_footer_1"
+      }
+    },
+    "Three Columns": {
+      "index": 12,
+      "placeholders": {
+        "0": "title_top_1",
+        "14": "content_col1",
+        "16": "content_col2",
+        "18": "content_col3",
+        "10": "date_footer_1",
+        "11": "footer_footer_1",
+        "12": "slide_number_footer_1"
+      }
+    },
+    "Four Columns With Titles": {
+      "index": 13,
+      "placeholders": {
+        "0": "title_top_1",
+        "13": "title_col1",
+        "14": "content_col1",
+        "15": "title_col2",
+        "16": "content_col2",
+        "17": "title_col3",
+        "18": "content_col3",
+        "19": "title_col4",
+        "20": "content_col4",
+        "10": "date_footer_1",
+        "11": "footer_footer_1",
+        "12": "slide_number_footer_1"
+      }
+    },
+    "Four Columns": {
+      "index": 14,
+      "placeholders": {
+        "0": "title_top",
+        "14": "content_col1",
+        "16": "content_col2",
+        "18": "content_col3",
+        "20": "content_col4",
+        "10": "date_footer",
+        "11": "footer_footer",
+        "12": "slide_number_footer"
+      }
+    },
+    "Agenda, 6 Textboxes": {
+      "index": 15,
+      "placeholders": {
+        "0": "title_top_1",
+        "28": "number_item1_1",
+        "18": "content_item1_1",
+        "29": "number_item2_1",
+        "20": "content_item2_1",
+        "30": "number_item3_1",
+        "22": "content_item3_1",
+        "31": "number_item4_1",
+        "19": "content_item4_1",
+        "32": "number_item5_1",
+        "21": "content_item5_1",
+        "33": "number_item6_1",
+        "34": "content_item6_1",
+        "10": "date_footer_1",
+        "11": "footer_footer_1",
+        "12": "slide_number_footer_1"
+      }
+    },
+    "Title and 6-item Lists": {
+      "index": 16,
+      "placeholders": {
+        "0": "title_top_1",
+        "25": "content_25",
+        "13": "content_13",
+        "14": "content_14",
+        "26": "content_26",
+        "18": "content_item1_1",
+        "17": "content_17",
+        "27": "content_27",
+        "22": "content_item3_1",
+        "21": "content_item5_1",
+        "30": "number_item3_1",
+        "24": "content_24",
+        "23": "content_23",
+        "29": "number_item2_1",
+        "20": "content_item2_1",
+        "19": "content_item4_1",
+        "28": "number_item1_1",
+        "16": "content_16",
+        "15": "content_15",
+        "10": "date_footer_1",
+        "11": "footer_footer_1",
+        "12": "slide_number_footer_1"
+      }
+    },
+    "Big Number": {
+      "index": 17,
+      "placeholders": {
+        "0": "title_top_1",
+        "1": "content_1",
+        "10": "date_footer_1",
+        "11": "footer_footer_1",
+        "12": "slide_number_footer_1"
+      }
+    },
+    "SWOT Analysis": {
+      "index": 18,
+      "placeholders": {
+        "10": "date_footer_1",
+        "11": "footer_footer_1",
+        "12": "slide_number_footer_1",
+        "16": "content_16",
+        "17": "content_17",
+        "18": "content_18",
+        "19": "content_19"
+      }
+    }
+  },
+  "aliases": {
+    "table": "Title and Content",
+    "bullets": "Title and Content",
+    "content": "Title and Content",
+    "title": "Title Slide"
+  },
+  "validation": {
+    "warnings": [],
+    "errors": [
+      "Comparison: Comparison layout should have at least 2 text placeholders for left/right titles",
+      "Comparison: Comparison layout should have at least 2 content placeholders for left/right content"
+    ],
+    "layout_analysis": {
+      "Comparison": {
+        "warnings": [],
+        "errors": [
+          "Comparison layout should have at least 2 text placeholders for left/right titles",
+          "Comparison layout should have at least 2 content placeholders for left/right content"
+        ]
+      }
+    }
+  }
+}

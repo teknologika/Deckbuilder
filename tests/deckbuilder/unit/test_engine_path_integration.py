@@ -118,9 +118,7 @@ class TestEnginePathManagerIntegration:
 
             engine = Deckbuilder()
 
-            with (
-                patch("src.deckbuilder.engine.Presentation") as mock_presentation_class,
-            ):
+            with (patch("src.deckbuilder.engine.Presentation") as mock_presentation_class,):
 
                 mock_prs = Mock()
                 mock_prs.save = Mock()

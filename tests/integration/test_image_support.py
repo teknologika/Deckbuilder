@@ -52,7 +52,7 @@ Additional slide content with **formatted text** for testing.
 
             # Convert markdown to canonical JSON format
             canonical_data = markdown_to_canonical_json(markdown_content)
-            
+
             # Create presentation from canonical JSON
             result = deck.create_presentation(canonical_data, "image_test")
             print(f"✅ {result}")

@@ -83,7 +83,7 @@ class TestEngineCanonicalJSON(unittest.TestCase):
 
     def test_canonical_json_validation_missing_slides(self):
         """Test that missing 'slides' array raises ValueError"""
-        invalid_data = {"presentation": {"slides": []}}  # Legacy format
+        invalid_data = {"slides": []}
 
         with self.assertRaises(ValueError) as context:
             self.engine.create_presentation(invalid_data)
@@ -179,8 +179,11 @@ class TestEngineCanonicalJSON(unittest.TestCase):
             ]
         }
 
-        #with patch.object(self.engine, "write_presentation", return_value="test.pptx"):
-            #result = self.engine.create_presentation(canonical_data, "complex_test")
+        with patch.object(self.engine, "write_presentation", return_value="test.pptx"):
+            result = self.engine.create_presentation(canonical_data, "complex_test")
+
+        # Verify result is successful
+        self.assertIn("Successfully created presentation", result)
 
         # Verify all content types were processed
         self.mock_presentation_builder.add_slide.assert_called_once()
@@ -219,23 +222,22 @@ class TestEngineCanonicalJSON(unittest.TestCase):
         self.assertEqual(self.mock_presentation_builder.add_slide.call_count, 3)
         self.assertIn("Successfully created presentation with 3 slides", result)
 
-    def test_rejects_legacy_format(self):
-        """Test that legacy format with 'presentation.slides' is rejected"""
-        legacy_data = {
+    def test_rejects_invalid_structure(self):
+        """Test that invalid data structure is rejected"""
+        invalid_data = {
             "presentation": {
                 "slides": [
                     {
-                        "type": "Title Slide",
                         "layout": "Title Slide",
-                        "title": "Legacy Format",
-                        "rich_content": [],
+                        "placeholders": {"title": "Test"},
+                        "content": [],
                     }
                 ]
             }
         }
 
         with self.assertRaises(ValueError) as context:
-            self.engine.create_presentation(legacy_data)
+            self.engine.create_presentation(invalid_data)
 
         self.assertIn("'slides' array at root level", str(context.exception))
 

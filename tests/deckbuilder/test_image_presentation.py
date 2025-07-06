@@ -53,7 +53,7 @@ def run_image_presentation_test():
         # Convert markdown to canonical JSON format
         print("\n🔄 Converting markdown to canonical JSON...")
         canonical_data = markdown_to_canonical_json(markdown_content)
-        
+
         # Create presentation from canonical JSON
         print("🏗️ Creating presentation with image support...")
         result = deck.create_presentation(canonical_data, "enhanced_image_test")

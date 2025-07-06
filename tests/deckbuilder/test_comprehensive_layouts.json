@@ -1,56 +1,75 @@
 {
-  "presentation": {
-    "slides": [
-      {
-        "type": "Title Slide",
-        "layout": "Title Slide",
-        "title": "**Comprehensive Layout Test** with *Inline* Formatting",
-        "rich_content": [
-          {
-            "heading": "Testing all ___19 layouts___ and **formatting** capabilities",
-            "level": 2
-          }
-        ]
+  "slides": [
+    {
+      "layout": "Title Slide",
+      "placeholders": {
+        "title": "**Comprehensive Layout Test** with *Inline* Formatting"
       },
-      {
-        "type": "Title and Content",
-        "layout": "Title and Content",
-        "title": "Content Slide with **Bold** and *Italic*",
-        "rich_content": [
-          {
-            "heading": "Overview",
-            "level": 2
-          },
-          {
-            "paragraph": "This section demonstrates content slides with various formatting options."
-          },
-          {
-            "bullets": [
-              "First bullet point with **bold text**",
-              "Second point with *italic text*",
-              "Third point with ***bold and italic***",
-              "Fourth point with ___underlined text___"
-            ],
-            "bullet_levels": [1, 1, 1, 1]
-          },
-          {
-            "paragraph": "Additional paragraph with **mixed** *formatting* and ___underlines___."
-          }
-        ]
+      "content": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Testing all ___19 layouts___ and **formatting** capabilities"
+        }
+      ]
+    },
+    {
+      "layout": "Title and Content",
+      "placeholders": {
+        "title": "Content Slide with **Bold** and *Italic*"
       },
-      {
-        "type": "Section Header",
-        "layout": "Section Header",
-        "title": "Section Break: **Testing** *Complete*",
-        "rich_content": [
-          {
-            "paragraph": "This section demonstrates ___section header___ layout with **formatting** and serves as a divider between major topics."
-          }
-        ]
+      "content": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Overview"
+        },
+        {
+          "type": "paragraph",
+          "text": "This section demonstrates content slides with various formatting options."
+        },
+        {
+          "type": "bullets",
+          "items": [
+            {
+              "level": 1,
+              "text": "First bullet point with **bold text**"
+            },
+            {
+              "level": 1,
+              "text": "Second point with *italic text*"
+            },
+            {
+              "level": 1,
+              "text": "Third point with ***bold and italic***"
+            },
+            {
+              "level": 1,
+              "text": "Fourth point with ___underlined text___"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Additional paragraph with **mixed** *formatting* and ___underlines___."
+        }
+      ]
+    },
+    {
+      "layout": "Section Header",
+      "placeholders": {
+        "title": "Section Break: **Testing** *Complete*"
       },
-      {
-        "type": "Two Content",
-        "layout": "Two Content",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "This section demonstrates ___section header___ layout with **formatting** and serves as a divider between major topics."
+        }
+      ]
+    },
+    {
+      "layout": "Two Content",
+      "placeholders": {
         "title": "Two Content Layout Test",
         "content_left": [
           "**Feature A** details",
@@ -63,78 +82,104 @@
           "*Performance* metrics"
         ]
       },
-      {
-        "type": "Comparison",
-        "layout": "Comparison",
+      "content": []
+    },
+    {
+      "layout": "Comparison",
+      "placeholders": {
         "title": "Comparison Layout **Full** Test",
         "title_left": "Option A Benefits",
         "content_left": "**Cost effective** solution with *rapid* deployment and ***proven*** technology",
         "title_right": "Option B Benefits",
         "content_right": "___Advanced___ features with **future-proof** architecture and *scalable* design"
       },
-      {
-        "type": "Title Only",
-        "layout": "Title Only",
+      "content": []
+    },
+    {
+      "layout": "Title Only",
+      "placeholders": {
         "title": "Title Only Layout: **Bold** *Italic* ___Underline___"
       },
-      {
-        "type": "Blank",
-        "layout": "Blank",
-        "rich_content": [
-          {
-            "heading": "Blank Layout Test",
-            "level": 1
-          },
-          {
-            "paragraph": "This tests the blank layout with minimal structure and **formatted** content."
-          }
-        ]
-      },
-      {
-        "type": "Content with Caption",
-        "layout": "Content with Caption",
+      "content": []
+    },
+    {
+      "layout": "Blank",
+      "placeholders": {},
+      "content": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Blank Layout Test"
+        },
+        {
+          "type": "paragraph",
+          "text": "This tests the blank layout with minimal structure and **formatted** content."
+        }
+      ]
+    },
+    {
+      "layout": "Content with Caption",
+      "placeholders": {
         "title": "Content with Caption Test",
-        "rich_content": [
-          {
-            "heading": "Main Content",
-            "level": 2
-          },
-          {
-            "paragraph": "This layout demonstrates content with caption functionality:"
-          },
-          {
-            "bullets": [
-              "**Primary** content area",
-              "*Secondary* information",
-              "***Important*** notes"
-            ],
-            "bullet_levels": [1, 1, 1]
-          }
-        ],
         "text_caption": "Caption area with ___formatted___ text and **emphasis**."
       },
-      {
-        "type": "Picture with Caption",
-        "layout": "Picture with Caption",
+      "content": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Main Content"
+        },
+        {
+          "type": "paragraph",
+          "text": "This layout demonstrates content with caption functionality:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            {
+              "level": 1,
+              "text": "**Primary** content area"
+            },
+            {
+              "level": 1,
+              "text": "*Secondary* information"
+            },
+            {
+              "level": 1,
+              "text": "***Important*** notes"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "layout": "Picture with Caption",
+      "placeholders": {
         "title": "Picture Layout **Test**",
         "image_1": "placeholder_image.jpg",
         "text_caption": "Picture placeholder with ***formatted*** captions and *enhanced* presentation features"
       },
-      {
-        "type": "Title and Vertical Text",
-        "layout": "Title and Vertical Text",
+      "content": []
+    },
+    {
+      "layout": "Title and Vertical Text",
+      "placeholders": {
         "title": "**Vertical Text** Layout Test",
         "content": "This layout demonstrates vertical text capabilities with **formatted** content and *enhanced* presentation features for ___specialized___ content."
       },
-      {
-        "type": "Vertical Title and Text",
-        "layout": "Vertical Title and Text",
+      "content": []
+    },
+    {
+      "layout": "Vertical Title and Text",
+      "placeholders": {
         "title_top": "Vertical Title Layout",
         "content": "This layout demonstrates vertical title and text capabilities with **formatted** content and *enhanced* presentation features for ___specialized___ content."
       },
-      {
-        "type": "Three Columns With Titles",
-        "layout": "Three Columns With Titles",
+      "content": []
+    },
+    {
+      "layout": "Three Columns With Titles",
+      "placeholders": {
         "title": "Three Column Layout **With Titles** Test",
         "title_col1": "Performance",
         "content_col1": "**Fast processing** with optimized algorithms",
@@ -143,17 +188,21 @@
         "title_col3": "Usability",
         "content_col3": "*Intuitive* interface with **minimal** learning curve"
       },
-      {
-        "type": "Three Columns",
-        "layout": "Three Columns",
+      "content": []
+    },
+    {
+      "layout": "Three Columns",
+      "placeholders": {
         "title": "Three Column Layout **Without Titles** Test",
         "content_col1": "**Fast processing** with optimized algorithms and *sub-millisecond* response times",
         "content_col2": "***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance",
         "content_col3": "*Intuitive* interface with **minimal** learning curve and comprehensive docs"
       },
-      {
-        "type": "Four Columns With Titles",
-        "layout": "Four Columns With Titles",
+      "content": []
+    },
+    {
+      "layout": "Four Columns With Titles",
+      "placeholders": {
         "title": "Four Column Layout **With Titles** Test",
         "title_col1": "Performance",
         "content_col1": "**Fast processing** with optimized algorithms",
@@ -164,18 +213,22 @@
         "title_col4": "Cost",
         "content_col4": "___Transparent___ pricing with **flexible** plans"
       },
-      {
-        "type": "Four Columns",
-        "layout": "Four Columns",
+      "content": []
+    },
+    {
+      "layout": "Four Columns",
+      "placeholders": {
         "title": "Four Column Layout **Without Titles** Test",
         "content_col1": "**Fast processing** with optimized algorithms and *sub-millisecond* response times",
         "content_col2": "***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance",
         "content_col3": "*Intuitive* interface with **minimal** learning curve and comprehensive docs",
         "content_col4": "___Transparent___ pricing with **flexible** plans and *proven* ROI"
       },
-      {
-        "type": "Agenda, 6 Textboxes",
-        "layout": "Agenda, 6 Textboxes",
+      "content": []
+    },
+    {
+      "layout": "Agenda, 6 Textboxes",
+      "placeholders": {
         "title": "**Agenda** Layout Test",
         "number_item1_1": "01",
         "content_item1_1": "**Opening** remarks and introductions",
@@ -190,9 +243,11 @@
         "number_item6_1": "06",
         "content_item6_1": "*Q&A* session and next steps"
       },
-      {
-        "type": "Title and 6-item Lists",
-        "layout": "Title and 6-item Lists",
+      "content": []
+    },
+    {
+      "layout": "Title and 6-item Lists",
+      "placeholders": {
         "title": "**Six Item Lists** Layout Test",
         "number_item1_1": "01",
         "content_13": "**Features**",
@@ -211,37 +266,64 @@
         "content_23": "***Support***",
         "content_25": "**Documentation**"
       },
-      {
-        "type": "Big Number",
-        "layout": "Big Number",
+      "content": []
+    },
+    {
+      "layout": "Big Number",
+      "placeholders": {
         "title": "**42%**",
         "content": "Improvement in *performance* with ___new___ architecture"
       },
-      {
-        "type": "SWOT Analysis",
-        "layout": "SWOT Analysis",
+      "content": []
+    },
+    {
+      "layout": "SWOT Analysis",
+      "placeholders": {
         "content_16": "**Strong** market position with *proven* technology",
         "content_17": "___Limited___ geographic presence and **high** costs",
         "content_18": "*Emerging* markets and ***digital*** transformation",
         "content_19": "**Competition** and ___regulatory___ changes"
       },
-      {
-        "type": "Title and Content",
-        "layout": "Title and Content",
+      "content": []
+    },
+    {
+      "layout": "Title and Content",
+      "placeholders": {
         "title": "Table Slide with **Formatted** Content",
         "table": {
           "data": [
-            ["**Feature**", "*Status*", "___Priority___"],
-            ["Authentication", "**Complete**", "*High*"],
-            ["User Management", "***In Progress***", "___Medium___"],
-            ["Reporting", "*Planned*", "**Low**"],
-            ["API Integration", "___Blocked___", "***Critical***"]
+            [
+              "**Feature**",
+              "*Status*",
+              "___Priority___"
+            ],
+            [
+              "Authentication",
+              "**Complete**",
+              "*High*"
+            ],
+            [
+              "User Management",
+              "***In Progress***",
+              "___Medium___"
+            ],
+            [
+              "Reporting",
+              "*Planned*",
+              "**Low**"
+            ],
+            [
+              "API Integration",
+              "___Blocked___",
+              "***Critical***"
+            ]
           ],
           "header_style": "dark_blue_white_text",
           "row_style": "alternating_light_gray",
           "border_style": "thin_gray"
         }
-      }
-    ]
-  }
+      },
+      "content": []
+    }
+  ]
 }

@@ -79,24 +79,8 @@ class TestActualSlideContentValidation:
         """Helper method to generate presentation and return path to generated file."""
         deck = deckbuilder_with_env
 
-        # Convert legacy format to canonical format if needed
-        if "presentation" in json_data and "slides" in json_data["presentation"]:
-            # Legacy format - convert to canonical
-            canonical_data = {"slides": []}
-            for slide_data in json_data["presentation"]["slides"]:
-                canonical_slide = {
-                    "layout": slide_data.get("type", "Title and Content"),
-                    "placeholders": {
-                        key: value
-                        for key, value in slide_data.items()
-                        if key not in ["type", "layout"]
-                    },
-                    "content": [],
-                }
-                canonical_data["slides"].append(canonical_slide)
-        else:
-            # Already canonical format
-            canonical_data = json_data
+        # Use canonical format only
+        canonical_data = json_data
 
         result = deck.create_presentation(
             presentation_data=canonical_data, fileName=filename, templateName="default"
@@ -172,20 +156,24 @@ class TestActualSlideContentValidation:
     def test_simple_json_content_appears_in_slides(self, deckbuilder_with_env, test_output_dir):
         """Test that simple JSON content actually appears in PowerPoint slides"""
         json_data = {
-            "presentation": {
-                "slides": [
-                    {
-                        "type": "Title Slide",
+            "slides": [
+                {
+                    "layout": "Title Slide",
+                    "placeholders": {
                         "title": "TEST_TITLE_UNIQUE_123",
                         "subtitle": "TEST_SUBTITLE_UNIQUE_456",
                     },
-                    {
-                        "type": "Title and Content",
+                    "content": [],
+                },
+                {
+                    "layout": "Title and Content",
+                    "placeholders": {
                         "title": "CONTENT_TITLE_UNIQUE_789",
                         "content": "TEST_CONTENT_UNIQUE_ABC",
                     },
-                ]
-            }
+                    "content": [],
+                },
+            ]
         }
 
         expected_content = {
@@ -214,16 +202,17 @@ class TestActualSlideContentValidation:
     def test_semantic_field_names_content_appears(self, deckbuilder_with_env, test_output_dir):
         """Test that semantic field names actually place content in slides"""
         json_data = {
-            "presentation": {
-                "slides": [
-                    {
-                        "type": "Two Content",
+            "slides": [
+                {
+                    "layout": "Two Content",
+                    "placeholders": {
                         "title": "TWO_CONTENT_TITLE_UNIQUE_999",
                         "content_left": "LEFT_CONTENT_UNIQUE_111",
                         "content_right": "RIGHT_CONTENT_UNIQUE_222",
-                    }
-                ]
-            }
+                    },
+                    "content": [],
+                }
+            ]
         }
 
         expected_content = {
@@ -250,19 +239,22 @@ class TestActualSlideContentValidation:
     def test_rich_content_blocks_appear_in_slides(self, deckbuilder_with_env, test_output_dir):
         """Test that rich content blocks actually appear in PowerPoint slides"""
         json_data = {
-            "presentation": {
-                "slides": [
-                    {
-                        "type": "Title and Content",
+            "slides": [
+                {
+                    "layout": "Title and Content",
+                    "placeholders": {
                         "title": "RICH_CONTENT_TITLE_UNIQUE_888",
-                        "rich_content": [
-                            {"heading": "HEADING_UNIQUE_777", "level": 2},
-                            {"paragraph": "PARAGRAPH_UNIQUE_666"},
-                            {"bullets": ["BULLET_UNIQUE_555", "BULLET_UNIQUE_444"]},
-                        ],
-                    }
-                ]
-            }
+                    },
+                    "content": [
+                        {"type": "heading", "level": 2, "text": "HEADING_UNIQUE_777"},
+                        {"type": "paragraph", "text": "PARAGRAPH_UNIQUE_666"},
+                        {"type": "bullets", "items": [
+                            {"level": 1, "text": "BULLET_UNIQUE_555"},
+                            {"level": 1, "text": "BULLET_UNIQUE_444"}
+                        ]},
+                    ],
+                }
+            ]
         }
 
         expected_content = {
