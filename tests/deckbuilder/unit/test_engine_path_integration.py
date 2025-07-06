@@ -118,15 +118,38 @@ class TestEnginePathManagerIntegration:
 
             engine = Deckbuilder()
 
-            with (patch("src.deckbuilder.engine.Presentation") as mock_presentation_class,):
-
+            # Mock at the presentation builder level to focus on path management testing
+            with (
+                patch("src.deckbuilder.engine.Presentation") as mock_presentation_class,
+                patch.object(engine.presentation_builder, 'add_slide') as mock_add_slide,
+                patch.object(engine, 'write_presentation') as mock_write,
+            ):
                 mock_prs = Mock()
                 mock_prs.save = Mock()
+                # Mock slides collection for clear_slides operation
+                mock_slides = Mock()
+                mock_slides.__len__ = Mock(return_value=0)
+                mock_slides._sldIdLst = []
+                mock_prs.slides = mock_slides
                 mock_presentation_class.return_value = mock_prs
 
                 # Should use PathManager-resolved paths
-                # result = engine.create_presentation()  # Future: validate result
-                engine.create_presentation()
+                # Provide minimal valid canonical JSON data
+                minimal_data = {
+                    "slides": [
+                        {
+                            "layout": "Title Slide", 
+                            "placeholders": {"title": "Test"}, 
+                            "content": []
+                        }
+                    ]
+                }
+                # result = engine.create_presentation(minimal_data)  # Future: validate result
+                engine.create_presentation(minimal_data)
+                
+                # Verify presentation builder was called (focusing on path integration)
+                mock_add_slide.assert_called_once()
+                mock_write.assert_called_once()
 
                 # Should use PathManager-resolved paths for template operations
                 # Note: After refactoring, direct path checks are handled by template_manager

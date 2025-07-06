@@ -83,7 +83,7 @@ class TestEngineCanonicalJSON(unittest.TestCase):
 
     def test_canonical_json_validation_missing_slides(self):
         """Test that missing 'slides' array raises ValueError"""
-        invalid_data = {"slides": []}
+        invalid_data = {"other": "data"}  # No 'slides' key
 
         with self.assertRaises(ValueError) as context:
             self.engine.create_presentation(invalid_data)
