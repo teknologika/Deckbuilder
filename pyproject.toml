@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "deckbuilder"
-version = "1.0.6"
+version = "1.0.7"
 description = "Intelligent PowerPoint presentation generation with content-first design philosophy, PlaceKitten image processing, and comprehensive CLI tools"
 readme = "README.md"
 requires-python = ">=3.11"
