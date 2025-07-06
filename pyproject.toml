@@ -50,6 +50,7 @@ test = [
 ]
 lint = [
     "flake8>=5.0.0",
+    "flake8-length>=0.3.0",
     "bandit>=1.7.5"
 ]
 format = [
@@ -144,6 +145,8 @@ exclude_lines = [
 [tool.flake8]
 max-line-length = 100
 ignore = ["E203", "W503", "E501"]
+# File length limit (500 lines as per CLAUDE.md requirement)
+max-module-lines = 500
 exclude = [
     ".git",
     "__pycache__",
