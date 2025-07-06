@@ -139,10 +139,10 @@ class TestCLIPathManagement:
                 with (
                     patch.object(cli, "_validate_templates_folder", return_value=True),
                     patch("pathlib.Path.exists", return_value=True),
-                    patch("src.deckbuilder.cli.converter") as mock_converter,
+                    patch("deckbuilder.converter.markdown_to_canonical_json") as mock_converter,
                 ):
                     # Mock converter to return canonical JSON format
-                    mock_converter.markdown_to_canonical_json.return_value = {
+                    mock_converter.return_value = {
                         "slides": [
                             {
                                 "layout": "Title Slide",
@@ -154,7 +154,7 @@ class TestCLIPathManagement:
 
                     try:
                         cli.create_presentation(temp_md.name)
-                        mock_converter.markdown_to_canonical_json.assert_called_once()
+                        mock_converter.assert_called_once()
                         mock_db_instance.create_presentation.assert_called_once()
                     finally:
                         os.unlink(temp_md.name)

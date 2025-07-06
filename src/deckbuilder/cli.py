@@ -148,7 +148,7 @@ class DeckbuilderCLI:
                 )
 
             result = db.create_presentation(
-                presentation_data=presentation_data,
+                presentation_data,
                 fileName=output_name,
                 templateName=template_name,
             )
