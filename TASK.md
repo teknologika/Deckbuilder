@@ -7,6 +7,25 @@ Tasks are organized by phase and component.
 
 ---
 
+## 🚨 CURRENT PRIORITY: Content Processing Unification
+
+### **[GitHub Issue #35](https://github.com/teknologika/Deckbuilder/issues/35) - Unify content processing - eliminate artificial simple/rich distinction**
+**Added**: 2025-07-06
+**Priority**: HIGH - Affects 20+ test failures
+**Status**: 🔧 Ready for Implementation
+
+**Problem**: Content processing fails due to artificial "simple" vs "rich" content distinction that doesn't exist in python-pptx.
+
+**Key Discoveries**:
+- Python-pptx has **no concept of "simple" vs "rich" content** - all text uses same hierarchy
+- Hardcoded `placeholder_format.idx == 1` fails for complex layouts (Two Content, Four Columns)
+- JSON canonical pipeline achieved 64% test reduction (56 → 20 failures)
+- Remaining 20 failures all related to content block processing
+
+**Solution**: Unified content processing using semantic placeholder detection and single text_frame → paragraphs → runs path.
+
+---
+
 ### ✅ Completed Features
 - [x] Core presentation engine with structured frontmatter support
 - [x] Template system with semantic detection and JSON mapping

@@ -1,6 +1,5 @@
 import os
 import re
-from pptx.util import Cm, Pt
 
 try:
     from .formatting_support import FormattingSupport, get_default_language, get_default_font
@@ -452,113 +451,262 @@ class ContentFormatter:
                 run.font.underline = True
 
     def add_rich_content_to_slide(self, slide, rich_content: list):
-        """Add rich content blocks to a slide with improved formatting"""
-        # Find the content placeholder
-        content_placeholder = None
-        for shape in slide.placeholders:
-            if shape.placeholder_format.idx == 1:  # Content placeholder
-                content_placeholder = shape
-                break
+        """DEPRECATED: Use add_content_to_slide instead"""
+        print(
+            "Warning: add_rich_content_to_slide is deprecated, using unified add_content_to_slide"
+        )
 
-        if not content_placeholder:
-            return
-
-        # Skip if this placeholder has been converted to an image placeholder
-        if not hasattr(content_placeholder, "text_frame") or content_placeholder.text_frame is None:
-            print(
-                f"Warning: Skipping rich content for placeholder "
-                f"{content_placeholder.placeholder_format.idx} - converted to image placeholder"
-            )
-            return
-
-        # Clear existing content
-        text_frame = content_placeholder.text_frame
-        text_frame.clear()
-        text_frame.word_wrap = True
-
-        # Set margins for better spacing
-        text_frame.margin_left = Cm(0.25)
-        text_frame.margin_right = Cm(0.25)
-        text_frame.margin_top = Cm(0.25)
-        text_frame.margin_bottom = Cm(0.25)
-
-        # Add each content block with proper hierarchy
-        first_content = True
+        # Convert legacy rich content format to canonical format
+        canonical_content = []
         for block in rich_content:
-            if "heading" in block:
-                if first_content:
-                    p = text_frame.paragraphs[0]  # Use existing first paragraph
+            if isinstance(block, dict):
+                if "heading" in block:
+                    canonical_content.append(
+                        {
+                            "type": "heading",
+                            "text": block["heading"],
+                            "level": block.get("level", 2),
+                        }
+                    )
+                elif "paragraph" in block:
+                    canonical_content.append({"type": "paragraph", "text": block["paragraph"]})
+                elif "bullets" in block:
+                    # Convert bullets format
+                    items = []
+                    bullets = block["bullets"]
+                    bullet_levels = block.get("bullet_levels", [1] * len(bullets))
+
+                    for bullet, level in zip(bullets, bullet_levels):
+                        items.append({"text": bullet, "level": level})
+
+                    canonical_content.append({"type": "bullets", "items": items})
+
+        self.add_content_to_slide(slide, canonical_content)
+
+    def add_content_to_slide(self, slide, content):
+        """
+        Unified content processing for canonical JSON content blocks only.
+
+        Uses semantic placeholder detection instead of hardcoded indices.
+        Expects all content to be in canonical JSON format: [{"type": "...", "text": "..."}, ...]
+        """
+        from .placeholder_types import is_content_placeholder
+
+        print(f"🔧 DEBUG: add_content_to_slide called with content type: {type(content)}")
+        print(f"🔧 DEBUG: content: {content}")
+
+        # Find content placeholders using semantic detection
+        content_placeholders = []
+        for shape in slide.placeholders:
+            placeholder_type = shape.placeholder_format.type
+            print(
+                f"🔧 DEBUG: Found placeholder - idx: {shape.placeholder_format.idx}, type: {placeholder_type}, is_content: {is_content_placeholder(placeholder_type)}"
+            )
+            if is_content_placeholder(placeholder_type):
+                # Skip if converted to image placeholder
+                if hasattr(shape, "text_frame") and shape.text_frame is not None:
+                    content_placeholders.append(shape)
+                    print(
+                        f"🔧 DEBUG: Added content placeholder idx {shape.placeholder_format.idx} to processing list"
+                    )
+
+        print(f"🔧 DEBUG: Found {len(content_placeholders)} content placeholders")
+
+        if not content_placeholders:
+            print("Warning: No content placeholders found in slide")
+            # For slides without content placeholders (e.g., Title Slide), try to use other placeholder types
+            from .placeholder_types import is_subtitle_placeholder
+
+            subtitle_placeholders = []
+            for shape in slide.placeholders:
+                if is_subtitle_placeholder(shape.placeholder_format.type):
+                    if hasattr(shape, "text_frame") and shape.text_frame is not None:
+                        # Check if subtitle placeholder already has content (from explicit subtitle field)
+                        has_existing_content = False
+                        if hasattr(shape, "text_frame") and shape.text_frame.paragraphs:
+                            for paragraph in shape.text_frame.paragraphs:
+                                if paragraph.text.strip():
+                                    has_existing_content = True
+                                    break
+
+                        if not has_existing_content:
+                            subtitle_placeholders.append(shape)
+                            print(
+                                f"🔧 DEBUG: Found empty subtitle placeholder idx {shape.placeholder_format.idx} as fallback"
+                            )
+                        else:
+                            print(
+                                f"🔧 DEBUG: Subtitle placeholder idx {shape.placeholder_format.idx} already has content, skipping"
+                            )
+
+            if subtitle_placeholders:
+                print("🔧 DEBUG: Using subtitle placeholder as fallback for content")
+                content_placeholders = subtitle_placeholders
+            else:
+                print("Warning: No suitable placeholders found for content")
+                return
+
+        # Expect only canonical JSON content blocks
+        if isinstance(content, list) and content:
+            # Validate all items are canonical JSON blocks
+            for i, item in enumerate(content):
+                if not isinstance(item, dict) or "type" not in item:
+                    raise ValueError(
+                        f"Content item {i} must be canonical JSON block with 'type' field. Got: {item}"
+                    )
+
+            print("🔧 DEBUG: Processing canonical JSON content blocks")
+            self._process_canonical_content_blocks(content_placeholders, content)
+        else:
+            print(f"Warning: Expected list of canonical JSON content blocks, got: {type(content)}")
+
+    def _process_canonical_content_blocks(self, content_placeholders, content_blocks):
+        """Process canonical JSON content blocks like {"type": "paragraph", "text": "..."}"""
+        print(
+            f"🔧 DEBUG: _process_canonical_content_blocks called with {len(content_blocks)} blocks"
+        )
+
+        # Use first content placeholder for now
+        # TODO: Support multi-placeholder layouts (Two Content, Four Columns)
+        placeholder = content_placeholders[0]
+        text_frame = placeholder.text_frame
+        text_frame.clear()
+
+        print(f"🔧 DEBUG: Using placeholder idx {placeholder.placeholder_format.idx} for content")
+
+        first_block = True
+        for i, block in enumerate(content_blocks):
+            block_type = block.get("type", "")
+            print(f"🔧 DEBUG: Processing block {i}: type={block_type}, block={block}")
+
+            if block_type == "paragraph":
+                if first_block:
+                    p = text_frame.paragraphs[0]
                 else:
                     p = text_frame.add_paragraph()
-                self.apply_inline_formatting(block["heading"], p)
-                # Apply bold to all runs in the heading paragraph
+                text_content = block.get("text", "")
+                print(f"🔧 DEBUG: Adding paragraph text: '{text_content}'")
+                self.apply_inline_formatting(text_content, p)
+
+            elif block_type == "heading":
+                if first_block:
+                    p = text_frame.paragraphs[0]
+                else:
+                    p = text_frame.add_paragraph()
+                text_content = block.get("text", "")
+                print(f"🔧 DEBUG: Adding heading text: '{text_content}'")
+                self.apply_inline_formatting(text_content, p)
+                # Make headings bold
                 for run in p.runs:
                     run.font.bold = True
-                p.space_after = Pt(6)
-                p.space_before = Pt(12) if not first_content else Pt(0)
 
-            elif "paragraph" in block:
-                if first_content:
-                    p = text_frame.paragraphs[0]  # Use existing first paragraph
-                else:
-                    p = text_frame.add_paragraph()
-                self.apply_inline_formatting(block["paragraph"], p)
-                p.space_after = Pt(6)
-                p.space_before = Pt(3)
-
-            elif "bullets" in block:
-                # Get bullet levels if available, otherwise default to level 1
-                bullet_levels = block.get("bullet_levels", [1] * len(block["bullets"]))
-
-                for bullet_idx, bullet in enumerate(block["bullets"]):
-                    if first_content and bullet_idx == 0:
-                        p = text_frame.paragraphs[
-                            0
-                        ]  # Use existing first paragraph for first bullet
+            elif block_type == "bullets":
+                items = block.get("items", [])
+                print(f"🔧 DEBUG: Adding {len(items)} bullet items")
+                for item in items:
+                    if first_block:
+                        p = text_frame.paragraphs[0]
+                        first_block = False
                     else:
                         p = text_frame.add_paragraph()
-                    self.apply_inline_formatting(bullet, p)
 
-                    # Use the parsed bullet level
-                    bullet_level = (
-                        bullet_levels[bullet_idx] if bullet_idx < len(bullet_levels) else 1
-                    )
-                    p.level = bullet_level
+                    # Handle both simple and complex bullet items
+                    if isinstance(item, dict):
+                        text = item.get("text", "")
+                        level = item.get("level", 1) - 1  # Convert to 0-based
+                    else:
+                        text = str(item)
+                        level = 0
 
-                    # Set spacing based on level
-                    if bullet_level == 1:
-                        p.space_after = Pt(3)
-                    else:  # Level 2+ (sub-bullets)
-                        p.space_after = Pt(2)
+                    p.level = level
+                    print(f"🔧 DEBUG: Adding bullet: '{text}' at level {level}")
+                    self.apply_inline_formatting(text, p)
 
-            first_content = False
+            elif block_type == "columns":
+                columns = block.get("columns", [])
+                print(
+                    f"🔧 DEBUG: Processing {len(columns)} columns across {len(content_placeholders)} placeholders"
+                )
+
+                # Distribute columns across available content placeholders
+                for col_idx, column in enumerate(columns):
+                    if col_idx < len(content_placeholders):
+                        placeholder = content_placeholders[col_idx]
+                        text_frame = placeholder.text_frame
+                        text_frame.clear()
+
+                        print(
+                            f"🔧 DEBUG: Processing column {col_idx} in placeholder idx {placeholder.placeholder_format.idx}"
+                        )
+
+                        # Process column content
+                        column_content = column.get("content", [])
+                        first_item = True
+                        for content_item in column_content:
+                            if isinstance(content_item, dict) and "type" in content_item:
+                                item_type = content_item.get("type", "")
+                                item_text = content_item.get("text", "")
+
+                                if first_item:
+                                    p = text_frame.paragraphs[0]
+                                    first_item = False
+                                else:
+                                    p = text_frame.add_paragraph()
+
+                                print(
+                                    f"🔧 DEBUG: Adding {item_type} to column {col_idx}: '{item_text}'"
+                                )
+                                self.apply_inline_formatting(item_text, p)
+
+                                # Apply type-specific formatting
+                                if item_type == "heading":
+                                    for run in p.runs:
+                                        run.font.bold = True
+                    else:
+                        print(f"🔧 DEBUG: No placeholder available for column {col_idx}")
+
+                # Mark that we've processed multi-column content, don't process individual blocks
+                return
+
+            else:
+                # Unknown block type - treat as paragraph
+                print(f"🔧 DEBUG: Unknown block type '{block_type}', treating as paragraph")
+                if first_block:
+                    p = text_frame.paragraphs[0]
+                else:
+                    p = text_frame.add_paragraph()
+                text = str(block.get("text", block))
+                print(f"🔧 DEBUG: Adding unknown block text: '{text}'")
+                self.apply_inline_formatting(text, p)
+
+            first_block = False
+
+    def _process_simple_content_list(self, placeholder, content_list):
+        """Process simple content list (legacy format)"""
+        text_frame = placeholder.text_frame
+        text_frame.clear()
+
+        for i, line in enumerate(content_list):
+            if i == 0:
+                p = text_frame.paragraphs[0]
+            else:
+                p = text_frame.add_paragraph()
+            self.apply_inline_formatting(str(line), p)
+
+    def _process_simple_content_string(self, placeholder, content_string):
+        """Process simple string content"""
+        text_frame = placeholder.text_frame
+        text_frame.clear()
+
+        p = text_frame.paragraphs[0]
+        self.apply_inline_formatting(content_string, p)
 
     def add_simple_content_to_slide(self, slide, content):
-        """Add simple content to slide with inline formatting support (backwards compatibility)"""
-        for shape in slide.placeholders:
-            if shape.placeholder_format.idx == 1:  # Content placeholder
-                # Skip if this placeholder has been converted to an image placeholder
-                if not hasattr(shape, "text_frame") or shape.text_frame is None:
-                    print(
-                        f"Warning: Skipping content for placeholder "
-                        f"{shape.placeholder_format.idx} - converted to image placeholder"
-                    )
-                    continue
-
-                text_frame = shape.text_frame
-                text_frame.clear()
-
-                if isinstance(content, str):
-                    p = text_frame.paragraphs[0]
-                    self.apply_inline_formatting(content, p)
-                elif isinstance(content, list):
-                    for i, line in enumerate(content):
-                        if i == 0:
-                            p = text_frame.paragraphs[0]  # Use existing first paragraph
-                        else:
-                            p = text_frame.add_paragraph()
-                        self.apply_inline_formatting(line, p)
-                break
+        """DEPRECATED: Use add_content_to_slide instead"""
+        print(
+            "Warning: add_simple_content_to_slide is deprecated, using unified add_content_to_slide"
+        )
+        self.add_content_to_slide(slide, content)
 
     def auto_parse_json_formatting(self, slide_data):
         """Auto-parse inline formatting in JSON slide data."""
@@ -581,17 +729,33 @@ class ContentFormatter:
             subtitle_text = processed_data["subtitle"]
             processed_data["subtitle_formatted"] = self.parse_inline_formatting(subtitle_text)
 
-        # Parse content list if present
+        # Parse content list - convert legacy strings to canonical JSON format
         if "content" in processed_data and isinstance(processed_data["content"], list):
-            # Convert simple content to rich content with formatting
-            rich_content = []
-            for item in processed_data["content"]:
+            content_list = processed_data["content"]
+            canonical_content = []
+
+            for item in content_list:
                 if isinstance(item, str):
-                    # Treat as paragraph text
-                    rich_content.append({"paragraph": item})
-            processed_data["rich_content"] = rich_content
-            # Remove old content key to avoid conflicts
-            del processed_data["content"]
+                    # Convert legacy string to canonical paragraph block
+                    canonical_content.append({"type": "paragraph", "text": item})
+                    print(
+                        "🔧 DEBUG: auto_parse_json_formatting converted legacy string to canonical paragraph"
+                    )
+                elif isinstance(item, dict) and "type" in item:
+                    # Already canonical JSON format - keep as is
+                    canonical_content.append(item)
+                    print(
+                        f"🔧 DEBUG: auto_parse_json_formatting preserved canonical JSON block: {item.get('type')}"
+                    )
+                else:
+                    # Unknown format - convert to paragraph
+                    canonical_content.append({"type": "paragraph", "text": str(item)})
+                    print(
+                        f"🔧 DEBUG: auto_parse_json_formatting converted unknown item to paragraph: {item}"
+                    )
+
+            # Replace with canonical format
+            processed_data["content"] = canonical_content
 
         # Parse table data if present
         if "table" in processed_data and "data" in processed_data["table"]:

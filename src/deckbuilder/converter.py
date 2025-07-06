@@ -120,9 +120,11 @@ class StructuredFrontmatterConverter:
         # Create result with type field for supported layouts
         result = {"type": layout_name}
 
-        # Copy title if present
+        # Copy title and subtitle if present
         if "title" in structured_data:
             result["title"] = structured_data["title"]
+        if "subtitle" in structured_data:
+            result["subtitle"] = structured_data["subtitle"]
 
         mapping_rules = structure_def.get("mapping_rules", {})
 

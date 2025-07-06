@@ -88,15 +88,18 @@ class SlideBuilder:
             slide, slide_data, layout_name, content_formatter, image_placeholder_handler
         )
 
-        # Handle rich content (skip only if empty to avoid overwriting placeholders)
-        if "rich_content" in slide_data:
-            rich_content = slide_data["rich_content"]
-            if rich_content:  # Only process if non-empty
-                content_formatter.add_rich_content_to_slide(slide, rich_content)
-        elif "content" in slide_data:
+        # Handle content using unified processing (skip only if empty to avoid overwriting placeholders)
+        print(f"🔧 DEBUG: slide_builder processing slide_data keys: {list(slide_data.keys())}")
+        if "content" in slide_data:
             content = slide_data["content"]
+            print(f"🔧 DEBUG: Found content: {content}")
             if content:  # Only process if non-empty
-                content_formatter.add_simple_content_to_slide(slide, content)
+                print("🔧 DEBUG: Processing content with unified processor")
+                content_formatter.add_content_to_slide(slide, content)
+            else:
+                print("🔧 DEBUG: Skipping empty content")
+        else:
+            print("🔧 DEBUG: No content found in slide_data")
 
         return slide
 
@@ -193,7 +196,7 @@ class SlideBuilder:
         )
         for field_name, field_value in content_data.items():
             # Skip non-content fields
-            if field_name in ["type", "rich_content", "table", "layout"]:
+            if field_name in ["type", "content", "table", "layout"]:
                 continue
 
             # Find placeholder using semantic detection
@@ -293,11 +296,7 @@ class SlideBuilder:
 
             # Handle main content placeholders (for simple content)
             elif "content" in slide_data and is_content_placeholder(placeholder_type):
-                # Only use simple content if rich_content is not available
-                if "rich_content" not in slide_data:
-                    content_formatter.add_simple_content_to_placeholder(
-                        shape, slide_data["content"]
-                    )
+                content_formatter.add_simple_content_to_placeholder(shape, slide_data["content"])
 
     def _apply_content_by_semantic_type(
         self,

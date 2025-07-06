@@ -8,9 +8,9 @@
                 {
                     "type": "heading",
                     "level": 2,
-                    "text": "Demonstrating ___19 layouts___ with **professional** formatting",
+                    "text": "Demonstrating ___19 layouts___ with **professional** formatting"
                 }
-            ],
+            ]
         },
         {
             "layout": "Title and Content",
@@ -20,7 +20,7 @@
                 {"type": "heading", "level": 2, "text": "Deckbuilder Features"},
                 {
                     "type": "paragraph",
-                    "text": "Deckbuilder delivers intelligent presentation generation with comprehensive formatting support.",
+                    "text": "Deckbuilder delivers intelligent presentation generation with comprehensive formatting support."
                 },
                 {
                     "type": "bullets",
@@ -28,14 +28,14 @@
                         {"level": 1, "text": "**Content-first** design philosophy"},
                         {"level": 1, "text": "*Semantic* layout recommendations"},
                         {"level": 1, "text": "***Advanced*** template management"},
-                        {"level": 1, "text": "___Professional___ formatting preservation"},
-                    ],
+                        {"level": 1, "text": "___Professional___ formatting preservation"}
+                    ]
                 },
                 {
                     "type": "paragraph",
-                    "text": "Transform your ideas into polished presentations with **automated** *intelligence* and ___consistent___ styling.",
-                },
-            ],
+                    "text": "Transform your ideas into polished presentations with **automated** *intelligence* and ___consistent___ styling."
+                }
+            ]
         },
         {
             "layout": "Two Content",
@@ -43,9 +43,9 @@
             "placeholders": {
                 "title": "Side-by-Side **Comparison**",
                 "content_left": "**Features**\n- Smart detection\n- Auto formatting\n- Template management",
-                "content_right": "**Benefits**\n- Save time\n- Professional output\n- Consistent branding",
+                "content_right": "**Benefits**\n- Save time\n- Professional output\n- Consistent branding"
             },
-            "content": [],
+            "content": []
         },
         {
             "layout": "Four Columns With Titles",
@@ -59,9 +59,9 @@
                 "title_col3": "Usability",
                 "content_col3": "*Intuitive* interface with **minimal** learning curve",
                 "title_col4": "Cost",
-                "content_col4": "___Transparent___ pricing with **flexible** plans",
+                "content_col4": "___Transparent___ pricing with **flexible** plans"
             },
-            "content": [],
+            "content": []
         },
         {
             "layout": "Title and Content",
@@ -77,10 +77,10 @@
                         ["Authentication", "**Complete**", "*High*"],
                         ["User Management", "***In Progress***", "___Medium___"],
                         ["Reporting", "*Planned*", "**Low**"],
-                        ["API Integration", "___Blocked___", "***Critical***"],
-                    ],
+                        ["API Integration", "___Blocked___", "***Critical***"]
+                    ]
                 }
-            ],
-        },
+            ]
+        }
     ]
 }
