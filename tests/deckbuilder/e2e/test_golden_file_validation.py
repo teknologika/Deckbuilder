@@ -114,18 +114,18 @@ class TestGoldenFileValidation:
         with open(self.golden_json) as f:
             data = json.load(f)
 
-        assert "presentation" in data, "JSON missing 'presentation' key"
-        assert "slides" in data["presentation"], "JSON missing 'slides' key"
+        # Expect canonical JSON format with slides at root level
+        assert "slides" in data, "JSON missing 'slides' key at root level"
 
-        slides = data["presentation"]["slides"]
+        slides = data["slides"]
         assert len(slides) > 5, f"Expected multiple slides, got {len(slides)}"
 
-        # Check for layout variety
-        slide_types = [slide.get("type", "") for slide in slides]
-        expected_types = ["Title Slide", "Title and Content", "Section Header"]
+        # Check for layout variety (canonical JSON uses 'layout' not 'type')
+        slide_layouts = [slide.get("layout", "") for slide in slides]
+        expected_layouts = ["Title Slide", "Title and Content", "Section Header"]
 
-        for expected_type in expected_types:
-            assert expected_type in slide_types, f"Slide type '{expected_type}' not found in JSON"
+        for expected_layout in expected_layouts:
+            assert expected_layout in slide_layouts, f"Slide layout '{expected_layout}' not found in JSON"
 
     def _run_cli_and_validate(
         self, input_file: Path, output_name: str, temp_dir: str, source_type: str
