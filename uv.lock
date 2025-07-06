@@ -297,6 +297,7 @@ dev = [
     { name = "bandit" },
     { name = "black", extra = ["jupyter"] },
     { name = "flake8" },
+    { name = "flake8-length" },
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "pytest-html" },
@@ -310,6 +311,7 @@ format = [
 lint = [
     { name = "bandit" },
     { name = "flake8" },
+    { name = "flake8-length" },
 ]
 test = [
     { name = "pytest" },
@@ -327,6 +329,7 @@ requires-dist = [
     { name = "deckbuilder", extras = ["test", "lint", "format"], marker = "extra == 'dev'" },
     { name = "fastmcp", specifier = ">=0.3.0" },
     { name = "flake8", marker = "extra == 'lint'", specifier = ">=5.0.0" },
+    { name = "flake8-length", marker = "extra == 'lint'", specifier = ">=0.3.0" },
     { name = "numpy", specifier = ">=1.24.0" },
     { name = "opencv-python", specifier = ">=4.8.0" },
     { name = "pillow", specifier = ">=10.0.0" },
@@ -412,6 +415,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/9b/af/fbfe3c4b5a657d79e5c47a2827a362f9e1b763336a52f926126aa6dc7123/flake8-7.3.0.tar.gz", hash = "sha256:fe044858146b9fc69b551a4b490d69cf960fcb78ad1edcb84e7fbb1b4a8e3872", size = 48326, upload-time = "2025-06-20T19:31:35.838Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/9f/56/13ab06b4f93ca7cac71078fbe37fcea175d3216f31f85c3168a6bbd0bb9a/flake8-7.3.0-py2.py3-none-any.whl", hash = "sha256:b9696257b9ce8beb888cdbe31cf885c90d31928fe202be0889a7cdafad32f01e", size = 57922, upload-time = "2025-06-20T19:31:34.425Z" },
+]
+
+[[package]]
+name = "flake8-length"
+version = "0.3.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "flake8" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/65/f9/8a80b7caf5637ff74ae9b0666e2f130a2493b6a325ec6b41dd2159b65d60/flake8-length-0.3.1.tar.gz", hash = "sha256:0ebd614c25361b54937335c9b143cc18562cd4da48024d48f79bf15ec453b510", size = 9351, upload-time = "2022-10-30T12:03:04.037Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/da/bb/11d8a6f5e6f2c9a760a75a3faef9ff7c88c6527e9927cd97c26bdce5ce2a/flake8_length-0.3.1-py3-none-any.whl", hash = "sha256:73b5e974957575b87b5df55ddfe71e52f3806fb9d6a6b6b5cddceeff77800e4c", size = 7025, upload-time = "2022-10-30T12:03:01.549Z" },
 ]
 
 [[package]]

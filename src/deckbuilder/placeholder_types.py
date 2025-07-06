@@ -25,6 +25,7 @@ SUBTITLE_PLACEHOLDERS = {PP_PLACEHOLDER_TYPE.SUBTITLE}  # SUBTITLE (4) - Subtitl
 CONTENT_PLACEHOLDERS = {
     PP_PLACEHOLDER_TYPE.BODY,  # BODY (2) - Main content area
     PP_PLACEHOLDER_TYPE.VERTICAL_BODY,  # VERTICAL_BODY (6) - Vertical text content
+    PP_PLACEHOLDER_TYPE.OBJECT,  # OBJECT (7) - Often used for text content in modern templates
 }
 
 # Media and object placeholders - for rich content like images, charts, tables
@@ -33,7 +34,6 @@ MEDIA_PLACEHOLDERS = {
     PP_PLACEHOLDER_TYPE.CHART,  # CHART (8) - Chart/graph placeholders
     PP_PLACEHOLDER_TYPE.TABLE,  # TABLE (12) - Data table placeholders
     PP_PLACEHOLDER_TYPE.MEDIA_CLIP,  # MEDIA_CLIP (10) - Video/audio content
-    PP_PLACEHOLDER_TYPE.OBJECT,  # OBJECT (7) - Generic embedded objects
     PP_PLACEHOLDER_TYPE.VERTICAL_OBJECT,  # VERTICAL_OBJECT (17) - Vertical objects
 }
 

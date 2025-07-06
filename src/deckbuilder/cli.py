@@ -62,8 +62,6 @@ class DeckbuilderCLI:
             return False
         return True
 
-    
-
     def _get_available_templates(self):
         """Get list of available templates with error handling"""
         template_folder = os.getenv("DECK_TEMPLATE_FOLDER")
@@ -133,6 +131,7 @@ class DeckbuilderCLI:
             presentation_data = {}
             if input_path.suffix.lower() == ".md":
                 from deckbuilder import converter
+
                 # Process markdown file
                 content = input_path.read_text(encoding="utf-8")
                 print(f"Processing markdown file: {input_path.name}")

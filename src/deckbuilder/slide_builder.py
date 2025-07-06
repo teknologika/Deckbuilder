@@ -88,12 +88,15 @@ class SlideBuilder:
             slide, slide_data, layout_name, content_formatter, image_placeholder_handler
         )
 
-        # Handle rich content
+        # Handle rich content (skip only if empty to avoid overwriting placeholders)
         if "rich_content" in slide_data:
-            content_formatter.add_rich_content_to_slide(slide, slide_data["rich_content"])
+            rich_content = slide_data["rich_content"]
+            if rich_content:  # Only process if non-empty
+                content_formatter.add_rich_content_to_slide(slide, rich_content)
         elif "content" in slide_data:
-            # Fallback to simple content (backwards compatibility)
-            content_formatter.add_simple_content_to_slide(slide, slide_data["content"])
+            content = slide_data["content"]
+            if content:  # Only process if non-empty
+                content_formatter.add_simple_content_to_slide(slide, content)
 
         return slide
 
@@ -184,7 +187,11 @@ class SlideBuilder:
             field_to_index[field_name] = int(placeholder_idx)
 
         # Process each field in slide_data using semantic detection
-        for field_name, field_value in slide_data.items():
+        # For canonical JSON format, process the placeholders object if it exists
+        content_data = (
+            slide_data.get("placeholders", {}) if "placeholders" in slide_data else slide_data
+        )
+        for field_name, field_value in content_data.items():
             # Skip non-content fields
             if field_name in ["type", "rich_content", "table", "layout"]:
                 continue
