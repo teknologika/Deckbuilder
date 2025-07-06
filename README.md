@@ -13,7 +13,7 @@ Decknuilder currently supports JSON and Frontmatter formatted Markdown for conte
 > [!IMPORTANT]  
 > Deckbuilder is currently under active development and should NOT be considered production ready.
 
-The MCP server is being enhanced to be with a **content-first design philosophy**, Deckbuilder's MCP server will transform how AI creates presentations by focusing on *what you want to communicate* rather than just *what layouts exist*.
+The MCP server will be enhanced to be with a **content-first design philosophy**, Deckbuilder's MCP server will transform how AI creates presentations by focusing on *what you want to communicate* rather than just *what layouts exist*.
 
 ## ✨ Key Features
 
