@@ -28,12 +28,12 @@ class TestEngineCanonicalJSON(unittest.TestCase):
             Deckbuilder.reset()
 
         # Mock path manager
-        self.mock_path_manager = MagicMock()
+        self.mock_path_manager = Mock()
         self.mock_path_manager.get_output_folder.return_value = "/tmp/test"
         self.mock_path_manager.get_template_name.return_value = "default"
 
         # Mock presentation builder
-        self.mock_presentation_builder = MagicMock()
+        self.mock_presentation_builder = Mock()
 
         # Create engine with mocked components
         with (

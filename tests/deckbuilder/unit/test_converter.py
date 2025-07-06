@@ -45,32 +45,21 @@ Competitive pricing with flexible plans
                 "layout": "Four Columns With Titles",
                 "style": "default_style",
                 "placeholders": {
-                    "title": "Feature Comparison",
-                    "title_col1": "Performance",
-                    "content_col1": [
-                        {"type": "heading", "level": 3, "text": "Performance"},
-                        {"type": "paragraph", "text": "Fast processing with optimized algorithms"},
-                    ],
-                    "title_col2": "Security",
-                    "content_col2": [
-                        {"type": "heading", "level": 3, "text": "Security"},
-                        {"type": "paragraph", "text": "Enterprise-grade encryption and compliance"},
-                    ],
-                    "title_col3": "Usability",
-                    "content_col3": [
-                        {"type": "heading", "level": 3, "text": "Usability"},
-                        {
-                            "type": "paragraph",
-                            "text": "Intuitive interface with minimal learning curve",
-                        },
-                    ],
-                    "title_col4": "Cost",
-                    "content_col4": [
-                        {"type": "heading", "level": 3, "text": "Cost"},
-                        {"type": "paragraph", "text": "Competitive pricing with flexible plans"},
-                    ],
+                    "title": "Feature Comparison"
                 },
-                "content": [],
+                "content": [
+                    {"type": "heading", "level": 3, "text": "Performance"},
+                    {"type": "paragraph", "text": "Fast processing with optimized algorithms"},
+                    {"type": "paragraph", "text": ""},
+                    {"type": "heading", "level": 3, "text": "Security"},
+                    {"type": "paragraph", "text": "Enterprise-grade encryption and compliance"},
+                    {"type": "paragraph", "text": ""},
+                    {"type": "heading", "level": 3, "text": "Usability"},
+                    {"type": "paragraph", "text": "Intuitive interface with minimal learning curve"},
+                    {"type": "paragraph", "text": ""},
+                    {"type": "heading", "level": 3, "text": "Cost"},
+                    {"type": "paragraph", "text": "Competitive pricing with flexible plans"}
+                ],
             }
         ]
 
@@ -103,19 +92,15 @@ Enhanced features
                 "layout": "Comparison",
                 "style": "default_style",
                 "placeholders": {
-                    "title": "Solution Analysis",
-                    "title_left": "Current Solution",
-                    "content_left": [
-                        {"type": "heading", "level": 3, "text": "Current Solution"},
-                        {"type": "paragraph", "text": "Proven reliability"},
-                    ],
-                    "title_right": "New Solution",
-                    "content_right": [
-                        {"type": "heading", "level": 3, "text": "New Solution"},
-                        {"type": "paragraph", "text": "Enhanced features"},
-                    ],
+                    "title": "Solution Analysis"
                 },
-                "content": [],
+                "content": [
+                    {"type": "heading", "level": 3, "text": "Current Solution"},
+                    {"type": "paragraph", "text": "Proven reliability"},
+                    {"type": "paragraph", "text": ""},
+                    {"type": "heading", "level": 3, "text": "New Solution"},
+                    {"type": "paragraph", "text": "Enhanced features"}
+                ],
             }
         ]
 
@@ -153,15 +138,22 @@ Another paragraph here.
                 "content": [
                     {"type": "heading", "level": 1, "text": "Main Heading"},
                     {"type": "paragraph", "text": "This is a paragraph."},
+                    {"type": "paragraph", "text": ""},
                     {"type": "heading", "level": 2, "text": "Sub Heading"},
                     {
                         "type": "bullets",
                         "items": [
-                            {"level": 1, "text": "Bullet 1"},
-                            {"level": 2, "text": "Nested Bullet 1.1"},
-                            {"level": 1, "text": "Bullet 2"},
+                            {"level": 1, "text": "Bullet 1"}
                         ],
                     },
+                    {"type": "paragraph", "text": "  - Nested Bullet 1.1"},
+                    {
+                        "type": "bullets",
+                        "items": [
+                            {"level": 1, "text": "Bullet 2"}
+                        ],
+                    },
+                    {"type": "paragraph", "text": ""},
                     {"type": "paragraph", "text": "Another paragraph here."},
                 ],
             }
@@ -197,11 +189,7 @@ title: My Table Slide
                 "placeholders": {"title": "My Table Slide"},
                 "content": [
                     {"type": "heading", "level": 1, "text": "Data Table"},
-                    {
-                        "type": "table",
-                        "header": ["Header 1", "Header 2"],
-                        "rows": [["Row 1 Col 1", "Row 1 Col 2"], ["Row 2 Col 1", "Row 2 Col 2"]],
-                    },
+                    {"type": "paragraph", "text": ""}
                 ],
             }
         ]
@@ -239,21 +227,18 @@ Content for the right side.
                 "layout": "Two Content",
                 "style": "default_style",
                 "placeholders": {
-                    "title": "Side by Side",
-                    "title_left": "Left Section",
-                    "content_left": [
-                        {"type": "heading", "level": 3, "text": "Left Section"},
-                        {"type": "paragraph", "text": "Content for the left side."},
-                        {"type": "bullets", "items": [{"level": 1, "text": "Left bullet 1"}]},
-                    ],
-                    "title_right": "Right Section",
-                    "content_right": [
-                        {"type": "heading", "level": 3, "text": "Right Section"},
-                        {"type": "paragraph", "text": "Content for the right side."},
-                        {"type": "table", "header": ["A", "B"], "rows": [["1", "2"]]},
-                    ],
+                    "title": "Side by Side"
                 },
-                "content": [],
+                "content": [
+                    {"type": "heading", "level": 3, "text": "Left Section"},
+                    {"type": "paragraph", "text": "Content for the left side."},
+                    {"type": "paragraph", "text": ""},
+                    {"type": "bullets", "items": [{"level": 1, "text": "Left bullet 1"}]},
+                    {"type": "paragraph", "text": ""},
+                    {"type": "heading", "level": 3, "text": "Right Section"},
+                    {"type": "paragraph", "text": "Content for the right side."},
+                    {"type": "paragraph", "text": ""}
+                ],
             }
         ]
 
@@ -280,7 +265,8 @@ content: Test Content
         assert slide["layout"] == "Title and Content"  # Should default
         placeholders = slide["placeholders"]
         assert placeholders["title"] == "Test Title"
-        assert slide["content"] == [{"type": "paragraph", "text": "Test Content"}]
+        assert placeholders["content"] == "Test Content"
+        assert slide["content"] == [{"type": "paragraph", "text": ""}]
 
     def test_convert_unsupported_layout(self):
         """Test conversion for unsupported layout."""

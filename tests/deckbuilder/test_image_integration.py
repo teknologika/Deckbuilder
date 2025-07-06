@@ -17,6 +17,7 @@ sys.path.insert(0, str(src_path))
 
 import pytest  # noqa: E402
 from deckbuilder.engine import Deckbuilder  # noqa: E402
+from deckbuilder.converter import markdown_to_canonical_json  # noqa: E402
 
 
 @pytest.fixture
@@ -117,7 +118,8 @@ media:
 ---
 """
 
-        result = deck.create_presentation_from_markdown(markdown, "test_valid_image")
+        canonical_data = markdown_to_canonical_json(markdown)
+        result = deck.create_presentation(canonical_data, "test_valid_image")
 
         assert "Successfully created presentation" in result
 
@@ -144,7 +146,8 @@ media:
 ---
 """
 
-        result = deck.create_presentation_from_markdown(markdown, "test_fallback_image")
+        canonical_data = markdown_to_canonical_json(markdown)
+        result = deck.create_presentation(canonical_data, "test_fallback_image")
 
         assert "Successfully created presentation" in result
 
@@ -179,7 +182,8 @@ media:
 ---
 """
 
-        result = deck.create_presentation_from_markdown(markdown, "test_multiple_images")
+        canonical_data = markdown_to_canonical_json(markdown)
+        result = deck.create_presentation(canonical_data, "test_multiple_images")
 
         assert "Successfully created presentation with 2 slides" in result
 
@@ -329,7 +333,8 @@ media:
 """
 
         # Should not crash, should handle gracefully
-        result = deck.create_presentation_from_markdown(markdown, "test_invalid_layout")
+        canonical_data = markdown_to_canonical_json(markdown)
+        result = deck.create_presentation(canonical_data, "test_invalid_layout")
         assert "Successfully created presentation" in result
 
     def test_missing_image_with_no_fallback(self, deckbuilder_with_env, monkeypatch):
@@ -351,7 +356,8 @@ media:
 """
 
         # Should not crash, should handle gracefully
-        result = deck.create_presentation_from_markdown(markdown, "test_no_fallback")
+        canonical_data = markdown_to_canonical_json(markdown)
+        result = deck.create_presentation(canonical_data, "test_no_fallback")
         assert "Successfully created presentation" in result
 
 

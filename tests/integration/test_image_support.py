@@ -13,6 +13,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))  # noqa: E402
 
 from deckbuilder.engine import Deckbuilder  # noqa: E402
+from deckbuilder.converter import markdown_to_canonical_json  # noqa: E402
 
 
 def test_image_integration():
@@ -49,10 +50,11 @@ media:
 Additional slide content with **formatted text** for testing.
 """
 
-            # Create presentation from markdown
-            result = deck.create_presentation_from_markdown(
-                markdown_content, fileName="image_test", templateName="default"
-            )
+            # Convert markdown to canonical JSON format
+            canonical_data = markdown_to_canonical_json(markdown_content)
+            
+            # Create presentation from canonical JSON
+            result = deck.create_presentation(canonical_data, "image_test")
             print(f"✅ {result}")
 
             # Check if presentation was created

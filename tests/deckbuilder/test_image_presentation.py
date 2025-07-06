@@ -12,6 +12,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))  # noqa: E402
 
 from deckbuilder.engine import Deckbuilder  # noqa: E402
+from deckbuilder.converter import markdown_to_canonical_json  # noqa: E402
 
 
 def run_image_presentation_test():
@@ -49,11 +50,13 @@ def run_image_presentation_test():
         with open(test_file, "r", encoding="utf-8") as f:
             markdown_content = f.read()
 
-        # Create presentation from enhanced markdown
-        print("\n🏗️ Creating presentation with image support...")
-        result = deck.create_presentation_from_markdown(
-            markdown_content, fileName="enhanced_image_test", templateName="default"
-        )
+        # Convert markdown to canonical JSON format
+        print("\n🔄 Converting markdown to canonical JSON...")
+        canonical_data = markdown_to_canonical_json(markdown_content)
+        
+        # Create presentation from canonical JSON
+        print("🏗️ Creating presentation with image support...")
+        result = deck.create_presentation(canonical_data, "enhanced_image_test")
 
         print(f"✅ {result}")
 
