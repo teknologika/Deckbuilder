@@ -182,3 +182,40 @@ class PlaceKitten:
             results.append(result)
 
         return results
+
+    def is_available(self) -> bool:
+        """
+        Check if PlaceKitten service is available.
+
+        Returns:
+            True if available images exist
+        """
+        return len(self._get_available_images()) > 0
+
+    def get_fallback_info(self, dimensions: tuple, context: dict = None) -> dict:
+        """
+        Get fallback image information for given dimensions.
+
+        Args:
+            dimensions: Tuple of (width, height)
+            context: Optional context dictionary (layout, slide_index, etc.)
+
+        Returns:
+            Dictionary with fallback image information
+        """
+        width, height = dimensions
+        available_images = self._get_available_images()
+
+        return {
+            "available": len(available_images) > 0,
+            "image_id": 1 if available_images else None,
+            "dimensions": {"width": width, "height": height},
+            "styling": {
+                "base_filter": "grayscale",
+                "contrast": 95,
+                "brightness": 105,
+                "smart_crop_strategy": "rule_of_thirds",
+                "face_detection": True,
+                "professional_mode": True,
+            },
+        }

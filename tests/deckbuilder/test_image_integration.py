@@ -207,28 +207,25 @@ class TestJSONImageIntegration:
         """Test JSON input with image_1 field."""
         deck = deckbuilder_with_env
 
+        # Convert to canonical JSON format
         json_data = {
-            "presentation": {
-                "slides": [
-                    {
-                        "type": "Picture with Caption",
+            "slides": [
+                {
+                    "layout": "Picture with Caption",
+                    "placeholders": {
                         "title": "JSON Image Test",
                         "image_1": "src/placekitten/images/ACuteKitten-1.png",
                         "text_caption_1": "JSON image caption",
-                    }
-                ]
-            }
+                    },
+                    "content": [],
+                }
+            ]
         }
 
-        # Create presentation and add slides
-        deck.create_presentation("default", "test_json_image")
-        result = deck.add_slide_from_json(json_data)
+        # Create presentation using canonical JSON
+        result = deck.create_presentation(json_data, fileName="test_json_image")
 
-        assert "Successfully added slide(s)" in result
-
-        # Save presentation
-        save_result = deck.write_presentation("test_json_image")
-        assert "Successfully created presentation" in save_result
+        assert "Successfully created presentation" in result
 
         # Check output file
         output_files = list(test_output_dir.glob("*.pptx"))
@@ -240,26 +237,25 @@ class TestJSONImageIntegration:
         """Test JSON input with missing image (fallback)."""
         deck = deckbuilder_with_env
 
+        # Convert to canonical JSON format
         json_data = {
-            "presentation": {
-                "slides": [
-                    {
-                        "type": "Picture with Caption",
+            "slides": [
+                {
+                    "layout": "Picture with Caption",
+                    "placeholders": {
                         "title": "JSON Fallback Test",
                         "image_1": "assets/missing_image.png",
                         "text_caption_1": "Fallback caption",
-                    }
-                ]
-            }
+                    },
+                    "content": [],
+                }
+            ]
         }
 
-        deck.create_presentation("default", "test_json_fallback")
-        result = deck.add_slide_from_json(json_data)
+        # Create presentation using canonical JSON
+        result = deck.create_presentation(json_data, fileName="test_json_fallback")
 
-        assert "Successfully added slide(s)" in result
-
-        save_result = deck.write_presentation("test_json_fallback")
-        assert "Successfully created presentation" in save_result
+        assert "Successfully created presentation" in result
 
 
 class TestImageProcessingFeatures:

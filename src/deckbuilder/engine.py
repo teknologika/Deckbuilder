@@ -1,12 +1,20 @@
 # import json
+import sys
 from datetime import datetime
+from pathlib import Path
 from typing import Dict, Any
+
 from pptx import Presentation
 
 from .path_manager import path_manager, PathManager
 from .presentation_builder import PresentationBuilder
 from .content_processor import ContentProcessor
 from .template_manager import TemplateManager
+from .image_handler import ImageHandler
+
+# Import PlaceKitten from parent directory
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from placekitten import PlaceKitten  # noqa: E402
 
 
 def singleton(cls):
@@ -44,13 +52,24 @@ class Deckbuilder:
         self.content_processor = ContentProcessor()
         self.presentation_builder = PresentationBuilder(self._path_manager)
 
+        # Initialize image-related components
+        self.image_handler = ImageHandler()
+        self.placekitten = PlaceKitten()
+
         # Ensure default template exists in templates folder
         template_name = self._path_manager.get_template_name() or "default"
         self.template_manager.check_template_exists(template_name)
 
+        # Store template info for tests
+        self.template_name = template_name
+        self.template_path, _ = self.template_manager.prepare_template(template_name)
+
     def _initialize_presentation(self, templateName: str = "default") -> None:
         # Prepare template and get path and layout mapping
         template_path, layout_mapping = self.template_manager.prepare_template(templateName)
+
+        # Store template path for tests
+        self.template_path = template_path
 
         # Update components with layout mapping
         self.content_processor.layout_mapping = layout_mapping
