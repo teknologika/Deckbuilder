@@ -169,9 +169,10 @@ class TestActualSlideContentValidation:
                     "layout": "Title and Content",
                     "placeholders": {
                         "title": "CONTENT_TITLE_UNIQUE_789",
-                        "content": "TEST_CONTENT_UNIQUE_ABC",
                     },
-                    "content": [],
+                    "content": [
+                        {"type": "paragraph", "text": "TEST_CONTENT_UNIQUE_ABC"}
+                    ],
                 },
             ]
         }
