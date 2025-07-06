@@ -132,7 +132,7 @@ class DeckbuilderCLI:
         try:
             presentation_data = {}
             if input_path.suffix.lower() == ".md":
-                from . import converter
+                from deckbuilder import converter
                 # Process markdown file
                 content = input_path.read_text(encoding="utf-8")
                 print(f"Processing markdown file: {input_path.name}")
@@ -335,7 +335,7 @@ class DeckbuilderCLI:
             try:
                 # Try relative import first (for package usage)
                 try:
-                    from .cli_tools import DocumentationGenerator
+                    from deckbuilder.cli_tools import DocumentationGenerator
                 except ImportError:
                     # Fallback to absolute import (for direct script execution)
                     import sys
