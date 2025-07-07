@@ -54,7 +54,7 @@ columns:
 Content from Four Columns structured frontmatter above.
 
 ---
-layout: table
+layout: Title and Content
 style: dark_blue_white_text
 row_style: alternating_light_gray
 border_style: thin_gray

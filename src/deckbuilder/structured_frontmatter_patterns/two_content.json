@@ -4,13 +4,11 @@
     "yaml_pattern": {
         "layout": "Two Content",
         "title": "str",
-        "sections": [{"title": "str", "content": ["str"]}]
+        "sections": [{"content": ["str"]}]
     },
     "mapping_rules": {
         "title": "title",
-        "sections[0].title": "title_left",
         "sections[0].content": "content_left",
-        "sections[1].title": "title_right",
         "sections[1].content": "content_right"
     },
     "validation": {
@@ -18,5 +16,5 @@
         "min_sections": 2,
         "max_sections": 2
     },
-    "example": "---\n                layout: Two Content\n                title: Before and After\n                sections:\n                  - title: Current State\n                    content:\n                      - Manual processes\n                      - Time-consuming workflows\n                  - title: Future State\n                    content:\n                      - Automated systems\n                      - Streamlined operations\n                ---"
+    "example": "---\n                layout: Two Content\n                title: Before and After\n                sections:\n                  - content:\n                      - Manual processes\n                      - Time-consuming workflows\n                  - content:\n                      - Automated systems\n                      - Streamlined operations\n                ---"
 }

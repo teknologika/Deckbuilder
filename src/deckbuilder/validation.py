@@ -87,10 +87,18 @@ class PresentationValidator:
         """
         print("🔍 JSON → Template validation: Mapping alignment...")
 
+        # Debug: Show template mapping structure
+        print(f"[Validation] Template mapping loaded: {self.template_name}.json")
+        layouts = self.template_mapping.get("layouts", {})
+        print(f"[Validation] Available layouts: {list(layouts.keys())}")
+        print(f"[Validation] Validating {len(self.presentation_data.get('slides', []))} slides")
+
         # Validate each slide's placeholders can be mapped
         for slide_idx, slide_data in enumerate(self.presentation_data.get("slides", [])):
             slide_num = slide_idx + 1
             layout_name = slide_data.get("layout")
+
+            print(f"[Validation] Slide {slide_num}: Checking layout '{layout_name}'")
 
             if not layout_name:
                 raise ValidationError(
@@ -102,11 +110,18 @@ class PresentationValidator:
             layouts = self.template_mapping.get("layouts", {})
             if layout_name not in layouts:
                 available_layouts = list(layouts.keys())
+                print(f"[Validation] ERROR: Layout '{layout_name}' not found in template mapping")
                 raise ValidationError(
                     f"Slide {slide_num}: Unknown layout '{layout_name}'\n"
                     f"Available layouts: {', '.join(available_layouts)}\n"
                     f"Fix: Use one of the available layouts or update template mapping"
                 )
+
+            # Show slide content fields for debugging
+            placeholders = slide_data.get("placeholders", {})
+            content_blocks = slide_data.get("content", [])
+            print(f"[Validation]   Placeholder fields: {list(placeholders.keys())}")
+            print(f"[Validation]   Content blocks: {len(content_blocks)}")
 
             # Validate placeholder mappings
             self._validate_slide_placeholders(slide_num, slide_data, layout_name)
@@ -120,25 +135,35 @@ class PresentationValidator:
         layout_info = self.template_mapping["layouts"][layout_name]
         placeholder_mappings = layout_info.get("placeholders", {})
 
+        print(f"[Validation]   Template placeholders for '{layout_name}': {placeholder_mappings}")
+
         # Create reverse mapping: field_name -> placeholder_index
         field_to_index = {}
         for placeholder_idx, field_name in placeholder_mappings.items():
             field_to_index[field_name] = int(placeholder_idx)
 
+        print(f"[Validation]   Field-to-index mapping: {field_to_index}")
+
         # Check all placeholder fields in slide data
         placeholders = slide_data.get("placeholders", {})
         unmapped_fields = []
+        mapped_fields = []
 
         for field_name in placeholders.keys():
             if field_name in ["style"]:  # Skip non-content fields
                 continue
 
             # Check if field can be resolved
-            if not self._can_resolve_field_name(field_name, field_to_index):
+            if self._can_resolve_field_name(field_name, field_to_index):
+                mapped_fields.append(field_name)
+                print(f"[Validation]     ✓ '{field_name}' can be mapped")
+            else:
                 unmapped_fields.append(field_name)
+                print(f"[Validation]     ✗ '{field_name}' cannot be mapped")
 
         if unmapped_fields:
             available_fields = list(field_to_index.keys())
+            print(f"[Validation] ERROR: Unmapped fields found for slide {slide_num}")
             raise ValidationError(
                 f"Slide {slide_num} ({layout_name}): Cannot map placeholder fields: {', '.join(unmapped_fields)}\n"
                 f"Available template fields: {', '.join(available_fields)}\n"
@@ -170,6 +195,7 @@ class PresentationValidator:
         Raises ValidationError if generated content doesn't match specification.
         """
         print("🔍 Post-generation validation: PPTX ↔ JSON verification...")
+        print(f"[Validation] Loading generated PPTX: {pptx_file_path}")
 
         if not Path(pptx_file_path).exists():
             raise ValidationError(f"Generated PPTX file not found: {pptx_file_path}")
@@ -181,6 +207,8 @@ class PresentationValidator:
         expected_slides = len(self.presentation_data.get("slides", []))
         actual_slides = len(prs.slides)
 
+        print(f"[Validation] Slide count check: expected={expected_slides}, actual={actual_slides}")
+
         if actual_slides != expected_slides:
             raise ValidationError(
                 f"Slide count mismatch: expected {expected_slides}, got {actual_slides}\n"
@@ -189,12 +217,20 @@ class PresentationValidator:
 
         # Validate each slide content
         validation_errors = []
+        print(f"[Validation] Validating content for {actual_slides} slides...")
+
         for slide_idx, (slide, slide_spec) in enumerate(
             zip(prs.slides, self.presentation_data["slides"])
         ):
+            slide_num = slide_idx + 1
+            layout_name = slide_spec.get("layout", "unknown")
+            print(f"[Validation] Slide {slide_num} ({layout_name}): Starting content validation")
+
             try:
-                self._validate_slide_content(slide_idx + 1, slide, slide_spec)
+                self._validate_slide_content(slide_num, slide, slide_spec)
+                print(f"[Validation] Slide {slide_num}: ✓ Content validation passed")
             except ValidationError as e:
+                print(f"[Validation] Slide {slide_num}: ✗ Content validation failed")
                 validation_errors.append(str(e))
 
         if validation_errors:
@@ -228,41 +264,75 @@ class PresentationValidator:
         placeholders_spec = slide_spec.get("placeholders", {})
         layout_name = slide_spec["layout"]
 
+        print(f"[Validation]   Expected placeholders: {list(placeholders_spec.keys())}")
+
         # Get actual placeholder content
         actual_content = {}
+        all_placeholders = {}  # Track all placeholders for debugging
+
         for shape in slide.shapes:
             try:
                 if hasattr(shape, "placeholder_format") and shape.placeholder_format:
                     ph_type = shape.placeholder_format.type
                     ph_idx = shape.placeholder_format.idx
+                    try:
+                        ph_name = getattr(shape.element.nvSpPr.cNvPr, "name", "unnamed")
+                    except AttributeError:
+                        ph_name = "unnamed"
 
                     content = self._extract_shape_text(shape)
+                    semantic_type = self._get_semantic_type(ph_type)
+
+                    # Track all placeholders
+                    all_placeholders[f"{semantic_type}_{ph_idx}"] = {
+                        "content": content,
+                        "name": ph_name,
+                        "has_content": bool(content.strip()),
+                    }
+
                     if content.strip():  # Only count non-empty content
-                        semantic_type = self._get_semantic_type(ph_type)
                         actual_content[f"{semantic_type}_{ph_idx}"] = content
             except ValueError:
                 continue
 
+        print("[Validation]   Found placeholders in slide:")
+        for ph_key, ph_info in all_placeholders.items():
+            status = "✓ HAS CONTENT" if ph_info["has_content"] else "✗ EMPTY"
+            print(f"[Validation]     {ph_key} ('{ph_info['name']}'): {status}")
+            if ph_info["has_content"]:
+                print(
+                    f"[Validation]       Content: '{ph_info['content'][:50]}{'...' if len(ph_info['content']) > 50 else ''}'"
+                )
+
+        print(f"[Validation]   Non-empty placeholders: {list(actual_content.keys())}")
+
         # Check critical fields that should have content
         critical_missing = []
+        print("[Validation]   Checking critical field mappings:")
 
         for field_name, expected_content in placeholders_spec.items():
             if field_name in ["style"]:  # Skip non-content fields
                 continue
 
             if not expected_content or str(expected_content).strip() == "":
+                print(f"[Validation]     '{field_name}': SKIPPED (empty expected content)")
                 continue  # Skip empty expected content
 
             # Check if this field has corresponding content in PPTX
             found_content = False
             expected_clean = self._strip_formatting_markers(str(expected_content))
+            print(
+                f"[Validation]     '{field_name}': Looking for '{expected_clean[:30]}{'...' if len(expected_clean) > 30 else ''}'"
+            )
 
-            for _, actual_text in actual_content.items():
+            for ph_key, actual_text in actual_content.items():
                 if expected_clean.lower() in actual_text.lower():
                     found_content = True
+                    print(f"[Validation]       ✓ FOUND in {ph_key}")
                     break
 
             if not found_content:
+                print("[Validation]       ✗ NOT FOUND in any placeholder")
                 critical_missing.append(f"{field_name} (expected: '{expected_clean[:30]}...')")
 
         # Special validation for vertical layouts
@@ -282,7 +352,12 @@ class PresentationValidator:
         """Validate that content blocks are properly processed."""
         expected_content_blocks = slide_spec.get("content", [])
 
+        print(
+            f"[Validation]   Content blocks validation: {len(expected_content_blocks)} blocks expected"
+        )
+
         if not expected_content_blocks:
+            print("[Validation]     No content blocks to validate")
             return  # No content blocks expected
 
         # Check for tables
@@ -291,7 +366,12 @@ class PresentationValidator:
         )
         actual_tables = sum(1 for shape in slide.shapes if hasattr(shape, "table"))
 
+        print(
+            f"[Validation]     Table validation: expected={expected_tables}, actual={actual_tables}"
+        )
+
         if expected_tables > 0 and actual_tables == 0:
+            print("[Validation]     ✗ Table content missing")
             raise ValidationError(
                 f"Slide {slide_num}: Expected {expected_tables} table(s), found 0"
             )
@@ -303,6 +383,8 @@ class PresentationValidator:
             if block.get("type") != "table" and block.get("text")
         ]
 
+        print(f"[Validation]     Text content blocks to validate: {len(content_blocks_text)}")
+
         if content_blocks_text:
             found_content_text = []
             for shape in slide.shapes:
@@ -310,21 +392,34 @@ class PresentationValidator:
                 if text:
                     found_content_text.append(text)
 
+            print(f"[Validation]     Actual text content found in {len(found_content_text)} shapes")
+
             # Check if key content from blocks appears somewhere in slide
             missing_content = []
-            for expected_text in content_blocks_text:
+            for i, expected_text in enumerate(content_blocks_text):
                 expected_clean = self._strip_formatting_markers(expected_text)
+                print(
+                    f"[Validation]       Block {i + 1}: Looking for '{expected_clean[:30]}{'...' if len(expected_clean) > 30 else ''}'"
+                )
+
                 found = any(
                     expected_clean.lower() in actual_text.lower()
                     for actual_text in found_content_text
                 )
-                if not found:
+
+                if found:
+                    print("[Validation]         ✓ FOUND in slide content")
+                else:
+                    print("[Validation]         ✗ NOT FOUND in slide content")
                     missing_content.append(expected_clean[:30] + "...")
 
             if missing_content:
+                print("[Validation]     ✗ Missing content blocks detected")
                 raise ValidationError(
                     f"Slide {slide_num}: Missing content blocks: {', '.join(missing_content)}"
                 )
+            else:
+                print("[Validation]     ✓ All content blocks found")
 
     def _extract_shape_text(self, shape) -> str:
         """Extract all text from a shape."""

@@ -5,8 +5,14 @@
         "layout": "Comparison",
         "title": "str",
         "comparison": {
-            "left": {"title": "str", "content": "str"},
-            "right": {"title": "str", "content": "str"}
+            "left": {
+                "title": "str",
+                "content": "str"
+            },
+            "right": {
+                "title": "str",
+                "content": "str"
+            }
         }
     },
     "mapping_rules": {
@@ -17,8 +23,14 @@
         "comparison.right.content": "content_right"
     },
     "validation": {
-        "required_fields": ["title", "comparison"],
-        "required_comparison_fields": ["left", "right"]
+        "required_fields": [
+            "title",
+            "comparison"
+        ],
+        "required_comparison_fields": [
+            "left",
+            "right"
+        ]
     },
     "example": "---\nlayout: Comparison\ntitle: Solution Analysis\ncomparison:\n  left:\n    title: Traditional Approach\n    content: Proven reliability with established workflows\n  right:\n    title: Modern Solution\n    content: Advanced features with improved efficiency\n---"
 }

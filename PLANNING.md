@@ -182,6 +182,15 @@ This layered approach enables the content-first methodology while preserving the
 - **No regression tolerance**: Layout fixes cannot break other layouts
 - **Golden file compliance**: 100% validation success rate on example files required
 
+### 3. Content Placement Architecture and Debugging
+- **Enhanced debugging pipeline**: Comprehensive logging throughout content placement process
+- **Placeholder resolution transparency**: Clear visibility into field-to-placeholder mapping attempts
+- **Template mapping verification**: Debug output shows template lookups and semantic detection
+- **Content processing visibility**: Detailed logs of content block processing and conflicts
+- **Validation debugging**: Specific error messages with actual vs. expected content comparison
+- **Systematic placeholder detection**: Index-based mapping with semantic fallback
+- **Content flow debugging**: Track content from input through processing to final placement
+
 ### 3. Modular Architecture
 - **Maximum file size: 500 lines of code**
 - Clear separation of concerns between components
@@ -211,7 +220,10 @@ This layered approach enables the content-first methodology while preserving the
   - `optimize_content_for_layout()` - Content optimization and YAML generation
 
 ### 2. Presentation Engine (`/src/deckbuilder/`)
-- **engine.py**: Core PowerPoint generation using python-pptx
+- **engine.py**: Core PowerPoint generation using python-pptx with built-in validation
+- **slide_builder.py**: Advanced content placement logic with enhanced debugging
+- **content_formatter.py**: Content block processing with detailed placement tracking
+- **validation.py**: Three-stage validation system (Markdown→JSON→Template→PPTX)
 - **structured_frontmatter.py**: YAML → JSON → PowerPoint conversion
 - **placeholder_types.py**: Template placeholder detection and mapping
 - **table_styles.py**: Professional table formatting system

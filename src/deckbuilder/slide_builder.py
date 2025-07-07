@@ -150,7 +150,10 @@ class SlideBuilder:
                 descriptive_name = placeholder_mappings[placeholder_idx]
                 try:
                     # Update the placeholder name
-                    placeholder.element.nvSpPr.cNvPr.name = descriptive_name
+                    try:
+                        placeholder.element.nvSpPr.cNvPr.name = descriptive_name
+                    except AttributeError:
+                        pass  # Some placeholder types don't support name changes
                 except Exception:
                     # Fallback: some placeholder types might not allow name changes
                     pass  # nosec - Continue processing other placeholders
@@ -189,48 +192,103 @@ class SlideBuilder:
         for placeholder_idx, field_name in placeholder_mappings.items():
             field_to_index[field_name] = int(placeholder_idx)
 
+        # Enhanced debugging: Show all available placeholders and template mapping
+        print(f"Layout '{layout_name}' - Template Mapping Analysis:")
+        print(f"  Available placeholders in template: {list(field_to_index.keys())}")
+
+        # Show actual PowerPoint placeholders
+        actual_placeholders = []
+        for ph in slide.placeholders:
+            ph_type = (
+                ph.placeholder_format.type.name
+                if hasattr(ph.placeholder_format.type, "name")
+                else str(ph.placeholder_format.type)
+            )
+            try:
+                ph_name = getattr(ph.element.nvSpPr.cNvPr, "name", "unnamed")
+            except AttributeError:
+                ph_name = "unnamed"
+            actual_placeholders.append(f"{ph.placeholder_format.idx}:{ph_type}({ph_name})")
+        print(f"  PowerPoint placeholders found: {actual_placeholders}")
+
         # Process each field in slide_data using semantic detection
         # For canonical JSON format, process the placeholders object if it exists
         content_data = (
             slide_data.get("placeholders", {}) if "placeholders" in slide_data else slide_data
         )
+        print(f"  Content fields to map: {list(content_data.keys())}")
+        successful_mappings = []
+        failed_mappings = []
+
         for field_name, field_value in content_data.items():
             # Skip non-content fields
             if field_name in ["type", "content", "table", "layout"]:
                 continue
 
+            print(f"    Mapping field '{field_name}' (value: {str(field_value)[:50]}...)")
+
             # Find placeholder using semantic detection
             target_placeholder = None
+            mapping_method = None
 
             # Handle title placeholders
             if field_name == "title":
+                print("      Method: Semantic title detection")
                 for placeholder in slide.placeholders:
                     if is_title_placeholder(placeholder.placeholder_format.type):
                         target_placeholder = placeholder
+                        mapping_method = (
+                            f"Semantic title (idx {placeholder.placeholder_format.idx})"
+                        )
                         break
 
             # Handle subtitle placeholders
             elif field_name == "subtitle":
+                print("      Method: Semantic subtitle detection")
                 for placeholder in slide.placeholders:
                     if is_subtitle_placeholder(placeholder.placeholder_format.type):
                         target_placeholder = placeholder
+                        mapping_method = (
+                            f"Semantic subtitle (idx {placeholder.placeholder_format.idx})"
+                        )
                         break
 
             # Handle content placeholders
             elif field_name == "content":
-                # First try to find content_1 specifically (for layouts like vertical)
-                content_1_idx = field_to_index.get("content_1")
-                if content_1_idx is not None:
-                    for placeholder in slide.placeholders:
-                        if placeholder.placeholder_format.idx == content_1_idx:
-                            target_placeholder = placeholder
-                            break
+                print("      Method: Content field resolution")
 
-                # Fallback to any content placeholder
+                # First try to find content field in template mapping
+                content_field = field_to_index.get("content")
+                if content_field is not None:
+                    print(f"        Trying template mapping 'content' -> idx {content_field}")
+                    for placeholder in slide.placeholders:
+                        if placeholder.placeholder_format.idx == content_field:
+                            target_placeholder = placeholder
+                            mapping_method = f"Template mapping content -> idx {content_field}"
+                            break
+                else:
+                    print("        No 'content' field in template mapping, trying content_1")
+                    # Fallback: try to find content_1 specifically (for layouts like vertical)
+                    content_1_idx = field_to_index.get("content_1")
+                    if content_1_idx is not None:
+                        print(f"        Trying template mapping 'content_1' -> idx {content_1_idx}")
+                        for placeholder in slide.placeholders:
+                            if placeholder.placeholder_format.idx == content_1_idx:
+                                target_placeholder = placeholder
+                                mapping_method = (
+                                    f"Template mapping content_1 -> idx {content_1_idx}"
+                                )
+                                break
+
+                # Final fallback to semantic content placeholder detection
                 if not target_placeholder:
+                    print("        Template mapping failed, trying semantic content detection")
                     for placeholder in slide.placeholders:
                         if is_content_placeholder(placeholder.placeholder_format.type):
                             target_placeholder = placeholder
+                            mapping_method = (
+                                f"Semantic content (idx {placeholder.placeholder_format.idx})"
+                            )
                             break
 
             # Handle image_path fields and image placeholder fields - find PICTURE placeholders
@@ -239,27 +297,59 @@ class SlideBuilder:
                 or field_name.endswith(".image_path")
                 or "image" in field_name.lower()
             ):
+                print("      Method: Image field detection")
                 for placeholder in slide.placeholders:
                     if placeholder.placeholder_format.type == PP_PLACEHOLDER_TYPE.PICTURE:
                         target_placeholder = placeholder
+                        mapping_method = (
+                            f"Image placeholder (idx {placeholder.placeholder_format.idx})"
+                        )
+                        print(
+                            f"        Found PICTURE placeholder at idx {placeholder.placeholder_format.idx}"
+                        )
                         break
+                if not target_placeholder:
+                    print(f"        No PICTURE placeholder found for image field '{field_name}'")
 
             # Handle other fields by checking if they match placeholder names in JSON mapping
             else:
+                print("      Method: Template mapping lookup")
                 # Try to find by exact field name match in JSON mapping
                 target_field = field_name
 
                 # Handle common field name variations - be flexible for users
-                target_field = self._resolve_field_name_variations(field_name, field_to_index)
+                resolved_field = self._resolve_field_name_variations(field_name, field_to_index)
+
+                if resolved_field != field_name:
+                    print(f"        Field name resolved: '{field_name}' -> '{resolved_field}'")
+                    target_field = resolved_field
+                else:
+                    print(f"        Using field name as-is: '{field_name}'")
 
                 if target_field in field_to_index:
                     placeholder_idx = field_to_index[target_field]
+                    print(
+                        f"        Template mapping found: '{target_field}' -> idx {placeholder_idx}"
+                    )
                     for placeholder in slide.placeholders:
                         if placeholder.placeholder_format.idx == placeholder_idx:
                             target_placeholder = placeholder
+                            mapping_method = (
+                                f"Template mapping '{target_field}' -> idx {placeholder_idx}"
+                            )
+                            print(f"        Matched placeholder at idx {placeholder_idx}")
                             break
+                    if not target_placeholder:
+                        print(
+                            f"        Template mapping failed: idx {placeholder_idx} not found in slide"
+                        )
+                else:
+                    print(f"        No template mapping found for field '{target_field}'")
 
             if target_placeholder:
+                print(f"    SUCCESS: '{field_name}' mapped using {mapping_method}")
+                successful_mappings.append(f"{field_name} -> {mapping_method}")
+
                 # Apply content based on placeholder's semantic type
                 self._apply_content_by_semantic_type(
                     target_placeholder,
@@ -269,6 +359,19 @@ class SlideBuilder:
                     content_formatter,
                     image_placeholder_handler,
                 )
+            else:
+                print(f"    FAILED: '{field_name}' could not be mapped to any placeholder")
+                failed_mappings.append(field_name)
+
+        # Summary of mapping results
+        print("  Mapping Summary:")
+        print(f"    Successful: {len(successful_mappings)} fields")
+        for mapping in successful_mappings:
+            print(f"      {mapping}")
+        if failed_mappings:
+            print(f"    Failed: {len(failed_mappings)} fields")
+            for field in failed_mappings:
+                print(f"      {field} (no suitable placeholder found)")
 
         # Process nested structures like media.image_path
         self._process_nested_image_fields(slide, slide_data, image_placeholder_handler)

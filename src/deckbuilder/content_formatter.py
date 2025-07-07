@@ -1,4 +1,3 @@
-import os
 import re
 
 try:
@@ -119,9 +118,8 @@ class ContentFormatter:
 
     def _debug_log(self, message):
         """Debug logging for content processing pipeline"""
-        # Only log if debug environment variable is set
-        if os.getenv("DECKBUILDER_DEBUG"):
-            print(f"[DECKBUILDER DEBUG] {message}")
+        # Always log for content placement debugging (not just when DECKBUILDER_DEBUG is set)
+        print(f"[ContentFormatter] {message}")
 
     def _add_rich_content_list_to_placeholder(self, text_frame, content_list):
         """Add list content with proper formatting and bullet support."""
@@ -495,8 +493,26 @@ class ContentFormatter:
 
         from .placeholder_types import is_content_placeholder, is_title_placeholder
 
-        # print(f"Processing {type(content).__name__} content")
-        # print(f"Content: {content}")
+        self._debug_log(
+            f"Processing {type(content).__name__} content with {len(content) if isinstance(content, list) else 'N/A'} blocks"
+        )
+
+        # Enhanced content analysis debugging
+        if isinstance(content, list):
+            for i, block in enumerate(content):
+                if isinstance(block, dict):
+                    block_type = block.get("type", "unknown")
+                    block_keys = list(block.keys())
+                    self._debug_log(f"  Block {i + 1}: type='{block_type}', keys={block_keys}")
+                else:
+                    self._debug_log(
+                        f"  Block {i + 1}: {type(block).__name__} = {str(block)[:50]}..."
+                    )
+        elif isinstance(content, dict):
+            content_keys = list(content.keys())
+            self._debug_log(f"  Content dict keys: {content_keys}")
+        else:
+            self._debug_log(f"  Content: {str(content)[:100]}...")
 
         # Find title placeholder to check if it needs content extracted
         title_placeholder = None
@@ -516,7 +532,9 @@ class ContentFormatter:
                         has_title_content = True
                         break
             title_needs_content = not has_title_content
-            # print(f"Title empty: {title_needs_content}")
+            self._debug_log(
+                f"Title placeholder analysis: empty={title_needs_content}, needs_content={title_needs_content}"
+            )
 
         # Extract first heading to title if needed
         processed_content = content
@@ -531,7 +549,7 @@ class ContentFormatter:
             if first_heading_idx is not None:
                 heading_block = content[first_heading_idx]
                 heading_text = heading_block.get("text", "")
-                print(f"Moving heading to title: {heading_text}")
+                self._debug_log(f"Extracting first heading to title: '{heading_text}'")
 
                 # Add heading text to title placeholder
                 p = title_placeholder.text_frame.paragraphs[0]
@@ -539,25 +557,44 @@ class ContentFormatter:
 
                 # Remove the heading from content blocks
                 processed_content = content[:first_heading_idx] + content[first_heading_idx + 1 :]
-                print(f"Content blocks remaining: {len(processed_content)}")
+                self._debug_log(
+                    f"Content blocks remaining after title extraction: {len(processed_content)}"
+                )
 
         # Find content placeholders using semantic detection
         content_placeholders = []
+        self._debug_log("Analyzing slide placeholders for content placement:")
+
         for shape in slide.placeholders:
             placeholder_type = shape.placeholder_format.type
-            print(
-                f"Placeholder {shape.placeholder_format.idx}: {placeholder_type.name if hasattr(placeholder_type, 'name') else placeholder_type}"
+            try:
+                placeholder_name = getattr(shape.element.nvSpPr.cNvPr, "name", "unnamed")
+            except AttributeError:
+                placeholder_name = "unnamed"
+            type_name = (
+                placeholder_type.name
+                if hasattr(placeholder_type, "name")
+                else str(placeholder_type)
             )
+
+            self._debug_log(
+                f"  Placeholder {shape.placeholder_format.idx}: {type_name} ('{placeholder_name}')"
+            )
+
             if is_content_placeholder(placeholder_type):
                 # Skip if converted to image placeholder
                 if hasattr(shape, "text_frame") and shape.text_frame is not None:
                     content_placeholders.append(shape)
-                    print(f"  Using placeholder {shape.placeholder_format.idx}")
+                    self._debug_log("    -> SELECTED for content placement")
+                else:
+                    self._debug_log("    -> SKIPPED (no text_frame)")
+            else:
+                self._debug_log("    -> SKIPPED (not content type)")
 
-        print(f"Found {len(content_placeholders)} content placeholders")
+        self._debug_log(f"Content placeholder summary: {len(content_placeholders)} selected")
 
         if not content_placeholders:
-            print("Warning: No content placeholders found in slide")
+            self._debug_log("No content placeholders found - trying fallback options")
             # For slides without content placeholders (e.g., Title Slide), try to use other placeholder types
             from .placeholder_types import is_subtitle_placeholder
 
@@ -575,17 +612,21 @@ class ContentFormatter:
 
                         if not has_existing_content:
                             subtitle_placeholders.append(shape)
-                            print(f"  Fallback to subtitle {shape.placeholder_format.idx}")
+                            self._debug_log(
+                                f"  Fallback option: subtitle placeholder {shape.placeholder_format.idx}"
+                            )
                         else:
-                            print(
-                                f"  Subtitle {shape.placeholder_format.idx} has content, skipping"
+                            self._debug_log(
+                                f"  Subtitle {shape.placeholder_format.idx} has existing content, skipping"
                             )
 
             if subtitle_placeholders:
-                print("  Using subtitle as content fallback")
+                self._debug_log("Using subtitle placeholders as content fallback")
                 content_placeholders = subtitle_placeholders
             else:
-                print("Warning: No suitable placeholders found for content")
+                self._debug_log(
+                    "CRITICAL: No suitable placeholders found for content - content will be lost!"
+                )
                 return
 
         # Expect only canonical JSON content blocks
@@ -597,18 +638,23 @@ class ContentFormatter:
                         f"Content item {i} must be canonical JSON block with 'type' field. Got: {item}"
                     )
 
-            print("Processing content blocks")
+            self._debug_log("Starting canonical content block processing")
             self._process_canonical_content_blocks(content_placeholders, processed_content)
         elif processed_content:
-            print(
-                f"Warning: Expected list of canonical JSON content blocks, got: {type(processed_content)}"
+            self._debug_log(
+                f"WARNING: Expected list of canonical JSON content blocks, got: {type(processed_content)}"
             )
+            self._debug_log(f"Content value: {str(processed_content)[:200]}...")
         else:
-            pass  # No content blocks remaining
+            self._debug_log("No content blocks to process")
 
     def _process_canonical_content_blocks(self, content_placeholders, content_blocks):
         """Process canonical JSON content blocks like {"type": "paragraph", "text": "..."}"""
-        print(f"Processing {len(content_blocks)} content blocks")
+        self._debug_log(f"Processing {len(content_blocks)} canonical content blocks")
+
+        # Show content block types for debugging
+        block_types = [block.get("type", "unknown") for block in content_blocks]
+        self._debug_log(f"Block types: {block_types}")
 
         # Use first content placeholder for now
         # TODO: Support multi-placeholder layouts (Two Content, Four Columns)
@@ -616,12 +662,21 @@ class ContentFormatter:
         text_frame = placeholder.text_frame
         text_frame.clear()
 
-        print(f"  Using placeholder {placeholder.placeholder_format.idx}")
+        try:
+            placeholder_name = getattr(placeholder.element.nvSpPr.cNvPr, "name", "unnamed")
+        except AttributeError:
+            placeholder_name = "unnamed"
+        self._debug_log(
+            f"Using placeholder {placeholder.placeholder_format.idx} ('{placeholder_name}') for content"
+        )
 
         first_block = True
         for i, block in enumerate(content_blocks):
             block_type = block.get("type", "")
-            print(f"  Block {i + 1}: {block_type}")
+            block_text = block.get("text", "")
+            self._debug_log(
+                f"  Block {i + 1}/{len(content_blocks)}: type='{block_type}', text_length={len(block_text)}"
+            )
 
             if block_type == "paragraph":
                 if first_block:
@@ -638,7 +693,9 @@ class ContentFormatter:
                 else:
                     p = text_frame.add_paragraph()
                 text_content = block.get("text", "")
-                print(f"    Heading: {text_content}")
+                self._debug_log(
+                    f"    Adding heading: '{text_content[:50]}{'...' if len(text_content) > 50 else ''}'"
+                )
                 self.apply_inline_formatting(text_content, p)
                 # Make headings bold
                 for run in p.runs:
@@ -646,7 +703,7 @@ class ContentFormatter:
 
             elif block_type == "bullets":
                 items = block.get("items", [])
-                print(f"    Bullets: {len(items)} items")
+                self._debug_log(f"    Adding bullet list: {len(items)} items")
                 for item in items:
                     if first_block:
                         p = text_frame.paragraphs[0]
@@ -668,7 +725,7 @@ class ContentFormatter:
 
             elif block_type == "columns":
                 columns = block.get("columns", [])
-                print(f"    Distributing {len(columns)} columns")
+                self._debug_log(f"    Processing multi-column layout: {len(columns)} columns")
 
                 # Distribute columns across available content placeholders
                 for col_idx, column in enumerate(columns):
@@ -677,7 +734,7 @@ class ContentFormatter:
                         text_frame = placeholder.text_frame
                         text_frame.clear()
 
-                        print(
+                        self._debug_log(
                             f"      Column {col_idx + 1} -> placeholder {placeholder.placeholder_format.idx}"
                         )
 
@@ -695,9 +752,7 @@ class ContentFormatter:
                                 else:
                                     p = text_frame.add_paragraph()
 
-                                print(
-                                    # f"        {item_type}: {item_text[:30]}..."
-                                )
+                                # self._debug_log(f"        {item_type}: {item_text[:30]}...")
                                 self.apply_inline_formatting(item_text, p)
 
                                 # Apply type-specific formatting
@@ -705,24 +760,26 @@ class ContentFormatter:
                                     for run in p.runs:
                                         run.font.bold = True
                     else:
-                        print(f"      Column {col_idx + 1}: no placeholder")
+                        self._debug_log(
+                            f"      Column {col_idx + 1}: no available placeholder (only {len(content_placeholders)} total)"
+                        )
 
                 # Mark that we've processed multi-column content, don't process individual blocks
                 return
 
             elif block_type == "table":
-                print("    Creating table with data")
+                self._debug_log("    Processing table content block")
                 # Get slide from content placeholders context - we know the slide from the calling context
                 slide = getattr(self, "_current_slide", None)
                 if slide:
                     self._create_table_in_slide(slide, placeholder, block)
                 else:
-                    print("      No slide context available, using text fallback")
+                    self._debug_log("      No slide context available, using text fallback")
                     self._fallback_table_as_text(placeholder, block)
 
             else:
                 # Unknown block type - treat as paragraph
-                print(f"    Unknown block type '{block_type}', using as paragraph")
+                self._debug_log(f"    Unknown block type '{block_type}', treating as paragraph")
                 if first_block:
                     p = text_frame.paragraphs[0]
                 else:
