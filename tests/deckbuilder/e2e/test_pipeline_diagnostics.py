@@ -137,7 +137,7 @@ class TestContentGenerationDiagnostics:
                 {
                     "layout": "Title Slide",
                     "placeholders": {"title": "TEST TITLE", "subtitle": "TEST SUBTITLE"},
-                    "content": []
+                    "content": [],
                 }
             ]
         }
@@ -212,11 +212,8 @@ class TestContentGenerationDiagnostics:
                     "layout": "Title and Content",
                     "placeholders": {"title": "**Bold Title** Test"},
                     "content": [
-                        {
-                            "type": "paragraph",
-                            "text": "This is *italic* and **bold** text"
-                        }
-                    ]
+                        {"type": "paragraph", "text": "This is *italic* and **bold** text"}
+                    ],
                 }
             ]
         }
@@ -302,18 +299,18 @@ class TestContentGenerationDiagnostics:
                                 {
                                     "content": [
                                         {"type": "paragraph", "text": "Left Column Item 1"},
-                                        {"type": "paragraph", "text": "Left Column Item 2"}
+                                        {"type": "paragraph", "text": "Left Column Item 2"},
                                     ]
                                 },
                                 {
                                     "content": [
                                         {"type": "paragraph", "text": "Right Column Item 1"},
-                                        {"type": "paragraph", "text": "Right Column Item 2"}
+                                        {"type": "paragraph", "text": "Right Column Item 2"},
                                     ]
-                                }
-                            ]
+                                },
+                            ],
                         }
-                    ]
+                    ],
                 }
             ]
         }

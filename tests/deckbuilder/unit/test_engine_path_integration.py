@@ -121,8 +121,8 @@ class TestEnginePathManagerIntegration:
             # Mock at the presentation builder level to focus on path management testing
             with (
                 patch("src.deckbuilder.engine.Presentation") as mock_presentation_class,
-                patch.object(engine.presentation_builder, 'add_slide') as mock_add_slide,
-                patch.object(engine, 'write_presentation') as mock_write,
+                patch.object(engine.presentation_builder, "add_slide") as mock_add_slide,
+                patch.object(engine, "write_presentation") as mock_write,
             ):
                 mock_prs = Mock()
                 mock_prs.save = Mock()
@@ -137,16 +137,12 @@ class TestEnginePathManagerIntegration:
                 # Provide minimal valid canonical JSON data
                 minimal_data = {
                     "slides": [
-                        {
-                            "layout": "Title Slide", 
-                            "placeholders": {"title": "Test"}, 
-                            "content": []
-                        }
+                        {"layout": "Title Slide", "placeholders": {"title": "Test"}, "content": []}
                     ]
                 }
                 # result = engine.create_presentation(minimal_data)  # Future: validate result
                 engine.create_presentation(minimal_data)
-                
+
                 # Verify presentation builder was called (focusing on path integration)
                 mock_add_slide.assert_called_once()
                 mock_write.assert_called_once()

@@ -89,17 +89,17 @@ class SlideBuilder:
         )
 
         # Handle content using unified processing (skip only if empty to avoid overwriting placeholders)
-        print(f"🔧 DEBUG: slide_builder processing slide_data keys: {list(slide_data.keys())}")
+        # print(f"Processing slide with: {', '.join(list(slide_data.keys()))}")
         if "content" in slide_data:
             content = slide_data["content"]
-            print(f"🔧 DEBUG: Found content: {content}")
+            print(f"Content: {len(content) if isinstance(content, list) else 'text'}")
             if content:  # Only process if non-empty
-                print("🔧 DEBUG: Processing content with unified processor")
+                print("  Processing content blocks")
                 content_formatter.add_content_to_slide(slide, content)
             else:
-                print("🔧 DEBUG: Skipping empty content")
+                pass  # Skip empty content
         else:
-            print("🔧 DEBUG: No content found in slide_data")
+            pass  # No content blocks
 
         return slide
 
@@ -218,10 +218,20 @@ class SlideBuilder:
 
             # Handle content placeholders
             elif field_name == "content":
-                for placeholder in slide.placeholders:
-                    if is_content_placeholder(placeholder.placeholder_format.type):
-                        target_placeholder = placeholder
-                        break
+                # First try to find content_1 specifically (for layouts like vertical)
+                content_1_idx = field_to_index.get("content_1")
+                if content_1_idx is not None:
+                    for placeholder in slide.placeholders:
+                        if placeholder.placeholder_format.idx == content_1_idx:
+                            target_placeholder = placeholder
+                            break
+
+                # Fallback to any content placeholder
+                if not target_placeholder:
+                    for placeholder in slide.placeholders:
+                        if is_content_placeholder(placeholder.placeholder_format.type):
+                            target_placeholder = placeholder
+                            break
 
             # Handle image_path fields and image placeholder fields - find PICTURE placeholders
             elif (
@@ -237,8 +247,13 @@ class SlideBuilder:
             # Handle other fields by checking if they match placeholder names in JSON mapping
             else:
                 # Try to find by exact field name match in JSON mapping
-                if field_name in field_to_index:
-                    placeholder_idx = field_to_index[field_name]
+                target_field = field_name
+
+                # Handle common field name variations - be flexible for users
+                target_field = self._resolve_field_name_variations(field_name, field_to_index)
+
+                if target_field in field_to_index:
+                    placeholder_idx = field_to_index[target_field]
                     for placeholder in slide.placeholders:
                         if placeholder.placeholder_format.idx == placeholder_idx:
                             target_placeholder = placeholder
@@ -257,6 +272,89 @@ class SlideBuilder:
 
         # Process nested structures like media.image_path
         self._process_nested_image_fields(slide, slide_data, image_placeholder_handler)
+
+    def _resolve_field_name_variations(self, field_name: str, field_to_index: dict) -> str:
+        """
+        Resolve field name variations to handle user flexibility.
+
+        Users shouldn't have to know exact template field names - the engine should
+        be smart enough to map common variations automatically.
+        """
+        # Return original if exact match exists
+        if field_name in field_to_index:
+            return field_name
+
+        # Common variations mapping
+        variations = {
+            # Caption variations
+            "text_caption": ["text_caption_1", "caption", "caption_1"],
+            "caption": ["text_caption_1", "text_caption", "caption_1"],
+            # Title variations
+            "title_top": ["title_top_1", "title"],
+            "title_left": ["title_left_1", "left_title", "title_col1"],
+            "title_right": ["title_right_1", "right_title", "title_col2"],
+            # Content variations
+            "content_left": ["content_left_1", "left_content", "content_col1"],
+            "content_right": ["content_right_1", "right_content", "content_col2"],
+            "content": ["content_1", "main_content", "body"],
+            # Column variations
+            "content_col1": ["content_left", "content_left_1", "col1_content"],
+            "content_col2": ["content_right", "content_right_1", "col2_content"],
+            "content_col3": ["content_col3_1", "col3_content"],
+            "content_col4": ["content_col4_1", "col4_content"],
+            "title_col1": ["title_left", "title_left_1", "col1_title"],
+            "title_col2": ["title_right", "title_right_1", "col2_title"],
+            "title_col3": ["title_col3_1", "col3_title"],
+            "title_col4": ["title_col4_1", "col4_title"],
+            # Item variations (for agenda, lists)
+            "content_item1": ["content_item1_1", "item1_content", "item_1"],
+            "content_item2": ["content_item2_1", "item2_content", "item_2"],
+            "content_item3": ["content_item3_1", "item3_content", "item_3"],
+            "content_item4": ["content_item4_1", "item4_content", "item_4"],
+            "content_item5": ["content_item5_1", "item5_content", "item_5"],
+            "content_item6": ["content_item6_1", "item6_content", "item_6"],
+            # Number variations (for agenda)
+            "number_item1": ["number_item1_1", "item1_number", "num_1"],
+            "number_item2": ["number_item2_1", "item2_number", "num_2"],
+            "number_item3": ["number_item3_1", "item3_number", "num_3"],
+            "number_item4": ["number_item4_1", "item4_number", "num_4"],
+            "number_item5": ["number_item5_1", "item5_number", "num_5"],
+            "number_item6": ["number_item6_1", "item6_number", "num_6"],
+        }
+
+        # Check if field_name has variations to try
+        if field_name in variations:
+            for variant in variations[field_name]:
+                if variant in field_to_index:
+                    return variant
+
+        # Reverse lookup - check if template has a field that maps to this user field
+        for template_field in field_to_index.keys():
+            if template_field in variations:
+                if field_name in variations[template_field]:
+                    return template_field
+
+        # Smart suffix handling - try adding/removing _1 suffix
+        if field_name.endswith("_1"):
+            base_name = field_name[:-2]
+            if base_name in field_to_index:
+                return base_name
+        else:
+            suffixed_name = field_name + "_1"
+            if suffixed_name in field_to_index:
+                return suffixed_name
+
+        # Partial matching for complex fields
+        for template_field in field_to_index.keys():
+            # Check if field names are similar (contain each other)
+            if (
+                field_name.lower() in template_field.lower()
+                or template_field.lower() in field_name.lower()
+            ):
+                return template_field
+
+        # Return original if no variations found
+        return field_name
 
     def _add_content_to_placeholders_fallback(self, slide, slide_data, content_formatter):
         """

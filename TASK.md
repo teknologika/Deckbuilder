@@ -7,22 +7,69 @@ Tasks are organized by phase and component.
 
 ---
 
-## 🚨 CURRENT PRIORITY: Content Processing Unification
+## 🚧 IN PROGRESS: Built-in End-to-End Validation System (GitHub Issue #36)
+
+### **Implement Built-in Validation System** - 🚧 IN PROGRESS 2025-07-07
+**Status**: 🚧 IN PROGRESS - Addressing layout regression issues
+**GitHub Issue**: https://github.com/teknologika/Deckbuilder/issues/36
+
+**Problem**: Placeholder mapping fixes break other layouts due to lack of systematic validation. Golden file validation shows 45.6% success rate with major issues in vertical layouts, multi-column layouts, and complex placeholders.
+
+**Implementation Plan**:
+- [x] Create `src/deckbuilder/validation.py` with PresentationValidator class
+- [x] Integrate into `src/deckbuilder/engine.py` create_presentation method  
+- [x] Pre-generation validation: JSON ↔ Template mapping alignment
+- [x] Post-generation validation: PPTX output ↔ JSON input verification
+- [x] Clear error messages for missing mappings and wrong content
+
+**Current Status**: ✅ **VALIDATION SYSTEM WORKING!**
+- Pre-generation validation successfully detected mapping issues in golden files
+- System fails fast with clear error messages and fix instructions
+- Example error caught: "Cannot map placeholder fields: number_item1_1, number_item2_1, ..."
+- Next: Fix template mappings to achieve 100% golden file validation
+
+**Success Criteria**:
+- 100% validation success rate on golden example files
+- No more ping-ponging layout fixes
+- Uniform placeholder mapping across all 20 layouts
+
+---
+
+## ✅ COMPLETED: Major Bug Fixes and Documentation (v1.0.7)
+
+### **Systemic Title Extraction Fix** - ✅ COMPLETED 2025-07-07
+**Status**: ✅ FIXED - Critical layout issue resolved
+**Impact**: All 8 affected layouts now properly display titles
+
+**Problem**: First headings in simple markdown layouts were going to content blocks instead of title placeholders, causing vertical layouts and others to show content without proper titles.
+
+**Solution Implemented**:
+- Enhanced `add_content_to_slide()` to automatically detect empty title placeholders
+- Extract first heading from content blocks and move to title placeholder
+- Remove extracted heading from content blocks to prevent duplication
+- Applied semantic placeholder detection for robust title handling
+
+**Affected Layouts Fixed**: Title and Content, Section Header, Two Content, Comparison, Content with Caption, Picture with Caption, Title and Vertical Text, Vertical Title and Text, Big Number
+
+### **Bash Completion Fix** - ✅ COMPLETED 2025-07-07
+**Status**: ✅ FIXED - Tab completion works reliably
+**Problem**: `deckbuilder create` tab completion not working for .md and .json files
+**Solution**: Replaced problematic pattern matching with explicit file filtering loop
+
+### **Comprehensive Documentation Added** - ✅ COMPLETED 2025-07-07
+**New Documentation**:
+- **docs/TemplateManagement.md**: Complete workflow for adding PowerPoint templates to Deckbuilder
+- **docs/LayoutDiscovery.md**: Multi-layered layout discovery system documentation
+- **Template mapping updates**: Updated default.json after default.pptx tweaks
+
+## 🚨 CURRENT PRIORITY: Content Processing Unification (Paused)
 
 ### **[GitHub Issue #35](https://github.com/teknologika/Deckbuilder/issues/35) - Unify content processing - eliminate artificial simple/rich distinction**
 **Added**: 2025-07-06
-**Priority**: HIGH - Affects 20+ test failures
-**Status**: 🔧 Ready for Implementation
+**Priority**: MEDIUM - Test failures may be resolved by title extraction fix
+**Status**: 🔄 Under Review - Reassess after v1.0.7 fixes
 
-**Problem**: Content processing fails due to artificial "simple" vs "rich" content distinction that doesn't exist in python-pptx.
-
-**Key Discoveries**:
-- Python-pptx has **no concept of "simple" vs "rich" content** - all text uses same hierarchy
-- Hardcoded `placeholder_format.idx == 1` fails for complex layouts (Two Content, Four Columns)
-- JSON canonical pipeline achieved 64% test reduction (56 → 20 failures)
-- Remaining 20 failures all related to content block processing
-
-**Solution**: Unified content processing using semantic placeholder detection and single text_frame → paragraphs → runs path.
+**Note**: The systemic title extraction fix in v1.0.7 may have resolved many of the content processing issues. Need to re-run tests to determine if this issue still requires separate work or if the title extraction fix addressed the underlying problems.
 
 ---
 
@@ -172,7 +219,44 @@ Tasks are organized by phase and component.
   - [ ] Implement performance benchmarking
   - [ ] Add user acceptance testing scenarios
 
-### 🚀 Next Development Phases (Current Focus)
+### 📋 New Tasks Discovered (2025-07-07)
+
+#### **Template System Enhancement**
+- [ ] **Create missing structured frontmatter patterns** - Priority: Low
+  - [ ] Add structured patterns for: Title Slide, Title and Content, Section Header
+  - [ ] Add patterns for: Title Only, Blank, Content with Caption  
+  - [ ] Add patterns for: Title and Vertical Text, Vertical Title and Text, Big Number
+  - [ ] Update pattern registry to match all 19 supported layouts
+
+#### **MCP Layout Discovery Tools** - Priority: Medium
+- [ ] **Add `get_supported_layouts()` MCP tool**
+  - [ ] Return list of all supported layouts with descriptions
+  - [ ] Include template information and total layout count
+  - [ ] Provide programmatic discovery for Claude Desktop clients
+
+- [ ] **Add `validate_layout_request()` MCP tool**
+  - [ ] Pre-validate layout requests before processing
+  - [ ] Check required fields for structured frontmatter
+  - [ ] Return detailed validation feedback and suggestions
+
+- [ ] **Add `get_layout_capabilities()` MCP tool**
+  - [ ] Document layout features and requirements
+  - [ ] Include field requirements and content type support
+  - [ ] Provide usage examples and best practices
+
+#### **Documentation & Design Review** - Priority: Low
+- [ ] **Comprehensive design and documentation review**
+  - [ ] Review all feature documentation for accuracy and completeness
+  - [ ] Ensure API documentation matches current implementation
+  - [ ] Update user guides with v1.0.7 improvements
+  - [ ] Consolidate template system documentation
+  - [ ] Review MCP tools documentation for consistency
+  - [ ] Update README.md with new documentation links
+  - [ ] Review and update all docs/* files for consistency
+  - [ ] Ensure all architectural decisions are properly documented
+  - [ ] Create unified user onboarding guide
+
+### 🚀 Next Development Phases
 
 #### JSON is King Refactoring
 - [ ] **1. Implement Canonical JSON Model:** Define and document the final JSON schema. (Partially Completed)

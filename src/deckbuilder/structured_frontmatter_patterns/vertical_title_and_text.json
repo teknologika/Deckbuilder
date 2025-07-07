@@ -1,0 +1,28 @@
+{
+    "layout_name": "Vertical Title and Text",
+    "description": "Vertical orientation title and content layout",
+    "yaml_pattern": {
+        "layout": "Vertical Title and Text",
+        "title": "str",
+        "content": "str"
+    },
+    "placeholder_mapping": {
+        "title": "title_top",
+        "content": "content"
+    },
+    "content_processing_rules": {
+        "title": {
+            "source": "yaml_title_or_first_heading",
+            "formatting": "preserve_markdown"
+        },
+        "content": {
+            "source": "yaml_content_or_remaining_blocks",
+            "formatting": "preserve_markdown"
+        }
+    },
+    "layout_intelligence": {
+        "content_type": "text_heavy",
+        "orientation": "vertical",
+        "best_for": ["detailed_explanations", "vertical_content"]
+    }
+}

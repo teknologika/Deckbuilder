@@ -13,10 +13,10 @@
     },
     "mapping_rules": {
         "title": "title",
-        "swot.strengths": "content_1",
-        "swot.weaknesses": "content_2",
-        "swot.opportunities": "content_3",
-        "swot.threats": "content_4"
+        "swot.strengths": "content_top_left",
+        "swot.weaknesses": "content_top_right",
+        "swot.opportunities": "content_bottom_left",
+        "swot.threats": "content_bottom_right"
     },
     "validation": {"required_fields": ["title", "swot"]},
     "example": "---\n                layout: SWOT Analysis\n                title: Strategic Analysis\n                swot:\n                  strengths: Strong market position\n                  weaknesses: Limited resources\n                  opportunities: New markets\n                  threats: Competition\n                ---"

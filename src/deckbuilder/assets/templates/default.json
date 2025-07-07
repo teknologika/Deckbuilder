@@ -7,229 +7,229 @@
     "Title Slide": {
       "index": 0,
       "placeholders": {
-        "0": "title_top_1",
-        "1": "subtitle_1",
-        "10": "date_footer_1",
-        "11": "footer_footer_1",
-        "12": "slide_number_footer_1"
+        "0": "title_top",
+        "1": "subtitle",
+        "10": "date_footer",
+        "11": "footer_footer",
+        "12": "slide_number_footer"
       }
     },
     "Title and Content": {
       "index": 1,
       "placeholders": {
-        "0": "title_top_1",
-        "1": "content_1",
-        "10": "date_footer_1",
-        "11": "footer_footer_1",
-        "12": "slide_number_footer_1"
+        "0": "title_top",
+        "1": "content",
+        "10": "date_footer",
+        "11": "footer_footer",
+        "12": "slide_number_footer"
       }
     },
     "Section Header": {
       "index": 2,
       "placeholders": {
-        "0": "title_top_1",
-        "1": "text_1",
-        "10": "date_footer_1",
-        "11": "footer_footer_1",
-        "12": "slide_number_footer_1"
+        "0": "title_top",
+        "1": "text",
+        "10": "date_footer",
+        "11": "footer_footer",
+        "12": "slide_number_footer"
       }
     },
     "Two Content": {
       "index": 3,
       "placeholders": {
-        "0": "title_top_1",
-        "1": "content_left_1",
-        "2": "content_right_1",
-        "10": "date_footer_1",
-        "11": "footer_footer_1",
-        "12": "slide_number_footer_1"
+        "0": "title_top",
+        "1": "content_left",
+        "2": "content_right",
+        "10": "date_footer",
+        "11": "footer_footer",
+        "12": "slide_number_footer"
       }
     },
     "Comparison": {
       "index": 4,
       "placeholders": {
-        "0": "title_top_1",
-        "1": "title_left_1",
-        "2": "content_left_1",
-        "3": "title_right_1",
-        "4": "content_right_1",
-        "10": "date_footer_1",
-        "11": "footer_footer_1",
-        "12": "slide_number_footer_1"
+        "0": "title_top",
+        "1": "title_left",
+        "2": "content_left",
+        "3": "title_right",
+        "4": "content_right",
+        "10": "date_footer",
+        "11": "footer_footer",
+        "12": "slide_number_footer"
       }
     },
     "Title Only": {
       "index": 5,
       "placeholders": {
-        "0": "title_top_1",
-        "10": "date_footer_1",
-        "11": "footer_footer_1",
-        "12": "slide_number_footer_1"
+        "0": "title_top",
+        "10": "date_footer",
+        "11": "footer_footer",
+        "12": "slide_number_footer"
       }
     },
     "Blank": {
       "index": 6,
       "placeholders": {
-        "10": "date_footer_1",
-        "11": "footer_footer_1",
-        "12": "slide_number_footer_1"
+        "10": "date_footer",
+        "11": "footer_footer",
+        "12": "slide_number_footer"
       }
     },
     "Content with Caption": {
       "index": 7,
       "placeholders": {
-        "0": "title_top_1",
-        "1": "content_1",
-        "2": "text_caption_1",
-        "10": "date_footer_1",
-        "11": "footer_footer_1",
-        "12": "slide_number_footer_1"
+        "0": "title_top",
+        "1": "content",
+        "2": "text_caption",
+        "10": "date_footer",
+        "11": "footer_footer",
+        "12": "slide_number_footer"
       }
     },
     "Picture with Caption": {
       "index": 8,
       "placeholders": {
-        "0": "title_top_1",
-        "1": "image_1",
-        "2": "text_caption_1",
-        "10": "date_footer_1",
-        "11": "footer_footer_1",
-        "12": "slide_number_footer_1"
+        "0": "title_top",
+        "1": "image",
+        "2": "text_caption",
+        "10": "date_footer",
+        "11": "footer_footer",
+        "12": "slide_number_footer"
       }
     },
     "Title and Vertical Text": {
       "index": 9,
       "placeholders": {
-        "0": "title_top_1",
-        "1": "content_1",
-        "10": "date_footer_1",
-        "11": "footer_footer_1",
-        "12": "slide_number_footer_1"
+        "0": "title_top",
+        "1": "content",
+        "10": "date_footer",
+        "11": "footer_footer",
+        "12": "slide_number_footer"
       }
     },
     "Vertical Title and Text": {
       "index": 10,
       "placeholders": {
-        "0": "title_top_1",
-        "1": "content_1",
-        "10": "date_footer_1",
-        "11": "footer_footer_1",
-        "12": "slide_number_footer_1"
+        "0": "title_top",
+        "1": "content",
+        "10": "date_footer",
+        "11": "footer_footer",
+        "12": "slide_number_footer"
       }
     },
     "Three Columns With Titles": {
       "index": 11,
       "placeholders": {
-        "0": "title_top_1",
-        "13": "title_col1_1",
-        "14": "content_col1_1",
-        "15": "title_col2_1",
-        "16": "content_col2_1",
-        "17": "title_col3_1",
-        "18": "content_col3_1",
-        "10": "date_footer_1",
-        "11": "footer_footer_1",
-        "12": "slide_number_footer_1"
+        "0": "title_top",
+        "13": "title_col1",
+        "14": "content_col1",
+        "15": "title_col2",
+        "16": "content_col2",
+        "17": "title_col3",
+        "18": "content_col3",
+        "10": "date_footer",
+        "11": "footer_footer",
+        "12": "slide_number_footer"
       }
     },
     "Three Columns": {
       "index": 12,
       "placeholders": {
-        "0": "title_top_1",
-        "14": "content_col1_1",
-        "16": "content_col2_1",
-        "18": "content_col3_1",
-        "10": "date_footer_1",
-        "11": "footer_footer_1",
-        "12": "slide_number_footer_1"
+        "0": "title_top",
+        "14": "content_col1",
+        "16": "content_col2",
+        "18": "content_col3",
+        "10": "date_footer",
+        "11": "footer_footer",
+        "12": "slide_number_footer"
       }
     },
     "Four Columns With Titles": {
       "index": 13,
       "placeholders": {
-        "0": "title_top_1",
-        "13": "title_col1_1",
-        "14": "content_col1_1",
-        "15": "title_col2_1",
-        "16": "content_col2_1",
-        "17": "title_col3_1",
-        "18": "content_col3_1",
-        "19": "title_col4_1",
-        "20": "content_col4_1",
-        "10": "date_footer_1",
-        "11": "footer_footer_1",
-        "12": "slide_number_footer_1"
+        "0": "title_top",
+        "13": "title_col1",
+        "14": "content_col1",
+        "15": "title_col2",
+        "16": "content_col2",
+        "17": "title_col3",
+        "18": "content_col3",
+        "19": "title_col4",
+        "20": "content_col4",
+        "10": "date_footer",
+        "11": "footer_footer",
+        "12": "slide_number_footer"
       }
     },
     "Four Columns": {
       "index": 14,
       "placeholders": {
-        "0": "title_top_1",
-        "14": "content_col1_1",
-        "16": "content_col2_1",
-        "18": "content_col3_1",
-        "20": "content_col4_1",
-        "10": "date_footer_1",
-        "11": "footer_footer_1",
-        "12": "slide_number_footer_1"
+        "0": "title_top",
+        "14": "content_col1",
+        "16": "content_col2",
+        "18": "content_col3",
+        "20": "content_col4",
+        "10": "date_footer",
+        "11": "footer_footer",
+        "12": "slide_number_footer"
       }
     },
     "Agenda, 6 Textboxes": {
       "index": 15,
       "placeholders": {
-        "0": "title_top_1",
-        "18": "content_item1_1",
-        "20": "content_item2_1",
-        "22": "content_item3_1",
-        "19": "content_item4_1",
-        "21": "content_item5_1",
-        "34": "content_item6_1",
-        "10": "date_footer_1",
-        "11": "footer_footer_1",
-        "12": "slide_number_footer_1"
+        "0": "title_top",
+        "18": "content_item1",
+        "20": "content_item2",
+        "22": "content_item3",
+        "19": "content_item4",
+        "21": "content_item5",
+        "34": "content_item6",
+        "10": "date_footer",
+        "11": "footer_footer",
+        "12": "slide_number_footer"
       }
     },
     "Title and 6-item Lists": {
       "index": 16,
       "placeholders": {
         "0": "slide_title",
-        "13": "Title_1",
-        "14": "Content_1",
-        "18": "Title_2",
-        "17": "Content_2",
-        "22": "Title_3",
-        "21": "Content_3",
-        "16": "Title_4",
-        "15": "Content_4",
-        "20": "Title_5",
-        "19": "Content_5",
-        "24": "Title_6",
-        "23": "Content_6",
-        "10": "date_footer_1",
-        "11": "footer_footer_1",
-        "12": "slide_number_footer_1"
+        "13": "Title1",
+        "14": "Content1",
+        "18": "Title2",
+        "17": "Content3",
+        "22": "Title3",
+        "21": "Content3",
+        "16": "Title4",
+        "15": "Content4",
+        "20": "Title5",
+        "19": "Content5",
+        "24": "Title6",
+        "23": "Content6",
+        "10": "date_footer",
+        "11": "footer_footer",
+        "12": "slide_number_footer"
       }
     },
     "Big Number": {
       "index": 17,
       "placeholders": {
-        "0": "title_top_1",
-        "1": "content_1",
-        "10": "date_footer_1",
-        "11": "footer_footer_1",
-        "12": "slide_number_footer_1"
+        "0": "title_top",
+        "1": "content",
+        "10": "date_footer",
+        "11": "footer_footer",
+        "12": "slide_number_footer"
       }
     },
     "SWOT Analysis": {
       "index": 18,
       "placeholders": {
-        "10": "date_footer_1",
-        "11": "footer_footer_1",
-        "12": "slide_number_footer_1",
-        "16": "content_16",
-        "17": "content_17",
-        "18": "content_18",
-        "19": "content_19"
+        "10": "date_footer",
+        "11": "footer_footer",
+        "12": "slide_number_footer",
+        "16": "content_top_left",
+        "17": "content_top_right",
+        "18": "content_bottom_left",
+        "19": "content_bottom_right"
       }
     }
   },

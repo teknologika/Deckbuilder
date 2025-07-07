@@ -1,7 +1,7 @@
 ---
 layout: Title Slide
 ---
-# **Deckbuilder: Intelligent PowerPoint Generation** © Bruce McLeod
+# **Deckbuilder: Intelligent PowerPoint Generation**
 ## Showcasing all ___19 layouts___ with **professional** *formatting* capabilities
 
 ---

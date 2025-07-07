@@ -490,10 +490,13 @@ class ContentFormatter:
         Uses semantic placeholder detection instead of hardcoded indices.
         Expects all content to be in canonical JSON format: [{"type": "...", "text": "..."}, ...]
         """
+        # Store slide context for table creation
+        self._current_slide = slide
+
         from .placeholder_types import is_content_placeholder, is_title_placeholder
 
-        print(f"🔧 DEBUG: add_content_to_slide called with content type: {type(content)}")
-        print(f"🔧 DEBUG: content: {content}")
+        # print(f"Processing {type(content).__name__} content")
+        # print(f"Content: {content}")
 
         # Find title placeholder to check if it needs content extracted
         title_placeholder = None
@@ -513,7 +516,7 @@ class ContentFormatter:
                         has_title_content = True
                         break
             title_needs_content = not has_title_content
-            print(f"🔧 DEBUG: Title placeholder empty: {title_needs_content}")
+            # print(f"Title empty: {title_needs_content}")
 
         # Extract first heading to title if needed
         processed_content = content
@@ -528,7 +531,7 @@ class ContentFormatter:
             if first_heading_idx is not None:
                 heading_block = content[first_heading_idx]
                 heading_text = heading_block.get("text", "")
-                print(f"🔧 DEBUG: Extracting first heading to title: '{heading_text}'")
+                print(f"Moving heading to title: {heading_text}")
 
                 # Add heading text to title placeholder
                 p = title_placeholder.text_frame.paragraphs[0]
@@ -536,26 +539,22 @@ class ContentFormatter:
 
                 # Remove the heading from content blocks
                 processed_content = content[:first_heading_idx] + content[first_heading_idx + 1 :]
-                print(
-                    f"🔧 DEBUG: Removed heading from content, {len(processed_content)} blocks remaining"
-                )
+                print(f"Content blocks remaining: {len(processed_content)}")
 
         # Find content placeholders using semantic detection
         content_placeholders = []
         for shape in slide.placeholders:
             placeholder_type = shape.placeholder_format.type
             print(
-                f"🔧 DEBUG: Found placeholder - idx: {shape.placeholder_format.idx}, type: {placeholder_type}, is_content: {is_content_placeholder(placeholder_type)}"
+                f"Placeholder {shape.placeholder_format.idx}: {placeholder_type.name if hasattr(placeholder_type, 'name') else placeholder_type}"
             )
             if is_content_placeholder(placeholder_type):
                 # Skip if converted to image placeholder
                 if hasattr(shape, "text_frame") and shape.text_frame is not None:
                     content_placeholders.append(shape)
-                    print(
-                        f"🔧 DEBUG: Added content placeholder idx {shape.placeholder_format.idx} to processing list"
-                    )
+                    print(f"  Using placeholder {shape.placeholder_format.idx}")
 
-        print(f"🔧 DEBUG: Found {len(content_placeholders)} content placeholders")
+        print(f"Found {len(content_placeholders)} content placeholders")
 
         if not content_placeholders:
             print("Warning: No content placeholders found in slide")
@@ -576,16 +575,14 @@ class ContentFormatter:
 
                         if not has_existing_content:
                             subtitle_placeholders.append(shape)
-                            print(
-                                f"🔧 DEBUG: Found empty subtitle placeholder idx {shape.placeholder_format.idx} as fallback"
-                            )
+                            print(f"  Fallback to subtitle {shape.placeholder_format.idx}")
                         else:
                             print(
-                                f"🔧 DEBUG: Subtitle placeholder idx {shape.placeholder_format.idx} already has content, skipping"
+                                f"  Subtitle {shape.placeholder_format.idx} has content, skipping"
                             )
 
             if subtitle_placeholders:
-                print("🔧 DEBUG: Using subtitle placeholder as fallback for content")
+                print("  Using subtitle as content fallback")
                 content_placeholders = subtitle_placeholders
             else:
                 print("Warning: No suitable placeholders found for content")
@@ -600,20 +597,18 @@ class ContentFormatter:
                         f"Content item {i} must be canonical JSON block with 'type' field. Got: {item}"
                     )
 
-            print("🔧 DEBUG: Processing canonical JSON content blocks")
+            print("Processing content blocks")
             self._process_canonical_content_blocks(content_placeholders, processed_content)
         elif processed_content:
             print(
                 f"Warning: Expected list of canonical JSON content blocks, got: {type(processed_content)}"
             )
         else:
-            print("🔧 DEBUG: No content blocks remaining after title extraction")
+            pass  # No content blocks remaining
 
     def _process_canonical_content_blocks(self, content_placeholders, content_blocks):
         """Process canonical JSON content blocks like {"type": "paragraph", "text": "..."}"""
-        print(
-            f"🔧 DEBUG: _process_canonical_content_blocks called with {len(content_blocks)} blocks"
-        )
+        print(f"Processing {len(content_blocks)} content blocks")
 
         # Use first content placeholder for now
         # TODO: Support multi-placeholder layouts (Two Content, Four Columns)
@@ -621,12 +616,12 @@ class ContentFormatter:
         text_frame = placeholder.text_frame
         text_frame.clear()
 
-        print(f"🔧 DEBUG: Using placeholder idx {placeholder.placeholder_format.idx} for content")
+        print(f"  Using placeholder {placeholder.placeholder_format.idx}")
 
         first_block = True
         for i, block in enumerate(content_blocks):
             block_type = block.get("type", "")
-            print(f"🔧 DEBUG: Processing block {i}: type={block_type}, block={block}")
+            print(f"  Block {i + 1}: {block_type}")
 
             if block_type == "paragraph":
                 if first_block:
@@ -634,7 +629,7 @@ class ContentFormatter:
                 else:
                     p = text_frame.add_paragraph()
                 text_content = block.get("text", "")
-                print(f"🔧 DEBUG: Adding paragraph text: '{text_content}'")
+                # print(f"    Paragraph: {text_content[:50]}...")
                 self.apply_inline_formatting(text_content, p)
 
             elif block_type == "heading":
@@ -643,7 +638,7 @@ class ContentFormatter:
                 else:
                     p = text_frame.add_paragraph()
                 text_content = block.get("text", "")
-                print(f"🔧 DEBUG: Adding heading text: '{text_content}'")
+                print(f"    Heading: {text_content}")
                 self.apply_inline_formatting(text_content, p)
                 # Make headings bold
                 for run in p.runs:
@@ -651,7 +646,7 @@ class ContentFormatter:
 
             elif block_type == "bullets":
                 items = block.get("items", [])
-                print(f"🔧 DEBUG: Adding {len(items)} bullet items")
+                print(f"    Bullets: {len(items)} items")
                 for item in items:
                     if first_block:
                         p = text_frame.paragraphs[0]
@@ -668,14 +663,12 @@ class ContentFormatter:
                         level = 0
 
                     p.level = level
-                    print(f"🔧 DEBUG: Adding bullet: '{text}' at level {level}")
+                    # print(f"      - {text[:30]}...")
                     self.apply_inline_formatting(text, p)
 
             elif block_type == "columns":
                 columns = block.get("columns", [])
-                print(
-                    f"🔧 DEBUG: Processing {len(columns)} columns across {len(content_placeholders)} placeholders"
-                )
+                print(f"    Distributing {len(columns)} columns")
 
                 # Distribute columns across available content placeholders
                 for col_idx, column in enumerate(columns):
@@ -685,7 +678,7 @@ class ContentFormatter:
                         text_frame.clear()
 
                         print(
-                            f"🔧 DEBUG: Processing column {col_idx} in placeholder idx {placeholder.placeholder_format.idx}"
+                            f"      Column {col_idx + 1} -> placeholder {placeholder.placeholder_format.idx}"
                         )
 
                         # Process column content
@@ -703,7 +696,7 @@ class ContentFormatter:
                                     p = text_frame.add_paragraph()
 
                                 print(
-                                    f"🔧 DEBUG: Adding {item_type} to column {col_idx}: '{item_text}'"
+                                    # f"        {item_type}: {item_text[:30]}..."
                                 )
                                 self.apply_inline_formatting(item_text, p)
 
@@ -712,20 +705,30 @@ class ContentFormatter:
                                     for run in p.runs:
                                         run.font.bold = True
                     else:
-                        print(f"🔧 DEBUG: No placeholder available for column {col_idx}")
+                        print(f"      Column {col_idx + 1}: no placeholder")
 
                 # Mark that we've processed multi-column content, don't process individual blocks
                 return
 
+            elif block_type == "table":
+                print("    Creating table with data")
+                # Get slide from content placeholders context - we know the slide from the calling context
+                slide = getattr(self, "_current_slide", None)
+                if slide:
+                    self._create_table_in_slide(slide, placeholder, block)
+                else:
+                    print("      No slide context available, using text fallback")
+                    self._fallback_table_as_text(placeholder, block)
+
             else:
                 # Unknown block type - treat as paragraph
-                print(f"🔧 DEBUG: Unknown block type '{block_type}', treating as paragraph")
+                print(f"    Unknown block type '{block_type}', using as paragraph")
                 if first_block:
                     p = text_frame.paragraphs[0]
                 else:
                     p = text_frame.add_paragraph()
                 text = str(block.get("text", block))
-                print(f"🔧 DEBUG: Adding unknown block text: '{text}'")
+                # print(f"      Text: {text[:50]}...")
                 self.apply_inline_formatting(text, p)
 
             first_block = False
@@ -788,19 +791,19 @@ class ContentFormatter:
                     # Convert legacy string to canonical paragraph block
                     canonical_content.append({"type": "paragraph", "text": item})
                     print(
-                        "🔧 DEBUG: auto_parse_json_formatting converted legacy string to canonical paragraph"
+                        # "Converted string to paragraph"
                     )
                 elif isinstance(item, dict) and "type" in item:
                     # Already canonical JSON format - keep as is
                     canonical_content.append(item)
                     print(
-                        f"🔧 DEBUG: auto_parse_json_formatting preserved canonical JSON block: {item.get('type')}"
+                        # f"Preserved {item.get('type')} block"
                     )
                 else:
                     # Unknown format - convert to paragraph
                     canonical_content.append({"type": "paragraph", "text": str(item)})
                     print(
-                        f"🔧 DEBUG: auto_parse_json_formatting converted unknown item to paragraph: {item}"
+                        # f"Converted unknown item to paragraph: {item}"
                     )
 
             # Replace with canonical format
@@ -833,3 +836,109 @@ class ContentFormatter:
 
         # Note: Removed complex formatting preprocessing - formatting now handled at render time
         return processed_data
+
+    def _create_table_in_slide(self, slide, placeholder, table_block):
+        """
+        Create a PowerPoint table in the given slide, replacing the placeholder.
+
+        Args:
+            slide: PowerPoint slide object
+            placeholder: PowerPoint placeholder shape to replace
+            table_block: Table block with header and rows data
+        """
+        from pptx.util import Inches  # noqa: F401
+
+        try:
+            # Extract table data from block
+            header = table_block.get("header", [])
+            rows = table_block.get("rows", [])
+
+            if not header and not rows:
+                print("      No table data found")
+                return
+
+            # Calculate table dimensions
+            if header:
+                table_data = [header] + rows
+            else:
+                table_data = rows
+
+            if not table_data:
+                print("      Empty table data")
+                return
+
+            rows_count = len(table_data)
+            cols_count = max(len(row) for row in table_data) if table_data else 0
+
+            if rows_count == 0 or cols_count == 0:
+                print(f"      Invalid table dimensions: {rows_count}x{cols_count}")
+                return
+
+            print(f"      Creating {rows_count}x{cols_count} table")
+
+            # Get placeholder dimensions and position
+            left = placeholder.left
+            top = placeholder.top
+            width = placeholder.width
+            height = placeholder.height
+
+            # Remove the placeholder shape and create table in its place
+            sp = placeholder._element
+            parent = sp.getparent()
+            parent.remove(sp)
+
+            # Add table to slide
+            table_shape = slide.shapes.add_table(rows_count, cols_count, left, top, width, height)
+            table = table_shape.table
+
+            # Populate table with data
+            for row_idx, row_data in enumerate(table_data):
+                for col_idx, cell_data in enumerate(row_data):
+                    if col_idx < len(table.rows[row_idx].cells):
+                        cell = table.rows[row_idx].cells[col_idx]
+                        cell_text = str(cell_data) if cell_data is not None else ""
+
+                        # Apply inline formatting to cell text
+                        cell.text_frame.clear()
+                        p = cell.text_frame.paragraphs[0]
+                        self.apply_inline_formatting(cell_text, p)
+
+                        # Apply header formatting
+                        if row_idx == 0 and header:
+                            for run in p.runs:
+                                run.font.bold = True
+
+            print(
+                f"      Table created successfully with {rows_count} rows and {cols_count} columns"
+            )
+
+        except Exception as e:
+            print(f"      Error creating table: {e}")
+            # Fallback: add table data as text
+            self._fallback_table_as_text(placeholder, table_block)
+
+    def _fallback_table_as_text(self, placeholder, table_block):
+        """Fallback method to display table as text when table creation fails."""
+        try:
+            header = table_block.get("header", [])
+            rows = table_block.get("rows", [])
+
+            if hasattr(placeholder, "text_frame") and placeholder.text_frame:
+                text_frame = placeholder.text_frame
+                text_frame.clear()
+                p = text_frame.paragraphs[0]
+
+                # Convert table to text representation
+                table_text = "Table data:\n"
+                if header:
+                    table_text += " | ".join(str(cell) for cell in header) + "\n"
+                    table_text += "-" * 50 + "\n"
+                for row in rows:
+                    table_text += " | ".join(str(cell) for cell in row) + "\n"
+
+                self.apply_inline_formatting(table_text, p)
+                print("      Table displayed as text fallback")
+            else:
+                print("      Could not display table - no text frame available")
+        except Exception as e:
+            print(f"      Error in table text fallback: {e}")

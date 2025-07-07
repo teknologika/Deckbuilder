@@ -8,10 +8,10 @@
     },
     "mapping_rules": {
         "title": "title",
-        "sections[0].title": "title_left_1",
-        "sections[0].content": "content_left_1",
-        "sections[1].title": "title_right_1",
-        "sections[1].content": "content_right_1"
+        "sections[0].title": "title_left",
+        "sections[0].content": "content_left",
+        "sections[1].title": "title_right",
+        "sections[1].content": "content_right"
     },
     "validation": {
         "required_fields": ["title", "sections"],

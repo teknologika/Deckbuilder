@@ -8,18 +8,12 @@
     },
     "mapping_rules": {
         "title": "title",
-        "agenda[0].number": "number_item1",
-        "agenda[0].item": "content_item1",
-        "agenda[1].number": "number_item2",
-        "agenda[1].item": "content_item2",
-        "agenda[2].number": "number_item3",
-        "agenda[2].item": "content_item3",
-        "agenda[3].number": "number_item4",
-        "agenda[3].item": "content_item4",
-        "agenda[4].number": "number_item5",
-        "agenda[4].item": "content_item5",
-        "agenda[5].number": "number_item6",
-        "agenda[5].item": "content_item6"
+        "agenda[0]": "content_item1",
+        "agenda[1]": "content_item2",
+        "agenda[2]": "content_item3",
+        "agenda[3]": "content_item4",
+        "agenda[4]": "content_item5",
+        "agenda[5]": "content_item6"
     },
     "validation": {"required_fields": ["title", "agenda"], "max_items": 6},
     "example": "---\n                layout: Agenda, 6 Textboxes\n                title: Meeting Agenda\n                agenda:\n                  - number: \"01\"\n                    item: Opening remarks\n                  - number: \"02\"\n                    item: Market analysis\n                ---"

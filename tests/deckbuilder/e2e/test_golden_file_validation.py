@@ -125,7 +125,9 @@ class TestGoldenFileValidation:
         expected_layouts = ["Title Slide", "Title and Content", "Section Header"]
 
         for expected_layout in expected_layouts:
-            assert expected_layout in slide_layouts, f"Slide layout '{expected_layout}' not found in JSON"
+            assert (
+                expected_layout in slide_layouts
+            ), f"Slide layout '{expected_layout}' not found in JSON"
 
     def _run_cli_and_validate(
         self, input_file: Path, output_name: str, temp_dir: str, source_type: str

@@ -129,13 +129,21 @@ class DeckbuilderCLI:
 
         try:
             presentation_data = {}
+            markdown_content = None
+
             if input_path.suffix.lower() == ".md":
                 from deckbuilder import converter
+                from deckbuilder.validation import PresentationValidator
 
                 # Process markdown file
-                content = input_path.read_text(encoding="utf-8")
+                markdown_content = input_path.read_text(encoding="utf-8")
                 print(f"Processing markdown file: {input_path.name}")
-                presentation_data = converter.markdown_to_canonical_json(content)
+                presentation_data = converter.markdown_to_canonical_json(markdown_content)
+
+                # STEP 0: Validate Markdown → JSON conversion
+                template_folder = str(self.path_manager.get_template_folder())
+                validator = PresentationValidator(presentation_data, template_name, template_folder)
+                validator.validate_markdown_to_json(markdown_content, presentation_data)
             elif input_path.suffix.lower() == ".json":
                 # Process JSON file directly
                 with open(input_path, "r", encoding="utf-8") as f:

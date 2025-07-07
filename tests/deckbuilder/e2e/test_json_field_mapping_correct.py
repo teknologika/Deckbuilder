@@ -58,18 +58,18 @@ class TestJSONFieldMappingCorrect:
                                 {
                                     "content": [
                                         {"type": "paragraph", "text": "Left item 1"},
-                                        {"type": "paragraph", "text": "Left item 2"}
+                                        {"type": "paragraph", "text": "Left item 2"},
                                     ]
                                 },
                                 {
                                     "content": [
                                         {"type": "paragraph", "text": "Right item 1"},
-                                        {"type": "paragraph", "text": "Right item 2"}
+                                        {"type": "paragraph", "text": "Right item 2"},
                                     ]
-                                }
-                            ]
+                                },
+                            ],
                         }
-                    ]
+                    ],
                 }
             ]
         }
@@ -154,29 +154,13 @@ class TestJSONFieldMappingCorrect:
                         {
                             "type": "columns",
                             "columns": [
-                                {
-                                    "content": [
-                                        {"type": "paragraph", "text": "Column 1 content"}
-                                    ]
-                                },
-                                {
-                                    "content": [
-                                        {"type": "paragraph", "text": "Column 2 content"}
-                                    ]
-                                },
-                                {
-                                    "content": [
-                                        {"type": "paragraph", "text": "Column 3 content"}
-                                    ]
-                                },
-                                {
-                                    "content": [
-                                        {"type": "paragraph", "text": "Column 4 content"}
-                                    ]
-                                }
-                            ]
+                                {"content": [{"type": "paragraph", "text": "Column 1 content"}]},
+                                {"content": [{"type": "paragraph", "text": "Column 2 content"}]},
+                                {"content": [{"type": "paragraph", "text": "Column 3 content"}]},
+                                {"content": [{"type": "paragraph", "text": "Column 4 content"}]},
+                            ],
                         }
-                    ]
+                    ],
                 }
             ]
         }
@@ -258,16 +242,19 @@ class TestJSONFieldMappingCorrect:
                     "placeholders": {"title": "**Formatting** Test with *All* Types"},
                     "content": [
                         {"type": "heading", "level": 2, "text": "**Bold** Heading"},
-                        {"type": "paragraph", "text": "Paragraph with *italic* and ___underline___ text."},
+                        {
+                            "type": "paragraph",
+                            "text": "Paragraph with *italic* and ___underline___ text.",
+                        },
                         {
                             "type": "bullets",
                             "items": [
                                 {"level": 1, "text": "***Bold italic*** bullet"},
                                 {"level": 1, "text": "Regular bullet with **bold** text"},
-                                {"level": 1, "text": "Another with ___underlines___"}
-                            ]
-                        }
-                    ]
+                                {"level": 1, "text": "Another with ___underlines___"},
+                            ],
+                        },
+                    ],
                 },
                 {
                     "layout": "Two Content",
@@ -279,19 +266,25 @@ class TestJSONFieldMappingCorrect:
                                 {
                                     "content": [
                                         {"type": "paragraph", "text": "**Bold** left item"},
-                                        {"type": "paragraph", "text": "*Italic* left item"}
+                                        {"type": "paragraph", "text": "*Italic* left item"},
                                     ]
                                 },
                                 {
                                     "content": [
-                                        {"type": "paragraph", "text": "___Underlined___ right item"},
-                                        {"type": "paragraph", "text": "***Bold italic*** right item"}
+                                        {
+                                            "type": "paragraph",
+                                            "text": "___Underlined___ right item",
+                                        },
+                                        {
+                                            "type": "paragraph",
+                                            "text": "***Bold italic*** right item",
+                                        },
                                     ]
-                                }
-                            ]
+                                },
+                            ],
                         }
-                    ]
-                }
+                    ],
+                },
             ]
         }
 
@@ -372,19 +365,11 @@ class TestJSONFieldMappingCorrect:
                         {
                             "type": "columns",
                             "columns": [
-                                {
-                                    "content": [
-                                        {"type": "paragraph", "text": "Left content"}
-                                    ]
-                                },
-                                {
-                                    "content": [
-                                        {"type": "paragraph", "text": "Right content"}
-                                    ]
-                                }
-                            ]
+                                {"content": [{"type": "paragraph", "text": "Left content"}]},
+                                {"content": [{"type": "paragraph", "text": "Right content"}]},
+                            ],
                         }
-                    ]
+                    ],
                 }
             ]
         }

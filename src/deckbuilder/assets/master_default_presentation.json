@@ -4,7 +4,7 @@
             "layout": "Title Slide",
             "style": "default_style",
             "placeholders": {
-                "title": "**Deckbuilder: Intelligent PowerPoint Generation** © Bruce McLeod"
+                "title": "**Deckbuilder: Intelligent PowerPoint Generation**"
             },
             "content": [
                 {
@@ -157,7 +157,7 @@
             "style": "default_style",
             "placeholders": {
                 "title": "Picture Layout **Test**",
-                "image_1": "placeholder_image.jpg",
+                "image": "placeholder_image.jpg",
                 "text_caption": "Picture placeholder with ***formatted*** captions"
             },
             "content": []
@@ -238,18 +238,12 @@
             "style": "default_style",
             "placeholders": {
                 "title": "**Agenda** Layout Test",
-                "number_item1_1": "01",
-                "content_item1_1": "**Opening** remarks and introductions",
-                "number_item2_1": "02",
-                "content_item2_1": "*Market* analysis and trends",
-                "number_item3_1": "03",
-                "content_item3_1": "***Product*** roadmap updates",
-                "number_item4_1": "04",
-                "content_item4_1": "___Financial___ performance review",
-                "number_item5_1": "05",
-                "content_item5_1": "**Strategic** initiatives overview",
-                "number_item6_1": "06",
-                "content_item6_1": "*Q&A* session and next steps"
+                "content_item1": "01 - **Opening** remarks and introductions",
+                "content_item2": "02 - *Market* analysis and trends",
+                "content_item3": "03 - ***Product*** roadmap updates",
+                "content_item4": "04 - ___Financial___ performance review",
+                "content_item5": "05 - **Strategic** initiatives overview",
+                "content_item6": "06 - *Q&A* session and next steps"
             },
             "content": []
         },
@@ -257,23 +251,18 @@
             "layout": "Title and 6-item Lists",
             "style": "default_style",
             "placeholders": {
-                "title": "**Six Item Lists** Layout Test",
-                "number_item1_1": "01",
-                "content_13": "**Features**",
-                "content_item1_1": "*Authentication*",
-                "number_item2_1": "02",
-                "content_14": "**Authorization**",
-                "content_item2_1": "___Encryption___",
-                "number_item3_1": "03",
-                "content_15": "***Benefits***",
-                "content_item3_1": "**Security**",
-                "content_16": "*Performance*",
-                "content_item4_1": "___Scalability___",
-                "content_17": "**Reliability**",
-                "content_item5_1": "*Monitoring*",
-                "content_24": "06",
-                "content_23": "***Support***",
-                "content_25": "**Documentation**"
+                "slide_title": "**Six Item Lists** Layout Test",
+                "Title1": "**Features**",
+                "Content1": "*Authentication*",
+                "Title2": "**Authorization**",
+                "Content3": "___Encryption___",
+                "Title3": "***Benefits***",
+                "Title4": "*Performance*",
+                "Content4": "___Scalability___",
+                "Title5": "**Reliability**",
+                "Content5": "*Monitoring*",
+                "Title6": "***Support***",
+                "Content6": "**Documentation**"
             },
             "content": []
         },
@@ -291,10 +280,10 @@
             "style": "default_style",
             "placeholders": {
                 "title": "**SWOT** Analysis",
-                "content_16": "**Strong** market position with *proven* technology",
-                "content_17": "___Limited___ geographic presence and **high** costs",
-                "content_18": "*Emerging* markets and ***digital*** transformation",
-                "content_19": "**Competition** and ___regulatory___ changes"
+                "content_top_left": "**Strong** market position with *proven* technology",
+                "content_top_right": "___Limited___ geographic presence and **high** costs",
+                "content_bottom_left": "*Emerging* markets and ***digital*** transformation",
+                "content_bottom_right": "**Competition** and ___regulatory___ changes"
             },
             "content": []
         },

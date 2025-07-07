@@ -1,17 +1,15 @@
+> [!IMPORTANT]  
+> Deckbuilder is currently under active development and should NOT be considered production ready.
+
 # 🎯 Deckbuilder
 [![PyPI version](https://badge.fury.io/py/deckbuilder.svg)](https://badge.fury.io/py/deckbuilder)
 [![Test Suite](https://github.com/teknologika/deckbuilder/actions/workflows/test.yml/badge.svg)](https://github.com/teknologika/deckbuilder/actions/workflows/test.yml)
 [![PlaceKitten Integrated](https://img.shields.io/badge/PlaceKitten-Integrated-blue)](src/placekitten/README.md)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 
-> **Transform LLMs from layout pickers into presentation consultants**
-
 Deckbuilder is a powerful Python library, Command Line, and MCP (Model Context Protocol) server for PowerPoint presentation generation.
 
-Decknuilder currently supports JSON and Frontmatter formatted Markdown for content. Any slide template can be mapped using JSON with template support being progressivley added to Markdown.
-
-> [!IMPORTANT]  
-> Deckbuilder is currently under active development and should NOT be considered production ready.
+Deckbuilder currently supports JSON and Frontmatter formatted Markdown for content. Any slide template can be mapped using JSON with template support being progressivley added to Markdown.
 
 The MCP server will be enhanced to be with a **content-first design philosophy**, Deckbuilder's MCP server will transform how AI creates presentations by focusing on *what you want to communicate* rather than just *what layouts exist*.
 
@@ -22,14 +20,12 @@ Create complete PowerPoint presentations from JSON or Markdown with YAML frontma
 
 ### 🎨 **Rich Content Support**
 - **Advanced Formatting**: `**bold**`, `*italic*`, `___underline___`, `***bold italic***`
-- **International Support**: 20 proofing languages including English, Spanish, French, German, Chinese, Japanese
-- **Typography Control**: Custom font families with global `-f/--font` argument
-- **Mixed Content**: Seamlessly combine headings, paragraphs, and bullet points
+- **Language & Font updating**:The aility to update the fonts and language of all slide objects using the command line tools.
 - **Professional Tables**: Custom styling with themes and colors
 - **50+ Business Layouts**: Progressive library of professional presentation templates
 
 ### 🖼️ **Smart Image Processing** 
-- **Placekitten Generation**: Professional placeholder generation with computer vision
+- **Placekitten Generation**: Professional placeholder generation 
 - **Intelligent Fallbacks**: Automatic handling of missing/invalid images
 - **Smart Cropping**: Face detection and rule-of-thirds composition
 - **Professional Filters**: 10+ effects optimized for business presentations

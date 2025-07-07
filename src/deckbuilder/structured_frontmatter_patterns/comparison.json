@@ -11,10 +11,10 @@
     },
     "mapping_rules": {
         "title": "title",
-        "comparison.left.title": "title_left_1",
-        "comparison.left.content": "content_left_1",
-        "comparison.right.title": "title_right_1",
-        "comparison.right.content": "content_right_1"
+        "comparison.left.title": "title_left",
+        "comparison.left.content": "content_left",
+        "comparison.right.title": "title_right",
+        "comparison.right.content": "content_right"
     },
     "validation": {
         "required_fields": ["title", "comparison"],

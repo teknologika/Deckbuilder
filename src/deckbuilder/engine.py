@@ -92,7 +92,12 @@ class Deckbuilder:
         """
         Creates a presentation from the canonical JSON data model.
         Only accepts canonical format: {"slides": [{"layout": "...", "placeholders": {...}, "content": [...]}]}
+
+        Includes built-in end-to-end validation to prevent layout regressions.
         """
+        # Import validation here to avoid circular imports
+        from .validation import PresentationValidator
+
         self._initialize_presentation(templateName)
 
         # Strict validation for canonical JSON format only
@@ -123,12 +128,26 @@ class Deckbuilder:
             if "content" in slide_data and not isinstance(slide_data["content"], list):
                 raise ValueError(f"Slide {i + 1} 'content' must be an array.")
 
-        # Process slides using canonical format
+        # STEP 1: Pre-generation validation (JSON ↔ Template alignment)
+        template_folder = str(self._path_manager.get_template_folder())
+        validator = PresentationValidator(presentation_data, templateName, template_folder)
+        validator.validate_pre_generation()
+
+        # STEP 2: Process slides using canonical format
         for slide_data in presentation_data["slides"]:
             self.presentation_builder.add_slide(self.prs, slide_data)
 
-        # Automatically save the presentation to disk after creation
+        # STEP 3: Save the presentation to disk
         write_result = self.write_presentation(fileName)
+
+        # Extract the file path from write_result for post-generation validation
+        # write_result format: "Successfully created presentation: filename.pptx"
+        if "Successfully created presentation:" in write_result:
+            file_path = write_result.split("Successfully created presentation: ")[1].strip()
+            full_path = str(self._path_manager.get_output_folder() / file_path)
+
+            # STEP 4: Post-generation validation (PPTX ↔ JSON verification)
+            validator.validate_post_generation(full_path)
 
         return f"Successfully created presentation with {len(presentation_data['slides'])} slides. {write_result}"
 
