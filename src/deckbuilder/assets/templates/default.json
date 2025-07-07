@@ -223,6 +223,7 @@
     "SWOT Analysis": {
       "index": 18,
       "placeholders": {
+        "0": "title_top",
         "10": "date_footer",
         "11": "footer_footer",
         "12": "slide_number_footer",

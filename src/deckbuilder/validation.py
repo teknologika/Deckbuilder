@@ -172,21 +172,81 @@ class PresentationValidator:
 
     def _can_resolve_field_name(self, field_name: str, field_to_index: Dict[str, int]) -> bool:
         """
-        STRICT validation - check if field name can be resolved.
+        Enhanced validation - check if field name can be resolved using same logic as slide_builder.
 
-        Validation must be strict and fail if there's no exact match.
-        The engine will handle flexible resolution, but validation catches mismatches.
+        This uses the same field name resolution logic as the content placement system
+        to ensure validation and processing are consistent.
         """
-        # Direct match only
+        # Direct match
         if field_name in field_to_index:
             return True
 
-        # Only allow semantic fields that are always handled
+        # Always allow semantic fields that have guaranteed fallbacks
         if field_name in ["title", "subtitle"]:
             return True  # Always handled by semantic detection
 
-        # STRICT: No flexible matching in validation
+        # Enhanced field name resolution for common variations
+        resolved_field = self._resolve_field_name_variations(field_name, field_to_index)
+        if resolved_field != field_name and resolved_field in field_to_index:
+            return True
+
+        # Content field variations
+        if field_name == "content":
+            # Check if template has content, content_1, or other content variations
+            for variant in ["content", "content_1", "main_content", "body"]:
+                if variant in field_to_index:
+                    return True
+
         return False
+
+    def _resolve_field_name_variations(self, field_name: str, field_to_index: dict) -> str:
+        """
+        Resolve field name variations - same logic as slide_builder for consistency.
+        """
+        # Return original if exact match exists
+        if field_name in field_to_index:
+            return field_name
+
+        # Common variations mapping - must match slide_builder.py exactly
+        variations = {
+            # Caption variations
+            "text_caption": ["text_caption_1", "caption", "caption_1"],
+            "caption": ["text_caption_1", "text_caption", "caption_1"],
+            # Title variations - CRITICAL: map "title" to "title_top" for template compatibility
+            "title": ["title_top", "title_top_1", "main_title"],
+            "title_top": ["title", "title_top_1", "main_title"],
+            "title_left": ["title_left_1", "left_title", "title_col1"],
+            "title_right": ["title_right_1", "right_title", "title_col2"],
+            # Content variations
+            "content_left": ["content_left_1", "left_content", "content_col1"],
+            "content_right": ["content_right_1", "right_content", "content_col2"],
+            "content": ["content_1", "main_content", "body"],
+        }
+
+        # Check if field_name has variations to try
+        if field_name in variations:
+            for variant in variations[field_name]:
+                if variant in field_to_index:
+                    return variant
+
+        # Reverse lookup - check if template has a field that maps to this user field
+        for template_field in field_to_index.keys():
+            if template_field in variations:
+                if field_name in variations[template_field]:
+                    return template_field
+
+        # Smart suffix handling - try adding/removing _1 suffix
+        if field_name.endswith("_1"):
+            base_name = field_name[:-2]
+            if base_name in field_to_index:
+                return base_name
+        else:
+            suffixed_name = field_name + "_1"
+            if suffixed_name in field_to_index:
+                return suffixed_name
+
+        # Return original if no variations found
+        return field_name
 
     def validate_post_generation(self, pptx_file_path: str):
         """

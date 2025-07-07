@@ -233,14 +233,41 @@ class SlideBuilder:
 
             # Handle title placeholders
             if field_name == "title":
-                print("      Method: Semantic title detection")
-                for placeholder in slide.placeholders:
-                    if is_title_placeholder(placeholder.placeholder_format.type):
-                        target_placeholder = placeholder
-                        mapping_method = (
-                            f"Semantic title (idx {placeholder.placeholder_format.idx})"
-                        )
-                        break
+                print("      Method: Title field resolution")
+
+                # First try to find title field in template mapping
+                title_field = field_to_index.get("title")
+                if title_field is not None:
+                    print(f"        Trying template mapping 'title' -> idx {title_field}")
+                    for placeholder in slide.placeholders:
+                        if placeholder.placeholder_format.idx == title_field:
+                            target_placeholder = placeholder
+                            mapping_method = f"Template mapping title -> idx {title_field}"
+                            break
+                else:
+                    print("        No 'title' field in template mapping, trying title_top")
+                    # Try title_top which is common in templates
+                    title_top_idx = field_to_index.get("title_top")
+                    if title_top_idx is not None:
+                        print(f"        Trying template mapping 'title_top' -> idx {title_top_idx}")
+                        for placeholder in slide.placeholders:
+                            if placeholder.placeholder_format.idx == title_top_idx:
+                                target_placeholder = placeholder
+                                mapping_method = (
+                                    f"Template mapping title_top -> idx {title_top_idx}"
+                                )
+                                break
+
+                # Final fallback to semantic title detection
+                if not target_placeholder:
+                    print("        Template mapping failed, trying semantic title detection")
+                    for placeholder in slide.placeholders:
+                        if is_title_placeholder(placeholder.placeholder_format.type):
+                            target_placeholder = placeholder
+                            mapping_method = (
+                                f"Semantic title (idx {placeholder.placeholder_format.idx})"
+                            )
+                            break
 
             # Handle subtitle placeholders
             elif field_name == "subtitle":
@@ -392,8 +419,9 @@ class SlideBuilder:
             # Caption variations
             "text_caption": ["text_caption_1", "caption", "caption_1"],
             "caption": ["text_caption_1", "text_caption", "caption_1"],
-            # Title variations
-            "title_top": ["title_top_1", "title"],
+            # Title variations - CRITICAL: map "title" to "title_top" for template compatibility
+            "title": ["title_top", "title_top_1", "main_title"],
+            "title_top": ["title", "title_top_1", "main_title"],
             "title_left": ["title_left_1", "left_title", "title_col1"],
             "title_right": ["title_right_1", "right_title", "title_col2"],
             # Content variations
