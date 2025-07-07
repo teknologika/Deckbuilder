@@ -7,52 +7,52 @@
     "Title Slide": {
       "index": 0,
       "placeholders": {
-        "0": "title_top",
-        "1": "subtitle",
-        "10": "date_footer",
-        "11": "footer_footer",
-        "12": "slide_number_footer"
+        "0": "title_top_1",
+        "1": "subtitle_1",
+        "10": "date_footer_1",
+        "11": "footer_footer_1",
+        "12": "slide_number_footer_1"
       }
     },
     "Title and Content": {
       "index": 1,
       "placeholders": {
-        "0": "title_top",
-        "1": "content",
-        "10": "date_footer",
-        "11": "footer_footer",
-        "12": "slide_number_footer"
+        "0": "title_top_1",
+        "1": "content_1",
+        "10": "date_footer_1",
+        "11": "footer_footer_1",
+        "12": "slide_number_footer_1"
       }
     },
     "Section Header": {
       "index": 2,
       "placeholders": {
-        "0": "title_top",
-        "1": "text",
-        "10": "date_footer",
-        "11": "footer_footer",
-        "12": "slide_number_footer"
+        "0": "title_top_1",
+        "1": "text_1",
+        "10": "date_footer_1",
+        "11": "footer_footer_1",
+        "12": "slide_number_footer_1"
       }
     },
     "Two Content": {
       "index": 3,
       "placeholders": {
-        "0": "title_top",
-        "1": "content_left",
-        "2": "content_right",
-        "10": "date_footer",
-        "11": "footer_footer",
-        "12": "slide_number_footer"
+        "0": "title_top_1",
+        "1": "content_left_1",
+        "2": "content_right_1",
+        "10": "date_footer_1",
+        "11": "footer_footer_1",
+        "12": "slide_number_footer_1"
       }
     },
     "Comparison": {
       "index": 4,
       "placeholders": {
         "0": "title_top_1",
-        "1": "title_left",
-        "2": "content_left",
-        "3": "title_right",
-        "4": "content_right",
+        "1": "title_left_1",
+        "2": "content_left_1",
+        "3": "title_right_1",
+        "4": "content_right_1",
         "10": "date_footer_1",
         "11": "footer_footer_1",
         "12": "slide_number_footer_1"
@@ -121,12 +121,12 @@
       "index": 11,
       "placeholders": {
         "0": "title_top_1",
-        "13": "title_col1",
-        "14": "content_col1",
-        "15": "title_col2",
-        "16": "content_col2",
-        "17": "title_col3",
-        "18": "content_col3",
+        "13": "title_col1_1",
+        "14": "content_col1_1",
+        "15": "title_col2_1",
+        "16": "content_col2_1",
+        "17": "title_col3_1",
+        "18": "content_col3_1",
         "10": "date_footer_1",
         "11": "footer_footer_1",
         "12": "slide_number_footer_1"
@@ -136,9 +136,9 @@
       "index": 12,
       "placeholders": {
         "0": "title_top_1",
-        "14": "content_col1",
-        "16": "content_col2",
-        "18": "content_col3",
+        "14": "content_col1_1",
+        "16": "content_col2_1",
+        "18": "content_col3_1",
         "10": "date_footer_1",
         "11": "footer_footer_1",
         "12": "slide_number_footer_1"
@@ -148,14 +148,14 @@
       "index": 13,
       "placeholders": {
         "0": "title_top_1",
-        "13": "title_col1",
-        "14": "content_col1",
-        "15": "title_col2",
-        "16": "content_col2",
-        "17": "title_col3",
-        "18": "content_col3",
-        "19": "title_col4",
-        "20": "content_col4",
+        "13": "title_col1_1",
+        "14": "content_col1_1",
+        "15": "title_col2_1",
+        "16": "content_col2_1",
+        "17": "title_col3_1",
+        "18": "content_col3_1",
+        "19": "title_col4_1",
+        "20": "content_col4_1",
         "10": "date_footer_1",
         "11": "footer_footer_1",
         "12": "slide_number_footer_1"
@@ -164,31 +164,25 @@
     "Four Columns": {
       "index": 14,
       "placeholders": {
-        "0": "title_top",
-        "14": "content_col1",
-        "16": "content_col2",
-        "18": "content_col3",
-        "20": "content_col4",
-        "10": "date_footer",
-        "11": "footer_footer",
-        "12": "slide_number_footer"
+        "0": "title_top_1",
+        "14": "content_col1_1",
+        "16": "content_col2_1",
+        "18": "content_col3_1",
+        "20": "content_col4_1",
+        "10": "date_footer_1",
+        "11": "footer_footer_1",
+        "12": "slide_number_footer_1"
       }
     },
     "Agenda, 6 Textboxes": {
       "index": 15,
       "placeholders": {
         "0": "title_top_1",
-        "28": "number_item1_1",
         "18": "content_item1_1",
-        "29": "number_item2_1",
         "20": "content_item2_1",
-        "30": "number_item3_1",
         "22": "content_item3_1",
-        "31": "number_item4_1",
         "19": "content_item4_1",
-        "32": "number_item5_1",
         "21": "content_item5_1",
-        "33": "number_item6_1",
         "34": "content_item6_1",
         "10": "date_footer_1",
         "11": "footer_footer_1",
@@ -198,25 +192,19 @@
     "Title and 6-item Lists": {
       "index": 16,
       "placeholders": {
-        "0": "title_top_1",
-        "25": "content_25",
-        "13": "content_13",
-        "14": "content_14",
-        "26": "content_26",
-        "18": "content_item1_1",
-        "17": "content_17",
-        "27": "content_27",
-        "22": "content_item3_1",
-        "21": "content_item5_1",
-        "30": "number_item3_1",
-        "24": "content_24",
-        "23": "content_23",
-        "29": "number_item2_1",
-        "20": "content_item2_1",
-        "19": "content_item4_1",
-        "28": "number_item1_1",
-        "16": "content_16",
-        "15": "content_15",
+        "0": "slide_title",
+        "13": "Title_1",
+        "14": "Content_1",
+        "18": "Title_2",
+        "17": "Content_2",
+        "22": "Title_3",
+        "21": "Content_3",
+        "16": "Title_4",
+        "15": "Content_4",
+        "20": "Title_5",
+        "19": "Content_5",
+        "24": "Title_6",
+        "23": "Content_6",
         "10": "date_footer_1",
         "11": "footer_footer_1",
         "12": "slide_number_footer_1"
