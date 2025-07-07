@@ -73,7 +73,15 @@ _deckbuilder_completion() {
         create)
             # File completion for create command
             if [[ ${COMP_CWORD} == 2 ]]; then
-                COMPREPLY=($(compgen -f -X "!*.@(md|json)" -- ${cur}))
+                # Complete .md and .json files
+                local files
+                files=($(compgen -f -- ${cur}))
+                COMPREPLY=()
+                for file in "${files[@]}"; do
+                    if [[ "$file" == *.md ]] || [[ "$file" == *.json ]]; then
+                        COMPREPLY+=("$file")
+                    fi
+                done
                 return 0
             fi
             ;;

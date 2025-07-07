@@ -490,10 +490,55 @@ class ContentFormatter:
         Uses semantic placeholder detection instead of hardcoded indices.
         Expects all content to be in canonical JSON format: [{"type": "...", "text": "..."}, ...]
         """
-        from .placeholder_types import is_content_placeholder
+        from .placeholder_types import is_content_placeholder, is_title_placeholder
 
         print(f"🔧 DEBUG: add_content_to_slide called with content type: {type(content)}")
         print(f"🔧 DEBUG: content: {content}")
+
+        # Find title placeholder to check if it needs content extracted
+        title_placeholder = None
+        for shape in slide.placeholders:
+            if is_title_placeholder(shape.placeholder_format.type):
+                if hasattr(shape, "text_frame") and shape.text_frame is not None:
+                    title_placeholder = shape
+                    break
+
+        # Check if title placeholder is empty and needs first heading extracted
+        title_needs_content = False
+        if title_placeholder:
+            has_title_content = False
+            if title_placeholder.text_frame.paragraphs:
+                for paragraph in title_placeholder.text_frame.paragraphs:
+                    if paragraph.text.strip():
+                        has_title_content = True
+                        break
+            title_needs_content = not has_title_content
+            print(f"🔧 DEBUG: Title placeholder empty: {title_needs_content}")
+
+        # Extract first heading to title if needed
+        processed_content = content
+        if title_needs_content and isinstance(content, list) and content:
+            # Look for first heading in content blocks
+            first_heading_idx = None
+            for i, item in enumerate(content):
+                if isinstance(item, dict) and item.get("type") == "heading":
+                    first_heading_idx = i
+                    break
+
+            if first_heading_idx is not None:
+                heading_block = content[first_heading_idx]
+                heading_text = heading_block.get("text", "")
+                print(f"🔧 DEBUG: Extracting first heading to title: '{heading_text}'")
+
+                # Add heading text to title placeholder
+                p = title_placeholder.text_frame.paragraphs[0]
+                self.apply_inline_formatting(heading_text, p)
+
+                # Remove the heading from content blocks
+                processed_content = content[:first_heading_idx] + content[first_heading_idx + 1 :]
+                print(
+                    f"🔧 DEBUG: Removed heading from content, {len(processed_content)} blocks remaining"
+                )
 
         # Find content placeholders using semantic detection
         content_placeholders = []
@@ -547,18 +592,22 @@ class ContentFormatter:
                 return
 
         # Expect only canonical JSON content blocks
-        if isinstance(content, list) and content:
+        if isinstance(processed_content, list) and processed_content:
             # Validate all items are canonical JSON blocks
-            for i, item in enumerate(content):
+            for i, item in enumerate(processed_content):
                 if not isinstance(item, dict) or "type" not in item:
                     raise ValueError(
                         f"Content item {i} must be canonical JSON block with 'type' field. Got: {item}"
                     )
 
             print("🔧 DEBUG: Processing canonical JSON content blocks")
-            self._process_canonical_content_blocks(content_placeholders, content)
+            self._process_canonical_content_blocks(content_placeholders, processed_content)
+        elif processed_content:
+            print(
+                f"Warning: Expected list of canonical JSON content blocks, got: {type(processed_content)}"
+            )
         else:
-            print(f"Warning: Expected list of canonical JSON content blocks, got: {type(content)}")
+            print("🔧 DEBUG: No content blocks remaining after title extraction")
 
     def _process_canonical_content_blocks(self, content_placeholders, content_blocks):
         """Process canonical JSON content blocks like {"type": "paragraph", "text": "..."}"""
