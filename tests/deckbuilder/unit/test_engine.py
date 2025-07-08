@@ -31,6 +31,7 @@ class TestEngineCanonicalJSON(unittest.TestCase):
         self.mock_path_manager = Mock()
         self.mock_path_manager.get_output_folder.return_value = "/tmp/test"
         self.mock_path_manager.get_template_name.return_value = "default"
+        self.mock_path_manager.get_template_folder.return_value = "/tmp/templates"
 
         # Mock presentation builder
         self.mock_presentation_builder = Mock()
@@ -73,8 +74,14 @@ class TestEngineCanonicalJSON(unittest.TestCase):
             ]
         }
 
-        # Mock the write_presentation method to avoid file I/O
-        with patch.object(self.engine, "write_presentation", return_value="test.pptx"):
+        # Mock the write_presentation method and validation to avoid file I/O
+        with (
+            patch.object(self.engine, "write_presentation", return_value="test.pptx"),
+            patch("deckbuilder.validation.PresentationValidator") as mock_validator,
+        ):
+            mock_val_instance = mock_validator.return_value
+            mock_val_instance.validate_pre_generation.return_value = None
+            mock_val_instance.validate_post_generation.return_value = None
             result = self.engine.create_presentation(valid_canonical_data, "test")
 
         # Verify presentation builder was called with canonical data
@@ -179,7 +186,13 @@ class TestEngineCanonicalJSON(unittest.TestCase):
             ]
         }
 
-        with patch.object(self.engine, "write_presentation", return_value="test.pptx"):
+        with (
+            patch.object(self.engine, "write_presentation", return_value="test.pptx"),
+            patch("deckbuilder.validation.PresentationValidator") as mock_validator,
+        ):
+            mock_val_instance = mock_validator.return_value
+            mock_val_instance.validate_pre_generation.return_value = None
+            mock_val_instance.validate_post_generation.return_value = None
             result = self.engine.create_presentation(canonical_data, "complex_test")
 
         # Verify result is successful
@@ -215,7 +228,13 @@ class TestEngineCanonicalJSON(unittest.TestCase):
             ]
         }
 
-        with patch.object(self.engine, "write_presentation", return_value="test.pptx"):
+        with (
+            patch.object(self.engine, "write_presentation", return_value="test.pptx"),
+            patch("deckbuilder.validation.PresentationValidator") as mock_validator,
+        ):
+            mock_val_instance = mock_validator.return_value
+            mock_val_instance.validate_pre_generation.return_value = None
+            mock_val_instance.validate_post_generation.return_value = None
             result = self.engine.create_presentation(canonical_data, "multi_slide_test")
 
         # Verify all slides were processed
