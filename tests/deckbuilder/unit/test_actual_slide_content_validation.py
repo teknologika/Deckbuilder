@@ -278,8 +278,10 @@ class TestActualSlideContentValidation:
         self, deckbuilder_with_env, test_output_dir
     ):
         """Test that the comprehensive layouts golden file actually produces content"""
-        # Load the actual comprehensive layouts file
-        golden_json_path = Path(__file__).parent.parent / "test_comprehensive_layouts.json"
+        # Load the actual master layouts file
+        golden_json_path = (
+            project_root / "src" / "deckbuilder" / "assets" / "master_default_presentation.json"
+        )
         with open(golden_json_path, "r") as f:
             json_data = json.load(f)
 

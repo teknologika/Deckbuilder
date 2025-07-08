@@ -47,7 +47,11 @@ class TestGoldenFileValidation:
         # Use test fixtures from project
         self.golden_md = self.project_root / "tests" / "deckbuilder" / "test_presentation.md"
         self.golden_json = (
-            self.project_root / "tests" / "deckbuilder" / "test_comprehensive_layouts.json"
+            self.project_root
+            / "src"
+            / "deckbuilder"
+            / "assets"
+            / "master_default_presentation.json"
         )
 
     def teardown_method(self):
@@ -199,10 +203,10 @@ class TestGoldenFileValidation:
             # Generate presentation from the canonical JSON fixture
             canonical_json_file = (
                 self.project_root
-                / "tests"
+                / "src"
                 / "deckbuilder"
-                / "fixtures"
-                / "canonical_presentation.json"
+                / "assets"
+                / "master_default_presentation.json"
             )
             json_output_pptx = self._run_cli_and_validate(
                 canonical_json_file, "from_json", temp_dir, "json"
@@ -238,7 +242,7 @@ class TestGoldenFileValidation:
 
         assert title_text, f"No title found on first slide of {source_type} presentation"
         assert (
-            "Test" in title_text or "Comprehensive" in title_text
+            "Test" in title_text or "Comprehensive" in title_text or "Deckbuilder" in title_text
         ), f"Expected test title in {source_type} title, got: {title_text}"
 
         # Validate multiple slides exist with content

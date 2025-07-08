@@ -143,47 +143,13 @@ class StructuredFrontmatterConverter:
         return result
 
     def _process_content_field(self, content: str) -> Any:
-        """Process content field to convert markdown to LLM-friendly JSON format"""
+        """Process content field - for structured frontmatter, just return content as-is"""
         if not content or not isinstance(content, str):
             return content
 
-        content = content.strip()
-        if not content:
-            return content
-
-        # Import ContentProcessor locally to avoid circular imports
-        try:
-            from .content_processor import ContentProcessor
-        except ImportError:
-            # Fallback if content_processor not available
-            return content
-
-        # Check if content contains tables
-        if "|" in content and content.count("|") >= 2:
-            processor = ContentProcessor()
-            # Parse as table
-            table_data = processor._parse_markdown_table(content, {})
-            if table_data.get("data"):
-                return {"type": "table", "data": table_data}
-
-        # Check if content contains bullet points
-        if any(line.strip().startswith(("- ", "* ")) for line in content.split("\n")):
-            processor = ContentProcessor()
-            # Parse as rich content (includes bullets)
-            rich_content = processor._parse_rich_content(content)
-            if rich_content:
-                return {"type": "rich_content", "blocks": rich_content}
-
-        # Check if content has inline formatting
-        if any(marker in content for marker in ["**", "*", "___", "__"]):
-            processor = ContentProcessor()
-            # Parse inline formatting
-            formatted = processor._parse_inline_formatting(content)
-            if len(formatted) > 1 or formatted[0].get("format"):
-                return {"type": "formatted_text", "segments": formatted}
-
-        # Return as plain text if no special formatting detected
-        return content
+        # For structured frontmatter, we don't need rich content processing
+        # Just return the content string as-is
+        return content.strip()
 
     def _extract_value_by_path(self, data: Dict[str, Any], path: str) -> Any:
         """Extract value from nested dict using dot notation path with array support"""
