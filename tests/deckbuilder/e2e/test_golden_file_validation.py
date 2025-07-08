@@ -44,8 +44,10 @@ class TestGoldenFileValidation:
         # Initialize templates in temp directory
         self._initialize_temp_templates()
 
-        # Use test fixtures from project
-        self.golden_md = self.project_root / "tests" / "deckbuilder" / "test_presentation.md"
+        # Use master files from project assets
+        self.golden_md = (
+            self.project_root / "src" / "deckbuilder" / "assets" / "master_default_presentation.md"
+        )
         self.golden_json = (
             self.project_root
             / "src"

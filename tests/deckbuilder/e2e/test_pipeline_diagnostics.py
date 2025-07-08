@@ -210,10 +210,12 @@ class TestContentGenerationDiagnostics:
             "slides": [
                 {
                     "layout": "Title and Content",
-                    "placeholders": {"title": "**Bold Title** Test"},
-                    "content": [
-                        {"type": "paragraph", "text": "This is *italic* and **bold** text"}
-                    ],
+                    "style": "default_style",
+                    "placeholders": {
+                        "title": "**Bold Title** Test",
+                        "content": "This is *italic* and **bold** text",
+                    },
+                    "content": [],
                 }
             ]
         }
@@ -405,10 +407,7 @@ class TestMarkdownGenerationDiagnostics:
 layout: Title Slide
 title: MARKDOWN TEST TITLE
 subtitle: MARKDOWN TEST SUBTITLE
----
-
-# This is the slide content
-"""
+---"""
 
         with tempfile.TemporaryDirectory() as temp_dir:
             self.temp_dir = temp_dir

@@ -112,15 +112,7 @@ content: "- Bullet 1\\n- Bullet 2\\n- Bullet 3"
                 "style": "default_style",
                 "placeholders": {
                     "title": "My Simple Slide",
-                    "content": {
-                        "type": "rich_content",
-                        "blocks": [
-                            {
-                                "bullets": ["Bullet 1", "Bullet 2", "Bullet 3"],
-                                "bullet_levels": [1, 1, 1],
-                            }
-                        ],
-                    },
+                    "content": "- Bullet 1\n- Bullet 2\n- Bullet 3",
                 },
                 "content": [],
             }
@@ -142,15 +134,14 @@ content: "| Header 1 | Header 2 |\\n|---|---|\\n| Row 1 Col 1 | Row 1 Col 2 |"
 ---"""
         result = markdown_to_canonical_json(markdown_input)
 
-        # Test structure rather than exact content due to complex table formatting
+        # Test structure - content should be plain string with table markdown
         assert len(result["slides"]) == 1
         slide = result["slides"][0]
         assert slide["layout"] == "Title and Content"
         assert slide["style"] == "default_style"
         assert slide["placeholders"]["title"] == "My Table Slide"
-        assert isinstance(slide["placeholders"]["content"], dict)
-        assert slide["placeholders"]["content"]["type"] == "table"
-        assert "data" in slide["placeholders"]["content"]
+        assert isinstance(slide["placeholders"]["content"], str)
+        assert "| Header 1 | Header 2 |" in slide["placeholders"]["content"]
         assert slide["content"] == []
 
     def test_convert_two_content_layout(self):
@@ -171,13 +162,13 @@ content_right: "| A | B |\\n|---|---|\\n| 1 | 2 |"
         assert slide["placeholders"]["title"] == "Side by Side"
         assert slide["content"] == []
 
-        # Test that content_left is processed as rich content (bullets)
-        assert isinstance(slide["placeholders"]["content_left"], dict)
-        assert slide["placeholders"]["content_left"]["type"] == "rich_content"
+        # Test that content_left is plain string with bullet markdown
+        assert isinstance(slide["placeholders"]["content_left"], str)
+        assert "- Left bullet 1" in slide["placeholders"]["content_left"]
 
-        # Test that content_right is processed as table
-        assert isinstance(slide["placeholders"]["content_right"], dict)
-        assert slide["placeholders"]["content_right"]["type"] == "table"
+        # Test that content_right is plain string with table markdown
+        assert isinstance(slide["placeholders"]["content_right"], str)
+        assert "| A | B |" in slide["placeholders"]["content_right"]
 
     def test_convert_missing_layout(self):
         """Test conversion when layout field is missing."""

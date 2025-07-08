@@ -133,7 +133,7 @@ class TestEnginePathManagerIntegration:
                 mock_slides._sldIdLst = []
                 mock_prs.slides = mock_slides
                 mock_presentation_class.return_value = mock_prs
-                
+
                 # Mock validator to avoid file I/O
                 mock_val_instance = mock_validator.return_value
                 mock_val_instance.validate_pre_generation.return_value = None

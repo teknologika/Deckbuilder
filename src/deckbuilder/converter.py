@@ -71,6 +71,11 @@ class StructuredFrontmatterRegistry:
             default_mapping_rules = {
                 "title": "title",
                 "content": "content",
+                "text": "text",
+                "subtitle": "subtitle",
+                "text_caption": "text_caption",
+                "image": "image",
+                "title_top": "title_top",
             }
             return {"mapping_rules": default_mapping_rules}
 

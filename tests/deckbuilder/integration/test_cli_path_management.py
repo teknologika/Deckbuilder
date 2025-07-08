@@ -152,7 +152,7 @@ class TestCLIPathManagement:
                             }
                         ]
                     }
-                    
+
                     # Mock validator to avoid file I/O
                     mock_val_instance = mock_validator.return_value
                     mock_val_instance.validate_pre_generation.return_value = None

@@ -24,9 +24,15 @@ def test_image_integration():
     with tempfile.TemporaryDirectory() as temp_dir:
         print(f"📁 Using temp directory: {temp_dir}")
 
-        # Set environment variable for output folder
+        # Set environment variables for template and output folders
         original_output = os.environ.get("DECK_OUTPUT_FOLDER")
+        original_template = os.environ.get("DECK_TEMPLATE_FOLDER")
+        project_root = Path(__file__).parent.parent.parent
+
         os.environ["DECK_OUTPUT_FOLDER"] = temp_dir
+        os.environ["DECK_TEMPLATE_FOLDER"] = str(
+            project_root / "src" / "deckbuilder" / "assets" / "templates"
+        )
 
         try:
             # Create deckbuilder instance
@@ -37,7 +43,7 @@ def test_image_integration():
 layout: Picture with Caption
 title: System Architecture Overview
 image_1: "non_existent_image.png"
-text_caption_1: "High-level system architecture with main components: Frontend (React-based interface), API (RESTful services with authentication), Database (PostgreSQL with Redis cache)"
+text_caption_1: "System architecture with Frontend, API, and Database components"
 ---
 """
 
@@ -67,6 +73,11 @@ text_caption_1: "High-level system architecture with main components: Frontend (
                 os.environ["DECK_OUTPUT_FOLDER"] = original_output
             elif "DECK_OUTPUT_FOLDER" in os.environ:
                 del os.environ["DECK_OUTPUT_FOLDER"]
+
+            if original_template:
+                os.environ["DECK_TEMPLATE_FOLDER"] = original_template
+            elif "DECK_TEMPLATE_FOLDER" in os.environ:
+                del os.environ["DECK_TEMPLATE_FOLDER"]
 
 
 def test_placekitten_availability():
