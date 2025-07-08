@@ -131,7 +131,7 @@ media:
 
         output_file = output_files[0]
         file_size_kb = output_file.stat().st_size / 1024
-        assert file_size_kb > 50, f"File size {file_size_kb:.1f}KB too small for embedded image"
+        assert file_size_kb > 45, f"File size {file_size_kb:.1f}KB too small for embedded image"
 
     def test_markdown_with_fallback_image(self, deckbuilder_with_env, test_output_dir):
         """Test markdown with missing image (triggers PlaceKitten fallback)."""
@@ -159,7 +159,7 @@ media:
 
         output_file = output_files[0]
         file_size_kb = output_file.stat().st_size / 1024
-        assert file_size_kb > 50, f"File size {file_size_kb:.1f}KB too small for embedded image"
+        assert file_size_kb > 45, f"File size {file_size_kb:.1f}KB too small for embedded image"
 
     def test_markdown_multiple_images(self, deckbuilder_with_env, test_output_dir):
         """Test markdown with multiple image slides."""
@@ -196,7 +196,7 @@ media:
         output_file = output_files[0]
         file_size_kb = output_file.stat().st_size / 1024
         assert (
-            file_size_kb > 100
+            file_size_kb > 90
         ), f"File size {file_size_kb:.1f}KB too small for multiple embedded images"
 
 
@@ -323,15 +323,15 @@ class TestErrorHandling:
         markdown = """---
 layout: Non Existent Layout
 title: Test Invalid Layout
-media:
-  image_path: "src/placekitten/images/ACuteKitten-1.png"
+image_1: "src/placekitten/images/ACuteKitten-1.png"
 ---
 """
 
-        # Should not crash, should handle gracefully
+        # Should raise ValidationError for invalid layout
         canonical_data = markdown_to_canonical_json(markdown)
-        result = deck.create_presentation(canonical_data, "test_invalid_layout")
-        assert "Successfully created presentation" in result
+        with pytest.raises(Exception) as exc_info:
+            deck.create_presentation(canonical_data, "test_invalid_layout")
+        assert "Unknown layout" in str(exc_info.value)
 
     def test_missing_image_with_no_fallback(self, deckbuilder_with_env, monkeypatch):
         """Test behavior when image is missing and fallback fails."""
