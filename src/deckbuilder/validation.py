@@ -225,6 +225,19 @@ class PresentationValidator:
             "content_left": ["content_left_1", "left_content", "content_col1"],
             "content_right": ["content_right_1", "right_content", "content_col2"],
             "content": ["content_1", "main_content", "body"],
+            # Image variations
+            "image": ["image_1", "image_path", "picture"],
+            "image_1": ["image", "image_path", "picture"],
+            "image_path": ["image", "image_1", "picture"],
+            # SWOT Analysis variations
+            "content_top_left": ["content_16", "strengths", "strength"],
+            "content_top_right": ["content_17", "weaknesses", "weakness"],
+            "content_bottom_left": ["content_18", "opportunities", "opportunity"],
+            "content_bottom_right": ["content_19", "threats", "threat"],
+            "content_16": ["content_top_left", "strengths", "strength"],
+            "content_17": ["content_top_right", "weaknesses", "weakness"],
+            "content_18": ["content_bottom_left", "opportunities", "opportunity"],
+            "content_19": ["content_bottom_right", "threats", "threat"],
         }
 
         # Check if field_name has variations to try
@@ -346,14 +359,23 @@ class PresentationValidator:
                     content = self._extract_shape_text(shape)
                     semantic_type = self._get_semantic_type(ph_type)
 
+                    # Special handling for PICTURE placeholders
+                    has_content = bool(content.strip())
+                    if ph_type.name == "PICTURE":
+                        # For picture placeholders, check if image is present
+                        has_image = self._check_placeholder_has_image(shape)
+                        has_content = has_image
+                        if has_image:
+                            content = "[IMAGE PRESENT]"
+
                     # Track all placeholders
                     all_placeholders[f"{semantic_type}_{ph_idx}"] = {
                         "content": content,
                         "name": ph_name,
-                        "has_content": bool(content.strip()),
+                        "has_content": has_content,
                     }
 
-                    if content.strip():  # Only count non-empty content
+                    if has_content:  # Count content or images
                         actual_content[f"{semantic_type}_{ph_idx}"] = content
             except ValueError:
                 continue
@@ -388,11 +410,22 @@ class PresentationValidator:
                 f"[Validation]     '{field_name}': Looking for '{expected_clean[:30]}{'...' if len(expected_clean) > 30 else ''}'"
             )
 
-            for ph_key, actual_text in actual_content.items():
-                if expected_clean.lower() in actual_text.lower():
-                    found_content = True
-                    print(f"[Validation]       ✓ FOUND in {ph_key}")
-                    break
+            # Special handling for image fields
+            if field_name in ["image", "image_1", "image_path"] or "image" in field_name.lower():
+                # For image fields, just check if we have any content in actual_content
+                # (which includes "[IMAGE PRESENT]" for successful image insertion)
+                for ph_key, actual_text in actual_content.items():
+                    if "PICTURE" in ph_key or "[IMAGE PRESENT]" in actual_text:
+                        found_content = True
+                        print(f"[Validation]       ✓ FOUND image in {ph_key}")
+                        break
+            else:
+                # Normal text content validation
+                for ph_key, actual_text in actual_content.items():
+                    if expected_clean.lower() in actual_text.lower():
+                        found_content = True
+                        print(f"[Validation]       ✓ FOUND in {ph_key}")
+                        break
 
             if not found_content:
                 print("[Validation]       ✗ NOT FOUND in any placeholder")
@@ -438,6 +471,33 @@ class PresentationValidator:
         text = re.sub(r"\*\*(.*?)\*\*", r"\1", text)  # **bold**
         text = re.sub(r"\*(.*?)\*", r"\1", text)  # *italic*
         return text.strip()
+
+    def _check_placeholder_has_image(self, shape) -> bool:
+        """Check if a PICTURE placeholder contains an image."""
+        try:
+            # Check if shape has image content
+            if hasattr(shape, "image"):
+                return shape.image is not None
+
+            # Check if shape has fill with image
+            if hasattr(shape, "fill") and shape.fill.type is not None:
+                # PICTURE fill type indicates image is present
+                return True
+
+            # Check for image in shape element
+            if hasattr(shape, "element") and shape.element is not None:
+                # Look for image elements in the shape XML
+                image_elements = shape.element.xpath(
+                    ".//a:blip",
+                    namespaces={"a": "http://schemas.openxmlformats.org/drawingml/2006/main"},
+                )
+                return len(image_elements) > 0
+
+        except Exception:  # nosec B110
+            # If we can't determine, assume no image for validation purposes
+            pass
+
+        return False
 
     def _parse_markdown_sections(self, markdown_content: str) -> List[Dict[str, Any]]:
         """Parse markdown into sections with frontmatter and content."""

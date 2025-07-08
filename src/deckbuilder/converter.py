@@ -132,6 +132,9 @@ class StructuredFrontmatterConverter:
         for structured_path, placeholder_target in mapping_rules.items():
             value = self._extract_value_by_path(structured_data, structured_path)
             if value is not None:
+                # Convert arrays to newline-separated strings for content placeholders
+                if isinstance(value, list):
+                    value = "\n".join(str(item) for item in value)
                 # In the new canonical model, we directly use the target name
                 result[placeholder_target] = value
 
@@ -325,8 +328,8 @@ def markdown_to_canonical_json(markdown_content: str) -> Dict[str, Any]:
                 "type", "Title and Content"
             ),  # Use 'type' from converted mappings
             "style": frontmatter.get("style", "default_style"),
-            "placeholders": placeholder_mappings,
-            "content": [],
+            "placeholders": placeholder_mappings,  # ,
+            # "content": [],  # Legacy?
         }
 
         # Remove 'type' from placeholders as it's now in 'layout'

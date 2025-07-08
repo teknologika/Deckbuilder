@@ -1,237 +1,185 @@
 ---
 layout: Title Slide
+title: "**Deckbuilder: Intelligent PowerPoint Generation**"
+subtitle: "Showcasing all ___19 layouts___ with **professional** *formatting* capabilities"
 ---
-# **Deckbuilder: Intelligent PowerPoint Generation**
-## Showcasing all ___19 layouts___ with **professional** *formatting* capabilities
 
 ---
 layout: Title and Content
+title: "Rich Content with **Professional** *Formatting*"
+content: |
+  ## Deckbuilder Features
+
+  Deckbuilder delivers intelligent presentation generation with comprehensive formatting support.
+
+  - **Content-first** design philosophy
+  - *Semantic* layout recommendations
+  - ***Advanced*** template management
+  - ___Professional___ formatting preservation
+
+  Transform your ideas into polished presentations with **automated** *intelligence* and ___consistent___ styling.
 ---
-# Rich Content with **Professional** *Formatting*
-
-## Deckbuilder Features
-Deckbuilder delivers intelligent presentation generation with comprehensive formatting support.
-
-- **Content-first** design philosophy
-- *Semantic* layout recommendations
-- ***Advanced*** template management
-- ___Professional___ formatting preservation
-
-Transform your ideas into polished presentations with **automated** *intelligence* and ___consistent___ styling.
 
 ---
 layout: Section Header
+title: "**Deckbuilder** *Capabilities*"
+text: "Comprehensive presentation intelligence with ___professional___ **layout** automation for streamlined content creation."
 ---
-# **Deckbuilder** *Capabilities*
-
-Comprehensive presentation intelligence with ___professional___ **layout** automation for streamlined content creation.
 
 ---
 layout: Two Content
-title: Deckbuilder **Core** Features
-sections:
-  - title: Content Intelligence
-    content:
-      - "**Semantic** layout detection"
-      - "*Automatic* content optimization"
-      - "***Smart*** placeholder mapping"
-  - title: Professional Output
-    content:
-      - "___Enterprise-grade___ presentations"
-      - "**Consistent** branding"
-      - "*Polished* formatting"
+title: "Deckbuilder **Core** Features"
+content_left: |
+  **Semantic** layout detection
+  *Automatic* content optimization
+  ***Smart*** placeholder mapping
+content_right: |
+  ___Enterprise-grade___ presentations
+  **Consistent** branding
+  *Polished* formatting
 ---
-
-Intelligent presentation generation with automated content placement and professional styling.
 
 ---
 layout: Comparison
-title: Deckbuilder **Advantage** Analysis
-comparison:
-  left:
-    title: Traditional Approach
-    content: "**Manual** slide creation with *time-consuming* layout decisions and ***inconsistent*** formatting"
-  right:
-    title: Deckbuilder Solution
-    content: "___Intelligent___ automation with **content-first** design and *professional* output quality"
+title: "Deckbuilder **Advantage** Analysis"
+title_left: "Traditional Approach"
+content_left: "**Manual** slide creation with *time-consuming* layout decisions and ***inconsistent*** formatting"
+title_right: "Deckbuilder Solution"
+content_right: "___Intelligent___ automation with **content-first** design and *professional* output quality"
 ---
-
-Automated presentation intelligence delivers superior results compared to traditional manual approaches.
 
 ---
 layout: Title Only
+title: "Deckbuilder: **Intelligent** *Presentation* ___Generation___"
 ---
-# Deckbuilder: **Intelligent** *Presentation* ___Generation___
 
 ---
 layout: Blank
 ---
-# Content-First Design Philosophy
-
-Deckbuilder transforms presentation creation through **intelligent** content analysis and automated layout selection.
 
 ---
 layout: Content with Caption
+title: "Advanced Layout Capabilities"
+content: |
+  ## Professional Features
+
+  Deckbuilder provides sophisticated layout management with intelligent content placement:
+
+  - **Template** analysis and optimization
+  - *Automatic* placeholder detection
+  - ***Semantic*** content mapping
+text_caption: "Enterprise-grade presentation generation with ___professional___ output and **consistent** formatting."
 ---
-# Advanced Layout Capabilities
-
-## Professional Features
-Deckbuilder provides sophisticated layout management with intelligent content placement:
-
-- **Template** analysis and optimization
-- *Automatic* placeholder detection
-- ***Semantic*** content mapping
-
-Enterprise-grade presentation generation with ___professional___ output and **consistent** formatting.
 
 ---
 layout: Picture with Caption
-title: Picture Layout **Test**
-media:
-  caption: "Picture placeholder with ***formatted*** captions"
-  description: "This slide demonstrates picture functionality with *formatting* capabilities and ___enhanced___ presentation features"
+title: "Picture Layout **Test**"
+image: "placeholder_image.jpg"
+text_caption: "Picture placeholder with ***formatted*** captions"
 ---
-
-Content from Picture with Caption structured frontmatter above.
 
 ---
 layout: Title and Vertical Text
+title: "**Vertical Text** Layout Test"
+content: "This layout demonstrates vertical text capabilities with **formatted** content and *enhanced* presentation features for ___specialized___ content."
 ---
-# **Vertical Text** Layout Test
-
-This layout demonstrates vertical text capabilities with **formatted** content and *enhanced* presentation features for ___specialized___ content.
 
 ---
 layout: Vertical Title and Text
+title_top: "Vertical Title Layout"
+content: "This layout demonstrates vertical title and text capabilities with **formatted** content and *enhanced* presentation features for ___specialized___ content."
 ---
-# Vertical Title Layout
-
-This layout demonstrates vertical title and text capabilities with **formatted** content and *enhanced* presentation features for ___specialized___ content.
 
 ---
 layout: Three Columns With Titles
-title: Three Column Layout **With Titles** Test
-columns:
-  - title: Performance
-    content: "**Fast processing** with optimized algorithms"
-  - title: Security
-    content: "***Enterprise-grade*** encryption with ___SOC2___ compliance"
-  - title: Usability
-    content: "*Intuitive* interface with **minimal** learning curve"
+title: "Three Column Layout **With Titles** Test"
+title_col1: "Performance"
+content_col1: "**Fast processing** with optimized algorithms"
+title_col2: "Security"
+content_col2: "***Enterprise-grade*** encryption with ___SOC2___ compliance"
+title_col3: "Usability"
+content_col3: "*Intuitive* interface with **minimal** learning curve"
 ---
-
-Content from Three Columns With Titles structured frontmatter above.
 
 ---
 layout: Three Columns
-title: Three Column Layout **Without Titles** Test
-columns:
-  - content: "**Fast processing** with optimized algorithms and *sub-millisecond* response times"
-  - content: "***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance"
-  - content: "*Intuitive* interface with **minimal** learning curve and comprehensive docs"
+title: "Three Column Layout **Without Titles** Test"
+content_col1: "**Fast processing** with optimized algorithms and *sub-millisecond* response times"
+content_col2: "***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance"
+content_col3: "*Intuitive* interface with **minimal** learning curve and comprehensive docs"
 ---
-
-Content from Three Columns structured frontmatter above.
 
 ---
 layout: Four Columns With Titles
-title: Four Column Layout **With Titles** Test
-columns:
-  - title: Performance
-    content: "**Fast processing** with optimized algorithms"
-  - title: Security
-    content: "***Enterprise-grade*** encryption with ___SOC2___ compliance"
-  - title: Usability
-    content: "*Intuitive* interface with **minimal** learning curve"
-  - title: Cost
-    content: "___Transparent___ pricing with **flexible** plans"
+title: "Four Column Layout **With Titles** Test"
+title_col1: "Performance"
+content_col1: "**Fast processing** with optimized algorithms"
+title_col2: "Security"
+content_col2: "***Enterprise-grade*** encryption with ___SOC2___ compliance"
+title_col3: "Usability"
+content_col3: "*Intuitive* interface with **minimal** learning curve"
+title_col4: "Cost"
+content_col4: "___Transparent___ pricing with **flexible** plans"
 ---
-
-Content from Four Columns With Titles structured frontmatter above.
 
 ---
 layout: Four Columns
-title: Four Column Layout **Without Titles** Test
-columns:
-  - content: "**Fast processing** with optimized algorithms and *sub-millisecond* response times"
-  - content: "***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance"
-  - content: "*Intuitive* interface with **minimal** learning curve and comprehensive docs"
-  - content: "___Transparent___ pricing with **flexible** plans and *proven* ROI"
+title: "Four Column Layout **Without Titles** Test"
+content_col1: "**Fast processing** with optimized algorithms and *sub-millisecond* response times"
+content_col2: "***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance"
+content_col3: "*Intuitive* interface with **minimal** learning curve and comprehensive docs"
+content_col4: "___Transparent___ pricing with **flexible** plans and *proven* ROI"
 ---
-
-Content from Four Columns structured frontmatter above.
 
 ---
 layout: Agenda, 6 Textboxes
-title: **Agenda** Layout Test
-agenda:
-  - number: "01"
-    item: "**Opening** remarks and introductions"
-  - number: "02"
-    item: "*Market* analysis and trends"
-  - number: "03"
-    item: "***Product*** roadmap updates"
-  - number: "04"
-    item: "___Financial___ performance review"
-  - number: "05"
-    item: "**Strategic** initiatives overview"
-  - number: "06"
-    item: "*Q&A* session and next steps"
+title: "**Agenda** Layout Test"
+content_item1: "01 - **Opening** remarks and introductions"
+content_item2: "02 - *Market* analysis and trends"
+content_item3: "03 - ***Product*** roadmap updates"
+content_item4: "04 - ___Financial___ performance review"
+content_item5: "05 - **Strategic** initiatives overview"
+content_item6: "06 - *Q&A* session and next steps"
 ---
-
-Content from Agenda, 6 Textboxes structured frontmatter above.
 
 ---
 layout: Title and 6-item Lists
-title: **Six Item Lists** Layout Test
-lists:
-  - number: "01"
-    title: "**Features**"
-    content: "*Authentication*"
-  - number: "02"
-    title: "**Authorization**"
-    content: "___Encryption___"
-  - number: "03"
-    title: "***Benefits***"
-    content: "**Security**"
-  - number: "04"
-    title: "*Performance*"
-    content: "___Scalability___"
-  - number: "05"
-    title: "**Reliability**"
-    content: "*Monitoring*"
-  - number: "06"
-    title: "***Support***"
-    content: "**Documentation**"
+slide_title: "**Six Item Lists** Layout Test"
+Title1: "**Features**"
+Content1: "*Authentication*"
+Title2: "**Authorization**"
+Content3: "___Encryption___"
+Title3: "***Benefits***"
+Title4: "*Performance*"
+Content4: "___Scalability___"
+Title5: "**Reliability**"
+Content5: "*Monitoring*"
+Title6: "***Support***"
+Content6: "**Documentation**"
 ---
-
-Content from Title and 6-item Lists structured frontmatter above.
 
 ---
 layout: Big Number
+title: "**42%**"
+content: "Improvement in *performance* with ___new___ architecture"
 ---
-# **42%**
-## Improvement in *performance* with ___new___ architecture
 
 ---
 layout: SWOT Analysis
-title: **SWOT** Analysis
-swot:
-  strengths: "**Strong** market position with *proven* technology"
-  weaknesses: "___Limited___ geographic presence and **high** costs"
-  opportunities: "*Emerging* markets and ***digital*** transformation"
-  threats: "**Competition** and ___regulatory___ changes"
+title: "**SWOT** Analysis"
+content_top_left: "**Strong** market position with *proven* technology"
+content_top_right: "___Limited___ geographic presence and **high** costs"
+content_bottom_left: "*Emerging* markets and ***digital*** transformation"
+content_bottom_right: "**Competition** and ___regulatory___ changes"
 ---
-
-Content from SWOT Analysis structured frontmatter above.
 
 ---
 layout: Title and Content
+title: "Table Slide with **Formatted** Content"
+content: |
+  | **Feature** | *Status* | ___Priority___ |
+  | Authentication | **Complete** | *High* |
+  | User Management | ***In Progress*** | ___Medium___ |
+  | Reporting | *Planned* | **Low** |
+  | API Integration | ___Blocked___ | ***Critical*** |
 ---
-# Table Slide with **Formatted** Content
-
-| **Feature** | *Status* | ___Priority___ |
-| Authentication | **Complete** | *High* |
-| User Management | ***In Progress*** | ___Medium___ |
-| Reporting | *Planned* | **Low** |
-| API Integration | ___Blocked___ | ***Critical*** |

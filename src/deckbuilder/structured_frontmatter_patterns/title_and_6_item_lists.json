@@ -4,14 +4,20 @@
     "yaml_pattern": {
         "layout": "Title and 6-item Lists",
         "title": "str",
-        "lists": [{"number": "str", "title": "str", "content": "str"}]
+        "lists": [
+            {
+                "number": "str",
+                "title": "str",
+                "content": "str"
+            }
+        ]
     },
     "mapping_rules": {
         "title": "slide_title",
         "lists[0].title": "Title1",
         "lists[0].content": "Content1",
         "lists[1].title": "Title2",
-        "lists[1].content": "Content3",
+        "lists[1].content": "Content2",
         "lists[2].title": "Title3",
         "lists[2].content": "Content3",
         "lists[3].title": "Title4",
@@ -21,6 +27,12 @@
         "lists[5].title": "Title6",
         "lists[5].content": "Content6"
     },
-    "validation": {"required_fields": ["title", "lists"], "max_items": 6},
+    "validation": {
+        "required_fields": [
+            "title",
+            "lists"
+        ],
+        "max_items": 6
+    },
     "example": "---\n                 layout: Title and 6-item Lists\n                 title: Feature Overview\n                 lists:\n                   - number: \"01\"\n                     title: Authentication\n                     content: Secure login system\n                 ---"
 }

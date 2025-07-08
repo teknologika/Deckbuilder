@@ -71,16 +71,8 @@
       "layout": "Two Content",
       "placeholders": {
         "title": "Two Content Layout Test",
-        "content_left": [
-          "**Feature A** details",
-          "*Feature B* information",
-          "***Critical*** updates"
-        ],
-        "content_right": [
-          "___Important___ notices",
-          "**Security** measures",
-          "*Performance* metrics"
-        ]
+        "content_left": "**Feature A** details\n*Feature B* information\n***Critical*** updates",
+        "content_right": "___Important___ notices\n**Security** measures\n*Performance* metrics"
       },
       "content": []
     },
@@ -156,7 +148,7 @@
       "layout": "Picture with Caption",
       "placeholders": {
         "title": "Picture Layout **Test**",
-        "image_1": "placeholder_image.jpg",
+        "image": "placeholder_image.jpg",
         "text_caption": "Picture placeholder with ***formatted*** captions and *enhanced* presentation features"
       },
       "content": []
@@ -279,10 +271,11 @@
     {
       "layout": "SWOT Analysis",
       "placeholders": {
-        "content_16": "**Strong** market position with *proven* technology",
-        "content_17": "___Limited___ geographic presence and **high** costs",
-        "content_18": "*Emerging* markets and ***digital*** transformation",
-        "content_19": "**Competition** and ___regulatory___ changes"
+        "title": "**SWOT Analysis** Overview",
+        "content_top_left": "**Strong** market position with *proven* technology",
+        "content_top_right": "___Limited___ geographic presence and **high** costs",
+        "content_bottom_left": "*Emerging* markets and ***digital*** transformation",
+        "content_bottom_right": "**Competition** and ___regulatory___ changes"
       },
       "content": []
     },

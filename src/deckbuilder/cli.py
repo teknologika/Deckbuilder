@@ -395,7 +395,12 @@ class DeckbuilderCLI:
             print("Then reload: source ~/.bash_profile")
 
         except Exception as e:
-            print(f"Error setting up templates: {e}")
+            # Extract filename from JSON parsing errors
+            error_msg = str(e)
+            if "Expecting property name enclosed in double quotes" in error_msg:
+                print(f"⚠️ JSON parsing error in master_default_presentation.json: {e}")
+            else:
+                print(f"⚠️ Error setting up templates: {e}")
             print("💡 Make sure you have write permissions to the target directory")
 
     def _copy_golden_files_as_examples(self, target_path):

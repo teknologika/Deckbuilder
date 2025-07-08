@@ -212,7 +212,7 @@ class SlideBuilder:
 
         for field_name, field_value in content_data.items():
             # Skip non-content fields
-            if field_name in ["type", "content", "table", "layout"]:
+            if field_name in ["type", "table", "layout"]:
                 continue
 
             print(f"    Mapping field '{field_name}' (value: {str(field_value)[:50]}...)")
@@ -418,6 +418,10 @@ class SlideBuilder:
             "content_left": ["content_left_1", "left_content", "content_col1"],
             "content_right": ["content_right_1", "right_content", "content_col2"],
             "content": ["content_1", "main_content", "body"],
+            # Image variations
+            "image": ["image_1", "image_path", "picture"],
+            "image_1": ["image", "image_path", "picture"],
+            "image_path": ["image", "image_1", "picture"],
             # Column variations
             "content_col1": ["content_left", "content_left_1", "col1_content"],
             "content_col2": ["content_right", "content_right_1", "col2_content"],
@@ -441,6 +445,15 @@ class SlideBuilder:
             "number_item4": ["number_item4_1", "item4_number", "num_4"],
             "number_item5": ["number_item5_1", "item5_number", "num_5"],
             "number_item6": ["number_item6_1", "item6_number", "num_6"],
+            # SWOT Analysis variations
+            "content_top_left": ["content_16", "strengths", "strength"],
+            "content_top_right": ["content_17", "weaknesses", "weakness"],
+            "content_bottom_left": ["content_18", "opportunities", "opportunity"],
+            "content_bottom_right": ["content_19", "threats", "threat"],
+            "content_16": ["content_top_left", "strengths", "strength"],
+            "content_17": ["content_top_right", "weaknesses", "weakness"],
+            "content_18": ["content_bottom_left", "opportunities", "opportunity"],
+            "content_19": ["content_bottom_right", "threats", "threat"],
         }
 
         # Check if field_name has variations to try
