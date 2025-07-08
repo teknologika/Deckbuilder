@@ -88,18 +88,8 @@ class SlideBuilder:
             slide, slide_data, layout_name, content_formatter, image_placeholder_handler
         )
 
-        # Handle content using unified processing (skip only if empty to avoid overwriting placeholders)
-        # print(f"Processing slide with: {', '.join(list(slide_data.keys()))}")
-        if "content" in slide_data:
-            content = slide_data["content"]
-            print(f"Content: {len(content) if isinstance(content, list) else 'text'}")
-            if content:  # Only process if non-empty
-                print("  Processing content blocks")
-                content_formatter.add_content_to_slide(slide, content)
-            else:
-                pass  # Skip empty content
-        else:
-            pass  # No content blocks
+        # All content should be processed through placeholders only - no legacy content blocks
+        print("  Slide completed using structured frontmatter placeholders only")
 
         return slide
 

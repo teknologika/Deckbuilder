@@ -119,9 +119,13 @@ class PresentationValidator:
 
             # Show slide content fields for debugging
             placeholders = slide_data.get("placeholders", {})
-            content_blocks = slide_data.get("content", [])
             print(f"[Validation]   Placeholder fields: {list(placeholders.keys())}")
-            print(f"[Validation]   Content blocks: {len(content_blocks)}")
+
+            # Legacy content blocks should not exist in structured frontmatter
+            if "content" in slide_data:
+                print(
+                    "[Validation]   WARNING: Legacy content blocks detected - should be converted to placeholders"
+                )
 
             # Validate placeholder mappings
             self._validate_slide_placeholders(slide_num, slide_data, layout_name)
@@ -316,8 +320,7 @@ class PresentationValidator:
         # Validate critical placeholders are not empty
         self._validate_critical_placeholders(slide_num, slide, slide_spec)
 
-        # Validate content blocks are processed
-        self._validate_content_blocks(slide_num, slide, slide_spec)
+        # Content blocks validation removed - structured frontmatter uses placeholders only
 
     def _validate_critical_placeholders(self, slide_num: int, slide, slide_spec: Dict[str, Any]):
         """Validate that critical placeholders have content."""
@@ -408,78 +411,7 @@ class PresentationValidator:
                 f"Slide {slide_num} ({layout_name}): Missing critical content: {', '.join(critical_missing)}"
             )
 
-    def _validate_content_blocks(self, slide_num: int, slide, slide_spec: Dict[str, Any]):
-        """Validate that content blocks are properly processed."""
-        expected_content_blocks = slide_spec.get("content", [])
-
-        print(
-            f"[Validation]   Content blocks validation: {len(expected_content_blocks)} blocks expected"
-        )
-
-        if not expected_content_blocks:
-            print("[Validation]     No content blocks to validate")
-            return  # No content blocks expected
-
-        # Check for tables
-        expected_tables = sum(
-            1 for block in expected_content_blocks if block.get("type") == "table"
-        )
-        actual_tables = sum(1 for shape in slide.shapes if hasattr(shape, "table"))
-
-        print(
-            f"[Validation]     Table validation: expected={expected_tables}, actual={actual_tables}"
-        )
-
-        if expected_tables > 0 and actual_tables == 0:
-            print("[Validation]     ✗ Table content missing")
-            raise ValidationError(
-                f"Slide {slide_num}: Expected {expected_tables} table(s), found 0"
-            )
-
-        # Check for content blocks in placeholders
-        content_blocks_text = [
-            block.get("text", "")
-            for block in expected_content_blocks
-            if block.get("type") != "table" and block.get("text")
-        ]
-
-        print(f"[Validation]     Text content blocks to validate: {len(content_blocks_text)}")
-
-        if content_blocks_text:
-            found_content_text = []
-            for shape in slide.shapes:
-                text = self._extract_shape_text(shape)
-                if text:
-                    found_content_text.append(text)
-
-            print(f"[Validation]     Actual text content found in {len(found_content_text)} shapes")
-
-            # Check if key content from blocks appears somewhere in slide
-            missing_content = []
-            for i, expected_text in enumerate(content_blocks_text):
-                expected_clean = self._strip_formatting_markers(expected_text)
-                print(
-                    f"[Validation]       Block {i + 1}: Looking for '{expected_clean[:30]}{'...' if len(expected_clean) > 30 else ''}'"
-                )
-
-                found = any(
-                    expected_clean.lower() in actual_text.lower()
-                    for actual_text in found_content_text
-                )
-
-                if found:
-                    print("[Validation]         ✓ FOUND in slide content")
-                else:
-                    print("[Validation]         ✗ NOT FOUND in slide content")
-                    missing_content.append(expected_clean[:30] + "...")
-
-            if missing_content:
-                print("[Validation]     ✗ Missing content blocks detected")
-                raise ValidationError(
-                    f"Slide {slide_num}: Missing content blocks: {', '.join(missing_content)}"
-                )
-            else:
-                print("[Validation]     ✓ All content blocks found")
+    # _validate_content_blocks method removed - structured frontmatter uses placeholders only
 
     def _extract_shape_text(self, shape) -> str:
         """Extract all text from a shape."""

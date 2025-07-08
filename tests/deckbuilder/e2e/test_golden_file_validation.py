@@ -88,7 +88,6 @@ class TestGoldenFileValidation:
             "Title and Content",
             "Two Content",
             "Four Columns",
-            "table",  # Note: uses lowercase in frontmatter
             "Section Header",
             "Title Only",
             "Picture with Caption",
