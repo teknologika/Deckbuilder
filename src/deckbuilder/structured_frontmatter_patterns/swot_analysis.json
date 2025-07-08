@@ -1,23 +1,23 @@
 {
-    "structure_type": "analysis",
+    "structure_type": "direct_fields",
     "description": "SWOT analysis layout with four quadrants",
     "yaml_pattern": {
         "layout": "SWOT Analysis",
         "title": "str",
-        "swot": {
-            "strengths": "str",
-            "weaknesses": "str",
-            "opportunities": "str",
-            "threats": "str"
-        }
+        "content_top_left": "str",
+        "content_top_right": "str",
+        "content_bottom_left": "str",
+        "content_bottom_right": "str"
     },
     "mapping_rules": {
         "title": "title",
-        "swot.strengths": "content_top_left",
-        "swot.weaknesses": "content_top_right",
-        "swot.opportunities": "content_bottom_left",
-        "swot.threats": "content_bottom_right"
+        "content_top_left": "content_top_left",
+        "content_top_right": "content_top_right",
+        "content_bottom_left": "content_bottom_left",
+        "content_bottom_right": "content_bottom_right"
     },
-    "validation": {"required_fields": ["title", "swot"]},
-    "example": "---\n                layout: SWOT Analysis\n                title: Strategic Analysis\n                swot:\n                  strengths: Strong market position\n                  weaknesses: Limited resources\n                  opportunities: New markets\n                  threats: Competition\n                ---"
+    "validation": {
+        "required_fields": ["title", "content_top_left", "content_top_right", "content_bottom_left", "content_bottom_right"]
+    },
+    "example": "---\nlayout: SWOT Analysis\ntitle: \"**SWOT** Analysis\"\ncontent_top_left: \"**Strong** market position with *proven* technology\"\ncontent_top_right: \"___Limited___ geographic presence and **high** costs\"\ncontent_bottom_left: \"*Emerging* markets and ***digital*** transformation\"\ncontent_bottom_right: \"**Competition** and ___regulatory___ changes\"\n---"
 }

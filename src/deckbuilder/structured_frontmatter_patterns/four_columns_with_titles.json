@@ -1,26 +1,31 @@
 {
-    "structure_type": "columns",
+    "structure_type": "direct_fields",
     "description": "Four-column comparison layout with individual titles and content",
     "yaml_pattern": {
         "layout": "Four Columns With Titles",
         "title": "str",
-        "columns": [{"title": "str", "content": "str"}]
+        "title_col1": "str",
+        "content_col1": "str",
+        "title_col2": "str",
+        "content_col2": "str",
+        "title_col3": "str",
+        "content_col3": "str",
+        "title_col4": "str",
+        "content_col4": "str"
     },
     "mapping_rules": {
         "title": "title",
-        "columns[0].title": "title_col1",
-        "columns[0].content": "content_col1",
-        "columns[1].title": "title_col2",
-        "columns[1].content": "content_col2",
-        "columns[2].title": "title_col3",
-        "columns[2].content": "content_col3",
-        "columns[3].title": "title_col4",
-        "columns[3].content": "content_col4"
+        "title_col1": "title_col1",
+        "content_col1": "content_col1",
+        "title_col2": "title_col2",
+        "content_col2": "content_col2",
+        "title_col3": "title_col3",
+        "content_col3": "content_col3",
+        "title_col4": "title_col4",
+        "content_col4": "content_col4"
     },
     "validation": {
-        "min_columns": 1,
-        "max_columns": 4,
-        "required_fields": ["title", "columns"]
+        "required_fields": ["title", "title_col1", "content_col1", "title_col2", "content_col2", "title_col3", "content_col3", "title_col4", "content_col4"]
     },
-    "example": "---\n                layout: Four Columns\n                title: Feature Comparison\n                columns:\n                  - title: Performance\n                    content: Fast processing with optimized algorithms\n                  - title: Security\n                    content: Enterprise-grade encryption and compliance\n                  - title: Usability\n                    content: Intuitive interface with minimal learning curve\n                  - title: Cost\n                    content: Competitive pricing with flexible plans\n                ---"
+    "example": "---\nlayout: Four Columns With Titles\ntitle: \"Four Column Layout With Titles Test\"\ntitle_col1: \"Performance\"\ncontent_col1: \"**Fast processing** with optimized algorithms\"\ntitle_col2: \"Security\"\ncontent_col2: \"***Enterprise-grade*** encryption with ___SOC2___ compliance\"\ntitle_col3: \"Usability\"\ncontent_col3: \"*Intuitive* interface with **minimal** learning curve\"\ntitle_col4: \"Cost\"\ncontent_col4: \"___Transparent___ pricing with **flexible** plans\"\n---"
 }

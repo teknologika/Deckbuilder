@@ -1,21 +1,21 @@
 {
-    "structure_type": "columns",
+    "structure_type": "direct_fields",
     "description": "Three-column layout with content only (no titles)",
     "yaml_pattern": {
         "layout": "Three Columns",
         "title": "str",
-        "columns": [{"content": "str"}]
+        "content_col1": "str",
+        "content_col2": "str",
+        "content_col3": "str"
     },
     "mapping_rules": {
         "title": "title",
-        "columns[0].content": "content_col1",
-        "columns[1].content": "content_col2",
-        "columns[2].content": "content_col3"
+        "content_col1": "content_col1",
+        "content_col2": "content_col2",
+        "content_col3": "content_col3"
     },
     "validation": {
-        "min_columns": 1,
-        "max_columns": 3,
-        "required_fields": ["title", "columns"]
+        "required_fields": ["title", "content_col1", "content_col2", "content_col3"]
     },
-    "example": "---\nlayout: Three Columns\ntitle: Benefits Overview\ncolumns:\n  - content: Fast processing with optimized algorithms and sub-millisecond response times\n  - content: Enterprise-grade encryption with SOC2 and GDPR compliance\n  - content: Intuitive interface with minimal learning curve and comprehensive docs\n---"
+    "example": "---\nlayout: Three Columns\ntitle: \"Three Column Layout Without Titles Test\"\ncontent_col1: \"**Fast processing** with optimized algorithms and *sub-millisecond* response times\"\ncontent_col2: \"***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance\"\ncontent_col3: \"*Intuitive* interface with **minimal** learning curve and comprehensive docs\"\n---"
 }

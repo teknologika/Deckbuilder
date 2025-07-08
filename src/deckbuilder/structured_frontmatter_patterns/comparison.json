@@ -1,36 +1,29 @@
 {
-    "structure_type": "comparison",
+    "structure_type": "direct_fields",
     "description": "Side-by-side comparison layout for contrasting two options",
     "yaml_pattern": {
         "layout": "Comparison",
         "title": "str",
-        "comparison": {
-            "left": {
-                "title": "str",
-                "content": "str"
-            },
-            "right": {
-                "title": "str",
-                "content": "str"
-            }
-        }
+        "title_left": "str",
+        "content_left": "str",
+        "title_right": "str",
+        "content_right": "str"
     },
     "mapping_rules": {
         "title": "title",
-        "comparison.left.title": "title_left",
-        "comparison.left.content": "content_left",
-        "comparison.right.title": "title_right",
-        "comparison.right.content": "content_right"
+        "title_left": "title_left",
+        "content_left": "content_left",
+        "title_right": "title_right",
+        "content_right": "content_right"
     },
     "validation": {
         "required_fields": [
             "title",
-            "comparison"
-        ],
-        "required_comparison_fields": [
-            "left",
-            "right"
+            "title_left",
+            "content_left",
+            "title_right",
+            "content_right"
         ]
     },
-    "example": "---\nlayout: Comparison\ntitle: Solution Analysis\ncomparison:\n  left:\n    title: Traditional Approach\n    content: Proven reliability with established workflows\n  right:\n    title: Modern Solution\n    content: Advanced features with improved efficiency\n---"
+    "example": "---\nlayout: Comparison\ntitle: \"Deckbuilder Advantage Analysis\"\ntitle_left: \"Traditional Approach\"\ncontent_left: \"**Manual** slide creation with *time-consuming* layout decisions and ***inconsistent*** formatting\"\ntitle_right: \"Deckbuilder Solution\"\ncontent_right: \"___Intelligent___ automation with **content-first** design and *professional* output quality\"\n---"
 }

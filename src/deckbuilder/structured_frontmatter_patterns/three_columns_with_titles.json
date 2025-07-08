@@ -1,24 +1,27 @@
 {
-    "structure_type": "columns",
+    "structure_type": "direct_fields",
     "description": "Three-column layout with individual titles and content",
     "yaml_pattern": {
         "layout": "Three Columns With Titles",
         "title": "str",
-        "columns": [{"title": "str", "content": "str"}]
+        "title_col1": "str",
+        "content_col1": "str",
+        "title_col2": "str",
+        "content_col2": "str",
+        "title_col3": "str",
+        "content_col3": "str"
     },
     "mapping_rules": {
         "title": "title",
-        "columns[0].title": "title_col1",
-        "columns[0].content": "content_col1",
-        "columns[1].title": "title_col2",
-        "columns[1].content": "content_col2",
-        "columns[2].title": "title_col3",
-        "columns[2].content": "content_col3"
+        "title_col1": "title_col1",
+        "content_col1": "content_col1",
+        "title_col2": "title_col2",
+        "content_col2": "content_col2",
+        "title_col3": "title_col3",
+        "content_col3": "content_col3"
     },
     "validation": {
-        "min_columns": 1,
-        "max_columns": 3,
-        "required_fields": ["title", "columns"]
+        "required_fields": ["title", "title_col1", "content_col1", "title_col2", "content_col2", "title_col3", "content_col3"]
     },
-    "example": "---\n                layout: Three Columns With Titles\n                title: Key Features\n                columns:\n                  - title: Performance\n                    content: Fast processing with optimized algorithms\n                  - title: Security\n                    content: Enterprise-grade encryption and compliance\n                  - title: Usability\n                    content: Intuitive interface with minimal learning curve\n                ---"
+    "example": "---\nlayout: Three Columns With Titles\ntitle: \"Three Column Layout With Titles Test\"\ntitle_col1: \"Performance\"\ncontent_col1: \"**Fast processing** with optimized algorithms\"\ntitle_col2: \"Security\"\ncontent_col2: \"***Enterprise-grade*** encryption with ___SOC2___ compliance\"\ntitle_col3: \"Usability\"\ncontent_col3: \"*Intuitive* interface with **minimal** learning curve\"\n---"
 }

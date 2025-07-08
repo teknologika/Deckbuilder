@@ -122,9 +122,9 @@ class StructuredFrontmatterConverter:
 
         # Copy title and subtitle if present
         if "title" in structured_data:
-            result["title"] = structured_data["title"]
+            result["title"] = self._process_content_field(structured_data["title"])
         if "subtitle" in structured_data:
-            result["subtitle"] = structured_data["subtitle"]
+            result["subtitle"] = self._process_content_field(structured_data["subtitle"])
 
         mapping_rules = structure_def.get("mapping_rules", {})
 
@@ -135,10 +135,55 @@ class StructuredFrontmatterConverter:
                 # Convert arrays to newline-separated strings for content placeholders
                 if isinstance(value, list):
                     value = "\n".join(str(item) for item in value)
+                # Process content to convert markdown to LLM-friendly JSON
+                processed_value = self._process_content_field(value)
                 # In the new canonical model, we directly use the target name
-                result[placeholder_target] = value
+                result[placeholder_target] = processed_value
 
         return result
+
+    def _process_content_field(self, content: str) -> Any:
+        """Process content field to convert markdown to LLM-friendly JSON format"""
+        if not content or not isinstance(content, str):
+            return content
+
+        content = content.strip()
+        if not content:
+            return content
+
+        # Import ContentProcessor locally to avoid circular imports
+        try:
+            from .content_processor import ContentProcessor
+        except ImportError:
+            # Fallback if content_processor not available
+            return content
+
+        # Check if content contains tables
+        if "|" in content and content.count("|") >= 2:
+            processor = ContentProcessor()
+            # Parse as table
+            table_data = processor._parse_markdown_table(content, {})
+            if table_data.get("data"):
+                return {"type": "table", "data": table_data}
+
+        # Check if content contains bullet points
+        if any(line.strip().startswith(("- ", "* ")) for line in content.split("\n")):
+            processor = ContentProcessor()
+            # Parse as rich content (includes bullets)
+            rich_content = processor._parse_rich_content(content)
+            if rich_content:
+                return {"type": "rich_content", "blocks": rich_content}
+
+        # Check if content has inline formatting
+        if any(marker in content for marker in ["**", "*", "___", "__"]):
+            processor = ContentProcessor()
+            # Parse inline formatting
+            formatted = processor._parse_inline_formatting(content)
+            if len(formatted) > 1 or formatted[0].get("format"):
+                return {"type": "formatted_text", "segments": formatted}
+
+        # Return as plain text if no special formatting detected
+        return content
 
     def _extract_value_by_path(self, data: Dict[str, Any], path: str) -> Any:
         """Extract value from nested dict using dot notation path with array support"""
@@ -299,26 +344,25 @@ def markdown_to_canonical_json(markdown_content: str) -> Dict[str, Any]:
     Converts a Markdown string with frontmatter into the canonical JSON presentation model.
     This will be the single entry point for all .md files.
     """
-    # 1. Split content into slides using "---" as a delimiter for both frontmatter and content
-    # This regex handles cases where there might be leading/trailing newlines around the ---.
-    # It also ensures that the first block is treated as frontmatter if it starts with ---
-    blocks = re.split(r"""^---\s*$\n""", markdown_content, flags=re.MULTILINE)
+    # 1. Split content into slides using "---" as a delimiter
+    # For pure structured frontmatter, each slide is a frontmatter block only
+    blocks = re.split(r"^---\s*$", markdown_content, flags=re.MULTILINE)
 
     canonical_slides = []
 
-    # The first block is usually empty if the markdown starts with ---
-    # Or it's the content if there's no frontmatter
-    start_index = 0
-    if blocks and not blocks[0].strip() and len(blocks) > 1:
-        start_index = 1  # Skip the initial empty block if frontmatter exists
+    # Skip the first empty block if it exists (when file starts with ---)
+    start_index = 1 if blocks and not blocks[0].strip() else 0
 
-    for i in range(start_index, len(blocks), 2):
+    for i in range(start_index, len(blocks)):
         frontmatter_raw = blocks[i].strip()
-        body_raw = blocks[i + 1].strip() if (i + 1) < len(blocks) else ""
+
+        # Skip empty blocks
+        if not frontmatter_raw:
+            continue
 
         frontmatter = yaml.safe_load(frontmatter_raw) or {}  # Ensure frontmatter is a dict
 
-        # 3. Use FrontmatterConverter to handle structured frontmatter
+        # 2. Use FrontmatterConverter to handle structured frontmatter
         converter = FrontmatterConverter()
         placeholder_mappings = converter.convert_structured_to_placeholders(frontmatter)
 
@@ -328,38 +372,13 @@ def markdown_to_canonical_json(markdown_content: str) -> Dict[str, Any]:
                 "type", "Title and Content"
             ),  # Use 'type' from converted mappings
             "style": frontmatter.get("style", "default_style"),
-            "placeholders": placeholder_mappings,  # ,
-            # "content": [],  # Legacy?
+            "placeholders": placeholder_mappings,
+            "content": [],  # Empty for pure structured frontmatter
         }
 
         # Remove 'type' from placeholders as it's now in 'layout'
         if "type" in slide_obj["placeholders"]:
             del slide_obj["placeholders"]["type"]
-
-        # 5. Parse the Markdown body into structured content blocks
-        # This logic will need to be robust, identifying headings, lists, tables, etc.
-        # and converting them into the structured `content` array.
-        # e.g., lines starting with '#' become 'heading' objects.
-        # e.g., lines starting with '-' become 'bullets' objects.
-
-        lines = body_raw.strip().split("\n")
-        for line in lines:
-            if line.startswith("#"):
-                level = len(line.split(" ")[0])
-                slide_obj["content"].append(
-                    {"type": "heading", "level": level, "text": line.lstrip("# ")}
-                )
-            elif line.startswith("-"):
-                # This is a simplified bullet implementation. A more robust
-                # implementation would group consecutive bullet points.
-                slide_obj["content"].append(
-                    {"type": "bullets", "items": [{"level": 1, "text": line.lstrip("- ")}]}
-                )
-            elif "|" in line:
-                # This is a simplified table implementation.
-                pass  # Table parsing will be implemented later
-            else:
-                slide_obj["content"].append({"type": "paragraph", "text": line})
 
         canonical_slides.append(slide_obj)
 

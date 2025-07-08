@@ -386,7 +386,7 @@ class LayoutRecommendationEngine:
         content_piece: str,
         message_intent: str,
     ) -> Dict[str, Any]:
-        """Generate structured frontmatter preview for the recommended layout."""
+        """Generate structured frontmatter preview using new direct field format."""
         if not layout_recommendations:
             return {}
 
@@ -395,45 +395,97 @@ class LayoutRecommendationEngine:
         # Generate title from content or intent
         title = self._extract_title_from_content(content_piece, message_intent)
 
+        # Use new direct field format for structured frontmatter
         if primary_layout == "Four Columns":
             return {
                 "preferred_format": "Four Columns",
                 "yaml_preview": f"""layout: Four Columns
 title: {title}
-columns:
-  - title: Category 1
-    content: "Key information for first category"
-  - title: Category 2
-    content: "Key information for second category"
-  - title: Category 3
-    content: "Key information for third category"
-  - title: Category 4
-    content: "Key information for fourth category" """,
-                "placeholder_mapping": {
-                    "Title 1": title,
-                    "Col 1 Title": "Category 1",
-                    "Col 2 Title": "Category 2",
-                    "Col 3 Title": "Category 3",
-                    "Col 4 Title": "Category 4",
-                },
+content_col1: "Key information for first category"
+content_col2: "Key information for second category"
+content_col3: "Key information for third category"
+content_col4: "Key information for fourth category" """,
+                "structured_format": "direct_fields",
+                "content_intelligence": "Enhanced with bullets, tables, and formatting support",
+            }
+        elif primary_layout == "Four Columns With Titles":
+            return {
+                "preferred_format": "Four Columns With Titles",
+                "yaml_preview": f"""layout: Four Columns With Titles
+title: {title}
+title_col1: "Category 1"
+content_col1: "Key information for first category"
+title_col2: "Category 2"
+content_col2: "Key information for second category"
+title_col3: "Category 3"
+content_col3: "Key information for third category"
+title_col4: "Category 4"
+content_col4: "Key information for fourth category" """,
+                "structured_format": "direct_fields",
+                "content_intelligence": "Enhanced with bullets, tables, and formatting support",
             }
         elif primary_layout == "Comparison":
             return {
                 "preferred_format": "Comparison",
                 "yaml_preview": f"""layout: Comparison
 title: {title}
-comparison:
-  left:
-    title: Option A
-    content: "Benefits and characteristics of first option"
-  right:
-    title: Option B
-    content: "Benefits and characteristics of second option" """,
-                "placeholder_mapping": {
-                    "Title 1": title,
-                    "Text Placeholder 2": "Option A",
-                    "Text Placeholder 4": "Option B",
-                },
+title_left: "Option A"
+content_left: "Benefits and characteristics of first option"
+title_right: "Option B"
+content_right: "Benefits and characteristics of second option" """,
+                "structured_format": "direct_fields",
+                "content_intelligence": "Enhanced with bullets, tables, and formatting support",
+            }
+        elif primary_layout == "Two Content":
+            return {
+                "preferred_format": "Two Content",
+                "yaml_preview": f"""layout: Two Content
+title: {title}
+content_left: |
+  - Key points for left side
+  - Supporting information
+content_right: |
+  - Key points for right side
+  - Additional details """,
+                "structured_format": "direct_fields",
+                "content_intelligence": "Enhanced with bullets, tables, and formatting support",
+            }
+        elif primary_layout == "Three Columns":
+            return {
+                "preferred_format": "Three Columns",
+                "yaml_preview": f"""layout: Three Columns
+title: {title}
+content_col1: "Content for first column"
+content_col2: "Content for second column"
+content_col3: "Content for third column" """,
+                "structured_format": "direct_fields",
+                "content_intelligence": "Enhanced with bullets, tables, and formatting support",
+            }
+        elif primary_layout == "Three Columns With Titles":
+            return {
+                "preferred_format": "Three Columns With Titles",
+                "yaml_preview": f"""layout: Three Columns With Titles
+title: {title}
+title_col1: "Category 1"
+content_col1: "Content for first column"
+title_col2: "Category 2"
+content_col2: "Content for second column"
+title_col3: "Category 3"
+content_col3: "Content for third column" """,
+                "structured_format": "direct_fields",
+                "content_intelligence": "Enhanced with bullets, tables, and formatting support",
+            }
+        elif primary_layout == "SWOT Analysis":
+            return {
+                "preferred_format": "SWOT Analysis",
+                "yaml_preview": f"""layout: SWOT Analysis
+title: {title}
+content_top_left: "**Strengths**: Market position and capabilities"
+content_top_right: "**Weaknesses**: Areas for improvement"
+content_bottom_left: "**Opportunities**: Market and growth potential"
+content_bottom_right: "**Threats**: External challenges and risks" """,
+                "structured_format": "direct_fields",
+                "content_intelligence": "Enhanced with bullets, tables, and formatting support",
             }
         else:
             return {
@@ -444,10 +496,8 @@ content: |
   - Key point from your content
   - Supporting information
   - Additional details""",
-                "placeholder_mapping": {
-                    "Title 1": title,
-                    "Content Placeholder 2": "Your content here",
-                },
+                "structured_format": "direct_fields",
+                "content_intelligence": "Enhanced with bullets, tables, and formatting support",
             }
 
     def _count_distinct_elements(self, content: str) -> int:
@@ -561,7 +611,7 @@ content: |
         }
 
     def _get_available_layouts(self) -> List[str]:
-        """Get list of currently available PowerPoint layouts."""
+        """Get list of currently available PowerPoint layouts with enhanced structured frontmatter support."""
         return [
             "Title Slide",
             "Title and Content",
@@ -572,7 +622,16 @@ content: |
             "Blank",
             "Content with Caption",
             "Picture with Caption",
+            "Title and Vertical Text",
+            "Vertical Title and Text",
+            "Three Columns With Titles",
+            "Three Columns",
+            "Four Columns With Titles",
             "Four Columns",
+            "Agenda, 6 Textboxes",
+            "Title and 6-item Lists",
+            "Big Number",
+            "SWOT Analysis",
         ]
 
 

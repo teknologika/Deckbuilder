@@ -69,7 +69,7 @@ async def deckbuilder_lifespan(server: FastMCP) -> AsyncIterator[DeckbuilderCont
 # Initialize FastMCP server with the Deckbuilder client as context
 mcp = FastMCP(
     "deckbuilder",
-    description="MCP server for creation of powerpoint decks",
+    description="MCP server for intelligent PowerPoint creation with content-first design and structured frontmatter optimization",
     lifespan=deckbuilder_lifespan,
     host=os.getenv("HOST", "0.0.0.0"),  # nosec B104
     port=os.getenv("PORT", "8050"),
@@ -202,6 +202,8 @@ async def analyze_presentation_needs_tool(
     Content-first approach: Understand communication goals before suggesting layouts.
     Acts as intelligent presentation consultant, not layout picker.
 
+    Enhanced with structured frontmatter intelligence for optimal content-to-layout mapping.
+
     Args:
         ctx: MCP context
         user_input: Raw description of what they want to present
@@ -225,6 +227,8 @@ async def analyze_presentation_needs_tool(
         - Audience considerations (expertise level, attention span, preferred format)
         - Recommended structure (slide sequence with purpose and timing)
         - Presentation strategy (opening/closing approach, engagement tactics)
+
+    This analysis feeds into the complete content-first workflow for intelligent presentations.
     """
     try:
         analysis_result = analyze_presentation_needs(
@@ -245,6 +249,8 @@ async def recommend_slide_approach_tool(
     Content-first approach: Analyzes what you want to communicate with this specific
     content piece and recommends the most effective slide layouts.
 
+    Enhanced with intelligent structured frontmatter pattern matching for precise content-to-layout optimization.
+
     Args:
         ctx: MCP context
         content_piece: Specific content to present (e.g., "We increased revenue 25%,
@@ -254,7 +260,7 @@ async def recommend_slide_approach_tool(
         presentation_context: Optional JSON string from analyze_presentation_needs_tool output
 
     Returns:
-        JSON string with layout recommendations, confidence scores, and content suggestions
+        JSON string with layout recommendations, confidence scores, and structured frontmatter previews
 
     Example:
         content_piece: "Our mobile app has these key features: real-time notifications,
@@ -264,10 +270,11 @@ async def recommend_slide_approach_tool(
         Returns recommendations like:
         - Four Columns layout (confidence: 0.90) for feature comparison grid
         - Title and Content layout (confidence: 0.75) for traditional feature list
-        - Content structuring suggestions and YAML preview
+        - Direct field YAML preview with content_col1, content_col2, etc.
+        - Structured frontmatter intelligence for optimal placeholder mapping
 
     This tool bridges the gap between content analysis (Tool #1) and content optimization (Tool #3)
-    by providing specific layout guidance for individual content pieces.
+    by providing specific layout guidance with production-ready structured frontmatter examples.
     """
     try:
         # Parse presentation context if provided
@@ -296,8 +303,10 @@ async def optimize_content_for_layout_tool(
     Optimize content structure and generate ready-to-use YAML for immediate presentation creation.
 
     Final step in content-first workflow: Takes raw content and chosen layout, then optimizes
-    the content structure and generates production-ready YAML that can be used directly
-    with create_presentation_from_markdown.
+    the content structure and generates production-ready structured frontmatter YAML.
+
+    Enhanced with direct field format matching structured frontmatter patterns for seamless
+    content-to-placeholder mapping and professional presentation output.
 
     Args:
         ctx: MCP context
@@ -317,16 +326,16 @@ async def optimize_content_for_layout_tool(
         chosen_layout: "Comparison"
 
         Returns:
-        - optimized_content.yaml_structure: Ready-to-use YAML for create_presentation_from_markdown
-        - gap_analysis: Content fit assessment and recommendations
-        - presentation_tips: Delivery guidance and timing estimates
-        - image_recommendations: Suggested visual content with PlaceKitten fallback support
+        - optimized_content.yaml_structure: Ready-to-use structured frontmatter YAML
+        - gap_analysis: Content fit assessment and layout utilization analysis
+        - presentation_tips: Delivery guidance and audience-specific recommendations
+        - Direct field format: title_left, content_left, title_right, content_right
 
     Complete Content-First Workflow:
-    1. analyze_presentation_needs_tool() -> overall structure
-    2. recommend_slide_approach_tool() -> layout recommendations
-    3. optimize_content_for_layout_tool() -> production-ready YAML ✅ THIS TOOL
-    4. create_presentation_from_markdown() -> final PowerPoint
+    1. analyze_presentation_needs_tool() -> overall structure and strategy
+    2. recommend_slide_approach_tool() -> layout recommendations with confidence scores
+    3. optimize_content_for_layout_tool() -> production-ready structured frontmatter ✅ THIS TOOL
+    4. create_presentation_from_markdown() -> final PowerPoint with proper placeholder mapping
     """
     try:
         # Parse slide context if provided

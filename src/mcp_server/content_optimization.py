@@ -138,11 +138,16 @@ class ContentOptimizationEngine:
         """Get the appropriate optimization handler for the layout."""
         handlers = {
             "Four Columns": self._optimize_for_four_columns,
+            "Four Columns With Titles": self._optimize_for_four_columns_with_titles,
+            "Three Columns": self._optimize_for_three_columns,
+            "Three Columns With Titles": self._optimize_for_three_columns_with_titles,
             "Comparison": self._optimize_for_comparison,
             "Two Content": self._optimize_for_two_content,
             "Title and Content": self._optimize_for_title_and_content,
             "Section Header": self._optimize_for_section_header,
             "Title Slide": self._optimize_for_title_slide,
+            "SWOT Analysis": self._optimize_for_swot_analysis,
+            "Agenda, 6 Textboxes": self._optimize_for_agenda_6_textboxes,
         }
         return handlers.get(layout)
 
@@ -243,8 +248,8 @@ class ContentOptimizationEngine:
 
         content_mapping = {
             "title": title,
-            "section_1": formatted_sections[0] if len(formatted_sections) > 0 else "",
-            "section_2": formatted_sections[1] if len(formatted_sections) > 1 else "",
+            "content_left": formatted_sections[0] if len(formatted_sections) > 0 else "",
+            "content_right": formatted_sections[1] if len(formatted_sections) > 1 else "",
         }
 
         return ContentOptimizationResult(
@@ -318,6 +323,199 @@ class ContentOptimizationEngine:
             yaml_structure=yaml_structure,
             content_mapping=content_mapping,
             formatting_applied=["title slide formatting"],
+            title_generated=title,
+        )
+
+    def _optimize_for_four_columns_with_titles(
+        self, content: str, slide_context: Optional[Dict]
+    ) -> ContentOptimizationResult:
+        """Optimize content for Four Columns With Titles layout."""
+        title = self._extract_or_generate_title(content, slide_context)
+        columns = self._parse_content_into_columns(content, 4)
+
+        # Apply formatting
+        formatted_columns = []
+        column_titles = []
+        formatting_applied = []
+
+        for i, col in enumerate(columns):
+            # Extract title and content from column
+            if ":" in col:
+                parts = col.split(":", 1)
+                col_title = parts[0].strip()
+                col_content = parts[1].strip()
+            else:
+                col_title = f"Category {i + 1}"
+                col_content = col
+
+            formatted_col = self._apply_content_formatting(col_content)
+            formatted_columns.append(formatted_col)
+            column_titles.append(col_title)
+
+            if formatted_col != col_content:
+                formatting_applied.append("content optimization")
+
+        # Generate YAML
+        yaml_structure = self._generate_four_columns_with_titles_yaml(
+            title, column_titles, formatted_columns
+        )
+
+        content_mapping = {
+            "title": title,
+            **{f"title_col{i + 1}": col_title for i, col_title in enumerate(column_titles)},
+            **{f"content_col{i + 1}": col for i, col in enumerate(formatted_columns)},
+        }
+
+        return ContentOptimizationResult(
+            yaml_structure=yaml_structure,
+            content_mapping=content_mapping,
+            formatting_applied=formatting_applied,
+            title_generated=title,
+        )
+
+    def _optimize_for_three_columns(
+        self, content: str, slide_context: Optional[Dict]
+    ) -> ContentOptimizationResult:
+        """Optimize content for Three Columns layout."""
+        title = self._extract_or_generate_title(content, slide_context)
+        columns = self._parse_content_into_columns(content, 3)
+
+        # Apply formatting
+        formatted_columns = []
+        formatting_applied = []
+
+        for col in columns:
+            formatted_col = self._apply_content_formatting(col)
+            formatted_columns.append(formatted_col)
+            if formatted_col != col:
+                formatting_applied.append("content optimization")
+
+        # Generate YAML
+        yaml_structure = self._generate_three_columns_yaml(title, formatted_columns)
+
+        content_mapping = {
+            "title": title,
+            **{f"content_col{i + 1}": col for i, col in enumerate(formatted_columns)},
+        }
+
+        return ContentOptimizationResult(
+            yaml_structure=yaml_structure,
+            content_mapping=content_mapping,
+            formatting_applied=formatting_applied,
+            title_generated=title,
+        )
+
+    def _optimize_for_three_columns_with_titles(
+        self, content: str, slide_context: Optional[Dict]
+    ) -> ContentOptimizationResult:
+        """Optimize content for Three Columns With Titles layout."""
+        title = self._extract_or_generate_title(content, slide_context)
+        columns = self._parse_content_into_columns(content, 3)
+
+        # Apply formatting and extract titles
+        formatted_columns = []
+        column_titles = []
+        formatting_applied = []
+
+        for i, col in enumerate(columns):
+            if ":" in col:
+                parts = col.split(":", 1)
+                col_title = parts[0].strip()
+                col_content = parts[1].strip()
+            else:
+                col_title = f"Category {i + 1}"
+                col_content = col
+
+            formatted_col = self._apply_content_formatting(col_content)
+            formatted_columns.append(formatted_col)
+            column_titles.append(col_title)
+
+            if formatted_col != col_content:
+                formatting_applied.append("content optimization")
+
+        # Generate YAML
+        yaml_structure = self._generate_three_columns_with_titles_yaml(
+            title, column_titles, formatted_columns
+        )
+
+        content_mapping = {
+            "title": title,
+            **{f"title_col{i + 1}": col_title for i, col_title in enumerate(column_titles)},
+            **{f"content_col{i + 1}": col for i, col in enumerate(formatted_columns)},
+        }
+
+        return ContentOptimizationResult(
+            yaml_structure=yaml_structure,
+            content_mapping=content_mapping,
+            formatting_applied=formatting_applied,
+            title_generated=title,
+        )
+
+    def _optimize_for_swot_analysis(
+        self, content: str, slide_context: Optional[Dict]
+    ) -> ContentOptimizationResult:
+        """Optimize content for SWOT Analysis layout."""
+        title = self._extract_or_generate_title(content, slide_context)
+
+        # Parse SWOT content into quadrants
+        swot_content = self._parse_content_into_swot_quadrants(content)
+
+        # Apply formatting
+        formatted_swot = {}
+        formatting_applied = []
+
+        for quadrant, content_text in swot_content.items():
+            formatted_content = self._apply_content_formatting(content_text)
+            formatted_swot[quadrant] = formatted_content
+            if formatted_content != content_text:
+                formatting_applied.append("SWOT content optimization")
+
+        # Generate YAML
+        yaml_structure = self._generate_swot_analysis_yaml(title, formatted_swot)
+
+        content_mapping = {
+            "title": title,
+            **formatted_swot,
+        }
+
+        return ContentOptimizationResult(
+            yaml_structure=yaml_structure,
+            content_mapping=content_mapping,
+            formatting_applied=formatting_applied,
+            title_generated=title,
+        )
+
+    def _optimize_for_agenda_6_textboxes(
+        self, content: str, slide_context: Optional[Dict]
+    ) -> ContentOptimizationResult:
+        """Optimize content for Agenda, 6 Textboxes layout."""
+        title = self._extract_or_generate_title(content, slide_context)
+
+        # Parse content into 6 agenda items
+        agenda_items = self._parse_content_into_agenda_items(content, 6)
+
+        # Apply formatting
+        formatted_items = []
+        formatting_applied = []
+
+        for item in agenda_items:
+            formatted_item = self._apply_content_formatting(item)
+            formatted_items.append(formatted_item)
+            if formatted_item != item:
+                formatting_applied.append("agenda item optimization")
+
+        # Generate YAML
+        yaml_structure = self._generate_agenda_6_textboxes_yaml(title, formatted_items)
+
+        content_mapping = {
+            "title": title,
+            **{f"content_item{i + 1}": item for i, item in enumerate(formatted_items)},
+        }
+
+        return ContentOptimizationResult(
+            yaml_structure=yaml_structure,
+            content_mapping=content_mapping,
+            formatting_applied=formatting_applied,
             title_generated=title,
         )
 
@@ -515,70 +713,134 @@ class ContentOptimizationEngine:
 
         return content
 
-    # YAML Generation Methods
-    def _generate_four_columns_yaml(self, title: str, columns: List[str]) -> str:
-        """Generate YAML for Four Columns layout."""
-        yaml_columns = []
-        for i, col in enumerate(columns):
-            col_title = f"Column {i + 1}"
-            # Try to extract a title from the column content
-            if ":" in col:
-                parts = col.split(":", 1)
-                col_title = parts[0].strip()
-                col_content = parts[1].strip()
-            else:
-                col_content = col
+    def _parse_content_into_swot_quadrants(self, content: str) -> Dict[str, str]:
+        """Parse content into SWOT analysis quadrants."""
+        default_swot = {
+            "content_top_left": "**Strengths**: Market position and capabilities",
+            "content_top_right": "**Weaknesses**: Areas for improvement",
+            "content_bottom_left": "**Opportunities**: Market and growth potential",
+            "content_bottom_right": "**Threats**: External challenges and risks",
+        }
 
-            yaml_columns.append(
-                f"""  - title: {col_title}
-    content: "{col_content}" """
+        # Look for explicit SWOT keywords
+        content_lower = content.lower()
+        swot_content = {}
+
+        if "strength" in content_lower:
+            strength_match = re.search(r"strength[s]?[:\-\s]*([^\n]+)", content, re.IGNORECASE)
+            if strength_match:
+                swot_content["content_top_left"] = (
+                    f"**Strengths**: {strength_match.group(1).strip()}"
+                )
+
+        if "weakness" in content_lower:
+            weakness_match = re.search(r"weakness[es]*[:\-\s]*([^\n]+)", content, re.IGNORECASE)
+            if weakness_match:
+                swot_content["content_top_right"] = (
+                    f"**Weaknesses**: {weakness_match.group(1).strip()}"
+                )
+
+        if "opportunit" in content_lower:
+            opportunity_match = re.search(
+                r"opportunit[y|ies]*[:\-\s]*([^\n]+)", content, re.IGNORECASE
             )
+            if opportunity_match:
+                swot_content["content_bottom_left"] = (
+                    f"**Opportunities**: {opportunity_match.group(1).strip()}"
+                )
+
+        if "threat" in content_lower:
+            threat_match = re.search(r"threat[s]*[:\-\s]*([^\n]+)", content, re.IGNORECASE)
+            if threat_match:
+                swot_content["content_bottom_right"] = (
+                    f"**Threats**: {threat_match.group(1).strip()}"
+                )
+
+        # Fill in missing quadrants with defaults
+        for key, default_value in default_swot.items():
+            if key not in swot_content:
+                swot_content[key] = default_value
+
+        return swot_content
+
+    def _parse_content_into_agenda_items(self, content: str, num_items: int) -> List[str]:
+        """Parse content into agenda items."""
+        # Look for numbered or bulleted items
+        numbered_items = re.findall(r"\d+[.\)\-\s]+([^\n]+)", content)
+        if len(numbered_items) >= num_items:
+            return numbered_items[:num_items]
+
+        bullet_items = re.findall(r"[-*•]\s*([^\n]+)", content)
+        if len(bullet_items) >= num_items:
+            return bullet_items[:num_items]
+
+        # Split by sentences
+        sentences = re.split(r"[.!?]+", content)
+        clean_sentences = [s.strip() for s in sentences if s.strip()]
+
+        if len(clean_sentences) >= num_items:
+            return clean_sentences[:num_items]
+
+        # Generate default agenda items
+        items = []
+        for i in range(num_items):
+            if i < len(clean_sentences):
+                items.append(f"{i + 1:02d} - {clean_sentences[i]}")
+            else:
+                items.append(f"{i + 1:02d} - Agenda item {i + 1}")
+
+        return items
+
+    # YAML Generation Methods (Updated for Direct Field Format)
+    def _generate_four_columns_yaml(self, title: str, columns: List[str]) -> str:
+        """Generate YAML for Four Columns layout using direct field format."""
+        # Ensure we have 4 columns
+        while len(columns) < 4:
+            columns.append(f"Content for column {len(columns) + 1}")
 
         return f"""---
 layout: Four Columns
 title: {title}
-columns:
-{chr(10).join(yaml_columns)}
+content_col1: "{columns[0]}"
+content_col2: "{columns[1]}"
+content_col3: "{columns[2]}"
+content_col4: "{columns[3]}"
 ---"""
 
     def _generate_comparison_yaml(
         self, title: str, left_title: str, left_content: str, right_title: str, right_content: str
     ) -> str:
-        """Generate YAML for Comparison layout."""
+        """Generate YAML for Comparison layout using direct field format."""
         return f"""---
 layout: Comparison
 title: {title}
-comparison:
-  left:
-    title: {left_title}
-    content: "{left_content}"
-  right:
-    title: {right_title}
-    content: "{right_content}"
+title_left: {left_title}
+content_left: "{left_content}"
+title_right: {right_title}
+content_right: "{right_content}"
 ---"""
 
     def _generate_two_content_yaml(self, title: str, sections: List[str]) -> str:
-        """Generate YAML for Two Content layout."""
+        """Generate YAML for Two Content layout using direct field format."""
         section1 = sections[0] if len(sections) > 0 else "Content for first section"
         section2 = sections[1] if len(sections) > 1 else "Content for second section"
 
         return f"""---
 layout: Two Content
 title: {title}
-sections:
-  - title: Section 1
-    content: "{section1}"
-  - title: Section 2
-    content: "{section2}"
+content_left: |
+  {section1}
+content_right: |
+  {section2}
 ---"""
 
     def _generate_title_and_content_yaml(self, title: str, content: str) -> str:
-        """Generate YAML for Title and Content layout."""
+        """Generate YAML for Title and Content layout using direct field format."""
         return f"""---
 layout: Title and Content
 title: {title}
----
-{content}"""
+content: "{content}"
+---"""
 
     def _generate_section_header_yaml(self, title: str, subtitle: str) -> str:
         """Generate YAML for Section Header layout."""
@@ -594,6 +856,94 @@ subtitle: {subtitle}
 layout: Title Slide
 title: {title}
 subtitle: {subtitle}
+---"""
+
+    def _generate_four_columns_with_titles_yaml(
+        self, title: str, column_titles: List[str], columns: List[str]
+    ) -> str:
+        """Generate YAML for Four Columns With Titles layout."""
+        # Ensure we have 4 columns and titles
+        while len(columns) < 4:
+            columns.append(f"Content for column {len(columns) + 1}")
+        while len(column_titles) < 4:
+            column_titles.append(f"Category {len(column_titles) + 1}")
+
+        return f"""---
+layout: Four Columns With Titles
+title: {title}
+title_col1: "{column_titles[0]}"
+content_col1: "{columns[0]}"
+title_col2: "{column_titles[1]}"
+content_col2: "{columns[1]}"
+title_col3: "{column_titles[2]}"
+content_col3: "{columns[2]}"
+title_col4: "{column_titles[3]}"
+content_col4: "{columns[3]}"
+---"""
+
+    def _generate_three_columns_yaml(self, title: str, columns: List[str]) -> str:
+        """Generate YAML for Three Columns layout."""
+        # Ensure we have 3 columns
+        while len(columns) < 3:
+            columns.append(f"Content for column {len(columns) + 1}")
+
+        return f"""---
+layout: Three Columns
+title: {title}
+content_col1: "{columns[0]}"
+content_col2: "{columns[1]}"
+content_col3: "{columns[2]}"
+---"""
+
+    def _generate_three_columns_with_titles_yaml(
+        self, title: str, column_titles: List[str], columns: List[str]
+    ) -> str:
+        """Generate YAML for Three Columns With Titles layout."""
+        # Ensure we have 3 columns and titles
+        while len(columns) < 3:
+            columns.append(f"Content for column {len(columns) + 1}")
+        while len(column_titles) < 3:
+            column_titles.append(f"Category {len(column_titles) + 1}")
+
+        return f"""---
+layout: Three Columns With Titles
+title: {title}
+title_col1: "{column_titles[0]}"
+content_col1: "{columns[0]}"
+title_col2: "{column_titles[1]}"
+content_col2: "{columns[1]}"
+title_col3: "{column_titles[2]}"
+content_col3: "{columns[2]}"
+---"""
+
+    def _generate_swot_analysis_yaml(self, title: str, swot_content: Dict[str, str]) -> str:
+        """Generate YAML for SWOT Analysis layout."""
+        return f"""---
+layout: SWOT Analysis
+title: {title}
+content_top_left: "{swot_content['content_top_left']}"
+content_top_right: "{swot_content['content_top_right']}"
+content_bottom_left: "{swot_content['content_bottom_left']}"
+content_bottom_right: "{swot_content['content_bottom_right']}"
+---"""
+
+    def _generate_agenda_6_textboxes_yaml(self, title: str, agenda_items: List[str]) -> str:
+        """Generate YAML for Agenda, 6 Textboxes layout."""
+        # Ensure we have 6 items
+        while len(agenda_items) < 6:
+            agenda_items.append(
+                f"{len(agenda_items) + 1:02d} - Agenda item {len(agenda_items) + 1}"
+            )
+
+        return f"""---
+layout: Agenda, 6 Textboxes
+title: {title}
+content_item1: "{agenda_items[0]}"
+content_item2: "{agenda_items[1]}"
+content_item3: "{agenda_items[2]}"
+content_item4: "{agenda_items[3]}"
+content_item5: "{agenda_items[4]}"
+content_item6: "{agenda_items[5]}"
 ---"""
 
     def _analyze_content_layout_fit(

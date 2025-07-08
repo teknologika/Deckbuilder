@@ -1,38 +1,53 @@
 {
-    "structure_type": "lists",
+    "structure_type": "direct_fields",
     "description": "Six-item list layout with numbers, titles, and content",
     "yaml_pattern": {
         "layout": "Title and 6-item Lists",
-        "title": "str",
-        "lists": [
-            {
-                "number": "str",
-                "title": "str",
-                "content": "str"
-            }
-        ]
+        "slide_title": "str",
+        "Title1": "str",
+        "Content1": "str",
+        "Title2": "str",
+        "Content2": "str",
+        "Title3": "str",
+        "Content3": "str",
+        "Title4": "str",
+        "Content4": "str",
+        "Title5": "str",
+        "Content5": "str",
+        "Title6": "str",
+        "Content6": "str"
     },
     "mapping_rules": {
-        "title": "slide_title",
-        "lists[0].title": "Title1",
-        "lists[0].content": "Content1",
-        "lists[1].title": "Title2",
-        "lists[1].content": "Content2",
-        "lists[2].title": "Title3",
-        "lists[2].content": "Content3",
-        "lists[3].title": "Title4",
-        "lists[3].content": "Content4",
-        "lists[4].title": "Title5",
-        "lists[4].content": "Content5",
-        "lists[5].title": "Title6",
-        "lists[5].content": "Content6"
+        "slide_title": "slide_title",
+        "Title1": "Title1",
+        "Content1": "Content1",
+        "Title2": "Title2",
+        "Content2": "Content2",
+        "Title3": "Title3",
+        "Content3": "Content3",
+        "Title4": "Title4",
+        "Content4": "Content4",
+        "Title5": "Title5",
+        "Content5": "Content5",
+        "Title6": "Title6",
+        "Content6": "Content6"
     },
     "validation": {
         "required_fields": [
-            "title",
-            "lists"
-        ],
-        "max_items": 6
+            "slide_title",
+            "Title1",
+            "Content1",
+            "Title2",
+            "Content2",
+            "Title3",
+            "Content3",
+            "Title4",
+            "Content4",
+            "Title5",
+            "Content5",
+            "Title6",
+            "Content6"
+        ]
     },
-    "example": "---\n                 layout: Title and 6-item Lists\n                 title: Feature Overview\n                 lists:\n                   - number: \"01\"\n                     title: Authentication\n                     content: Secure login system\n                 ---"
+    "example": "---\nlayout: Title and 6-item Lists\nslide_title: \"**Six Item Lists** Layout Test\"\nTitle1: \"**Features**\"\nContent1: \"*Authentication*\"\nTitle2: \"**Authorization**\"\nContent2: \"___Encryption___\"\nTitle3: \"***Benefits***\"\nContent3: \"*Performance*\"\nTitle4: \"*Performance*\"\nContent4: \"___Scalability___\"\nTitle5: \"**Reliability**\"\nContent5: \"*Monitoring*\"\nTitle6: \"***Support***\"\nContent6: \"**Documentation**\"\n---"
 }

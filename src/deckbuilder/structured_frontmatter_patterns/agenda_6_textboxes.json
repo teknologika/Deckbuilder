@@ -1,20 +1,27 @@
 {
-    "structure_type": "agenda",
+    "structure_type": "direct_fields",
     "description": "Six-item agenda layout with numbered items",
     "yaml_pattern": {
         "layout": "Agenda, 6 Textboxes",
         "title": "str",
-        "agenda": [{"number": "str", "item": "str"}]
+        "content_item1": "str",
+        "content_item2": "str",
+        "content_item3": "str",
+        "content_item4": "str",
+        "content_item5": "str",
+        "content_item6": "str"
     },
     "mapping_rules": {
         "title": "title",
-        "agenda[0]": "content_item1",
-        "agenda[1]": "content_item2",
-        "agenda[2]": "content_item3",
-        "agenda[3]": "content_item4",
-        "agenda[4]": "content_item5",
-        "agenda[5]": "content_item6"
+        "content_item1": "content_item1",
+        "content_item2": "content_item2",
+        "content_item3": "content_item3",
+        "content_item4": "content_item4",
+        "content_item5": "content_item5",
+        "content_item6": "content_item6"
     },
-    "validation": {"required_fields": ["title", "agenda"], "max_items": 6},
-    "example": "---\n                layout: Agenda, 6 Textboxes\n                title: Meeting Agenda\n                agenda:\n                  - number: \"01\"\n                    item: Opening remarks\n                  - number: \"02\"\n                    item: Market analysis\n                ---"
+    "validation": {
+        "required_fields": ["title", "content_item1", "content_item2", "content_item3", "content_item4", "content_item5", "content_item6"]
+    },
+    "example": "---\nlayout: Agenda, 6 Textboxes\ntitle: \"**Agenda** Layout Test\"\ncontent_item1: \"01 - **Opening** remarks and introductions\"\ncontent_item2: \"02 - *Market* analysis and trends\"\ncontent_item3: \"03 - ***Product*** roadmap updates\"\ncontent_item4: \"04 - ___Financial___ performance review\"\ncontent_item5: \"05 - **Strategic** initiatives overview\"\ncontent_item6: \"06 - *Q&A* session and next steps\"\n---"
 }

@@ -1,20 +1,19 @@
 {
-    "structure_type": "sections",
+    "structure_type": "direct_fields",
     "description": "Side-by-side layout with two content areas",
     "yaml_pattern": {
         "layout": "Two Content",
         "title": "str",
-        "sections": [{"content": ["str"]}]
+        "content_left": "str",
+        "content_right": "str"
     },
     "mapping_rules": {
         "title": "title",
-        "sections[0].content": "content_left",
-        "sections[1].content": "content_right"
+        "content_left": "content_left",
+        "content_right": "content_right"
     },
     "validation": {
-        "required_fields": ["title", "sections"],
-        "min_sections": 2,
-        "max_sections": 2
+        "required_fields": ["title", "content_left", "content_right"]
     },
-    "example": "---\n                layout: Two Content\n                title: Before and After\n                sections:\n                  - content:\n                      - Manual processes\n                      - Time-consuming workflows\n                  - content:\n                      - Automated systems\n                      - Streamlined operations\n                ---"
+    "example": "---\nlayout: Two Content\ntitle: \"Deckbuilder Core Features\"\ncontent_left: |\n  **Semantic** layout detection\n  *Automatic* content optimization\n  ***Smart*** placeholder mapping\ncontent_right: |\n  ___Enterprise-grade___ presentations\n  **Consistent** branding\n  *Polished* formatting\n---"
 }

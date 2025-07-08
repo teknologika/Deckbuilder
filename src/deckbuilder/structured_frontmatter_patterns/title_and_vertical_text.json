@@ -1,28 +1,17 @@
 {
-    "layout_name": "Title and Vertical Text",
+    "structure_type": "direct_fields",
     "description": "Title and content with vertical text orientation",
     "yaml_pattern": {
         "layout": "Title and Vertical Text",
         "title": "str",
         "content": "str"
     },
-    "placeholder_mapping": {
-        "title": "title_top",
+    "mapping_rules": {
+        "title": "title",
         "content": "content"
     },
-    "content_processing_rules": {
-        "title": {
-            "source": "yaml_title_or_first_heading",
-            "formatting": "preserve_markdown"
-        },
-        "content": {
-            "source": "yaml_content_or_remaining_blocks",
-            "formatting": "preserve_markdown"
-        }
+    "validation": {
+        "required_fields": ["title", "content"]
     },
-    "layout_intelligence": {
-        "content_type": "text_heavy",
-        "orientation": "vertical",
-        "best_for": ["detailed_explanations", "vertical_content"]
-    }
+    "example": "---\nlayout: Title and Vertical Text\ntitle: \"**Vertical Text** Layout Test\"\ncontent: \"This layout demonstrates vertical text capabilities with **formatted** content and *enhanced* presentation features for ___specialized___ content.\"\n---"
 }
