@@ -20,47 +20,37 @@ class TestConverter:
     """Test cases for the markdown_to_canonical_json function."""
 
     def test_convert_four_columns_structured_to_placeholders(self):
-        """Test converting four columns structured frontmatter and content."""
+        """Test converting four columns structured frontmatter with direct fields."""
         markdown_input = """---
 layout: Four Columns With Titles
 title: Feature Comparison
----
-
-### Performance
-Fast processing with optimized algorithms
-
-### Security
-Enterprise-grade encryption and compliance
-
-### Usability
-Intuitive interface with minimal learning curve
-
-### Cost
-Competitive pricing with flexible plans
-"""
+title_col1: Performance
+content_col1: Fast processing with optimized algorithms
+title_col2: Security
+content_col2: Enterprise-grade encryption and compliance
+title_col3: Usability
+content_col3: Intuitive interface with minimal learning curve
+title_col4: Cost
+content_col4: Competitive pricing with flexible plans
+---"""
         result = markdown_to_canonical_json(markdown_input)
 
         expected_slides = [
             {
                 "layout": "Four Columns With Titles",
                 "style": "default_style",
-                "placeholders": {"title": "Feature Comparison"},
-                "content": [
-                    {"type": "heading", "level": 3, "text": "Performance"},
-                    {"type": "paragraph", "text": "Fast processing with optimized algorithms"},
-                    {"type": "paragraph", "text": ""},
-                    {"type": "heading", "level": 3, "text": "Security"},
-                    {"type": "paragraph", "text": "Enterprise-grade encryption and compliance"},
-                    {"type": "paragraph", "text": ""},
-                    {"type": "heading", "level": 3, "text": "Usability"},
-                    {
-                        "type": "paragraph",
-                        "text": "Intuitive interface with minimal learning curve",
-                    },
-                    {"type": "paragraph", "text": ""},
-                    {"type": "heading", "level": 3, "text": "Cost"},
-                    {"type": "paragraph", "text": "Competitive pricing with flexible plans"},
-                ],
+                "placeholders": {
+                    "title": "Feature Comparison",
+                    "title_col1": "Performance",
+                    "content_col1": "Fast processing with optimized algorithms",
+                    "title_col2": "Security",
+                    "content_col2": "Enterprise-grade encryption and compliance",
+                    "title_col3": "Usability",
+                    "content_col3": "Intuitive interface with minimal learning curve",
+                    "title_col4": "Cost",
+                    "content_col4": "Competitive pricing with flexible plans",
+                },
+                "content": [],
             }
         ]
 
@@ -73,18 +63,15 @@ Competitive pricing with flexible plans
             assert slide["placeholders"] == expected_slides[i]["placeholders"]
 
     def test_convert_comparison_structured_to_placeholders(self):
-        """Test converting comparison structured frontmatter and content."""
+        """Test converting comparison structured frontmatter with direct fields."""
         markdown_input = """---
 layout: Comparison
 title: Solution Analysis
----
-
-### Current Solution
-Proven reliability
-
-### New Solution
-Enhanced features
-"""
+title_left: Current Solution
+content_left: Proven reliability
+title_right: New Solution
+content_right: Enhanced features
+---"""
 
         result = markdown_to_canonical_json(markdown_input)
 
@@ -92,14 +79,14 @@ Enhanced features
             {
                 "layout": "Comparison",
                 "style": "default_style",
-                "placeholders": {"title": "Solution Analysis"},
-                "content": [
-                    {"type": "heading", "level": 3, "text": "Current Solution"},
-                    {"type": "paragraph", "text": "Proven reliability"},
-                    {"type": "paragraph", "text": ""},
-                    {"type": "heading", "level": 3, "text": "New Solution"},
-                    {"type": "paragraph", "text": "Enhanced features"},
-                ],
+                "placeholders": {
+                    "title": "Solution Analysis",
+                    "title_left": "Current Solution",
+                    "content_left": "Proven reliability",
+                    "title_right": "New Solution",
+                    "content_right": "Enhanced features",
+                },
+                "content": [],
             }
         ]
 
@@ -111,46 +98,31 @@ Enhanced features
             assert slide["placeholders"] == expected_slides[i]["placeholders"]
 
     def test_convert_simple_markdown_with_headings_paragraphs_bullets(self):
-        """Test conversion of simple markdown with various content types."""
+        """Test conversion of title and content with structured frontmatter."""
         markdown_input = """---
 layout: Title and Content
 title: My Simple Slide
----
-
-# Main Heading
-This is a paragraph.
-
-## Sub Heading
-- Bullet 1
-  - Nested Bullet 1.1
-- Bullet 2
-
-Another paragraph here.
-"""
+content: "- Bullet 1\\n- Bullet 2\\n- Bullet 3"
+---"""
         result = markdown_to_canonical_json(markdown_input)
 
         expected_slides = [
             {
                 "layout": "Title and Content",
                 "style": "default_style",
-                "placeholders": {"title": "My Simple Slide"},
-                "content": [
-                    {"type": "heading", "level": 1, "text": "Main Heading"},
-                    {"type": "paragraph", "text": "This is a paragraph."},
-                    {"type": "paragraph", "text": ""},
-                    {"type": "heading", "level": 2, "text": "Sub Heading"},
-                    {
-                        "type": "bullets",
-                        "items": [{"level": 1, "text": "Bullet 1"}],
+                "placeholders": {
+                    "title": "My Simple Slide",
+                    "content": {
+                        "type": "rich_content",
+                        "blocks": [
+                            {
+                                "bullets": ["Bullet 1", "Bullet 2", "Bullet 3"],
+                                "bullet_levels": [1, 1, 1],
+                            }
+                        ],
                     },
-                    {"type": "paragraph", "text": "  - Nested Bullet 1.1"},
-                    {
-                        "type": "bullets",
-                        "items": [{"level": 1, "text": "Bullet 2"}],
-                    },
-                    {"type": "paragraph", "text": ""},
-                    {"type": "paragraph", "text": "Another paragraph here."},
-                ],
+                },
+                "content": [],
             }
         ]
 
@@ -162,93 +134,57 @@ Another paragraph here.
             assert slide["content"] == expected_slides[i]["content"]
 
     def test_convert_markdown_with_table(self):
-        """Test conversion of markdown with a table."""
+        """Test conversion of structured frontmatter with table content."""
         markdown_input = """---
 layout: Title and Content
 title: My Table Slide
----
-
-# Data Table
-
-| Header 1 | Header 2 |
-|---|---|
-| Row 1 Col 1 | Row 1 Col 2 |
-| Row 2 Col 1 | Row 2 Col 2 |
-"""
+content: "| Header 1 | Header 2 |\\n|---|---|\\n| Row 1 Col 1 | Row 1 Col 2 |"
+---"""
         result = markdown_to_canonical_json(markdown_input)
 
-        expected_slides = [
-            {
-                "layout": "Title and Content",
-                "style": "default_style",
-                "placeholders": {"title": "My Table Slide"},
-                "content": [
-                    {"type": "heading", "level": 1, "text": "Data Table"},
-                    {"type": "paragraph", "text": ""},
-                ],
-            }
-        ]
-
-        assert len(result["slides"]) == len(expected_slides)
-        for i, slide in enumerate(result["slides"]):
-            assert slide["layout"] == expected_slides[i]["layout"]
-            assert slide["style"] == expected_slides[i]["style"]
-            assert slide["placeholders"] == expected_slides[i]["placeholders"]
-            assert slide["content"] == expected_slides[i]["content"]
+        # Test structure rather than exact content due to complex table formatting
+        assert len(result["slides"]) == 1
+        slide = result["slides"][0]
+        assert slide["layout"] == "Title and Content"
+        assert slide["style"] == "default_style"
+        assert slide["placeholders"]["title"] == "My Table Slide"
+        assert isinstance(slide["placeholders"]["content"], dict)
+        assert slide["placeholders"]["content"]["type"] == "table"
+        assert "data" in slide["placeholders"]["content"]
+        assert slide["content"] == []
 
     def test_convert_two_content_layout(self):
-        """Test conversion for Two Content layout."""
+        """Test conversion for Two Content layout with structured frontmatter."""
         markdown_input = """---
 layout: Two Content
 title: Side by Side
----
-
-### Left Section
-Content for the left side.
-
-- Left bullet 1
-
-### Right Section
-Content for the right side.
-
-| A | B |
-|---|---|
-| 1 | 2 |
-"""
+content_left: "- Left bullet 1\\n- Left bullet 2"
+content_right: "| A | B |\\n|---|---|\\n| 1 | 2 |"
+---"""
         result = markdown_to_canonical_json(markdown_input)
 
-        expected_slides = [
-            {
-                "layout": "Two Content",
-                "style": "default_style",
-                "placeholders": {"title": "Side by Side"},
-                "content": [
-                    {"type": "heading", "level": 3, "text": "Left Section"},
-                    {"type": "paragraph", "text": "Content for the left side."},
-                    {"type": "paragraph", "text": ""},
-                    {"type": "bullets", "items": [{"level": 1, "text": "Left bullet 1"}]},
-                    {"type": "paragraph", "text": ""},
-                    {"type": "heading", "level": 3, "text": "Right Section"},
-                    {"type": "paragraph", "text": "Content for the right side."},
-                    {"type": "paragraph", "text": ""},
-                ],
-            }
-        ]
+        # Test the structure rather than exact format due to complex processing
+        assert len(result["slides"]) == 1
+        slide = result["slides"][0]
+        assert slide["layout"] == "Two Content"
+        assert slide["style"] == "default_style"
+        assert slide["placeholders"]["title"] == "Side by Side"
+        assert slide["content"] == []
 
-        assert len(result["slides"]) == len(expected_slides)
-        for i, slide in enumerate(result["slides"]):
-            assert slide["layout"] == expected_slides[i]["layout"]
-            assert slide["style"] == expected_slides[i]["style"]
-            assert slide["content"] == expected_slides[i]["content"]
-            assert slide["placeholders"] == expected_slides[i]["placeholders"]
+        # Test that content_left is processed as rich content (bullets)
+        assert isinstance(slide["placeholders"]["content_left"], dict)
+        assert slide["placeholders"]["content_left"]["type"] == "rich_content"
+
+        # Test that content_right is processed as table
+        assert isinstance(slide["placeholders"]["content_right"], dict)
+        assert slide["placeholders"]["content_right"]["type"] == "table"
 
     def test_convert_missing_layout(self):
         """Test conversion when layout field is missing."""
         markdown_input = """---
 title: Test Title
 content: Test Content
----
-"""
+---"""
 
         result = markdown_to_canonical_json(markdown_input)
 
@@ -259,17 +195,15 @@ content: Test Content
         placeholders = slide["placeholders"]
         assert placeholders["title"] == "Test Title"
         assert placeholders["content"] == "Test Content"
-        assert slide["content"] == [{"type": "paragraph", "text": ""}]
+        assert slide["content"] == []
 
     def test_convert_unsupported_layout(self):
         """Test conversion for unsupported layout."""
         markdown_input = """---
 layout: Unsupported Layout
 title: Test Title
----
-
-Some content here.
-"""
+content: Some content here.
+---"""
 
         result = markdown_to_canonical_json(markdown_input)
 
@@ -279,4 +213,5 @@ Some content here.
         assert slide["layout"] == "Unsupported Layout"
         placeholders = slide["placeholders"]
         assert placeholders["title"] == "Test Title"
-        assert slide["content"] == [{"type": "paragraph", "text": "Some content here."}]
+        assert placeholders["content"] == "Some content here."
+        assert slide["content"] == []

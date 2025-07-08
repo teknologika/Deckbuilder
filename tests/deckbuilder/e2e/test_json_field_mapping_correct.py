@@ -45,31 +45,17 @@ class TestJSONFieldMappingCorrect:
     def test_semantic_field_names_two_content(self):
         """Test Two Content layout with semantic field names (content_left, content_right)"""
 
-        # CORRECT expected canonical JSON structure
+        # CORRECT expected canonical JSON structure with structured frontmatter
         json_data = {
             "slides": [
                 {
                     "layout": "Two Content",
-                    "placeholders": {"title": "Two Content Test"},
-                    "content": [
-                        {
-                            "type": "columns",
-                            "columns": [
-                                {
-                                    "content": [
-                                        {"type": "paragraph", "text": "Left item 1"},
-                                        {"type": "paragraph", "text": "Left item 2"},
-                                    ]
-                                },
-                                {
-                                    "content": [
-                                        {"type": "paragraph", "text": "Right item 1"},
-                                        {"type": "paragraph", "text": "Right item 2"},
-                                    ]
-                                },
-                            ],
-                        }
-                    ],
+                    "placeholders": {
+                        "title": "Two Content Test",
+                        "content_left": "Left item 1\nLeft item 2",
+                        "content_right": "Right item 1\nRight item 2",
+                    },
+                    "content": [],
                 }
             ]
         }
@@ -144,23 +130,19 @@ class TestJSONFieldMappingCorrect:
     def test_semantic_field_names_four_columns(self):
         """Test Four Columns layout with semantic field names (content_col1, content_col2, etc.)"""
 
-        # CORRECT expected canonical JSON structure
+        # CORRECT expected canonical JSON structure with structured frontmatter
         json_data = {
             "slides": [
                 {
                     "layout": "Four Columns",
-                    "placeholders": {"title": "Four Columns Test"},
-                    "content": [
-                        {
-                            "type": "columns",
-                            "columns": [
-                                {"content": [{"type": "paragraph", "text": "Column 1 content"}]},
-                                {"content": [{"type": "paragraph", "text": "Column 2 content"}]},
-                                {"content": [{"type": "paragraph", "text": "Column 3 content"}]},
-                                {"content": [{"type": "paragraph", "text": "Column 4 content"}]},
-                            ],
-                        }
-                    ],
+                    "placeholders": {
+                        "title": "Four Columns Test",
+                        "content_col1": "Column 1 content",
+                        "content_col2": "Column 2 content",
+                        "content_col3": "Column 3 content",
+                        "content_col4": "Column 4 content",
+                    },
+                    "content": [],
                 }
             ]
         }
@@ -234,56 +216,25 @@ class TestJSONFieldMappingCorrect:
     def test_all_formatting_types_preserved(self):
         """Test that ALL formatting types are preserved in JSON processing"""
 
-        # CORRECT: All formatting types should work in canonical JSON format
+        # CORRECT: All formatting types should work in structured frontmatter format
         json_data = {
             "slides": [
                 {
                     "layout": "Title and Content",
-                    "placeholders": {"title": "**Formatting** Test with *All* Types"},
-                    "content": [
-                        {"type": "heading", "level": 2, "text": "**Bold** Heading"},
-                        {
-                            "type": "paragraph",
-                            "text": "Paragraph with *italic* and ___underline___ text.",
-                        },
-                        {
-                            "type": "bullets",
-                            "items": [
-                                {"level": 1, "text": "***Bold italic*** bullet"},
-                                {"level": 1, "text": "Regular bullet with **bold** text"},
-                                {"level": 1, "text": "Another with ___underlines___"},
-                            ],
-                        },
-                    ],
+                    "placeholders": {
+                        "title": "**Formatting** Test with *All* Types",
+                        "content": "## **Bold** Heading\nParagraph with *italic* and ___underline___ text.\n- ***Bold italic*** bullet\n- Regular bullet with **bold** text\n- Another with ___underlines___",
+                    },
+                    "content": [],
                 },
                 {
                     "layout": "Two Content",
-                    "placeholders": {"title": "Formatted **Two** Content"},
-                    "content": [
-                        {
-                            "type": "columns",
-                            "columns": [
-                                {
-                                    "content": [
-                                        {"type": "paragraph", "text": "**Bold** left item"},
-                                        {"type": "paragraph", "text": "*Italic* left item"},
-                                    ]
-                                },
-                                {
-                                    "content": [
-                                        {
-                                            "type": "paragraph",
-                                            "text": "___Underlined___ right item",
-                                        },
-                                        {
-                                            "type": "paragraph",
-                                            "text": "***Bold italic*** right item",
-                                        },
-                                    ]
-                                },
-                            ],
-                        }
-                    ],
+                    "placeholders": {
+                        "title": "Formatted **Two** Content",
+                        "content_left": "**Bold** left item\n*Italic* left item",
+                        "content_right": "___Underlined___ right item\n***Bold italic*** right item",
+                    },
+                    "content": [],
                 },
             ]
         }

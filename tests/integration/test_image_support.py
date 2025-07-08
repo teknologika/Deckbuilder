@@ -36,18 +36,9 @@ def test_image_integration():
             markdown_content = """---
 layout: Picture with Caption
 title: System Architecture Overview
-media:
-  image_path: "non_existent_image.png"  # This should trigger PlaceKitten fallback
-  alt_text: "System architecture diagram showing main components"
-  caption: "High-level system architecture"
-  description: |
-    Main components include:
-    • Frontend: React-based interface
-    • API: RESTful services with authentication
-    • Database: PostgreSQL with Redis cache
+image_1: "non_existent_image.png"
+text_caption_1: "High-level system architecture with main components: Frontend (React-based interface), API (RESTful services with authentication), Database (PostgreSQL with Redis cache)"
 ---
-
-Additional slide content with **formatted text** for testing.
 """
 
             # Convert markdown to canonical JSON format

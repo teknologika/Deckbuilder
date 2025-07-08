@@ -169,8 +169,9 @@ class TestActualSlideContentValidation:
                     "layout": "Title and Content",
                     "placeholders": {
                         "title": "CONTENT_TITLE_UNIQUE_789",
+                        "content": "TEST_CONTENT_UNIQUE_ABC",
                     },
-                    "content": [{"type": "paragraph", "text": "TEST_CONTENT_UNIQUE_ABC"}],
+                    "content": [],
                 },
             ]
         }
@@ -243,18 +244,9 @@ class TestActualSlideContentValidation:
                     "layout": "Title and Content",
                     "placeholders": {
                         "title": "RICH_CONTENT_TITLE_UNIQUE_888",
+                        "content": "## HEADING_UNIQUE_777\n\nPARAGRAPH_UNIQUE_666\n\n- BULLET_UNIQUE_555\n- BULLET_UNIQUE_444",
                     },
-                    "content": [
-                        {"type": "heading", "level": 2, "text": "HEADING_UNIQUE_777"},
-                        {"type": "paragraph", "text": "PARAGRAPH_UNIQUE_666"},
-                        {
-                            "type": "bullets",
-                            "items": [
-                                {"level": 1, "text": "BULLET_UNIQUE_555"},
-                                {"level": 1, "text": "BULLET_UNIQUE_444"},
-                            ],
-                        },
-                    ],
+                    "content": [],
                 }
             ]
         }

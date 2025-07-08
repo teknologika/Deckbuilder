@@ -129,7 +129,7 @@ class TestCLIPathManagement:
             with tempfile.NamedTemporaryFile(
                 mode="w", suffix=".md", delete=False, dir=temp_dir
             ) as temp_md:
-                temp_md.write("# Test Presentation\n---\nlayout: Title Slide\ntitle: Test\n---")
+                temp_md.write("---\nlayout: Title Slide\ntitle: Test\n---")
                 temp_md.flush()
 
                 mock_db_instance = MagicMock()
