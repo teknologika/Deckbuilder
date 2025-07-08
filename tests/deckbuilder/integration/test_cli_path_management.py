@@ -140,6 +140,7 @@ class TestCLIPathManagement:
                     patch.object(cli, "_validate_templates_folder", return_value=True),
                     patch("pathlib.Path.exists", return_value=True),
                     patch("deckbuilder.converter.markdown_to_canonical_json") as mock_converter,
+                    patch("deckbuilder.validation.PresentationValidator") as mock_validator,
                 ):
                     # Mock converter to return canonical JSON format
                     mock_converter.return_value = {
@@ -151,6 +152,11 @@ class TestCLIPathManagement:
                             }
                         ]
                     }
+                    
+                    # Mock validator to avoid file I/O
+                    mock_val_instance = mock_validator.return_value
+                    mock_val_instance.validate_pre_generation.return_value = None
+                    mock_val_instance.validate_post_generation.return_value = None
 
                     try:
                         cli.create_presentation(temp_md.name)

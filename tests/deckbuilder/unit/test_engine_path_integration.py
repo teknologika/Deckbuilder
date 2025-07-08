@@ -123,6 +123,7 @@ class TestEnginePathManagerIntegration:
                 patch("src.deckbuilder.engine.Presentation") as mock_presentation_class,
                 patch.object(engine.presentation_builder, "add_slide") as mock_add_slide,
                 patch.object(engine, "write_presentation") as mock_write,
+                patch("src.deckbuilder.validation.PresentationValidator") as mock_validator,
             ):
                 mock_prs = Mock()
                 mock_prs.save = Mock()
@@ -132,6 +133,11 @@ class TestEnginePathManagerIntegration:
                 mock_slides._sldIdLst = []
                 mock_prs.slides = mock_slides
                 mock_presentation_class.return_value = mock_prs
+                
+                # Mock validator to avoid file I/O
+                mock_val_instance = mock_validator.return_value
+                mock_val_instance.validate_pre_generation.return_value = None
+                mock_val_instance.validate_post_generation.return_value = None
 
                 # Should use PathManager-resolved paths
                 # Provide minimal valid canonical JSON data
