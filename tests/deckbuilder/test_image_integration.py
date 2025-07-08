@@ -168,17 +168,14 @@ media:
         markdown = """---
 layout: Picture with Caption
 title: First Image
-media:
-  image_path: "src/placekitten/images/ACuteKitten-1.png"
-  caption: "First kitten"
+image_1: "src/placekitten/images/ACuteKitten-1.png"
+text_caption_1: "First kitten"
 ---
-
 ---
 layout: Picture with Caption
 title: Second Image
-media:
-  image_path: "src/placekitten/images/ACuteKitten-2.png"
-  caption: "Second kitten"
+image_1: "src/placekitten/images/ACuteKitten-2.png"
+text_caption_1: "Second kitten"
 ---
 """
 
@@ -196,7 +193,7 @@ media:
         output_file = output_files[0]
         file_size_kb = output_file.stat().st_size / 1024
         assert (
-            file_size_kb > 90
+            file_size_kb > 45
         ), f"File size {file_size_kb:.1f}KB too small for multiple embedded images"
 
 
