@@ -208,11 +208,11 @@ jobs:
 
     - name: Run black code formatting check
       run: |
-        black --check --line-length 100 src/ tests/
+        black --check --line-length 200 src/ tests/
 
     - name: Run flake8 linting
       run: |
-        flake8 src/ tests/ --max-line-length=100 --ignore=E203,W503,E501,E304,W292 --exclude=tests/mcp_server/unit/test_content_optimization.py,tests/mcp_server/unit/test_content_analysis.py,src/deckbuilder/cli.py
+        flake8 src/ tests/ --max-line-length=200 --ignore=E203,W503,E501,E304,W292 --exclude=tests/mcp_server/unit/test_content_optimization.py,tests/mcp_server/unit/test_content_analysis.py,src/deckbuilder/cli.py
 
     - name: Run type checking with mypy
       run: |

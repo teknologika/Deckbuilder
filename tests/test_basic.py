@@ -44,8 +44,8 @@ def test_placeholder_types():
 
 def test_table_styles():
     """Test table styles module."""
-    from deckbuilder.table_styles import HEADER_STYLES
+    from deckbuilder.table_styles import TABLE_HEADER_STYLES
 
     # Test that styles are defined
-    assert HEADER_STYLES is not None
-    assert isinstance(HEADER_STYLES, dict)
+    assert TABLE_HEADER_STYLES is not None
+    assert isinstance(TABLE_HEADER_STYLES, dict)

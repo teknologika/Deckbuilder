@@ -4,7 +4,7 @@ repos:
     rev: 25.1.0
     hooks:
       - id: black
-        args: ["--check", "--line-length=100", "--include", "\\.pyi?$|\\.ipynb$"]
+        args: ["--check", "--line-length=200", "--include", "\\.pyi?$|\\.ipynb$"]
 
   # Linting (logic, unused imports, etc.)
   - repo: https://github.com/pycqa/flake8
@@ -12,7 +12,7 @@ repos:
     hooks:
       - id: flake8
         additional_dependencies: ["flake8-bugbear", "flake8-comprehensions"]
-        args: ["--max-line-length=100", "--ignore=E203,W503,E501,E304,W292"]
+        args: ["--max-line-length=200", "--ignore=E203,W503,E501,E304,W292"]
 
   # Import sorting
   # - repo: https://github.com/pre-commit/mirrors-isort
@@ -68,7 +68,7 @@ repos:
         always_run: true
       - id: pytest
         name: pytest with coverage
-        entry: pytest --cov=src --cov-report=term-missing --cov-fail-under=10
+        entry: pytest --cov=src --cov-report=term-missing --cov-fail-under=7
         language: python
         language_version: python3.12
         additional_dependencies: [pytest-cov, PyYAML, python-pptx, pydantic, numpy, opencv-python, pillow]

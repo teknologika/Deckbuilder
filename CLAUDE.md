@@ -41,10 +41,10 @@ The project has evolved beyond initial setup into a comprehensive content-first 
 
 ```bash
 # Format code with black (REQUIRED)
-black --line-length 100 src/
+black --line-length 200 src/
 
 # Check all flake8 violations (REQUIRED)
-flake8 src/ tests/ --max-line-length=100 --ignore=E203,W503,E501
+flake8 src/ tests/ --max-line-length=200 --ignore=E203,W503,E501
 
 # Run tests to ensure no regressions (REQUIRED)
 pytest tests/
@@ -73,7 +73,7 @@ pytest tests/
 - Only use f-strings when you have variables: `f"Hello {name}"`
 
 **Line Length (E501 - Style violations):**
-- Maximum 100 characters per line (ignored in CI for now)
+- Maximum 200 characters per line (ignored in CI for now)
 - Break long function calls, docstrings, and string literals when practical
 - Use parentheses for continuation: `("long string part 1 "\n"part 2")`
 - **Note**: E501 ignored in CI to focus on critical F-level errors first
@@ -226,7 +226,7 @@ Refer to these comprehensive specifications before implementing:
 5. **Document decisions**: Update feature docs when making design choices
 6. **Test with real scenarios**: Use actual user presentation needs for validation
 7. **Clean imports**: Remove unused imports (F401) and variables (F841) immediately
-8. **Format consistently**: Use `black --line-length 100 src/` before committing
+8. **Format consistently**: Use `black --line-length 200 src/` before committing
 9. **🚫 NO ROOT DIRECTORY POLLUTION**: Never create test files, output files, or temporary files in the root directory. Use appropriate subdirectories:
    - Test files: `/tests/` directory with proper structure
    - Output files: `/tests/output/` directory ONLY

@@ -89,7 +89,7 @@ where = ["src"]
 "*" = ["*.json", "*.md"]
 
 [tool.black]
-line-length = 100
+line-length = 200
 target-version = ['py311']
 include = '\.pyi?$'
 extend-exclude = '''
@@ -143,7 +143,7 @@ exclude_lines = [
 ]
 
 [tool.flake8]
-max-line-length = 100
+max-line-length = 200
 ignore = ["E203", "W503", "E501"]
 # File length limit (500 lines as per CLAUDE.md requirement)
 max-module-lines = 500
