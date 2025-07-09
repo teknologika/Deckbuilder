@@ -173,9 +173,8 @@ class ContentProcessor:
                 content_lines.append(line)
 
         # Parse mixed content based on slide type
-        if slide_data["type"] == "table":
-            slide_data["table"] = self._parse_markdown_table("\n".join(content_lines), config)
-        elif slide_data["type"] != "title":  # Content slides get rich content
+        # Note: Tables are now parsed in converter.py and come as JSON objects in placeholders
+        if slide_data["type"] != "title":  # Content slides get rich content
             rich_content = self._parse_rich_content("\n".join(content_lines))
             if rich_content:
                 slide_data["rich_content"] = rich_content
@@ -232,43 +231,6 @@ class ContentProcessor:
             blocks.append(current_block)
 
         return blocks
-
-    def _parse_markdown_table(self, content: str, config: dict) -> dict:
-        """Extract table from markdown and apply styling config"""
-        table_data = {
-            "data": [],
-            "header_style": config.get("style", "dark_blue_white_text"),
-            "row_style": config.get("row_style", "alternating_light_gray"),
-            "border_style": config.get("border_style", "thin_gray"),
-            "custom_colors": config.get("custom_colors", {}),
-        }
-
-        lines = [line.strip() for line in content.split("\n") if line.strip()]
-
-        for line in lines:
-            if line.startswith("|") and line.endswith("|"):
-                # Parse table row with inline formatting
-                cells = [cell.strip() for cell in line[1:-1].split("|")]
-                formatted_cells = []
-                for cell in cells:
-                    formatted_cells.append(
-                        {"text": cell, "formatted": self._parse_inline_formatting(cell)}
-                    )
-                table_data["data"].append(formatted_cells)
-            elif "|" in line and not line.startswith("|"):
-                # Handle tables without outer pipes with inline formatting
-                cells = [cell.strip() for cell in line.split("|")]
-                formatted_cells = []
-                for cell in cells:
-                    formatted_cells.append(
-                        {"text": cell, "formatted": self._parse_inline_formatting(cell)}
-                    )
-                table_data["data"].append(formatted_cells)
-            elif line.startswith("---") or line.startswith("==="):
-                # Skip separator lines
-                continue
-
-        return table_data
 
     def _parse_inline_formatting(self, text):
         """Parse inline formatting and return structured formatting data"""

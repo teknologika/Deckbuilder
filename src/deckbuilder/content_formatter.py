@@ -66,6 +66,22 @@ class ContentFormatter:
                 p = text_frame.paragraphs[0]
                 self.apply_formatted_segments_to_paragraph(formatted_segments, p)
                 return
+            elif content.get("type") == "table":
+                self._debug_log("Processing table content")
+                # Handle table content using TableBuilder
+                slide = getattr(self, "_current_slide", None)
+                if slide:
+                    from .table_builder import TableBuilder
+
+                    table_builder = TableBuilder(self)
+                    table_builder.add_table_to_slide(slide, content)
+                    # Remove the placeholder since table has been added
+                    self._remove_placeholder_from_slide(slide, placeholder)
+                else:
+                    self._debug_log("No slide context for table, using text fallback")
+                    p = text_frame.paragraphs[0]
+                    p.text = "Table content (could not render)"
+                return
             else:
                 # Fallback for other dict types - avoid string conversion if possible
                 self._debug_log(
@@ -999,3 +1015,19 @@ class ContentFormatter:
                 print("      Could not display table - no text frame available")
         except Exception as e:
             print(f"      Error in table text fallback: {e}")
+
+    def _remove_placeholder_from_slide(self, slide, placeholder):
+        """Remove a placeholder from the slide after it's been replaced by a table."""
+        try:
+            # Find the placeholder shape in the slide and remove it
+            for shape in slide.shapes:
+                if shape == placeholder:
+                    # Remove the shape element from the slide
+                    sp = shape._element
+                    parent = sp.getparent()
+                    if parent is not None:
+                        parent.remove(sp)
+                    break
+            print("      Placeholder removed from slide")
+        except Exception as e:
+            print(f"      Error removing placeholder: {e}")

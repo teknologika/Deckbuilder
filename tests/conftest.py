@@ -278,18 +278,72 @@ def formatted_content_samples():
 
 @pytest.fixture
 def table_data_sample():
-    """Sample table data for testing."""
+    """Sample table data for testing - new format with formatted cells."""
     return {
+        "type": "table",
         "data": [
-            ["**Feature**", "*Status*", "___Priority___"],
-            ["Authentication", "**Complete**", "*High*"],
-            ["User Management", "***In Progress***", "___Medium___"],
-            ["Reporting", "*Planned*", "**Low**"],
-            ["API Integration", "___Blocked___", "***Critical***"],
+            [
+                {
+                    "text": "**Feature**",
+                    "formatted": [{"text": "Feature", "format": {"bold": True}}],
+                },
+                {"text": "*Status*", "formatted": [{"text": "Status", "format": {"italic": True}}]},
+                {
+                    "text": "___Priority___",
+                    "formatted": [{"text": "Priority", "format": {"underline": True}}],
+                },
+            ],
+            [
+                {"text": "Authentication", "formatted": [{"text": "Authentication", "format": {}}]},
+                {
+                    "text": "**Complete**",
+                    "formatted": [{"text": "Complete", "format": {"bold": True}}],
+                },
+                {"text": "*High*", "formatted": [{"text": "High", "format": {"italic": True}}]},
+            ],
+            [
+                {
+                    "text": "User Management",
+                    "formatted": [{"text": "User Management", "format": {}}],
+                },
+                {
+                    "text": "***In Progress***",
+                    "formatted": [
+                        {"text": "In Progress", "format": {"bold": True, "italic": True}}
+                    ],
+                },
+                {
+                    "text": "___Medium___",
+                    "formatted": [{"text": "Medium", "format": {"underline": True}}],
+                },
+            ],
+            [
+                {"text": "Reporting", "formatted": [{"text": "Reporting", "format": {}}]},
+                {
+                    "text": "*Planned*",
+                    "formatted": [{"text": "Planned", "format": {"italic": True}}],
+                },
+                {"text": "**Low**", "formatted": [{"text": "Low", "format": {"bold": True}}]},
+            ],
+            [
+                {
+                    "text": "API Integration",
+                    "formatted": [{"text": "API Integration", "format": {}}],
+                },
+                {
+                    "text": "___Blocked___",
+                    "formatted": [{"text": "Blocked", "format": {"underline": True}}],
+                },
+                {
+                    "text": "***Critical***",
+                    "formatted": [{"text": "Critical", "format": {"bold": True, "italic": True}}],
+                },
+            ],
         ],
         "header_style": "dark_blue_white_text",
         "row_style": "alternating_light_gray",
         "border_style": "thin_gray",
+        "custom_colors": {},
     }
 
 

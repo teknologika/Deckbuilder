@@ -195,7 +195,184 @@
             "style": "default_style",
             "placeholders": {
                 "title": "Table Slide with **Formatted** Content",
-                "content": "| **Feature** | *Status* | ___Priority___ |\n| Authentication | **Complete** | *High* |\n| User Management | ***In Progress*** | ___Medium___ |\n| Reporting | *Planned* | **Low** |\n| API Integration | ___Blocked___ | ***Critical*** |"
+                "content": {
+                    "type": "table",
+                    "data": [
+                        [
+                            {
+                                "text": "**Feature**",
+                                "formatted": [
+                                    {
+                                        "text": "Feature",
+                                        "format": {
+                                            "bold": true
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "text": "*Status*",
+                                "formatted": [
+                                    {
+                                        "text": "Status",
+                                        "format": {
+                                            "italic": true
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "text": "___Priority___",
+                                "formatted": [
+                                    {
+                                        "text": "Priority",
+                                        "format": {
+                                            "underline": true
+                                        }
+                                    }
+                                ]
+                            }
+                        ],
+                        [
+                            {
+                                "text": "Authentication",
+                                "formatted": [
+                                    {
+                                        "text": "Authentication",
+                                        "format": {}
+                                    }
+                                ]
+                            },
+                            {
+                                "text": "**Complete**",
+                                "formatted": [
+                                    {
+                                        "text": "Complete",
+                                        "format": {
+                                            "bold": true
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "text": "*High*",
+                                "formatted": [
+                                    {
+                                        "text": "High",
+                                        "format": {
+                                            "italic": true
+                                        }
+                                    }
+                                ]
+                            }
+                        ],
+                        [
+                            {
+                                "text": "User Management",
+                                "formatted": [
+                                    {
+                                        "text": "User Management",
+                                        "format": {}
+                                    }
+                                ]
+                            },
+                            {
+                                "text": "***In Progress***",
+                                "formatted": [
+                                    {
+                                        "text": "In Progress",
+                                        "format": {
+                                            "bold": true,
+                                            "italic": true
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "text": "___Medium___",
+                                "formatted": [
+                                    {
+                                        "text": "Medium",
+                                        "format": {
+                                            "underline": true
+                                        }
+                                    }
+                                ]
+                            }
+                        ],
+                        [
+                            {
+                                "text": "Reporting",
+                                "formatted": [
+                                    {
+                                        "text": "Reporting",
+                                        "format": {}
+                                    }
+                                ]
+                            },
+                            {
+                                "text": "*Planned*",
+                                "formatted": [
+                                    {
+                                        "text": "Planned",
+                                        "format": {
+                                            "italic": true
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "text": "**Low**",
+                                "formatted": [
+                                    {
+                                        "text": "Low",
+                                        "format": {
+                                            "bold": true
+                                        }
+                                    }
+                                ]
+                            }
+                        ],
+                        [
+                            {
+                                "text": "API Integration",
+                                "formatted": [
+                                    {
+                                        "text": "API Integration",
+                                        "format": {}
+                                    }
+                                ]
+                            },
+                            {
+                                "text": "___Blocked___",
+                                "formatted": [
+                                    {
+                                        "text": "Blocked",
+                                        "format": {
+                                            "underline": true
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "text": "***Critical***",
+                                "formatted": [
+                                    {
+                                        "text": "Critical",
+                                        "format": {
+                                            "bold": true,
+                                            "italic": true
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    ],
+                    "header_style": "dark_blue_white_text",
+                    "row_style": "alternating_light_gray",
+                    "border_style": "thin_gray",
+                    "custom_colors": {}
+                }
             }
         }
     ]

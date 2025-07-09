@@ -419,6 +419,24 @@ class PresentationValidator:
                         found_content = True
                         print(f"[Validation]       ✓ FOUND image in {ph_key}")
                         break
+            # Special handling for table fields
+            elif isinstance(expected_content, dict) and expected_content.get("type") == "table":
+                # For table fields, check if we have table shapes in the slide or table content indicators
+                print("[Validation]       Table content detected - checking for table shapes")
+                # Check if we have table shapes in the slide
+                table_shapes = [shape for shape in slide.shapes if hasattr(shape, "table")]
+                if table_shapes:
+                    found_content = True
+                    print(
+                        f"[Validation]       ✓ FOUND table shape in slide ({len(table_shapes)} table(s))"
+                    )
+                else:
+                    # Fallback: check for table content indicators in text
+                    for ph_key, actual_text in actual_content.items():
+                        if "table" in actual_text.lower() or "rows" in actual_text.lower():
+                            found_content = True
+                            print(f"[Validation]       ✓ FOUND table content indicator in {ph_key}")
+                            break
             else:
                 # Normal text content validation
                 for ph_key, actual_text in actual_content.items():

@@ -148,13 +148,149 @@ class StructuredFrontmatterConverter:
         return result
 
     def _process_content_field(self, content: str) -> Any:
-        """Process content field - for structured frontmatter, just return content as-is"""
+        """Process content field - detect and parse tables, otherwise return content as-is"""
         if not content or not isinstance(content, str):
             return content
 
-        # For structured frontmatter, we don't need rich content processing
-        # Just return the content string as-is
-        return content.strip()
+        content = content.strip()
+
+        # Check if content contains a table (lines starting with |)
+        if self._is_table_content(content):
+            return self._parse_markdown_table(content)
+
+        # For non-table content, return as-is
+        return content
+
+    def _is_table_content(self, content: str) -> bool:
+        """Check if content contains table markdown syntax"""
+        lines = [line.strip() for line in content.split("\n") if line.strip()]
+
+        # A table needs at least 2 lines and contain pipe characters
+        if len(lines) < 2:
+            return False
+
+        # Check if we have lines that look like table rows
+        table_lines = 0
+        for line in lines:
+            if (line.startswith("|") and line.endswith("|")) or (
+                "|" in line and not line.startswith("---")
+            ):
+                table_lines += 1
+
+        return table_lines >= 2
+
+    def _parse_markdown_table(self, content: str) -> dict:
+        """Extract table from markdown and apply default styling config"""
+        table_data = {
+            "type": "table",
+            "data": [],
+            "header_style": "dark_blue_white_text",
+            "row_style": "alternating_light_gray",
+            "border_style": "thin_gray",
+            "custom_colors": {},
+        }
+
+        lines = [line.strip() for line in content.split("\n") if line.strip()]
+
+        for line in lines:
+            # Skip separator lines (markdown table separators)
+            # Check for lines that are only separators (with or without pipes)
+            clean_line = (
+                line.replace("|", "").replace("-", "").replace(":", "").replace("=", "").strip()
+            )
+            if (
+                line.startswith("---")
+                or line.startswith("===")
+                or clean_line == ""
+                or ("|" in line and all(c in "|-:= " for c in line))
+            ):
+                continue
+
+            if line.startswith("|") and line.endswith("|"):
+                # Parse table row with inline formatting
+                cells = [cell.strip() for cell in line[1:-1].split("|")]
+                formatted_cells = []
+                for cell in cells:
+                    formatted_cells.append(
+                        {"text": cell, "formatted": self._parse_inline_formatting(cell)}
+                    )
+                table_data["data"].append(formatted_cells)
+            elif "|" in line and not line.startswith("|"):
+                # Handle tables without outer pipes with inline formatting
+                cells = [cell.strip() for cell in line.split("|")]
+                formatted_cells = []
+                for cell in cells:
+                    formatted_cells.append(
+                        {"text": cell, "formatted": self._parse_inline_formatting(cell)}
+                    )
+                table_data["data"].append(formatted_cells)
+
+        return table_data
+
+    def _parse_inline_formatting(self, text):
+        """Parse inline formatting and return structured formatting data"""
+        if not text:
+            return [{"text": "", "format": {}}]
+
+        # Patterns in order of precedence (longest patterns first to avoid conflicts)
+        patterns = [
+            (
+                r"\*\*\*___(.*?)___\*\*\*",
+                {"bold": True, "italic": True, "underline": True},
+            ),  # ***___text___***
+            (
+                r"___\*\*\*(.*?)\*\*\*___",
+                {"bold": True, "italic": True, "underline": True},
+            ),  # ___***text***___
+            (r"\*\*\*(.*?)\*\*\*", {"bold": True, "italic": True}),  # ***text***
+            (r"___(.*?)___", {"underline": True}),  # ___text___
+            (r"\*\*(.*?)\*\*", {"bold": True}),  # **text**
+            (r"\*(.*?)\*", {"italic": True}),  # *text*
+        ]
+
+        # Find all matches and their positions
+        all_matches = []
+        for pattern, format_dict in patterns:
+            for match in re.finditer(pattern, text):
+                all_matches.append((match.start(), match.end(), match.group(1), format_dict))
+
+        # Sort matches by position
+        all_matches.sort(key=lambda x: x[0])
+
+        # Remove overlapping matches (keep the first one found)
+        filtered_matches = []
+        last_end = 0
+        for start, end, content, format_dict in all_matches:
+            if start >= last_end:
+                filtered_matches.append((start, end, content, format_dict))
+                last_end = end
+
+        # Build the formatted text segments
+        segments = []
+        last_pos = 0
+
+        for start, end, content, format_dict in filtered_matches:
+            # Add plain text before the formatted text
+            if start > last_pos:
+                plain_text = text[last_pos:start]
+                if plain_text:
+                    segments.append({"text": plain_text, "format": {}})
+
+            # Add formatted text
+            segments.append({"text": content, "format": format_dict})
+            last_pos = end
+
+        # Add any remaining plain text
+        if last_pos < len(text):
+            remaining_text = text[last_pos:]
+            if remaining_text:
+                segments.append({"text": remaining_text, "format": {}})
+
+        # If no formatting found, return the original text
+        if not segments:
+            segments = [{"text": text, "format": {}}]
+
+        return segments
 
     def _extract_value_by_path(self, data: Dict[str, Any], path: str) -> Any:
         """Extract value from nested dict using dot notation path with array support"""

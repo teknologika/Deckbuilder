@@ -369,6 +369,7 @@ class SlideBuilder:
 
                 # Apply content based on placeholder's semantic type
                 self._apply_content_by_semantic_type(
+                    slide,
                     target_placeholder,
                     field_name,
                     field_value,
@@ -532,6 +533,7 @@ class SlideBuilder:
 
     def _apply_content_by_semantic_type(
         self,
+        slide,
         placeholder,
         field_name,
         field_value,
@@ -543,6 +545,9 @@ class SlideBuilder:
         Apply content to a placeholder based on its semantic type and the content type.
         Uses inline formatting (**bold**, *italic*, ___underline___) processed at render time.
         """
+        # Set slide context for content formatter (needed for table processing)
+        content_formatter._current_slide = slide
+
         placeholder_type = placeholder.placeholder_format.type
 
         # Apply content based on placeholder semantic type

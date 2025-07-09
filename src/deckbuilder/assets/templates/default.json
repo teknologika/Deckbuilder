@@ -239,21 +239,5 @@
     "bullets": "Title and Content",
     "content": "Title and Content",
     "title": "Title Slide"
-  },
-  "validation": {
-    "warnings": [],
-    "errors": [
-      "Comparison: Comparison layout should have at least 2 text placeholders for left/right titles",
-      "Comparison: Comparison layout should have at least 2 content placeholders for left/right content"
-    ],
-    "layout_analysis": {
-      "Comparison": {
-        "warnings": [],
-        "errors": [
-          "Comparison layout should have at least 2 text placeholders for left/right titles",
-          "Comparison layout should have at least 2 content placeholders for left/right content"
-        ]
-      }
-    }
   }
 }
