@@ -67,10 +67,7 @@ class ContentProcessor:
 
     def _parse_structured_frontmatter(self, frontmatter_content: str) -> dict:
         """Parse structured frontmatter and convert to placeholder mappings"""
-        from .structured_frontmatter import (
-            StructuredFrontmatterConverter,
-            StructuredFrontmatterValidator,
-        )
+        from .converter import StructuredFrontmatterConverter
 
         try:
             parsed = yaml.safe_load(frontmatter_content)
@@ -87,25 +84,41 @@ class ContentProcessor:
             return parsed
 
         # Check if this is structured frontmatter
-        converter = StructuredFrontmatterConverter(self.layout_mapping)
+        converter = StructuredFrontmatterConverter()
 
         if converter.registry.supports_structured_frontmatter(layout_name):
-            # Validate structured frontmatter
-            validator = StructuredFrontmatterValidator()
-            validation_result = validator.validate_structured_frontmatter(parsed, layout_name)
-            if not validation_result["valid"]:
-                # Log warnings but continue processing
-                for error in validation_result["errors"]:
-                    print(f"Error in structured frontmatter: {error}")
-                for warning in validation_result["warnings"]:
-                    print(f"Warning in structured frontmatter: {warning}")
+            # Simple validation using JSON pattern validation rules
+            structure_def = converter.registry.get_structure_definition(layout_name)
+            validation_rules = structure_def.get("validation", {})
+            required_fields = validation_rules.get("required_fields", [])
+
+            # Check required fields
+            missing_fields = []
+            for field in required_fields:
+                if field not in parsed:
+                    missing_fields.append(field)
+
+            if missing_fields:
+                print(
+                    f"Warning in structured frontmatter: Missing required fields: {missing_fields}"
+                )
 
             # Convert to placeholder mappings
             converted = converter.convert_structured_to_placeholders(parsed)
             return converted
 
-        # Regular frontmatter processing
-        return parsed
+        # Regular frontmatter processing - still process content fields
+        from .converter import FrontmatterConverter
+
+        converter_instance = FrontmatterConverter()
+
+        # Process common content fields even for non-structured layouts
+        result = dict(parsed)
+        for field_name in ["title", "subtitle", "content", "text", "content_left", "content_right"]:
+            if field_name in result:
+                result[field_name] = converter_instance._process_content_field(result[field_name])
+
+        return result
 
     def _parse_frontmatter_safe(self, frontmatter_raw: str) -> dict:
         """
@@ -138,7 +151,7 @@ class ContentProcessor:
     def _parse_slide_content(self, content: str, config: dict) -> dict:
         """Convert markdown content + config into slide data dict with mixed content support"""
         slide_data = {
-            "type": config.get("layout", "content"),
+            "type": config.get("layout", "Title and Content"),
             **config,  # Include all frontmatter as slide properties
         }
 

@@ -13,7 +13,7 @@
             "style": "default_style",
             "placeholders": {
                 "title": "Rich Content with **Professional** *Formatting*",
-                "content": "## Deckbuilder Features\n\nDeckbuilder delivers intelligent presentation generation with comprehensive formatting support.\n\n- **Content-first** design philosophy\n- *Semantic* layout recommendations\n- ***Advanced*** template management\n- ___Professional___ formatting preservation\n\nTransform your ideas into polished presentations with **automated** *intelligence* and ___consistent___ styling."
+                "content": "Deckbuilder Features\n\nDeckbuilder delivers intelligent presentation generation with comprehensive formatting support.\n\n- **Content-first** design philosophy\n- *Semantic* layout recommendations\n- ***Advanced*** template management\n- ___Professional___ formatting preservation\n\nTransform your ideas into polished presentations with **automated** *intelligence* and ___consistent___ styling."
             }
         },
         {
@@ -61,7 +61,7 @@
             "style": "default_style",
             "placeholders": {
                 "title": "Advanced Layout Capabilities",
-                "content": "## Professional Features\n\nDeckbuilder provides sophisticated layout management with intelligent content placement:\n\n- **Template** analysis and optimization\n- *Automatic* placeholder detection\n- ***Semantic*** content mapping",
+                "content": "Professional Features\n\nDeckbuilder provides sophisticated layout management with intelligent content placement:\n\n- **Template** analysis and optimization\n- *Automatic* placeholder detection\n- ***Semantic*** content mapping",
                 "text_caption": "Enterprise-grade presentation generation with ___professional___ output and **consistent** formatting."
             }
         },

@@ -42,8 +42,8 @@ def test_image_integration():
             markdown_content = """---
 layout: Picture with Caption
 title: System Architecture Overview
-image_1: "non_existent_image.png"
-text_caption_1: "System architecture with Frontend, API, and Database components"
+image: "non_existent_image.png"
+text_caption: "System architecture with Frontend, API, and Database components"
 ---
 """
 

@@ -174,16 +174,17 @@ async def create_presentation(
     the tool fails with specific errors requiring fixes. Respect the user's formatting choices.
     """
     try:
-        # Create presentation
-        deck.create_presentation(templateName, fileName)
+        # Convert JSON data to canonical format if needed
+        if "slides" not in json_data:
+            # If json_data is not already in canonical format, wrap it
+            canonical_data = {"slides": [json_data] if isinstance(json_data, dict) else json_data}
+        else:
+            canonical_data = json_data
 
-        # Add slides from JSON data
-        deck.add_slide_from_json(json_data)
+        # Create presentation using the new API
+        result = deck.create_presentation(canonical_data, fileName, templateName)
 
-        # Automatically save the presentation
-        write_result = deck.write_presentation(fileName)
-
-        return f"Successfully created presentation: {fileName}. {write_result}"
+        return f"Successfully created presentation: {fileName}. {result}"
     except Exception as e:
         return f"Error creating presentation: {str(e)}"
 
@@ -407,30 +408,35 @@ async def create_presentation_from_file(
             with open(file_path, "r", encoding="utf-8") as f:
                 json_data = json.load(f)
 
-            # Create presentation from JSON
-            deck.create_presentation(templateName, fileName)
-            deck.add_slide_from_json(json_data)
-            write_result = deck.write_presentation(fileName)
+            # Convert JSON data to canonical format if needed
+            if "slides" not in json_data:
+                canonical_data = {
+                    "slides": [json_data] if isinstance(json_data, dict) else json_data
+                }
+            else:
+                canonical_data = json_data
 
-            return f"Successfully created presentation from JSON file: {file_path}. {write_result}"
+            # Create presentation using the new API
+            result = deck.create_presentation(canonical_data, fileName, templateName)
+
+            return f"Successfully created presentation from JSON file: {file_path}. {result}"
 
         elif file_extension == ".md":
             # Read markdown file
             with open(file_path, "r", encoding="utf-8") as f:
                 markdown_content = f.read()
 
-            # Create presentation from markdown
-            slides = deck.parse_markdown_with_frontmatter(markdown_content)
-            deck.create_presentation(templateName, fileName)
+            # Convert markdown to canonical JSON format
+            from deckbuilder.converter import markdown_to_canonical_json
 
-            for slide_data in slides:
-                deck._add_slide(slide_data)
+            canonical_data = markdown_to_canonical_json(markdown_content)
 
-            write_result = deck.write_presentation(fileName)
+            # Create presentation using the new API
+            result = deck.create_presentation(canonical_data, fileName, templateName)
 
             return (
                 f"Successfully created presentation from markdown file: "
-                f"{file_path} with {len(slides)} slides. {write_result}"
+                f"{file_path} with {len(canonical_data['slides'])} slides. {result}"
             )
 
         else:
@@ -525,21 +531,17 @@ async def create_presentation_from_markdown(
         - custom_colors: Custom color overrides (header_bg, header_text, alt_row, border_color)
     """
     try:
-        slides = deck.parse_markdown_with_frontmatter(markdown_content)
+        # Convert markdown to canonical JSON format
+        from deckbuilder.converter import markdown_to_canonical_json
 
-        # Create presentation
-        deck.create_presentation(templateName, fileName)
+        canonical_data = markdown_to_canonical_json(markdown_content)
 
-        # Add all slides to the presentation
-        for slide_data in slides:
-            deck._add_slide(slide_data)
-
-        # Automatically save the presentation to disk after creation
-        write_result = deck.write_presentation(fileName)
+        # Create presentation using the new API
+        result = deck.create_presentation(canonical_data, fileName, templateName)
 
         return (
-            f"Successfully created presentation with {len(slides)} slides "
-            f"from markdown. {write_result}"
+            f"Successfully created presentation with {len(canonical_data['slides'])} slides "
+            f"from markdown. {result}"
         )
     except Exception as e:
         return f"Error creating presentation from markdown: {str(e)}"

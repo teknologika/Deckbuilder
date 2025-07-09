@@ -1,4 +1,3 @@
-import yaml
 import re
 from typing import Dict, Any, List, Optional, Union
 
@@ -119,8 +118,20 @@ class StructuredFrontmatterConverter:
 
         structure_def = self.registry.get_structure_definition(layout_name)
         if not structure_def:
-            # No structured definition available, return original data for backward compatibility
-            return structured_data
+            # No structured definition available, but still process content fields
+            result = dict(structured_data)
+            # Process common content fields even for non-structured layouts
+            for field_name in [
+                "title",
+                "subtitle",
+                "content",
+                "text",
+                "content_left",
+                "content_right",
+            ]:
+                if field_name in result:
+                    result[field_name] = self._process_content_field(result[field_name])
+            return result
 
         # Create result with type field for supported layouts
         result = {"type": layout_name}
@@ -148,7 +159,7 @@ class StructuredFrontmatterConverter:
         return result
 
     def _process_content_field(self, content: str) -> Any:
-        """Process content field - detect and parse tables, otherwise return content as-is"""
+        """Process content field - detect and parse tables, process headings, otherwise return content as-is"""
         if not content or not isinstance(content, str):
             return content
 
@@ -158,8 +169,9 @@ class StructuredFrontmatterConverter:
         if self._is_table_content(content):
             return self._parse_markdown_table(content)
 
-        # For non-table content, return as-is
-        return content
+        # Process headings and other markdown content
+        processed_content = self._process_markdown_headings(content)
+        return processed_content
 
     def _is_table_content(self, content: str) -> bool:
         """Check if content contains table markdown syntax"""
@@ -291,6 +303,25 @@ class StructuredFrontmatterConverter:
             segments = [{"text": text, "format": {}}]
 
         return segments
+
+    def _process_markdown_headings(self, content: str) -> str:
+        """Process markdown headings by removing ## and ### prefixes"""
+        if not content:
+            return content
+
+        lines = content.split("\n")
+        processed_lines = []
+
+        for line in lines:
+            # Remove markdown heading prefixes
+            if line.strip().startswith("## "):
+                processed_lines.append(line.strip()[3:])  # Remove "## "
+            elif line.strip().startswith("### "):
+                processed_lines.append(line.strip()[4:])  # Remove "### "
+            else:
+                processed_lines.append(line)
+
+        return "\n".join(processed_lines)
 
     def _extract_value_by_path(self, data: Dict[str, Any], path: str) -> Any:
         """Extract value from nested dict using dot notation path with array support"""
@@ -450,42 +481,71 @@ def markdown_to_canonical_json(markdown_content: str) -> Dict[str, Any]:
     """
     Converts a Markdown string with frontmatter into the canonical JSON presentation model.
     This will be the single entry point for all .md files.
+
+    Handles both pure structured frontmatter and frontmatter + content pairs.
     """
-    # 1. Split content into slides using "---" as a delimiter
-    # For pure structured frontmatter, each slide is a frontmatter block only
-    blocks = re.split(r"^---\s*$", markdown_content, flags=re.MULTILINE)
+    # Import ContentProcessor to handle frontmatter + content parsing
+    from .content_processor import ContentProcessor
+
+    # Use ContentProcessor to properly parse frontmatter + content
+    processor = ContentProcessor()
+    slides = processor.parse_markdown_with_frontmatter(markdown_content)
 
     canonical_slides = []
 
-    # Skip the first empty block if it exists (when file starts with ---)
-    start_index = 1 if blocks and not blocks[0].strip() else 0
+    for slide_data in slides:
+        # Convert slide data to canonical format
+        slide_layout = slide_data.get("type") or slide_data.get("layout", "Title and Content")
 
-    for i in range(start_index, len(blocks)):
-        frontmatter_raw = blocks[i].strip()
-
-        # Skip empty blocks
-        if not frontmatter_raw:
-            continue
-
-        frontmatter = yaml.safe_load(frontmatter_raw) or {}  # Ensure frontmatter is a dict
-
-        # 2. Use FrontmatterConverter to handle structured frontmatter
-        converter = FrontmatterConverter()
-        placeholder_mappings = converter.convert_structured_to_placeholders(frontmatter)
-
-        # Initialize Canonical Slide Object with layout from placeholder_mappings
+        # Create canonical slide structure
         slide_obj = {
-            "layout": placeholder_mappings.get(
-                "type", "Title and Content"
-            ),  # Use 'type' from converted mappings
-            "style": frontmatter.get("style", "default_style"),
-            "placeholders": placeholder_mappings,
-            "content": [],  # Empty for pure structured frontmatter
+            "layout": slide_layout,
+            "style": slide_data.get("style", "default_style"),
+            "placeholders": {},
+            "content": [],
         }
 
-        # Remove 'type' from placeholders as it's now in 'layout'
-        if "type" in slide_obj["placeholders"]:
-            del slide_obj["placeholders"]["type"]
+        # Add title if present
+        if "title" in slide_data:
+            slide_obj["placeholders"]["title"] = slide_data["title"]
+
+        # Add subtitle if present
+        if "subtitle" in slide_data:
+            slide_obj["placeholders"]["subtitle"] = slide_data["subtitle"]
+
+        # Convert rich content to canonical format and put it in placeholders
+        if "rich_content" in slide_data:
+            content_blocks = []
+            for block in slide_data["rich_content"]:
+                if "heading" in block:
+                    content_blocks.append({"type": "heading", "text": block["heading"]})
+                elif "paragraph" in block:
+                    content_blocks.append({"type": "paragraph", "text": block["paragraph"]})
+                elif "bullets" in block:
+                    bullet_items = []
+                    bullets = block["bullets"]
+                    bullet_levels = block.get("bullet_levels", [1] * len(bullets))
+                    for bullet, level in zip(bullets, bullet_levels):
+                        bullet_items.append({"text": bullet, "level": level})
+                    content_blocks.append({"type": "bullets", "items": bullet_items})
+
+            if content_blocks:
+                # Put content blocks in the placeholders so slide builder can find them
+                slide_obj["placeholders"]["content"] = content_blocks
+
+        # Add other placeholder fields from frontmatter (exclude internal fields)
+        for key, value in slide_data.items():
+            if key not in [
+                "type",
+                "rich_content",
+                "style",
+                "layout",
+                "title_formatted",
+                "subtitle_formatted",
+            ]:
+                # Don't duplicate title and subtitle since they're already handled above
+                if key not in ["title", "subtitle"] or key not in slide_obj["placeholders"]:
+                    slide_obj["placeholders"][key] = value
 
         canonical_slides.append(slide_obj)
 
