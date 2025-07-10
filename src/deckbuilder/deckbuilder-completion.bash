@@ -1,6 +1,14 @@
 #!/bin/bash
 # Deckbuilder CLI Bash Completion Script
-# Generated for hierarchical command structure
+# Enhanced with comprehensive file and directory completion
+#
+# Features:
+#   - Hierarchical command completion
+#   - File type-aware completion (.md, .json, image files)
+#   - Directory navigation with trailing slashes
+#   - Template name completion
+#   - Language and font completion
+#   - Mixed file/directory completion for better UX
 #
 # Installation:
 #   1. User installation: Copy to ~/.deckbuilder-completion.bash
@@ -54,9 +62,26 @@ _deckbuilder_completion() {
                 return 0
             fi
             
-            # File completion for image crop
+            # File and directory completion for image crop
             if [[ ${COMP_CWORD} == 3 && "${COMP_WORDS[2]}" == "crop" ]]; then
-                COMPREPLY=($(compgen -f -X "!*.@(jpg|jpeg|png|gif|bmp|tiff)" -- ${cur}))
+                local files dirs
+                files=($(compgen -f -- ${cur}))
+                dirs=($(compgen -d -- ${cur}))
+                COMPREPLY=()
+                
+                # Add directories with trailing slash for navigation
+                for dir in "${dirs[@]}"; do
+                    COMPREPLY+=("$dir/")
+                done
+                
+                # Add image files
+                for file in "${files[@]}"; do
+                    case "$file" in
+                        *.jpg|*.jpeg|*.png|*.gif|*.bmp|*.tiff|*.JPG|*.JPEG|*.PNG|*.GIF|*.BMP|*.TIFF)
+                            COMPREPLY+=("$file")
+                            ;;
+                    esac
+                done
                 return 0
             fi
             ;;
@@ -71,12 +96,20 @@ _deckbuilder_completion() {
             ;;
             
         create)
-            # File completion for create command
+            # File and directory completion for create command
             if [[ ${COMP_CWORD} == 2 ]]; then
-                # Complete .md and .json files
-                local files
+                # Complete .md and .json files, plus directories for navigation
+                local files dirs
                 files=($(compgen -f -- ${cur}))
+                dirs=($(compgen -d -- ${cur}))
                 COMPREPLY=()
+                
+                # Add directories with trailing slash
+                for dir in "${dirs[@]}"; do
+                    COMPREPLY+=("$dir/")
+                done
+                
+                # Add matching files
                 for file in "${files[@]}"; do
                     if [[ "$file" == *.md ]] || [[ "$file" == *.json ]]; then
                         COMPREPLY+=("$file")
@@ -87,9 +120,24 @@ _deckbuilder_completion() {
             ;;
             
         init)
-            # Directory completion for init command
+            # Directory completion for init command (existing + new paths)
             if [[ ${COMP_CWORD} == 2 ]]; then
-                COMPREPLY=($(compgen -d -- ${cur}))
+                # Complete existing directories with trailing slash
+                local dirs
+                dirs=($(compgen -d -- ${cur}))
+                COMPREPLY=()
+                
+                # Add existing directories with trailing slash
+                for dir in "${dirs[@]}"; do
+                    COMPREPLY+=("$dir/")
+                done
+                
+                # Allow typing new directory names (no completion restriction)
+                # This enables users to create new paths like ./templates or ~/my-templates
+                if [[ -n "$cur" ]]; then
+                    COMPREPLY+=("$cur")
+                fi
+                
                 return 0
             fi
             ;;
@@ -148,34 +196,97 @@ _deckbuilder_completion() {
             ;;
             
         --templates|-t)
-            # Directory completion for templates folder
-            COMPREPLY=($(compgen -d -- ${cur}))
+            # Enhanced directory completion for templates folder
+            local dirs
+            dirs=($(compgen -d -- ${cur}))
+            COMPREPLY=()
+            
+            # Add directories with trailing slash for easier navigation
+            for dir in "${dirs[@]}"; do
+                COMPREPLY+=("$dir/")
+            done
+            
+            # Allow typing new paths
+            if [[ -n "$cur" ]]; then
+                COMPREPLY+=("$cur")
+            fi
             return 0
             ;;
             
         --output|-o)
-            # For most commands, this is a directory or filename
+            # Enhanced file and directory completion for output paths
             case "${COMP_WORDS[1]}" in
                 create)
-                    # For create, it's just a filename without extension
-                    COMPREPLY=($(compgen -f -- ${cur}))
+                    # For create, it's a filename without extension + directories
+                    local files dirs
+                    files=($(compgen -f -- ${cur}))
+                    dirs=($(compgen -d -- ${cur}))
+                    COMPREPLY=()
+                    
+                    # Add directories with trailing slash
+                    for dir in "${dirs[@]}"; do
+                        COMPREPLY+=("$dir/")
+                    done
+                    
+                    # Add files (any type since user may want to override)
+                    for file in "${files[@]}"; do
+                        COMPREPLY+=("$file")
+                    done
                     return 0
                     ;;
                 template)
                     if [[ "${COMP_WORDS[2]}" == "document" ]]; then
-                        # For template document, it's a markdown file
-                        COMPREPLY=($(compgen -f -X "!*.md" -- ${cur}))
+                        # For template document, it's a markdown file + directories
+                        local files dirs
+                        files=($(compgen -f -- ${cur}))
+                        dirs=($(compgen -d -- ${cur}))
+                        COMPREPLY=()
+                        
+                        # Add directories with trailing slash
+                        for dir in "${dirs[@]}"; do
+                            COMPREPLY+=("$dir/")
+                        done
+                        
+                        # Add markdown files
+                        for file in "${files[@]}"; do
+                            if [[ "$file" == *.md ]]; then
+                                COMPREPLY+=("$file")
+                            fi
+                        done
                         return 0
                     fi
                     ;;
                 image)
-                    # For image commands, it's an image file
-                    COMPREPLY=($(compgen -f -X "!*.@(jpg|jpeg|png|gif|bmp)" -- ${cur}))
+                    # For image commands, it's an image file + directories
+                    local files dirs
+                    files=($(compgen -f -- ${cur}))
+                    dirs=($(compgen -d -- ${cur}))
+                    COMPREPLY=()
+                    
+                    # Add directories with trailing slash
+                    for dir in "${dirs[@]}"; do
+                        COMPREPLY+=("$dir/")
+                    done
+                    
+                    # Add image files
+                    for file in "${files[@]}"; do
+                        case "$file" in
+                            *.jpg|*.jpeg|*.png|*.gif|*.bmp|*.JPG|*.JPEG|*.PNG|*.GIF|*.BMP)
+                                COMPREPLY+=("$file")
+                                ;;
+                        esac
+                    done
                     return 0
                     ;;
                 *)
-                    # General directory completion
-                    COMPREPLY=($(compgen -d -- ${cur}))
+                    # General directory completion with trailing slash
+                    local dirs
+                    dirs=($(compgen -d -- ${cur}))
+                    COMPREPLY=()
+                    
+                    for dir in "${dirs[@]}"; do
+                        COMPREPLY+=("$dir/")
+                    done
                     return 0
                     ;;
             esac
@@ -195,9 +306,23 @@ _deckbuilder_completion() {
             ;;
     esac
     
-    # General file completion for remaining cases
-    if [[ ${cur} == *.* ]]; then
-        COMPREPLY=($(compgen -f -- ${cur}))
+    # General file and directory completion for remaining cases
+    if [[ ${cur} == *.* ]] || [[ ${cur} == */* ]]; then
+        # If current word has extension or slash, complete files and directories
+        local files dirs
+        files=($(compgen -f -- ${cur}))
+        dirs=($(compgen -d -- ${cur}))
+        COMPREPLY=()
+        
+        # Add directories with trailing slash
+        for dir in "${dirs[@]}"; do
+            COMPREPLY+=("$dir/")
+        done
+        
+        # Add files
+        for file in "${files[@]}"; do
+            COMPREPLY+=("$file")
+        done
         return 0
     fi
     

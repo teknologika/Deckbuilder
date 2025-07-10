@@ -49,3 +49,9 @@ def error_print(*args, **kwargs):
 def success_print(*args, **kwargs):
     """Always print success messages, regardless of debug settings."""
     print(*args, **kwargs)
+
+
+def progress_print(*args, **kwargs):
+    """Print progress messages for user feedback (can be silenced with DECKBUILDER_QUIET)."""
+    if not os.getenv("DECKBUILDER_QUIET", "false").lower() == "true":
+        print(*args, **kwargs)

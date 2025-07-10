@@ -387,7 +387,7 @@ class DeckbuilderCLI:
             print()
             print("Then reload: source ~/.bash_profile")
             print()
-            print("✨ After setup, you can use TAB to complete commands, templates, and file paths!")
+            print("✨ After setup, you can use TAB to complete commands, templates, file paths, and directories!")
 
         except Exception as e:
             # Extract filename from JSON parsing errors
@@ -631,6 +631,8 @@ class DeckbuilderCLI:
         print("   • Commands: deckbuilder <TAB>")
         print("   • Template names: deckbuilder analyze <TAB>")
         print("   • File paths: deckbuilder create <TAB>")
+        print("   • Directory navigation: deckbuilder create docs/<TAB>")
+        print("   • Output paths: deckbuilder create file.md -o outputs/<TAB>")
         print("   • Global flags: deckbuilder -<TAB>")
         print()
         print("For system-wide installation:")

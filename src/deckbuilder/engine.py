@@ -149,7 +149,14 @@ class Deckbuilder:
             # STEP 4: Post-generation validation (PPTX ↔ JSON verification)
             validator.validate_post_generation(full_path)
 
-        return f"Successfully created presentation with {len(presentation_data['slides'])} slides. {write_result}"
+        # Show completion summary
+        from .logging_config import success_print
+
+        slide_count = len(presentation_data["slides"])
+        file_name = write_result.split("Successfully created presentation: ")[1].strip() if "Successfully created presentation:" in write_result else "presentation.pptx"
+        success_print(f"✅ Presentation complete: {file_name} ({slide_count} slides)")
+
+        return f"Successfully created presentation with {slide_count} slides. {write_result}"
 
     def write_presentation(self, fileName: str = "Sample_Presentation") -> str:
         """Writes the generated presentation to disk with ISO timestamp."""

@@ -130,8 +130,9 @@ class ContentFormatter:
 
     def _debug_log(self, message):
         """Debug logging for content processing pipeline"""
-        # Always log for content placement debugging (not just when DECKBUILDER_DEBUG is set)
-        print(f"[ContentFormatter] {message}")
+        from .logging_config import content_processor_print
+
+        content_processor_print(f"[ContentFormatter] {message}")
 
     def _add_rich_content_list_to_placeholder(self, text_frame, content_list):
         """Add list content with proper formatting and bullet support."""

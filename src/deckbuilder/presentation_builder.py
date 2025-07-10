@@ -55,6 +55,13 @@ class PresentationBuilder:
             prs: PowerPoint presentation object
             slide_data: Dictionary containing slide information
         """
+        # Show progress message
+        from .logging_config import progress_print
+
+        slide_number = len(prs.slides) + 1
+        layout_name = slide_data.get("layout", "Unknown Layout")
+        progress_print(f"Slide {slide_number}: {layout_name}")
+
         slide = self.slide_builder.add_slide(prs, slide_data, self.content_formatter, self.image_placeholder_handler)
 
         # Add table if provided
