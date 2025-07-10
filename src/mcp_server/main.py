@@ -12,6 +12,7 @@ from mcp.server.fastmcp import Context, FastMCP
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from deckbuilder.engine import get_deckbuilder_client  # noqa: E402
+from deckbuilder.template_metadata import TemplateMetadataLoader  # noqa: E402
 
 # Content-first tools moved to content_first_tools.py to keep core server focused
 
@@ -55,170 +56,16 @@ async def deckbuilder_lifespan(server: FastMCP) -> AsyncIterator[DeckbuilderCont
 # Initialize FastMCP server with the Deckbuilder client as context
 mcp = FastMCP(
     "deckbuilder",
-    description="MCP server for PowerPoint presentation generation from JSON and Markdown",
+    description="Token-efficient MCP server for PowerPoint presentation generation from files and markdown",
     lifespan=deckbuilder_lifespan,
     host=os.getenv("HOST", "0.0.0.0"),  # nosec B104
     port=os.getenv("PORT", "8050"),
 )
 
 
-@mcp.tool()
-async def create_presentation(
-    ctx: Context,
-    json_data: dict,
-    fileName: str = "Sample_Presentation",
-    templateName: str = "default",
-) -> str:
-    """Create a complete PowerPoint presentation from JSON data
-
-    This tool accepts JSON data containing all slides and creates a complete presentation
-    with automatic saving. Supports all slide types: title, content, table, and all
-    available layouts with inline formatting.
-
-    IMPORTANT: Use the provided JSON data exactly as given by the user. Do not modify,
-    reformat, or adjust the JSON structure unless the tool fails with specific errors
-    that require fixes.
-
-    Args:
-        ctx: MCP context
-        json_data: JSON object containing presentation data with slides (use as-is)
-        fileName: Output filename (default: Sample_Presentation)
-        templateName: Template to use (default: default)
-
-    Example JSON format:
-        {
-            "presentation": {
-                "slides": [
-                    {
-                        "type": "title",
-                        "title": "**My Title** with *formatting*",
-                        "subtitle": "Subtitle with ___underline___"
-                    },
-                    {
-                        "type": "content",
-                        "title": "Content Slide",
-                        "content": [
-                            "**Bold** bullet point",
-                            "*Italic* text with ___underline___",
-                            "***Bold italic*** combination"
-                        ]
-                    },
-                    {
-                        "type": "table",
-                        "title": "Table Example",
-                        "table": {
-                            "header_style": "dark_blue_white_text",
-                            "row_style": "alternating_light_gray",
-                            "data": [
-                                ["**Header 1**", "*Header 2*", "___Header 3___"],
-                                ["Data 1", "Data 2", "Data 3"]
-                            ]
-                        }
-                    },
-                    {
-                        "type": "Picture with Caption",
-                        "title": "Image Example",
-                        "image_1": "path/to/image.png",
-                        "text_caption_1": "**Professional** image with *automatic* fallback"
-                    }
-                ]
-            }
-        }
-
-    Supported slide types:
-        - title: Title slide with title and subtitle
-        - content: Content slide with rich text, bullets, headings
-        - table: Table slide with full styling support
-        - Picture with Caption: Image slides with automatic PlaceKitten fallback
-        - All PowerPoint layout types are supported via the template mapping
-
-    Image support:
-        - Direct image insertion via image_1, image_2, etc. fields
-        - Automatic PlaceKitten fallback for missing images
-        - Professional styling: grayscale filter + smart cropping
-        - Intelligent face detection and rule-of-thirds composition
-        - Optimized caching for performance
-
-    Inline formatting support:
-        - **bold** - Bold text
-        - *italic* - Italic text
-        - ___underline___ - Underlined text
-        - ***bold italic*** - Combined bold and italic
-        - ***___all three___*** - Bold, italic, and underlined
-
-    Table styling options:
-        - header_style: dark_blue_white_text, light_blue_dark_text, etc.
-        - row_style: alternating_light_gray, solid_white, etc.
-        - border_style: thin_gray, thick_gray, no_borders, etc.
-        - custom_colors: Custom hex color overrides
-
-    IMPORTANT: Do NOT include markdown table separator lines (|---|---|---|) in table data.
-    Only include actual table rows with content.
-
-    USER CONTENT POLICY: When users provide JSON or markdown content (pasted or referenced),
-    use it exactly as provided. Do not modify, reformat, or "improve" the structure unless
-    the tool fails with specific errors requiring fixes. Respect the user's formatting choices.
-    """
-    try:
-        # Convert JSON data to canonical format if needed
-        if "presentation" in json_data and "slides" in json_data["presentation"]:
-            # Handle Claude Desktop format: {"presentation": {"slides": [...]}}
-            canonical_data = json_data["presentation"]
-        elif "slides" not in json_data:
-            # If json_data is not already in canonical format, wrap it
-            canonical_data = {"slides": [json_data] if isinstance(json_data, dict) else json_data}
-        else:
-            canonical_data = json_data
-
-        # Convert Claude Desktop slide format to canonical format
-        if "slides" in canonical_data:
-            for slide in canonical_data["slides"]:
-                # Convert 'type' to 'layout' and map to proper layout names
-                if "type" in slide:
-                    slide_type = slide.pop("type")
-                    # Map Claude Desktop types to actual layout names
-                    type_to_layout = {
-                        "title": "Title Slide",
-                        "content": "Title and Content",
-                        "table": "Title and Content",  # Tables use Title and Content layout
-                        "Picture with Caption": "Picture with Caption",
-                        "comparison": "Comparison",
-                        "two_content": "Two Content",
-                        "section_header": "Section Header",
-                        "title_only": "Title Only",
-                        "blank": "Blank",
-                    }
-                    slide["layout"] = type_to_layout.get(slide_type, "Title and Content")
-
-                # Move direct fields to placeholders
-                placeholders = slide.get("placeholders", {})
-                direct_fields = [
-                    "title",
-                    "subtitle",
-                    "content",
-                    "text",
-                    "image_1",
-                    "text_caption_1",
-                ]
-                for field in direct_fields:
-                    if field in slide and field not in placeholders:
-                        field_value = slide[field]
-                        # Handle content arrays - convert to string
-                        if field == "content" and isinstance(field_value, list):
-                            field_value = "\n".join(field_value)
-                        placeholders[field] = field_value
-                        # Don't remove the field from slide yet - let the engine handle it
-
-                # Ensure placeholders dict exists
-                if placeholders:
-                    slide["placeholders"] = placeholders
-
-        # Create presentation using the new API
-        result = deck.create_presentation(canonical_data, fileName, templateName)
-
-        return f"Successfully created presentation: {fileName}. {result}"
-    except Exception as e:
-        return f"Error creating presentation: {str(e)}"
+# Note: create_presentation() JSON tool removed - forces efficient file-based workflows
+# The core Deckbuilder.create_presentation() engine method remains intact
+# Use create_presentation_from_file() for token-efficient LLM workflows (15 tokens vs 2000+)
 
 
 @mcp.tool()
@@ -401,6 +248,281 @@ async def create_presentation_from_markdown(
         return f"Successfully created presentation with {len(canonical_data['slides'])} slides " f"from markdown. {result}"
     except Exception as e:
         return f"Error creating presentation from markdown: {str(e)}"
+
+
+@mcp.tool()
+async def list_available_templates(ctx: Context) -> str:
+    """List all available presentation templates with metadata for intelligent selection
+    
+    This tool provides comprehensive template discovery for content-first workflows.
+    Returns template metadata including descriptions, use cases, and layout capabilities
+    to enable smart template selection without expensive trial-and-error.
+    
+    Token efficiency: ~50 tokens input → comprehensive template metadata output
+    
+    Returns:
+        JSON string with template metadata in the format:
+        {
+            "available_templates": {
+                "template_name": {
+                    "description": "Template description",
+                    "use_cases": ["use case 1", "use case 2"],
+                    "total_layouts": number,
+                    "key_layouts": ["layout 1", "layout 2"]
+                }
+            },
+            "recommendation": "Usage guidance for template selection"
+        }
+    
+    Use cases:
+        - Template discovery for new presentations
+        - Content-template matching for optimal results
+        - Understanding layout capabilities before generation
+        - Avoiding expensive template trial-and-error cycles
+    """
+    try:
+        # Initialize template metadata loader
+        loader = TemplateMetadataLoader()
+        
+        # Get template names first
+        template_names = loader.get_template_names()
+        
+        if not template_names:
+            return json.dumps({
+                "available_templates": {},
+                "recommendation": "No templates found. Check template folder configuration."
+            })
+        
+        # Transform to expected format defined by TDD test
+        available_templates = {}
+        
+        for template_name in template_names:
+            try:
+                # Load full metadata for each template
+                metadata = loader.load_template_metadata(template_name)
+                
+                # Extract key layouts (first few layout names)
+                key_layouts = list(metadata.layouts.keys())[:3]
+                
+                available_templates[template_name] = {
+                    "description": metadata.description,
+                    "use_cases": metadata.use_cases[:3],  # First 3 use cases
+                    "total_layouts": metadata.total_layouts,
+                    "key_layouts": key_layouts
+                }
+            except Exception as e:
+                # If we can't load metadata for a template, include it with basic info
+                available_templates[template_name] = {
+                    "description": f"Template: {template_name}",
+                    "use_cases": ["General presentations"],
+                    "total_layouts": 0,
+                    "key_layouts": []
+                }
+        
+        # Generate recommendation based on available templates
+        if "default" in available_templates and "business_pro" in available_templates:
+            recommendation = "Use 'default' for general presentations, 'business_pro' for executive content"
+        elif "default" in available_templates:
+            recommendation = "Use 'default' template for most presentation needs"
+        else:
+            template_names = list(available_templates.keys())
+            recommendation = f"Available templates: {', '.join(template_names)}"
+        
+        result = {
+            "available_templates": available_templates,
+            "recommendation": recommendation
+        }
+        
+        return json.dumps(result, indent=2)
+        
+    except Exception as e:
+        error_result = {
+            "error": f"Failed to load template metadata: {str(e)}",
+            "available_templates": {},
+            "recommendation": "Check template folder configuration and try again"
+        }
+        return json.dumps(error_result, indent=2)
+
+
+@mcp.tool()
+async def get_template_layouts(ctx: Context, template_name: str) -> str:
+    """Get detailed layout information for a specific template
+    
+    This tool provides comprehensive layout details for a template including
+    placeholder requirements, usage examples, and best practices for markdown authoring.
+    
+    Token efficiency: ~20 tokens input → detailed layout specifications
+    
+    Args:
+        ctx: MCP context
+        template_name: Name of template to analyze (e.g., 'default', 'business_pro')
+    
+    Returns:
+        JSON string with detailed layout information in the format:
+        {
+            "template_name": "template_name",
+            "layouts": {
+                "Layout Name": {
+                    "description": "Layout description",
+                    "required_placeholders": ["field1", "field2"],
+                    "optional_placeholders": ["field3"],
+                    "best_for": "Usage recommendations",
+                    "example": {
+                        "field1": "Example content 1",
+                        "field2": "Example content 2"
+                    }
+                }
+            },
+            "usage_tips": "General usage guidance"
+        }
+    
+    Use cases:
+        - Understanding placeholder requirements for markdown authoring
+        - Getting realistic examples for specific layouts
+        - Learning best practices for template usage
+        - Troubleshooting placeholder naming issues
+    """
+    try:
+        # Initialize template metadata loader
+        loader = TemplateMetadataLoader()
+        
+        # Check if template exists
+        if not loader.validate_template_exists(template_name):
+            # Get available templates for helpful error message
+            available_templates = loader.get_template_names()
+            
+            error_result = {
+                "error": f"Template '{template_name}' not found",
+                "available_templates": available_templates,
+                "suggestion": "Use list_available_templates() to see all available options"
+            }
+            return json.dumps(error_result, indent=2)
+        
+        # Load template metadata
+        metadata = loader.load_template_metadata(template_name)
+        
+        # Transform to expected format with examples
+        layouts_info = {}
+        
+        for layout_name, layout_meta in metadata.layouts.items():
+            # Generate realistic examples for this layout
+            example = _generate_layout_example(layout_name, layout_meta.placeholders)
+            
+            layouts_info[layout_name] = {
+                "description": layout_meta.description,
+                "required_placeholders": layout_meta.required_placeholders,
+                "optional_placeholders": layout_meta.optional_placeholders,
+                "best_for": layout_meta.best_for,
+                "example": example
+            }
+        
+        result = {
+            "template_name": template_name,
+            "layouts": layouts_info,
+            "usage_tips": "Use placeholders exactly as specified. Title is required for all layouts."
+        }
+        
+        return json.dumps(result, indent=2)
+        
+    except Exception as e:
+        error_result = {
+            "error": f"Failed to load template layouts: {str(e)}",
+            "template_name": template_name,
+            "suggestion": "Check template name and try again"
+        }
+        return json.dumps(error_result, indent=2)
+
+
+def _generate_layout_example(layout_name: str, placeholders: list) -> dict:
+    """Generate realistic examples for layout placeholders dynamically."""
+    
+    examples = {}
+    
+    # Generate examples based on semantic placeholder names
+    for placeholder in placeholders:
+        placeholder_lower = placeholder.lower()
+        
+        # Dynamic title examples
+        if placeholder_lower == "title":
+            examples[placeholder] = _get_title_example_for_layout(layout_name)
+        elif placeholder_lower == "subtitle":
+            examples[placeholder] = "Subtitle with key message"
+        elif placeholder_lower.startswith("title_col"):
+            col_num = placeholder_lower.split("_col")[-1] if "_col" in placeholder_lower else "1"
+            examples[placeholder] = f"Column {col_num} Title"
+        
+        # Dynamic content examples
+        elif placeholder_lower == "content":
+            examples[placeholder] = _get_content_example_for_layout(layout_name)
+        elif placeholder_lower.startswith("content_col"):
+            col_num = placeholder_lower.split("_col")[-1] if "_col" in placeholder_lower else "1"
+            examples[placeholder] = f"Feature {col_num} details"
+        elif placeholder_lower == "content_left":
+            examples[placeholder] = "Left side content details"
+        elif placeholder_lower == "content_right":
+            examples[placeholder] = "Right side content details"
+        elif "top_left" in placeholder_lower:
+            examples[placeholder] = "Strengths content"
+        elif "top_right" in placeholder_lower:
+            examples[placeholder] = "Weaknesses content"
+        elif "bottom_left" in placeholder_lower:
+            examples[placeholder] = "Opportunities content"
+        elif "bottom_right" in placeholder_lower:
+            examples[placeholder] = "Threats content"
+        
+        # Image and media examples
+        elif "image" in placeholder_lower or "picture" in placeholder_lower:
+            examples[placeholder] = "path/to/image.png"
+        elif "caption" in placeholder_lower:
+            examples[placeholder] = "Image caption or description"
+        
+        # Other semantic types
+        elif "summary" in placeholder_lower:
+            examples[placeholder] = "Executive summary content"
+        elif "bullet" in placeholder_lower:
+            examples[placeholder] = "• Bullet point 1\n• Bullet point 2"
+        
+        # Fallback for unrecognized patterns
+        else:
+            examples[placeholder] = f"Content for {placeholder}"
+    
+    return examples
+
+
+def _get_title_example_for_layout(layout_name: str) -> str:
+    """Generate appropriate title examples based on layout context."""
+    layout_lower = layout_name.lower()
+    
+    if "comparison" in layout_lower:
+        return "Feature Comparison"
+    elif "four" in layout_lower and "column" in layout_lower:
+        return "Four Key Areas"
+    elif "three" in layout_lower and "column" in layout_lower:
+        return "Three Main Points"
+    elif "swot" in layout_lower:
+        return "SWOT Analysis"
+    elif "agenda" in layout_lower:
+        return "Meeting Agenda"
+    elif "picture" in layout_lower:
+        return "Visual Overview"
+    elif "title" in layout_lower and "slide" in layout_lower:
+        return "My Presentation Title"
+    else:
+        return "Slide Title"
+
+
+def _get_content_example_for_layout(layout_name: str) -> str:
+    """Generate appropriate content examples based on layout context."""
+    layout_lower = layout_name.lower()
+    
+    if "section" in layout_lower:
+        return "Section introduction and overview"
+    elif "content" in layout_lower and "caption" in layout_lower:
+        return "Main content with supporting details"
+    elif "big" in layout_lower and "number" in layout_lower:
+        return "85%"  # For big number layouts
+    else:
+        return "Main content with bullet points and details"
 
 
 async def main():

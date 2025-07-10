@@ -9,9 +9,9 @@
 
 Deckbuilder is a powerful Python library, Command Line, and MCP (Model Context Protocol) server for PowerPoint presentation generation.
 
-Deckbuilder currently supports JSON and Frontmatter formatted Markdown for content. Any slide template can be mapped using JSON with template support being progressivley added to Markdown.
+Deckbuilder CLI and the library currently supports JSON and Frontmatter formatted Markdown for content.
 
-The MCP server will be enhanced to be with a **content-first design philosophy**, Deckbuilder's MCP server will transform how AI creates presentations by focusing on *what you want to communicate* rather than just *what layouts exist*.
+To minimise token usage, the MCP server supports file based (JSON or MD) and Markdown in the prompt window.
 
 ## ✨ Key Features
 
@@ -20,15 +20,15 @@ Create complete PowerPoint presentations from JSON or Markdown with YAML frontma
 
 ### 🎨 **Rich Content Support**
 - **Advanced Formatting**: `**bold**`, `*italic*`, `___underline___`, `***bold italic***`
-- **Language & Font updating**:The aility to update the fonts and language of all slide objects using the command line tools.
-- **Professional Tables**: Custom styling with themes and colors
-- **50+ Business Layouts**: Progressive library of professional presentation templates
+- **Language & Font updating**:The aility to update the fonts and language of all slide objects using the command line tools using the CLI.
+- **Professional Tables**: Custom styling with themes and colors.
+- **Supported Layouts**: Progressive library of templates being added.
 
 ### 🖼️ **Smart Image Processing** 
 - **Placekitten Generation**: Professional placeholder generation 
 - **Intelligent Fallbacks**: Automatic handling of missing/invalid images
 - **Smart Cropping**: Face detection and rule-of-thirds composition
-- **Professional Filters**: 10+ effects optimized for business presentations
+- **Professional Filters**: 10+ effects optimised for business presentations
 - **Performance Optimized**: <2s generation, intelligent caching
 
 ### ⚡ **Enhanced CLI Experience**
@@ -36,16 +36,13 @@ Create complete PowerPoint presentations from JSON or Markdown with YAML frontma
 - **One-Command Setup**: `deckbuilder init` creates templates and configuration
 - **Context-Aware Paths**: CLI args > env vars > current directory precedence
 - **Always Local Output**: CLI outputs to current directory for predictable local development
-- **Global Arguments**: `-t/--template-folder`, `-l/--language`, `-f/--font` for complete customization
+- **Global Arguments**: `-t/--template-folder`, `-l/--language`, `-f/--font` for complete customisation
 - **Comprehensive Command Structure**:
   - `deckbuilder template` → analyze, validate, document, enhance, list
   - `deckbuilder config` → show, languages, completion
   - `deckbuilder image` → generate, crop
   - `deckbuilder remap` → update existing PowerPoint files with language/font changes
 - **Template Management**: Analyze, validate, and enhance PowerPoint templates with detailed validation
-
-### 🎯 **Content-First Intelligence - Currently under design**
-Instead of asking "*what layouts exist?*", Deckbuilder will ask "*what do you want to communicate?*" This will transform the system from a layout picker into an intelligent presentation consultant.
 
 ## 🚀 Quick Start
 
