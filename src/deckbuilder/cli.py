@@ -378,7 +378,16 @@ class DeckbuilderCLI:
             print(f'export DECK_OUTPUT_FOLDER="{target_path.parent}"')
             print('export DECK_TEMPLATE_NAME="default"')
             print()
+
+            # Bash completion setup instructions
+            print("🔧 Optional: Enable tab completion for deckbuilder commands:")
+            completion_url = "https://raw.githubusercontent.com/teknologika/deckbuilder/main/src/deckbuilder/deckbuilder-completion.bash"
+            print(f"   curl -o ~/.deckbuilder-completion.bash {completion_url}")
+            print('   echo "source ~/.deckbuilder-completion.bash" >> ~/.bash_profile')
+            print()
             print("Then reload: source ~/.bash_profile")
+            print()
+            print("✨ After setup, you can use TAB to complete commands, templates, and file paths!")
 
         except Exception as e:
             # Extract filename from JSON parsing errors
