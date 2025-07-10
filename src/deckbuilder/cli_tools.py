@@ -157,9 +157,7 @@ class TemplateManager:
         print(f"✅ Documentation generated: {output_path}")
         return output_path
 
-    def _generate_template_documentation(
-        self, template_name: str, analysis: dict, mapping: dict
-    ) -> str:
+    def _generate_template_documentation(self, template_name: str, analysis: dict, mapping: dict) -> str:
         """Generate markdown documentation for template"""
         base_name = template_name.replace(".pptx", "")
         layouts = analysis.get("layouts", {})
@@ -177,10 +175,7 @@ class TemplateManager:
             # Check structured frontmatter support (placeholder for now)
             structured_status = "⏳"  # Would check structured_frontmatter.py
 
-            row = (
-                f"| {layout_name} | {index} | {placeholder_count} | "
-                f"{structured_status} | {mapping_status} |"
-            )
+            row = f"| {layout_name} | {index} | {placeholder_count} | " f"{structured_status} | {mapping_status} |"
             table_rows.append(row)
 
         # Generate detailed layout specifications
@@ -427,10 +422,7 @@ layout: Title Slide
                 if not os.path.exists(mapping_file):
                     return {
                         "status": "error",
-                        "error": (
-                            f"Mapping file not found: {mapping_file}. "
-                            "Run 'analyze' first to generate mapping."
-                        ),
+                        "error": (f"Mapping file not found: {mapping_file}. " "Run 'analyze' first to generate mapping."),
                     }
 
             # Create backup if requested
@@ -458,9 +450,7 @@ layout: Title Slide
                 print(f"   📊 Modified {modified_count} placeholders across {layout_count} layouts")
 
                 if "enhanced_template_path" in modifications:
-                    print(
-                        f"   📄 Enhanced template saved: {modifications['enhanced_template_path']}"
-                    )
+                    print(f"   📄 Enhanced template saved: {modifications['enhanced_template_path']}")
 
                 if modifications["issues"]:
                     print("⚠️  Issues encountered:")
@@ -547,9 +537,7 @@ layout: Title Slide
                             )
                             break
                         except Exception as e:
-                            modifications["issues"].append(
-                                f"Failed to modify master placeholder {placeholder_idx}: {str(e)}"
-                            )
+                            modifications["issues"].append(f"Failed to modify master placeholder {placeholder_idx}: {str(e)}")
         except Exception as e:
             modifications["issues"].append(f"No direct master placeholders or error: {e}")
 
@@ -575,9 +563,7 @@ layout: Title Slide
 
                     try:
                         # Update placeholder name on the master slide layout
-                        if hasattr(placeholder, "element") and hasattr(
-                            placeholder.element, "nvSpPr"
-                        ):
+                        if hasattr(placeholder, "element") and hasattr(placeholder.element, "nvSpPr"):
                             placeholder.element.nvSpPr.cNvPr.name = new_name
                             modifications["modified_count"] += 1
                             modifications["changes"].append(
@@ -589,16 +575,10 @@ layout: Title Slide
                                 }
                             )
                         else:
-                            error_msg = (
-                                f"Cannot modify placeholder {placeholder_idx} in {layout_name} - "
-                                "unsupported structure"
-                            )
+                            error_msg = f"Cannot modify placeholder {placeholder_idx} in {layout_name} - " "unsupported structure"
                             modifications["issues"].append(error_msg)
                     except Exception as e:
-                        error_msg = (
-                            f"Failed to modify placeholder {placeholder_idx} in {layout_name}: "
-                            f"{str(e)}"
-                        )
+                        error_msg = f"Failed to modify placeholder {placeholder_idx} in {layout_name}: " f"{str(e)}"
                         modifications["issues"].append(error_msg)
 
         # Save modified presentation with .g.pptx extension
@@ -866,9 +846,7 @@ columns:
 }""",
             },
             "Picture with Caption": {
-                "description": (
-                    "Media slides with image and caption (includes PlaceKitten fallback)"
-                ),
+                "description": ("Media slides with image and caption (includes PlaceKitten fallback)"),
                 "complexity": "advanced",
                 "frontmatter_example": """---
 layout: Picture with Caption
@@ -1216,21 +1194,15 @@ Examples:
     )
 
     # Global arguments
-    parser.add_argument(
-        "--template-folder", "-t", help="Path to templates folder (default: auto-detect)"
-    )
-    parser.add_argument(
-        "--output-folder", "-o", help="Path to output folder (default: ./template_output)"
-    )
+    parser.add_argument("--template-folder", "-t", help="Path to templates folder (default: auto-detect)")
+    parser.add_argument("--output-folder", "-o", help="Path to output folder (default: ./template_output)")
 
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
     # Analyze command
     analyze_parser = subparsers.add_parser("analyze", help="Analyze PowerPoint template structure")
     analyze_parser.add_argument("template", help="Template name (e.g., default)")
-    analyze_parser.add_argument(
-        "--verbose", "-v", action="store_true", help="Show detailed analysis"
-    )
+    analyze_parser.add_argument("--verbose", "-v", action="store_true", help="Show detailed analysis")
 
     # Document command
     doc_parser = subparsers.add_parser("document", help="Generate template documentation")
@@ -1242,14 +1214,10 @@ Examples:
     validate_parser.add_argument("template", help="Template name to validate")
 
     # Enhance command
-    enhance_parser = subparsers.add_parser(
-        "enhance", help="Enhance template with corrected placeholder names (saves as .g.pptx)"
-    )
+    enhance_parser = subparsers.add_parser("enhance", help="Enhance template with corrected placeholder names (saves as .g.pptx)")
     enhance_parser.add_argument("template", help="Template name to enhance")
     enhance_parser.add_argument("--mapping-file", help="Custom JSON mapping file path")
-    enhance_parser.add_argument(
-        "--no-backup", action="store_true", help="Skip creating backup before modification"
-    )
+    enhance_parser.add_argument("--no-backup", action="store_true", help="Skip creating backup before modification")
     enhance_parser.add_argument(
         "--use-conventions",
         action="store_true",
@@ -1263,9 +1231,7 @@ Examples:
         return
 
     # Initialize template manager with command-line arguments
-    manager = TemplateManager(
-        template_folder=args.template_folder, output_folder=args.output_folder
-    )
+    manager = TemplateManager(template_folder=args.template_folder, output_folder=args.output_folder)
 
     # Execute command
     if args.command == "analyze":
@@ -1276,9 +1242,7 @@ Examples:
         manager.validate_template(args.template)
     elif args.command == "enhance":
         create_backup = not args.no_backup
-        manager.enhance_template(
-            args.template, args.mapping_file, create_backup, args.use_conventions
-        )
+        manager.enhance_template(args.template, args.mapping_file, create_backup, args.use_conventions)
 
 
 if __name__ == "__main__":

@@ -92,13 +92,6 @@ where = ["src"]
 line-length = 200
 target-version = ['py311']
 include = '\.pyi?$'
-extend-exclude = '''
-(
-tests/mcp_server/unit/test_content_optimization\.py
-| tests/mcp_server/unit/test_content_analysis\.py
-| src/deckbuilder/cli\.py
-)
-'''
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -154,8 +147,5 @@ exclude = [
 "dist",
 "*.egg-info",
 ".venv",
-".pytest_cache",
-"tests/mcp_server/unit/test_content_optimization.py",
-"tests/mcp_server/unit/test_content_analysis.py",
-"src/deckbuilder/cli.py"
+".pytest_cache"
 ]

@@ -239,9 +239,7 @@ class FormattingSupport:
         except Exception:
             return False
 
-    def process_text_frame(
-        self, text_frame, language_code: Optional[str] = None, font_name: Optional[str] = None
-    ) -> Dict[str, int]:
+    def process_text_frame(self, text_frame, language_code: Optional[str] = None, font_name: Optional[str] = None) -> Dict[str, int]:
         """
         Process all text runs in a text frame, applying language and/or font settings.
 
@@ -274,9 +272,7 @@ class FormattingSupport:
 
         return stats
 
-    def process_shape(
-        self, shape, language_code: Optional[str] = None, font_name: Optional[str] = None
-    ) -> Dict[str, int]:
+    def process_shape(self, shape, language_code: Optional[str] = None, font_name: Optional[str] = None) -> Dict[str, int]:
         """
         Process a shape, applying formatting to its text content.
 
@@ -302,9 +298,7 @@ class FormattingSupport:
                 for row in shape.table.rows:
                     for cell in row.cells:
                         if cell.text_frame:
-                            cell_stats = self.process_text_frame(
-                                cell.text_frame, language_code, font_name
-                            )
+                            cell_stats = self.process_text_frame(cell.text_frame, language_code, font_name)
                             for key in stats:
                                 stats[key] += cell_stats[key]
 

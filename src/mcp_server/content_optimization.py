@@ -47,9 +47,7 @@ class ContentOptimizationEngine:
         self.layout_templates = self._build_layout_templates()
         self.formatting_rules = self._build_formatting_rules()
 
-    def optimize_content_for_layout(
-        self, content: str, chosen_layout: str, slide_context: Optional[Dict] = None
-    ) -> Dict[str, Any]:
+    def optimize_content_for_layout(self, content: str, chosen_layout: str, slide_context: Optional[Dict] = None) -> Dict[str, Any]:
         """
         Optimize content structure and generate ready-to-use YAML.
 
@@ -65,19 +63,13 @@ class ContentOptimizationEngine:
         cleaned_content = self._clean_content(content)
 
         # Generate optimized content structure
-        optimization_result = self._optimize_content_structure(
-            cleaned_content, chosen_layout, slide_context
-        )
+        optimization_result = self._optimize_content_structure(cleaned_content, chosen_layout, slide_context)
 
         # Perform gap analysis
-        gap_analysis = self._analyze_content_layout_fit(
-            cleaned_content, chosen_layout, optimization_result
-        )
+        gap_analysis = self._analyze_content_layout_fit(cleaned_content, chosen_layout, optimization_result)
 
         # Generate presentation tips
-        presentation_tips = self._generate_presentation_tips(
-            chosen_layout, gap_analysis, slide_context
-        )
+        presentation_tips = self._generate_presentation_tips(chosen_layout, gap_analysis, slide_context)
 
         return {
             "optimized_content": {
@@ -122,9 +114,7 @@ class ContentOptimizationEngine:
 
         return cleaned
 
-    def _optimize_content_structure(
-        self, content: str, chosen_layout: str, slide_context: Optional[Dict]
-    ) -> ContentOptimizationResult:
+    def _optimize_content_structure(self, content: str, chosen_layout: str, slide_context: Optional[Dict]) -> ContentOptimizationResult:
         """Optimize content structure for the chosen layout."""
         layout_handler = self._get_layout_handler(chosen_layout)
 
@@ -151,9 +141,7 @@ class ContentOptimizationEngine:
         }
         return handlers.get(layout)
 
-    def _optimize_for_four_columns(
-        self, content: str, slide_context: Optional[Dict]
-    ) -> ContentOptimizationResult:
+    def _optimize_for_four_columns(self, content: str, slide_context: Optional[Dict]) -> ContentOptimizationResult:
         """Optimize content for Four Columns layout."""
         # Extract title
         title = self._extract_or_generate_title(content, slide_context)
@@ -187,9 +175,7 @@ class ContentOptimizationEngine:
             title_generated=title,
         )
 
-    def _optimize_for_comparison(
-        self, content: str, slide_context: Optional[Dict]
-    ) -> ContentOptimizationResult:
+    def _optimize_for_comparison(self, content: str, slide_context: Optional[Dict]) -> ContentOptimizationResult:
         """Optimize content for Comparison layout."""
         title = self._extract_or_generate_title(content, slide_context)
 
@@ -205,9 +191,7 @@ class ContentOptimizationEngine:
             formatting_applied.append("comparison content optimization")
 
         # Generate YAML
-        yaml_structure = self._generate_comparison_yaml(
-            title, left_content["title"], left_formatted, right_content["title"], right_formatted
-        )
+        yaml_structure = self._generate_comparison_yaml(title, left_content["title"], left_formatted, right_content["title"], right_formatted)
 
         content_mapping = {
             "title": title,
@@ -224,9 +208,7 @@ class ContentOptimizationEngine:
             title_generated=title,
         )
 
-    def _optimize_for_two_content(
-        self, content: str, slide_context: Optional[Dict]
-    ) -> ContentOptimizationResult:
+    def _optimize_for_two_content(self, content: str, slide_context: Optional[Dict]) -> ContentOptimizationResult:
         """Optimize content for Two Content layout."""
         title = self._extract_or_generate_title(content, slide_context)
 
@@ -259,9 +241,7 @@ class ContentOptimizationEngine:
             title_generated=title,
         )
 
-    def _optimize_for_title_and_content(
-        self, content: str, slide_context: Optional[Dict]
-    ) -> ContentOptimizationResult:
+    def _optimize_for_title_and_content(self, content: str, slide_context: Optional[Dict]) -> ContentOptimizationResult:
         """Optimize content for Title and Content layout."""
         title = self._extract_or_generate_title(content, slide_context)
 
@@ -272,9 +252,7 @@ class ContentOptimizationEngine:
         formatted_content = self._apply_content_formatting(main_content)
         formatted_content = self._structure_as_bullets(formatted_content)
 
-        formatting_applied = (
-            ["bullet point structuring"] if formatted_content != main_content else []
-        )
+        formatting_applied = ["bullet point structuring"] if formatted_content != main_content else []
 
         # Generate YAML
         yaml_structure = self._generate_title_and_content_yaml(title, formatted_content)
@@ -288,9 +266,7 @@ class ContentOptimizationEngine:
             title_generated=title,
         )
 
-    def _optimize_for_section_header(
-        self, content: str, slide_context: Optional[Dict]
-    ) -> ContentOptimizationResult:
+    def _optimize_for_section_header(self, content: str, slide_context: Optional[Dict]) -> ContentOptimizationResult:
         """Optimize content for Section Header layout."""
         title = self._extract_or_generate_title(content, slide_context)
         subtitle = self._extract_subtitle_or_summary(content)
@@ -307,9 +283,7 @@ class ContentOptimizationEngine:
             title_generated=title,
         )
 
-    def _optimize_for_title_slide(
-        self, content: str, slide_context: Optional[Dict]
-    ) -> ContentOptimizationResult:
+    def _optimize_for_title_slide(self, content: str, slide_context: Optional[Dict]) -> ContentOptimizationResult:
         """Optimize content for Title Slide layout."""
         title = self._extract_or_generate_title(content, slide_context)
         subtitle = self._extract_subtitle_or_summary(content)
@@ -326,9 +300,7 @@ class ContentOptimizationEngine:
             title_generated=title,
         )
 
-    def _optimize_for_four_columns_with_titles(
-        self, content: str, slide_context: Optional[Dict]
-    ) -> ContentOptimizationResult:
+    def _optimize_for_four_columns_with_titles(self, content: str, slide_context: Optional[Dict]) -> ContentOptimizationResult:
         """Optimize content for Four Columns With Titles layout."""
         title = self._extract_or_generate_title(content, slide_context)
         columns = self._parse_content_into_columns(content, 4)
@@ -356,9 +328,7 @@ class ContentOptimizationEngine:
                 formatting_applied.append("content optimization")
 
         # Generate YAML
-        yaml_structure = self._generate_four_columns_with_titles_yaml(
-            title, column_titles, formatted_columns
-        )
+        yaml_structure = self._generate_four_columns_with_titles_yaml(title, column_titles, formatted_columns)
 
         content_mapping = {
             "title": title,
@@ -373,9 +343,7 @@ class ContentOptimizationEngine:
             title_generated=title,
         )
 
-    def _optimize_for_three_columns(
-        self, content: str, slide_context: Optional[Dict]
-    ) -> ContentOptimizationResult:
+    def _optimize_for_three_columns(self, content: str, slide_context: Optional[Dict]) -> ContentOptimizationResult:
         """Optimize content for Three Columns layout."""
         title = self._extract_or_generate_title(content, slide_context)
         columns = self._parse_content_into_columns(content, 3)
@@ -405,9 +373,7 @@ class ContentOptimizationEngine:
             title_generated=title,
         )
 
-    def _optimize_for_three_columns_with_titles(
-        self, content: str, slide_context: Optional[Dict]
-    ) -> ContentOptimizationResult:
+    def _optimize_for_three_columns_with_titles(self, content: str, slide_context: Optional[Dict]) -> ContentOptimizationResult:
         """Optimize content for Three Columns With Titles layout."""
         title = self._extract_or_generate_title(content, slide_context)
         columns = self._parse_content_into_columns(content, 3)
@@ -434,9 +400,7 @@ class ContentOptimizationEngine:
                 formatting_applied.append("content optimization")
 
         # Generate YAML
-        yaml_structure = self._generate_three_columns_with_titles_yaml(
-            title, column_titles, formatted_columns
-        )
+        yaml_structure = self._generate_three_columns_with_titles_yaml(title, column_titles, formatted_columns)
 
         content_mapping = {
             "title": title,
@@ -451,9 +415,7 @@ class ContentOptimizationEngine:
             title_generated=title,
         )
 
-    def _optimize_for_swot_analysis(
-        self, content: str, slide_context: Optional[Dict]
-    ) -> ContentOptimizationResult:
+    def _optimize_for_swot_analysis(self, content: str, slide_context: Optional[Dict]) -> ContentOptimizationResult:
         """Optimize content for SWOT Analysis layout."""
         title = self._extract_or_generate_title(content, slide_context)
 
@@ -485,9 +447,7 @@ class ContentOptimizationEngine:
             title_generated=title,
         )
 
-    def _optimize_for_agenda_6_textboxes(
-        self, content: str, slide_context: Optional[Dict]
-    ) -> ContentOptimizationResult:
+    def _optimize_for_agenda_6_textboxes(self, content: str, slide_context: Optional[Dict]) -> ContentOptimizationResult:
         """Optimize content for Agenda, 6 Textboxes layout."""
         title = self._extract_or_generate_title(content, slide_context)
 
@@ -729,32 +689,22 @@ class ContentOptimizationEngine:
         if "strength" in content_lower:
             strength_match = re.search(r"strength[s]?[:\-\s]*([^\n]+)", content, re.IGNORECASE)
             if strength_match:
-                swot_content["content_top_left"] = (
-                    f"**Strengths**: {strength_match.group(1).strip()}"
-                )
+                swot_content["content_top_left"] = f"**Strengths**: {strength_match.group(1).strip()}"
 
         if "weakness" in content_lower:
             weakness_match = re.search(r"weakness[es]*[:\-\s]*([^\n]+)", content, re.IGNORECASE)
             if weakness_match:
-                swot_content["content_top_right"] = (
-                    f"**Weaknesses**: {weakness_match.group(1).strip()}"
-                )
+                swot_content["content_top_right"] = f"**Weaknesses**: {weakness_match.group(1).strip()}"
 
         if "opportunit" in content_lower:
-            opportunity_match = re.search(
-                r"opportunit[y|ies]*[:\-\s]*([^\n]+)", content, re.IGNORECASE
-            )
+            opportunity_match = re.search(r"opportunit[y|ies]*[:\-\s]*([^\n]+)", content, re.IGNORECASE)
             if opportunity_match:
-                swot_content["content_bottom_left"] = (
-                    f"**Opportunities**: {opportunity_match.group(1).strip()}"
-                )
+                swot_content["content_bottom_left"] = f"**Opportunities**: {opportunity_match.group(1).strip()}"
 
         if "threat" in content_lower:
             threat_match = re.search(r"threat[s]*[:\-\s]*([^\n]+)", content, re.IGNORECASE)
             if threat_match:
-                swot_content["content_bottom_right"] = (
-                    f"**Threats**: {threat_match.group(1).strip()}"
-                )
+                swot_content["content_bottom_right"] = f"**Threats**: {threat_match.group(1).strip()}"
 
         # Fill in missing quadrants with defaults
         for key, default_value in default_swot.items():
@@ -807,9 +757,7 @@ content_col3: "{columns[2]}"
 content_col4: "{columns[3]}"
 ---"""
 
-    def _generate_comparison_yaml(
-        self, title: str, left_title: str, left_content: str, right_title: str, right_content: str
-    ) -> str:
+    def _generate_comparison_yaml(self, title: str, left_title: str, left_content: str, right_title: str, right_content: str) -> str:
         """Generate YAML for Comparison layout using direct field format."""
         return f"""---
 layout: Comparison
@@ -858,9 +806,7 @@ title: {title}
 subtitle: {subtitle}
 ---"""
 
-    def _generate_four_columns_with_titles_yaml(
-        self, title: str, column_titles: List[str], columns: List[str]
-    ) -> str:
+    def _generate_four_columns_with_titles_yaml(self, title: str, column_titles: List[str], columns: List[str]) -> str:
         """Generate YAML for Four Columns With Titles layout."""
         # Ensure we have 4 columns and titles
         while len(columns) < 4:
@@ -895,9 +841,7 @@ content_col2: "{columns[1]}"
 content_col3: "{columns[2]}"
 ---"""
 
-    def _generate_three_columns_with_titles_yaml(
-        self, title: str, column_titles: List[str], columns: List[str]
-    ) -> str:
+    def _generate_three_columns_with_titles_yaml(self, title: str, column_titles: List[str], columns: List[str]) -> str:
         """Generate YAML for Three Columns With Titles layout."""
         # Ensure we have 3 columns and titles
         while len(columns) < 3:
@@ -931,9 +875,7 @@ content_bottom_right: "{swot_content['content_bottom_right']}"
         """Generate YAML for Agenda, 6 Textboxes layout."""
         # Ensure we have 6 items
         while len(agenda_items) < 6:
-            agenda_items.append(
-                f"{len(agenda_items) + 1:02d} - Agenda item {len(agenda_items) + 1}"
-            )
+            agenda_items.append(f"{len(agenda_items) + 1:02d} - Agenda item {len(agenda_items) + 1}")
 
         return f"""---
 layout: Agenda, 6 Textboxes
@@ -946,9 +888,7 @@ content_item5: "{agenda_items[4]}"
 content_item6: "{agenda_items[5]}"
 ---"""
 
-    def _analyze_content_layout_fit(
-        self, content: str, chosen_layout: str, optimization_result: ContentOptimizationResult
-    ) -> GapAnalysis:
+    def _analyze_content_layout_fit(self, content: str, chosen_layout: str, optimization_result: ContentOptimizationResult) -> GapAnalysis:
         """Analyze how well the content fits the chosen layout."""
         # Analyze content characteristics
         # content_length = len(content.split())  # Future: use for length analysis
@@ -971,9 +911,7 @@ content_item6: "{agenda_items[5]}"
         missing_elements = self._identify_missing_elements(content, chosen_layout)
 
         # Generate recommendations
-        recommendations = self._generate_fit_recommendations(
-            content_fit, missing_elements, chosen_layout
-        )
+        recommendations = self._generate_fit_recommendations(content_fit, missing_elements, chosen_layout)
 
         # Calculate layout utilization
         layout_utilization = min(fit_score, 1.0)
@@ -985,9 +923,7 @@ content_item6: "{agenda_items[5]}"
             layout_utilization=layout_utilization,
         )
 
-    def _calculate_fit_score(
-        self, content: str, layout: str, optimization_result: ContentOptimizationResult
-    ) -> float:
+    def _calculate_fit_score(self, content: str, layout: str, optimization_result: ContentOptimizationResult) -> float:
         """Calculate a fit score between content and layout."""
         score = 0.5  # Base score
 
@@ -1002,10 +938,7 @@ content_item6: "{agenda_items[5]}"
                 score += 0.1
 
         elif layout == "Comparison":
-            if (
-                "left_content" in optimization_result.content_mapping
-                and "right_content" in optimization_result.content_mapping
-            ):
+            if "left_content" in optimization_result.content_mapping and "right_content" in optimization_result.content_mapping:
                 score += 0.3
                 # Bonus for balanced content
                 left_len = len(optimization_result.content_mapping["left_content"].split())
@@ -1033,15 +966,10 @@ content_item6: "{agenda_items[5]}"
         if layout == "Four Columns":
             content_elements = len(self._parse_content_into_columns(content, 4))
             if content_elements < 4:
-                missing.append(
-                    f"Need {4 - content_elements} more content elements for full utilization"
-                )
+                missing.append(f"Need {4 - content_elements} more content elements for full utilization")
 
         elif layout == "Comparison":
-            if not any(
-                word in content.lower()
-                for word in ["vs", "versus", "compared", "against", "but", "however"]
-            ):
+            if not any(word in content.lower() for word in ["vs", "versus", "compared", "against", "but", "however"]):
                 missing.append("Content lacks clear comparison elements")
 
         # Check for visual elements that could enhance the slide
@@ -1051,20 +979,14 @@ content_item6: "{agenda_items[5]}"
 
         return missing
 
-    def _generate_fit_recommendations(
-        self, content_fit: str, missing_elements: List[str], layout: str
-    ) -> List[str]:
+    def _generate_fit_recommendations(self, content_fit: str, missing_elements: List[str], layout: str) -> List[str]:
         """Generate recommendations for improving content-layout fit."""
         recommendations = []
 
         if content_fit == "poor":
-            recommendations.append(
-                "Consider switching to a simpler layout like 'Title and Content'"
-            )
+            recommendations.append("Consider switching to a simpler layout like 'Title and Content'")
         elif content_fit == "fair":
-            recommendations.append(
-                "Content structure could be improved for better layout utilization"
-            )
+            recommendations.append("Content structure could be improved for better layout utilization")
 
         if missing_elements:
             recommendations.extend([f"Suggestion: {element}" for element in missing_elements])
@@ -1077,26 +999,17 @@ content_item6: "{agenda_items[5]}"
 
         return recommendations
 
-    def _generate_presentation_tips(
-        self, layout: str, gap_analysis: GapAnalysis, slide_context: Optional[Dict]
-    ) -> Dict[str, str]:
+    def _generate_presentation_tips(self, layout: str, gap_analysis: GapAnalysis, slide_context: Optional[Dict]) -> Dict[str, str]:
         """Generate presentation delivery tips."""
         tips = {}
 
         # Layout-specific delivery guidance
         if layout == "Four Columns":
-            tips["delivery_guidance"] = (
-                "Present columns in logical order, allow time for audience to "
-                "process each section"
-            )
+            tips["delivery_guidance"] = "Present columns in logical order, allow time for audience to " "process each section"
         elif layout == "Comparison":
-            tips["delivery_guidance"] = (
-                "Guide audience through left side first, then right, conclude with recommendation"
-            )
+            tips["delivery_guidance"] = "Guide audience through left side first, then right, conclude with recommendation"
         elif layout == "Title and Content":
-            tips["delivery_guidance"] = (
-                "Use title to set context, walk through content points systematically"
-            )
+            tips["delivery_guidance"] = "Use title to set context, walk through content points systematically"
         else:
             tips["delivery_guidance"] = "Keep focus on key message, use slide as visual support"
 
@@ -1104,24 +1017,16 @@ content_item6: "{agenda_items[5]}"
         if slide_context and "audience" in slide_context:
             audience = slide_context["audience"]
             if audience == "board":
-                tips["audience_adaptation"] = (
-                    "Focus on high-level insights, minimize technical details"
-                )
+                tips["audience_adaptation"] = "Focus on high-level insights, minimize technical details"
             elif audience == "technical":
-                tips["audience_adaptation"] = (
-                    "Include technical details, be prepared for deep-dive questions"
-                )
+                tips["audience_adaptation"] = "Include technical details, be prepared for deep-dive questions"
             else:
                 tips["audience_adaptation"] = "Balance detail level, check for understanding"
         else:
             tips["audience_adaptation"] = "Adapt detail level based on audience expertise"
 
         # Timing estimate
-        word_count = sum(
-            len(mapping.split())
-            for mapping in gap_analysis.__dict__.values()
-            if isinstance(mapping, str)
-        )
+        word_count = sum(len(mapping.split()) for mapping in gap_analysis.__dict__.values() if isinstance(mapping, str))
         if word_count < 50:
             tips["timing_estimate"] = "1-2 minutes"
         elif word_count < 100:
@@ -1170,9 +1075,7 @@ content_item6: "{agenda_items[5]}"
 
 
 # Helper function for easy import
-def optimize_content_for_layout(
-    content: str, chosen_layout: str, slide_context: Optional[Dict] = None
-) -> Dict[str, Any]:
+def optimize_content_for_layout(content: str, chosen_layout: str, slide_context: Optional[Dict] = None) -> Dict[str, Any]:
     """
     Convenience function for optimizing content for a specific layout.
 

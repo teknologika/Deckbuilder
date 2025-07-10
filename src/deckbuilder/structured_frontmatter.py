@@ -713,9 +713,7 @@ class StructuredFrontmatterValidator:
     def __init__(self):
         self.registry = StructuredFrontmatterRegistry()
 
-    def validate_structured_frontmatter(
-        self, data: Dict[str, Any], layout_name: str
-    ) -> Dict[str, Any]:
+    def validate_structured_frontmatter(self, data: Dict[str, Any], layout_name: str) -> Dict[str, Any]:
         """Validate structured frontmatter against layout requirements"""
 
         structure_def = self.registry.get_structure_definition(layout_name)
@@ -746,9 +744,7 @@ class StructuredFrontmatterValidator:
 
         return result
 
-    def _validate_four_columns(
-        self, data: Dict[str, Any], rules: Dict[str, Any], result: Dict[str, Any]
-    ) -> None:
+    def _validate_four_columns(self, data: Dict[str, Any], rules: Dict[str, Any], result: Dict[str, Any]) -> None:
         """Validate Four Columns specific structure"""
         columns = data.get("columns", [])
 
@@ -759,17 +755,12 @@ class StructuredFrontmatterValidator:
             result["valid"] = False
             result["errors"].append(f"Expected at least {min_cols} columns, got {len(columns)}")
         elif len(columns) > max_cols:
-            result["warnings"].append(
-                f"Expected at most {max_cols} columns, got {len(columns)} "
-                f"(extra columns will be ignored)"
-            )
+            result["warnings"].append(f"Expected at most {max_cols} columns, got {len(columns)} " f"(extra columns will be ignored)")
 
         # Validate each column structure
         for i, column in enumerate(columns):
             if not isinstance(column, dict):
-                result["errors"].append(
-                    f"Column {i + 1} must be an object with 'title' and 'content'"
-                )
+                result["errors"].append(f"Column {i + 1} must be an object with 'title' and 'content'")
                 continue
 
             if "title" not in column:
@@ -777,9 +768,7 @@ class StructuredFrontmatterValidator:
             if "content" not in column:
                 result["warnings"].append(f"Column {i + 1} missing 'content' field")
 
-    def _validate_comparison(
-        self, data: Dict[str, Any], rules: Dict[str, Any], result: Dict[str, Any]
-    ) -> None:
+    def _validate_comparison(self, data: Dict[str, Any], rules: Dict[str, Any], result: Dict[str, Any]) -> None:
         """Validate Comparison specific structure"""
         comparison = data.get("comparison", {})
 
@@ -798,9 +787,7 @@ class StructuredFrontmatterValidator:
                     if "content" not in side_data:
                         result["warnings"].append(f"Comparison '{side}' missing 'content' field")
 
-    def _validate_two_content(
-        self, data: Dict[str, Any], rules: Dict[str, Any], result: Dict[str, Any]
-    ) -> None:
+    def _validate_two_content(self, data: Dict[str, Any], rules: Dict[str, Any], result: Dict[str, Any]) -> None:
         """Validate Two Content specific structure"""
         sections = data.get("sections", [])
 
@@ -809,19 +796,12 @@ class StructuredFrontmatterValidator:
 
         if len(sections) < min_sections:
             result["valid"] = False
-            result["errors"].append(
-                f"Expected at least {min_sections} sections, got {len(sections)}"
-            )
+            result["errors"].append(f"Expected at least {min_sections} sections, got {len(sections)}")
         elif len(sections) > max_sections:
-            result["warnings"].append(
-                f"Expected at most {max_sections} sections, got {len(sections)} "
-                f"(extra sections will be ignored)"
-            )
+            result["warnings"].append(f"Expected at most {max_sections} sections, got {len(sections)} " f"(extra sections will be ignored)")
 
 
-def get_structured_frontmatter_help(
-    layout_name: str = None, template_mapping: Dict = None
-) -> Dict[str, Any]:
+def get_structured_frontmatter_help(layout_name: str = None, template_mapping: Dict = None) -> Dict[str, Any]:
     """Get help information for structured frontmatter"""
 
     registry = StructuredFrontmatterRegistry(template_mapping)
@@ -855,8 +835,5 @@ def get_structured_frontmatter_help(
                 }
                 for name, definition in patterns.items()
             },
-            "usage": (
-                "Use 'layout: <LayoutName>' in frontmatter, then follow the structured "
-                "format for that layout"
-            ),
+            "usage": ("Use 'layout: <LayoutName>' in frontmatter, then follow the structured " "format for that layout"),
         }

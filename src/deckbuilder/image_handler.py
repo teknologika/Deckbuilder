@@ -99,9 +99,7 @@ class ImageHandler:
         except Exception:
             return None
 
-    def process_image(
-        self, image_path: str, target_dimensions: Tuple[int, int], quality: str = "high"
-    ) -> Optional[str]:
+    def process_image(self, image_path: str, target_dimensions: Tuple[int, int], quality: str = "high") -> Optional[str]:
         """
         Process and resize image to target dimensions for PowerPoint placeholder.
 
@@ -144,9 +142,7 @@ class ImageHandler:
             print(f"Warning: Image processing failed for {image_path}: {e}")
             return None
 
-    def _resize_with_aspect_ratio(
-        self, img: Image.Image, target_width: int, target_height: int
-    ) -> Image.Image:
+    def _resize_with_aspect_ratio(self, img: Image.Image, target_width: int, target_height: int) -> Image.Image:
         """
         Resize image to fit target dimensions while preserving aspect ratio.
 
@@ -175,9 +171,7 @@ class ImageHandler:
         # Resize using high-quality resampling
         return img.resize((new_width, new_height), Image.Resampling.LANCZOS)
 
-    def _generate_cache_key(
-        self, image_path: str, dimensions: Tuple[int, int], quality: str
-    ) -> str:
+    def _generate_cache_key(self, image_path: str, dimensions: Tuple[int, int], quality: str) -> str:
         """
         Generate unique cache key for processed image.
 
@@ -253,9 +247,7 @@ class ImageHandler:
 
             if total_size > max_size_bytes:
                 # Get files sorted by access time (LRU)
-                cache_files = [
-                    (f, f.stat().st_atime) for f in self.cache_dir.glob("*.jpg") if f.is_file()
-                ]
+                cache_files = [(f, f.stat().st_atime) for f in self.cache_dir.glob("*.jpg") if f.is_file()]
                 cache_files.sort(key=lambda x: x[1])  # Sort by access time
 
                 # Remove oldest files until under limit

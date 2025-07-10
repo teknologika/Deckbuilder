@@ -71,9 +71,7 @@ class DeckbuilderCLI:
         template_path = Path(template_folder)
         return [template.stem for template in template_path.glob("*.pptx")]
 
-    def create_presentation(
-        self, input_file: str, output_name: Optional[str] = None, template: Optional[str] = None
-    ) -> str:
+    def create_presentation(self, input_file: str, output_name: Optional[str] = None, template: Optional[str] = None) -> str:
         """
         Create presentation from markdown or JSON file
 
@@ -150,10 +148,7 @@ class DeckbuilderCLI:
                     presentation_data = json.load(f)
                 print(f"Processing JSON file: {input_path.name}")
             else:
-                raise ValueError(
-                    f"Unsupported file format: {input_path.suffix}. "
-                    "Supported formats: .md, .json"
-                )
+                raise ValueError(f"Unsupported file format: {input_path.suffix}. " "Supported formats: .md, .json")
 
             result = db.create_presentation(
                 presentation_data,
@@ -162,10 +157,7 @@ class DeckbuilderCLI:
             )
 
             # Check if result indicates an error
-            if result and (
-                "Error creating presentation from markdown:" in result
-                or "Error creating presentation from JSON:" in result
-            ):
+            if result and ("Error creating presentation from markdown:" in result or "Error creating presentation from JSON:" in result):
                 print(f"✗ {result}")
                 raise RuntimeError(result)
             print(f"✓ Presentation created successfully: {result}")
@@ -229,9 +221,7 @@ class DeckbuilderCLI:
                 output_file = f"placeholder_{width}x{height}{id_suffix}{filter_suffix}.jpg"
 
             # Generate image with optional parameters
-            image = pk.generate(
-                width=width, height=height, image_id=image_id, filter_type=filter_type
-            )
+            image = pk.generate(width=width, height=height, image_id=image_id, filter_type=filter_type)
 
             # Save image
             result = image.save(output_file)
@@ -264,9 +254,7 @@ class DeckbuilderCLI:
             processor = ImageProcessor(str(input_path))
 
             # Apply smart cropping
-            result_processor = processor.smart_crop(
-                width=width, height=height, save_steps=save_steps, output_prefix="smart_crop"
-            )
+            result_processor = processor.smart_crop(width=width, height=height, save_steps=save_steps, output_prefix="smart_crop")
 
             # Set output filename
             if not output_file:
@@ -375,9 +363,7 @@ class DeckbuilderCLI:
                 print("🚀 Next steps:")
                 print("   1. Read: Getting_Started.md")
                 print("   2. Try: deckbuilder create example_presentation.md")
-                print(
-                    "   3. Compare: Both example files show the same content in different formats"
-                )
+                print("   3. Compare: Both example files show the same content in different formats")
                 print()
 
             except ImportError as e:
@@ -432,14 +418,10 @@ class DeckbuilderCLI:
             if json_data.get("presentation", {}).get("slides"):
                 first_slide = json_data["presentation"]["slides"][0]
                 if first_slide.get("type") == "Title Slide":
-                    first_slide["title"] = (
-                        "**Deckbuilder: Intelligent PowerPoint Generation** © Bruce McLeod"
-                    )
+                    first_slide["title"] = "**Deckbuilder: Intelligent PowerPoint Generation** © Bruce McLeod"
                     # Update subtitle/rich_content if it exists
                     if "rich_content" in first_slide and first_slide["rich_content"]:
-                        first_slide["rich_content"][0][
-                            "heading"
-                        ] = "Showcasing all ___19 layouts___ with **professional** *formatting* capabilities"
+                        first_slide["rich_content"][0]["heading"] = "Showcasing all ___19 layouts___ with **professional** *formatting* capabilities"
 
             # Write to target as example_presentation.json
             with open(target_path / "example_presentation.json", "w", encoding="utf-8") as f:
@@ -495,9 +477,7 @@ class DeckbuilderCLI:
             if language_code == "en-AU":
                 print(f"  Proofing Language: {language_code} ({language_desc}) (Default)")
             else:
-                print(
-                    f"  Proofing Language: {language_code} ({language_desc}) (Environment Variable)"
-                )
+                print(f"  Proofing Language: {language_code} ({language_desc}) (Environment Variable)")
         else:
             print("  Proofing Language: en-AU (English (Australia)) (Default)")
 
@@ -512,9 +492,7 @@ class DeckbuilderCLI:
         """List all supported proofing languages"""
         print_supported_languages()
 
-    def validate_language_and_font(
-        self, language_code: Optional[str] = None, font_name: Optional[str] = None
-    ) -> bool:
+    def validate_language_and_font(self, language_code: Optional[str] = None, font_name: Optional[str] = None) -> bool:
         """
         Validate language and font settings, showing helpful messages.
 
@@ -631,10 +609,7 @@ class DeckbuilderCLI:
         print("To enable tab completion for deckbuilder commands:")
         print()
         print("1. Download the completion script:")
-        completion_url = (
-            "https://raw.githubusercontent.com/teknologika/deckbuilder/main/"
-            "src/deckbuilder/deckbuilder-completion.bash"
-        )
+        completion_url = "https://raw.githubusercontent.com/teknologika/deckbuilder/main/" "src/deckbuilder/deckbuilder-completion.bash"
         print(f"   curl -o ~/.deckbuilder-completion.bash {completion_url}")
         print()
         print("2. Add to your .bash_profile:")
@@ -677,71 +652,43 @@ def create_parser():
         metavar="LANG",
         help="Proofing language (e.g., en-US, en-AU)",
     )
-    parser.add_argument(
-        "-f", "--font", metavar="FONT", help='Default font family (e.g., "Calibri", "Arial")'
-    )
+    parser.add_argument("-f", "--font", metavar="FONT", help='Default font family (e.g., "Calibri", "Arial")')
     parser.add_argument("-h", "--help", action="store_true", help="Show help message")
     parser.add_argument("-V", "--version", action="store_true", help="Show version information")
 
-    subparsers = parser.add_subparsers(
-        dest="command", help="Available commands", metavar="<command>"
-    )
+    subparsers = parser.add_subparsers(dest="command", help="Available commands", metavar="<command>")
 
     # Create presentation command (stays as top-level)
-    create_parser = subparsers.add_parser(
-        "create", help="Generate presentations from markdown or JSON", add_help=False
-    )
+    create_parser = subparsers.add_parser("create", help="Generate presentations from markdown or JSON", add_help=False)
     create_parser.add_argument("input_file", help="Input markdown (.md) or JSON (.json) file")
     create_parser.add_argument("--output", "-o", help="Output filename (without extension)")
     create_parser.add_argument("--template", "-t", help="Template name to use (default: 'default')")
-    create_parser.add_argument(
-        "-h", "--help", action="store_true", help="Show help for create command"
-    )
+    create_parser.add_argument("-h", "--help", action="store_true", help="Show help for create command")
 
     # Template management commands (grouped)
-    template_parser = subparsers.add_parser(
-        "template", help="Manage PowerPoint templates and mappings", add_help=False
-    )
-    template_parser.add_argument(
-        "-h", "--help", action="store_true", help="Show help for template commands"
-    )
-    template_subs = template_parser.add_subparsers(
-        dest="template_command", help="Template subcommands", metavar="<subcommand>"
-    )
+    template_parser = subparsers.add_parser("template", help="Manage PowerPoint templates and mappings", add_help=False)
+    template_parser.add_argument("-h", "--help", action="store_true", help="Show help for template commands")
+    template_subs = template_parser.add_subparsers(dest="template_command", help="Template subcommands", metavar="<subcommand>")
 
     # Template analyze
-    analyze_parser = template_subs.add_parser(
-        "analyze", help="Analyze template structure and placeholders", add_help=False
-    )
+    analyze_parser = template_subs.add_parser("analyze", help="Analyze template structure and placeholders", add_help=False)
     analyze_parser.add_argument("template", nargs="?", default="default", help="Template name")
     analyze_parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
-    analyze_parser.add_argument(
-        "-h", "--help", action="store_true", help="Show help for analyze command"
-    )
+    analyze_parser.add_argument("-h", "--help", action="store_true", help="Show help for analyze command")
 
     # Template validate
-    validate_parser = template_subs.add_parser(
-        "validate", help="Validate template and JSON mappings", add_help=False
-    )
+    validate_parser = template_subs.add_parser("validate", help="Validate template and JSON mappings", add_help=False)
     validate_parser.add_argument("template", nargs="?", default="default", help="Template name")
-    validate_parser.add_argument(
-        "-h", "--help", action="store_true", help="Show help for validate command"
-    )
+    validate_parser.add_argument("-h", "--help", action="store_true", help="Show help for validate command")
 
     # Template document
-    document_parser = template_subs.add_parser(
-        "document", help="Generate comprehensive template documentation", add_help=False
-    )
+    document_parser = template_subs.add_parser("document", help="Generate comprehensive template documentation", add_help=False)
     document_parser.add_argument("template", nargs="?", default="default", help="Template name")
     document_parser.add_argument("--output", "-o", help="Output documentation file")
-    document_parser.add_argument(
-        "-h", "--help", action="store_true", help="Show help for document command"
-    )
+    document_parser.add_argument("-h", "--help", action="store_true", help="Show help for document command")
 
     # Template enhance
-    enhance_parser = template_subs.add_parser(
-        "enhance", help="Enhance template with corrected placeholders", add_help=False
-    )
+    enhance_parser = template_subs.add_parser("enhance", help="Enhance template with corrected placeholders", add_help=False)
     enhance_parser.add_argument("template", nargs="?", default="default", help="Template name")
     enhance_parser.add_argument("--mapping", help="Custom mapping file")
     enhance_parser.add_argument("--no-backup", action="store_true", help="Skip backup creation")
@@ -751,39 +698,25 @@ def create_parser():
         dest="use_conventions",
         help="Don't use naming conventions",
     )
-    enhance_parser.add_argument(
-        "-h", "--help", action="store_true", help="Show help for enhance command"
-    )
+    enhance_parser.add_argument("-h", "--help", action="store_true", help="Show help for enhance command")
 
     # Template list
-    list_parser = template_subs.add_parser(
-        "list", help="List all available templates", add_help=False
-    )
+    list_parser = template_subs.add_parser("list", help="List all available templates", add_help=False)
     list_parser.add_argument("-h", "--help", action="store_true", help="Show help for list command")
 
     # Image processing commands (grouped)
-    image_parser = subparsers.add_parser(
-        "image", help="Process and generate images with PlaceKitten", add_help=False
-    )
-    image_parser.add_argument(
-        "-h", "--help", action="store_true", help="Show help for image commands"
-    )
-    image_subs = image_parser.add_subparsers(
-        dest="image_command", help="Image subcommands", metavar="<subcommand>"
-    )
+    image_parser = subparsers.add_parser("image", help="Process and generate images with PlaceKitten", add_help=False)
+    image_parser.add_argument("-h", "--help", action="store_true", help="Show help for image commands")
+    image_subs = image_parser.add_subparsers(dest="image_command", help="Image subcommands", metavar="<subcommand>")
 
     # Image generate
-    generate_parser = image_subs.add_parser(
-        "generate", help="Generate PlaceKitten placeholder images", add_help=False
-    )
+    generate_parser = image_subs.add_parser("generate", help="Generate PlaceKitten placeholder images", add_help=False)
     generate_parser.add_argument("width", type=int, help="Image width")
     generate_parser.add_argument("height", type=int, help="Image height")
     generate_parser.add_argument("--id", type=int, help="Specific kitten image ID (1-6)")
     generate_parser.add_argument("--filter", help="Filter to apply (grayscale, sepia, blur, etc.)")
     generate_parser.add_argument("--output", "-o", help="Output filename")
-    generate_parser.add_argument(
-        "-h", "--help", action="store_true", help="Show help for generate command"
-    )
+    generate_parser.add_argument("-h", "--help", action="store_true", help="Show help for generate command")
 
     # Image crop
     crop_parser = image_subs.add_parser("crop", help="Smart crop existing images", add_help=False)
@@ -795,35 +728,21 @@ def create_parser():
     crop_parser.add_argument("-h", "--help", action="store_true", help="Show help for crop command")
 
     # Configuration and setup commands (grouped)
-    config_parser = subparsers.add_parser(
-        "config", help="Configuration, setup, and system information", add_help=False
-    )
-    config_parser.add_argument(
-        "-h", "--help", action="store_true", help="Show help for config commands"
-    )
-    config_subs = config_parser.add_subparsers(
-        dest="config_command", help="Configuration subcommands", metavar="<subcommand>"
-    )
+    config_parser = subparsers.add_parser("config", help="Configuration, setup, and system information", add_help=False)
+    config_parser.add_argument("-h", "--help", action="store_true", help="Show help for config commands")
+    config_subs = config_parser.add_subparsers(dest="config_command", help="Configuration subcommands", metavar="<subcommand>")
 
     # Config show
     show_parser = config_subs.add_parser("show", help="Show current configuration", add_help=False)
     show_parser.add_argument("-h", "--help", action="store_true", help="Show help for show command")
 
     # Config languages
-    languages_parser = config_subs.add_parser(
-        "languages", help="List supported languages", add_help=False
-    )
-    languages_parser.add_argument(
-        "-h", "--help", action="store_true", help="Show help for languages command"
-    )
+    languages_parser = config_subs.add_parser("languages", help="List supported languages", add_help=False)
+    languages_parser.add_argument("-h", "--help", action="store_true", help="Show help for languages command")
 
     # Config completion
-    completion_parser = config_subs.add_parser(
-        "completion", help="Setup bash completion", add_help=False
-    )
-    completion_parser.add_argument(
-        "-h", "--help", action="store_true", help="Show help for completion command"
-    )
+    completion_parser = config_subs.add_parser("completion", help="Setup bash completion", add_help=False)
+    completion_parser.add_argument("-h", "--help", action="store_true", help="Show help for completion command")
 
     # Remap command (update existing PowerPoint presentations)
     remap_parser = subparsers.add_parser(
@@ -838,31 +757,19 @@ def create_parser():
         metavar="LANG",
         help="Language code to apply (e.g., en-US, en-AU, es-ES)",
     )
-    remap_parser.add_argument(
-        "--font", "-f", metavar="FONT", help="Font family to apply (e.g., Calibri, Arial)"
-    )
-    remap_parser.add_argument(
-        "--output", "-o", metavar="FILE", help="Output file path (default: overwrite input)"
-    )
+    remap_parser.add_argument("--font", "-f", metavar="FONT", help="Font family to apply (e.g., Calibri, Arial)")
+    remap_parser.add_argument("--output", "-o", metavar="FILE", help="Output file path (default: overwrite input)")
     remap_parser.add_argument("--no-backup", action="store_true", help="Skip creating backup file")
-    remap_parser.add_argument(
-        "-h", "--help", action="store_true", help="Show help for remap command"
-    )
+    remap_parser.add_argument("-h", "--help", action="store_true", help="Show help for remap command")
 
     # Help command
-    help_parser = subparsers.add_parser(
-        "help", help="Show detailed help information", add_help=False
-    )
+    help_parser = subparsers.add_parser("help", help="Show detailed help information", add_help=False)
     help_parser.add_argument("help_command", nargs="?", help="Command to show help for")
     help_parser.add_argument("help_subcommand", nargs="?", help="Subcommand to show help for")
 
     # Init command (back to top-level for easy first-time setup)
-    init_parser = subparsers.add_parser(
-        "init", help="Initialize template folder with default files", add_help=False
-    )
-    init_parser.add_argument(
-        "path", nargs="?", default="./templates", help="Template folder path (default: ./templates)"
-    )
+    init_parser = subparsers.add_parser("init", help="Initialize template folder with default files", add_help=False)
+    init_parser.add_argument("path", nargs="?", default="./templates", help="Template folder path (default: ./templates)")
     init_parser.add_argument("-h", "--help", action="store_true", help="Show help for init command")
 
     return parser
@@ -1220,9 +1127,7 @@ def main():
                 print("Generate presentations from markdown or JSON")
                 print("Usage: deckbuilder create <file> [options]")
                 return
-            cli.create_presentation(
-                input_file=args.input_file, output_name=args.output, template=args.template
-            )
+            cli.create_presentation(input_file=args.input_file, output_name=args.output, template=args.template)
         elif args.command == "template":
             handle_template_command(cli, args)
         elif args.command == "image":

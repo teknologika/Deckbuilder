@@ -45,9 +45,7 @@ class ContentFormatter:
             # Check for formatted content with rich content blocks first
             if "rich_content_blocks" in content:
                 self._debug_log("Processing rich content blocks from content_formatting")
-                self._add_rich_content_blocks_to_placeholder(
-                    text_frame, content["rich_content_blocks"]
-                )
+                self._add_rich_content_blocks_to_placeholder(text_frame, content["rich_content_blocks"])
                 return
             elif "formatted_list" in content:
                 self._debug_log("Processing formatted_list from content_formatting")
@@ -84,9 +82,7 @@ class ContentFormatter:
                 return
             else:
                 # Fallback for other dict types - avoid string conversion if possible
-                self._debug_log(
-                    f"Unknown dict content structure, attempting text extraction: {list(content.keys())}"
-                )
+                self._debug_log(f"Unknown dict content structure, attempting text extraction: {list(content.keys())}")
                 p = text_frame.paragraphs[0]
                 if "text" in content:
                     self.apply_inline_formatting(content["text"], p)
@@ -156,9 +152,7 @@ class ContentFormatter:
                 if any(key in item for key in ["heading", "paragraph", "bullets"]):
                     self._debug_log(f"Processing rich content block in list: {list(item.keys())}")
                     # Process as rich content block using the specialized handler
-                    self._add_single_rich_content_block_to_placeholder(
-                        text_frame, item, paragraph_added
-                    )
+                    self._add_single_rich_content_block_to_placeholder(text_frame, item, paragraph_added)
                     paragraph_added = True
                 elif "text" in item:
                     # Simple text item
@@ -188,9 +182,7 @@ class ContentFormatter:
                     text_content = item.get("text", str(item))
                     self.apply_inline_formatting(text_content, p)
 
-    def _add_single_rich_content_block_to_placeholder(
-        self, text_frame, content_block, paragraph_added
-    ):
+    def _add_single_rich_content_block_to_placeholder(self, text_frame, content_block, paragraph_added):
         """Add a single rich content block (heading, paragraph, or bullets) to placeholder."""
         # Handle heading
         if "heading" in content_block:
@@ -275,11 +267,7 @@ class ContentFormatter:
             if "bullets" in content_dict and isinstance(content_dict["bullets"], list):
                 bullet_levels = content_dict.get("bullet_levels", [])
                 for i, bullet_text in enumerate(content_dict["bullets"]):
-                    p = (
-                        text_frame.paragraphs[0]
-                        if not paragraph_added
-                        else text_frame.add_paragraph()
-                    )
+                    p = text_frame.paragraphs[0] if not paragraph_added else text_frame.add_paragraph()
                     self.apply_inline_formatting(bullet_text, p)
 
                     # Set bullet level from bullet_levels array or default to level 1
@@ -466,9 +454,7 @@ class ContentFormatter:
 
     def add_rich_content_to_slide(self, slide, rich_content: list):
         """DEPRECATED: Use add_content_to_slide instead"""
-        print(
-            "Warning: add_rich_content_to_slide is deprecated, using unified add_content_to_slide"
-        )
+        print("Warning: add_rich_content_to_slide is deprecated, using unified add_content_to_slide")
 
         # Convert legacy rich content format to canonical format
         canonical_content = []
@@ -509,9 +495,7 @@ class ContentFormatter:
 
         from .placeholder_types import is_content_placeholder, is_title_placeholder
 
-        self._debug_log(
-            f"Processing {type(content).__name__} content with {len(content) if isinstance(content, list) else 'N/A'} blocks"
-        )
+        self._debug_log(f"Processing {type(content).__name__} content with {len(content) if isinstance(content, list) else 'N/A'} blocks")
 
         # Enhanced content analysis debugging
         if isinstance(content, list):
@@ -521,9 +505,7 @@ class ContentFormatter:
                     block_keys = list(block.keys())
                     self._debug_log(f"  Block {i + 1}: type='{block_type}', keys={block_keys}")
                 else:
-                    self._debug_log(
-                        f"  Block {i + 1}: {type(block).__name__} = {str(block)[:50]}..."
-                    )
+                    self._debug_log(f"  Block {i + 1}: {type(block).__name__} = {str(block)[:50]}...")
         elif isinstance(content, dict):
             content_keys = list(content.keys())
             self._debug_log(f"  Content dict keys: {content_keys}")
@@ -548,9 +530,7 @@ class ContentFormatter:
                         has_title_content = True
                         break
             title_needs_content = not has_title_content
-            self._debug_log(
-                f"Title placeholder analysis: empty={title_needs_content}, needs_content={title_needs_content}"
-            )
+            self._debug_log(f"Title placeholder analysis: empty={title_needs_content}, needs_content={title_needs_content}")
 
         # Extract first heading to title if needed
         processed_content = content
@@ -573,9 +553,7 @@ class ContentFormatter:
 
                 # Remove the heading from content blocks
                 processed_content = content[:first_heading_idx] + content[first_heading_idx + 1 :]
-                self._debug_log(
-                    f"Content blocks remaining after title extraction: {len(processed_content)}"
-                )
+                self._debug_log(f"Content blocks remaining after title extraction: {len(processed_content)}")
 
         # Find content placeholders using semantic detection
         content_placeholders = []
@@ -587,15 +565,9 @@ class ContentFormatter:
                 placeholder_name = getattr(shape.element.nvSpPr.cNvPr, "name", "unnamed")
             except AttributeError:
                 placeholder_name = "unnamed"
-            type_name = (
-                placeholder_type.name
-                if hasattr(placeholder_type, "name")
-                else str(placeholder_type)
-            )
+            type_name = placeholder_type.name if hasattr(placeholder_type, "name") else str(placeholder_type)
 
-            self._debug_log(
-                f"  Placeholder {shape.placeholder_format.idx}: {type_name} ('{placeholder_name}')"
-            )
+            self._debug_log(f"  Placeholder {shape.placeholder_format.idx}: {type_name} ('{placeholder_name}')")
 
             if is_content_placeholder(placeholder_type):
                 # Skip if converted to image placeholder
@@ -628,21 +600,15 @@ class ContentFormatter:
 
                         if not has_existing_content:
                             subtitle_placeholders.append(shape)
-                            self._debug_log(
-                                f"  Fallback option: subtitle placeholder {shape.placeholder_format.idx}"
-                            )
+                            self._debug_log(f"  Fallback option: subtitle placeholder {shape.placeholder_format.idx}")
                         else:
-                            self._debug_log(
-                                f"  Subtitle {shape.placeholder_format.idx} has existing content, skipping"
-                            )
+                            self._debug_log(f"  Subtitle {shape.placeholder_format.idx} has existing content, skipping")
 
             if subtitle_placeholders:
                 self._debug_log("Using subtitle placeholders as content fallback")
                 content_placeholders = subtitle_placeholders
             else:
-                self._debug_log(
-                    "CRITICAL: No suitable placeholders found for content - content will be lost!"
-                )
+                self._debug_log("CRITICAL: No suitable placeholders found for content - content will be lost!")
                 return
 
         # Expect only canonical JSON content blocks
@@ -650,16 +616,12 @@ class ContentFormatter:
             # Validate all items are canonical JSON blocks
             for i, item in enumerate(processed_content):
                 if not isinstance(item, dict) or "type" not in item:
-                    raise ValueError(
-                        f"Content item {i} must be canonical JSON block with 'type' field. Got: {item}"
-                    )
+                    raise ValueError(f"Content item {i} must be canonical JSON block with 'type' field. Got: {item}")
 
             self._debug_log("Starting canonical content block processing")
             self._process_canonical_content_blocks(content_placeholders, processed_content)
         elif processed_content:
-            self._debug_log(
-                f"WARNING: Expected list of canonical JSON content blocks, got: {type(processed_content)}"
-            )
+            self._debug_log(f"WARNING: Expected list of canonical JSON content blocks, got: {type(processed_content)}")
             self._debug_log(f"Content value: {str(processed_content)[:200]}...")
         else:
             self._debug_log("No content blocks to process")
@@ -682,17 +644,13 @@ class ContentFormatter:
             placeholder_name = getattr(placeholder.element.nvSpPr.cNvPr, "name", "unnamed")
         except AttributeError:
             placeholder_name = "unnamed"
-        self._debug_log(
-            f"Using placeholder {placeholder.placeholder_format.idx} ('{placeholder_name}') for content"
-        )
+        self._debug_log(f"Using placeholder {placeholder.placeholder_format.idx} ('{placeholder_name}') for content")
 
         first_block = True
         for i, block in enumerate(content_blocks):
             block_type = block.get("type", "")
             block_text = block.get("text", "")
-            self._debug_log(
-                f"  Block {i + 1}/{len(content_blocks)}: type='{block_type}', text_length={len(block_text)}"
-            )
+            self._debug_log(f"  Block {i + 1}/{len(content_blocks)}: type='{block_type}', text_length={len(block_text)}")
 
             if block_type == "paragraph":
                 if first_block:
@@ -709,9 +667,7 @@ class ContentFormatter:
                 else:
                     p = text_frame.add_paragraph()
                 text_content = block.get("text", "")
-                self._debug_log(
-                    f"    Adding heading: '{text_content[:50]}{'...' if len(text_content) > 50 else ''}'"
-                )
+                self._debug_log(f"    Adding heading: '{text_content[:50]}{'...' if len(text_content) > 50 else ''}'")
                 self.apply_inline_formatting(text_content, p)
                 # Make headings bold
                 for run in p.runs:
@@ -750,9 +706,7 @@ class ContentFormatter:
                         text_frame = placeholder.text_frame
                         text_frame.clear()
 
-                        self._debug_log(
-                            f"      Column {col_idx + 1} -> placeholder {placeholder.placeholder_format.idx}"
-                        )
+                        self._debug_log(f"      Column {col_idx + 1} -> placeholder {placeholder.placeholder_format.idx}")
 
                         # Process column content
                         column_content = column.get("content", [])
@@ -776,9 +730,7 @@ class ContentFormatter:
                                     for run in p.runs:
                                         run.font.bold = True
                     else:
-                        self._debug_log(
-                            f"      Column {col_idx + 1}: no available placeholder (only {len(content_placeholders)} total)"
-                        )
+                        self._debug_log(f"      Column {col_idx + 1}: no available placeholder (only {len(content_placeholders)} total)")
 
                 # Mark that we've processed multi-column content, don't process individual blocks
                 return
@@ -828,18 +780,14 @@ class ContentFormatter:
 
     def add_simple_content_to_slide(self, slide, content):
         """DEPRECATED: Use add_content_to_slide instead"""
-        print(
-            "Warning: add_simple_content_to_slide is deprecated, using unified add_content_to_slide"
-        )
+        print("Warning: add_simple_content_to_slide is deprecated, using unified add_content_to_slide")
         self.add_content_to_slide(slide, content)
 
     def auto_parse_json_formatting(self, slide_data):
         """Auto-parse inline formatting in JSON slide data."""
         # Type validation: ensure slide_data is a dictionary
         if not isinstance(slide_data, dict):
-            raise TypeError(
-                f"slide_data must be a dictionary, got {type(slide_data).__name__}: {slide_data}"
-            )
+            raise TypeError(f"slide_data must be a dictionary, got {type(slide_data).__name__}: {slide_data}")
 
         # Create a copy to avoid modifying original
         processed_data = slide_data.copy()
@@ -981,9 +929,7 @@ class ContentFormatter:
                             for run in p.runs:
                                 run.font.bold = True
 
-            print(
-                f"      Table created successfully with {rows_count} rows and {cols_count} columns"
-            )
+            print(f"      Table created successfully with {rows_count} rows and {cols_count} columns")
 
         except Exception as e:
             print(f"      Error creating table: {e}")

@@ -88,9 +88,7 @@ class SmartCropEngine:
         largest_area = 0
 
         if strategy == "haar-face":
-            face_cascade = cv2.CascadeClassifier(
-                cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
-            )
+            face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
             faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5)
 
             if len(faces) > 0:
@@ -132,9 +130,7 @@ class SmartCropEngine:
                 cv2.drawContours(step5_image, [largest_contour], -1, (0, 255, 0), 3)
                 x, y, w, h = cv2.boundingRect(largest_contour)
                 subject_bbox = (x, y, w, h)
-        self._add_debug_step(
-            "5-largest-contour", step5_image, save_steps, output_prefix, output_folder
-        )
+        self._add_debug_step("5-largest-contour", step5_image, save_steps, output_prefix, output_folder)
 
         # Step 6: Calculate bounding box of subject (visualization only)
         if subject_bbox is not None:
@@ -147,21 +143,15 @@ class SmartCropEngine:
             step6_image = cv2.addWeighted(step6_image, 0.8, overlay, 0.2, 0)
         else:
             step6_image = cv_image.copy()
-        self._add_debug_step(
-            "6-bounding-box", step6_image, save_steps, output_prefix, output_folder
-        )
+        self._add_debug_step("6-bounding-box", step6_image, save_steps, output_prefix, output_folder)
 
         # Step 7: Rule of thirds grid and composition
-        crop_box = self._calculate_optimal_crop(
-            original_width, original_height, target_width, target_height, subject_bbox
-        )
+        crop_box = self._calculate_optimal_crop(original_width, original_height, target_width, target_height, subject_bbox)
 
         # Visualize rule of thirds and crop area
         step7_image = cv_image.copy()
         self._draw_rule_of_thirds(step7_image, original_width, original_height)
-        self._add_debug_step(
-            "7-rule-of-thirds", step7_image, save_steps, output_prefix, output_folder
-        )
+        self._add_debug_step("7-rule-of-thirds", step7_image, save_steps, output_prefix, output_folder)
 
         # Step 8: Final crop area visualization
         step8_image = cv_image.copy()
@@ -171,9 +161,7 @@ class SmartCropEngine:
 
         # Step 9: Perform the actual crop
         cropped_cv = cv_image[y1:y2, x1:x2]
-        cropped_resized = cv2.resize(
-            cropped_cv, (target_width, target_height), interpolation=cv2.INTER_LANCZOS4
-        )
+        cropped_resized = cv2.resize(cropped_cv, (target_width, target_height), interpolation=cv2.INTER_LANCZOS4)
 
         # Convert back to PIL
         final_image = self._cv2_to_pil(cropped_resized)

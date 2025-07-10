@@ -124,6 +124,16 @@ def fresh_deckbuilder(mock_deckbuilder_env):
     # Reset singleton to ensure fresh instance
     Deckbuilder.reset()
 
+    # Copy template files to temp directory
+    project_root = Path(__file__).parent.parent
+    source_templates = project_root / "src" / "deckbuilder" / "assets" / "templates"
+    temp_templates = mock_deckbuilder_env["templates_dir"]
+
+    if source_templates.exists():
+        for template_file in source_templates.glob("*"):
+            if template_file.is_file():
+                shutil.copy2(template_file, temp_templates / template_file.name)
+
     # Create new instance with current environment
     instance = Deckbuilder()
 

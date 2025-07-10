@@ -42,9 +42,7 @@ class ImagePlaceholderHandler:
             if field_value and isinstance(field_value, str):
                 # Validate and process the provided image
                 if self.image_handler.validate_image(field_value):
-                    final_image_path = self.image_handler.process_image(
-                        field_value, dimensions, quality="high"
-                    )
+                    final_image_path = self.image_handler.process_image(field_value, dimensions, quality="high")
                 else:
                     print(f"Warning: Invalid image path '{field_value}', using fallback")
 
@@ -61,9 +59,7 @@ class ImagePlaceholderHandler:
                         picture = placeholder.insert_picture(final_image_path)
 
                         # Preserve alt text if provided
-                        alt_text = slide_data.get("alt_text") or slide_data.get("media", {}).get(
-                            "alt_text"
-                        )
+                        alt_text = slide_data.get("alt_text") or slide_data.get("media", {}).get("alt_text")
                         if alt_text and hasattr(picture, "element"):
                             # Set accessibility description
                             picture.element.nvPicPr.cNvPr.descr = str(alt_text)
@@ -73,9 +69,7 @@ class ImagePlaceholderHandler:
                         msg = f"Warning: Placeholder {field_name} cannot accept images"
                         print(msg)
                         # Try to replace existing content if it's a picture shape
-                        if hasattr(placeholder, "element") and hasattr(
-                            placeholder.element, "nvPicPr"
-                        ):
+                        if hasattr(placeholder, "element") and hasattr(placeholder.element, "nvPicPr"):
                             print("   Placeholder already contains an image, skipping...")
                         elif hasattr(placeholder, "text_frame") and placeholder.text_frame:
                             placeholder.text_frame.text = f"Image: {Path(final_image_path).name}"

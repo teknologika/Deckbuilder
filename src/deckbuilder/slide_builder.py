@@ -45,9 +45,7 @@ class SlideBuilder:
         """
         # Type validation: ensure slide_data is a dictionary
         if not isinstance(slide_data, dict):
-            raise TypeError(
-                f"slide_data must be a dictionary, got {type(slide_data).__name__}: {slide_data}"
-            )
+            raise TypeError(f"slide_data must be a dictionary, got {type(slide_data).__name__}: {slide_data}")
 
         # Track slide index for consistent image selection
         self._current_slide_index = getattr(self, "_current_slide_index", 0) + 1
@@ -85,18 +83,14 @@ class SlideBuilder:
         self._copy_placeholder_names_from_mapping(slide, layout_name)
 
         # Add content to placeholders using template mapping + semantic detection
-        self._apply_content_to_mapped_placeholders(
-            slide, slide_data, layout_name, content_formatter, image_placeholder_handler
-        )
+        self._apply_content_to_mapped_placeholders(slide, slide_data, layout_name, content_formatter, image_placeholder_handler)
 
         # All content should be processed through placeholders only - no legacy content blocks
         debug_print("  Slide completed using structured frontmatter placeholders only")
 
         return slide
 
-    def add_slide_with_direct_mapping(
-        self, prs, slide_data: dict, content_formatter, image_placeholder_handler
-    ):
+    def add_slide_with_direct_mapping(self, prs, slide_data: dict, content_formatter, image_placeholder_handler):
         """
         Add slide using direct field mapping (no markdown conversion).
 
@@ -149,9 +143,7 @@ class SlideBuilder:
                     # Fallback: some placeholder types might not allow name changes
                     pass  # nosec - Continue processing other placeholders
 
-    def _apply_content_to_mapped_placeholders(
-        self, slide, slide_data, layout_name, content_formatter, image_placeholder_handler
-    ):
+    def _apply_content_to_mapped_placeholders(self, slide, slide_data, layout_name, content_formatter, image_placeholder_handler):
         """
         Apply content to placeholders using template JSON mappings + semantic detection.
 
@@ -190,11 +182,7 @@ class SlideBuilder:
         # Show actual PowerPoint placeholders
         actual_placeholders = []
         for ph in slide.placeholders:
-            ph_type = (
-                ph.placeholder_format.type.name
-                if hasattr(ph.placeholder_format.type, "name")
-                else str(ph.placeholder_format.type)
-            )
+            ph_type = ph.placeholder_format.type.name if hasattr(ph.placeholder_format.type, "name") else str(ph.placeholder_format.type)
             try:
                 ph_name = getattr(ph.element.nvSpPr.cNvPr, "name", "unnamed")
             except AttributeError:
@@ -204,9 +192,7 @@ class SlideBuilder:
 
         # Process each field in slide_data using semantic detection
         # For canonical JSON format, process the placeholders object if it exists
-        content_data = (
-            slide_data.get("placeholders", {}) if "placeholders" in slide_data else slide_data
-        )
+        content_data = slide_data.get("placeholders", {}) if "placeholders" in slide_data else slide_data
         slide_builder_print(f"  Content fields to map: {list(content_data.keys())}")
         successful_mappings = []
         failed_mappings = []
@@ -216,9 +202,7 @@ class SlideBuilder:
             if field_name in ["type", "table", "layout"]:
                 continue
 
-            slide_builder_print(
-                f"    Mapping field '{field_name}' (value: {str(field_value)[:50]}...)"
-            )
+            slide_builder_print(f"    Mapping field '{field_name}' (value: {str(field_value)[:50]}...)")
 
             # Find placeholder using semantic detection
             target_placeholder = None
@@ -231,43 +215,31 @@ class SlideBuilder:
                 # First try to find title field in template mapping
                 title_field = field_to_index.get("title")
                 if title_field is not None:
-                    slide_builder_print(
-                        f"        Trying template mapping 'title' -> idx {title_field}"
-                    )
+                    slide_builder_print(f"        Trying template mapping 'title' -> idx {title_field}")
                     for placeholder in slide.placeholders:
                         if placeholder.placeholder_format.idx == title_field:
                             target_placeholder = placeholder
                             mapping_method = f"Template mapping title -> idx {title_field}"
                             break
                 else:
-                    slide_builder_print(
-                        "        No 'title' field in template mapping, trying title_top"
-                    )
+                    slide_builder_print("        No 'title' field in template mapping, trying title_top")
                     # Try title_top which is common in templates
                     title_top_idx = field_to_index.get("title_top")
                     if title_top_idx is not None:
-                        slide_builder_print(
-                            f"        Trying template mapping 'title_top' -> idx {title_top_idx}"
-                        )
+                        slide_builder_print(f"        Trying template mapping 'title_top' -> idx {title_top_idx}")
                         for placeholder in slide.placeholders:
                             if placeholder.placeholder_format.idx == title_top_idx:
                                 target_placeholder = placeholder
-                                mapping_method = (
-                                    f"Template mapping title_top -> idx {title_top_idx}"
-                                )
+                                mapping_method = f"Template mapping title_top -> idx {title_top_idx}"
                                 break
 
                 # Final fallback to semantic title detection
                 if not target_placeholder:
-                    slide_builder_print(
-                        "        Template mapping failed, trying semantic title detection"
-                    )
+                    slide_builder_print("        Template mapping failed, trying semantic title detection")
                     for placeholder in slide.placeholders:
                         if is_title_placeholder(placeholder.placeholder_format.type):
                             target_placeholder = placeholder
-                            mapping_method = (
-                                f"Semantic title (idx {placeholder.placeholder_format.idx})"
-                            )
+                            mapping_method = f"Semantic title (idx {placeholder.placeholder_format.idx})"
                             break
 
             # Handle subtitle placeholders
@@ -276,9 +248,7 @@ class SlideBuilder:
                 for placeholder in slide.placeholders:
                     if is_subtitle_placeholder(placeholder.placeholder_format.type):
                         target_placeholder = placeholder
-                        mapping_method = (
-                            f"Semantic subtitle (idx {placeholder.placeholder_format.idx})"
-                        )
+                        mapping_method = f"Semantic subtitle (idx {placeholder.placeholder_format.idx})"
                         break
 
             # Handle content placeholders
@@ -288,66 +258,44 @@ class SlideBuilder:
                 # First try to find content field in template mapping
                 content_field = field_to_index.get("content")
                 if content_field is not None:
-                    slide_builder_print(
-                        f"        Trying template mapping 'content' -> idx {content_field}"
-                    )
+                    slide_builder_print(f"        Trying template mapping 'content' -> idx {content_field}")
                     for placeholder in slide.placeholders:
                         if placeholder.placeholder_format.idx == content_field:
                             target_placeholder = placeholder
                             mapping_method = f"Template mapping content -> idx {content_field}"
                             break
                 else:
-                    slide_builder_print(
-                        "        No 'content' field in template mapping, trying content_1"
-                    )
+                    slide_builder_print("        No 'content' field in template mapping, trying content_1")
                     # Fallback: try to find content_1 specifically (for layouts like vertical)
                     content_1_idx = field_to_index.get("content_1")
                     if content_1_idx is not None:
-                        slide_builder_print(
-                            f"        Trying template mapping 'content_1' -> idx {content_1_idx}"
-                        )
+                        slide_builder_print(f"        Trying template mapping 'content_1' -> idx {content_1_idx}")
                         for placeholder in slide.placeholders:
                             if placeholder.placeholder_format.idx == content_1_idx:
                                 target_placeholder = placeholder
-                                mapping_method = (
-                                    f"Template mapping content_1 -> idx {content_1_idx}"
-                                )
+                                mapping_method = f"Template mapping content_1 -> idx {content_1_idx}"
                                 break
 
                 # Final fallback to semantic content placeholder detection
                 if not target_placeholder:
-                    slide_builder_print(
-                        "        Template mapping failed, trying semantic content detection"
-                    )
+                    slide_builder_print("        Template mapping failed, trying semantic content detection")
                     for placeholder in slide.placeholders:
                         if is_content_placeholder(placeholder.placeholder_format.type):
                             target_placeholder = placeholder
-                            mapping_method = (
-                                f"Semantic content (idx {placeholder.placeholder_format.idx})"
-                            )
+                            mapping_method = f"Semantic content (idx {placeholder.placeholder_format.idx})"
                             break
 
             # Handle image_path fields and image placeholder fields - find PICTURE placeholders
-            elif (
-                field_name == "image_path"
-                or field_name.endswith(".image_path")
-                or "image" in field_name.lower()
-            ):
+            elif field_name == "image_path" or field_name.endswith(".image_path") or "image" in field_name.lower():
                 slide_builder_print("      Method: Image field detection")
                 for placeholder in slide.placeholders:
                     if placeholder.placeholder_format.type == PP_PLACEHOLDER_TYPE.PICTURE:
                         target_placeholder = placeholder
-                        mapping_method = (
-                            f"Image placeholder (idx {placeholder.placeholder_format.idx})"
-                        )
-                        slide_builder_print(
-                            f"        Found PICTURE placeholder at idx {placeholder.placeholder_format.idx}"
-                        )
+                        mapping_method = f"Image placeholder (idx {placeholder.placeholder_format.idx})"
+                        slide_builder_print(f"        Found PICTURE placeholder at idx {placeholder.placeholder_format.idx}")
                         break
                 if not target_placeholder:
-                    slide_builder_print(
-                        f"        No PICTURE placeholder found for image field '{field_name}'"
-                    )
+                    slide_builder_print(f"        No PICTURE placeholder found for image field '{field_name}'")
 
             # Handle other fields by checking if they match placeholder names in JSON mapping
             else:
@@ -359,36 +307,24 @@ class SlideBuilder:
                 resolved_field = self._resolve_field_name_variations(field_name, field_to_index)
 
                 if resolved_field != field_name:
-                    slide_builder_print(
-                        f"        Field name resolved: '{field_name}' -> '{resolved_field}'"
-                    )
+                    slide_builder_print(f"        Field name resolved: '{field_name}' -> '{resolved_field}'")
                     target_field = resolved_field
                 else:
                     slide_builder_print(f"        Using field name as-is: '{field_name}'")
 
                 if target_field in field_to_index:
                     placeholder_idx = field_to_index[target_field]
-                    slide_builder_print(
-                        f"        Template mapping found: '{target_field}' -> idx {placeholder_idx}"
-                    )
+                    slide_builder_print(f"        Template mapping found: '{target_field}' -> idx {placeholder_idx}")
                     for placeholder in slide.placeholders:
                         if placeholder.placeholder_format.idx == placeholder_idx:
                             target_placeholder = placeholder
-                            mapping_method = (
-                                f"Template mapping '{target_field}' -> idx {placeholder_idx}"
-                            )
-                            slide_builder_print(
-                                f"        Matched placeholder at idx {placeholder_idx}"
-                            )
+                            mapping_method = f"Template mapping '{target_field}' -> idx {placeholder_idx}"
+                            slide_builder_print(f"        Matched placeholder at idx {placeholder_idx}")
                             break
                     if not target_placeholder:
-                        slide_builder_print(
-                            f"        Template mapping failed: idx {placeholder_idx} not found in slide"
-                        )
+                        slide_builder_print(f"        Template mapping failed: idx {placeholder_idx} not found in slide")
                 else:
-                    slide_builder_print(
-                        f"        No template mapping found for field '{target_field}'"
-                    )
+                    slide_builder_print(f"        No template mapping found for field '{target_field}'")
 
             if target_placeholder:
                 slide_builder_print(f"    SUCCESS: '{field_name}' mapped using {mapping_method}")
@@ -509,10 +445,7 @@ class SlideBuilder:
         # Partial matching for complex fields
         for template_field in field_to_index.keys():
             # Check if field names are similar (contain each other)
-            if (
-                field_name.lower() in template_field.lower()
-                or template_field.lower() in field_name.lower()
-            ):
+            if field_name.lower() in template_field.lower() or template_field.lower() in field_name.lower():
                 return template_field
 
         # Return original if no variations found
@@ -531,11 +464,7 @@ class SlideBuilder:
                 if hasattr(shape, "text_frame") and shape.text_frame:
                     text_frame = shape.text_frame
                     text_frame.clear()
-                    p = (
-                        text_frame.paragraphs[0]
-                        if text_frame.paragraphs
-                        else text_frame.add_paragraph()
-                    )
+                    p = text_frame.paragraphs[0] if text_frame.paragraphs else text_frame.add_paragraph()
                     content_formatter.apply_inline_formatting(slide_data["title"], p)
                 else:
                     shape.text = slide_data["title"]
@@ -545,11 +474,7 @@ class SlideBuilder:
                 if hasattr(shape, "text_frame") and shape.text_frame:
                     text_frame = shape.text_frame
                     text_frame.clear()
-                    p = (
-                        text_frame.paragraphs[0]
-                        if text_frame.paragraphs
-                        else text_frame.add_paragraph()
-                    )
+                    p = text_frame.paragraphs[0] if text_frame.paragraphs else text_frame.add_paragraph()
                     content_formatter.apply_inline_formatting(slide_data["subtitle"], p)
                 else:
                     shape.text = slide_data["subtitle"]
@@ -584,18 +509,9 @@ class SlideBuilder:
                 # Use text frame for formatting support
                 text_frame = placeholder.text_frame
                 text_frame.clear()
-                p = (
-                    text_frame.paragraphs[0]
-                    if text_frame.paragraphs
-                    else text_frame.add_paragraph()
-                )
+                p = text_frame.paragraphs[0] if text_frame.paragraphs else text_frame.add_paragraph()
                 # Handle formatted content properly for titles
-                if (
-                    isinstance(field_value, list)
-                    and field_value
-                    and isinstance(field_value[0], dict)
-                    and "text" in field_value[0]
-                ):
+                if isinstance(field_value, list) and field_value and isinstance(field_value[0], dict) and "text" in field_value[0]:
                     content_formatter.apply_formatted_segments_to_paragraph(field_value, p)
                 else:
                     content_formatter.apply_inline_formatting(str(field_value), p)
@@ -610,12 +526,8 @@ class SlideBuilder:
         elif is_media_placeholder(placeholder_type):
             # Media placeholders - handle images, charts, etc.
             if placeholder_type == PP_PLACEHOLDER_TYPE.PICTURE:
-                image_placeholder_handler.handle_image_placeholder(
-                    placeholder, field_name, field_value, slide_data
-                )
-            elif placeholder_type == PP_PLACEHOLDER_TYPE.OBJECT and hasattr(
-                placeholder, "text_frame"
-            ):
+                image_placeholder_handler.handle_image_placeholder(placeholder, field_name, field_value, slide_data)
+            elif placeholder_type == PP_PLACEHOLDER_TYPE.OBJECT and hasattr(placeholder, "text_frame"):
                 # OBJECT placeholders with text_frame should be treated as content placeholders
                 content_formatter.add_simple_content_to_placeholder(placeholder, field_value)
             else:
@@ -623,17 +535,8 @@ class SlideBuilder:
                 if hasattr(placeholder, "text_frame") and placeholder.text_frame:
                     text_frame = placeholder.text_frame
                     text_frame.clear()
-                    p = (
-                        text_frame.paragraphs[0]
-                        if text_frame.paragraphs
-                        else text_frame.add_paragraph()
-                    )
-                    if (
-                        isinstance(field_value, list)
-                        and field_value
-                        and isinstance(field_value[0], dict)
-                        and "text" in field_value[0]
-                    ):
+                    p = text_frame.paragraphs[0] if text_frame.paragraphs else text_frame.add_paragraph()
+                    if isinstance(field_value, list) and field_value and isinstance(field_value[0], dict) and "text" in field_value[0]:
                         content_formatter.apply_formatted_segments_to_paragraph(field_value, p)
                     else:
                         content_formatter.apply_inline_formatting(str(field_value), p)
@@ -643,17 +546,8 @@ class SlideBuilder:
             if hasattr(placeholder, "text_frame") and placeholder.text_frame:
                 text_frame = placeholder.text_frame
                 text_frame.clear()
-                p = (
-                    text_frame.paragraphs[0]
-                    if text_frame.paragraphs
-                    else text_frame.add_paragraph()
-                )
-                if (
-                    isinstance(field_value, list)
-                    and field_value
-                    and isinstance(field_value[0], dict)
-                    and "text" in field_value[0]
-                ):
+                p = text_frame.paragraphs[0] if text_frame.paragraphs else text_frame.add_paragraph()
+                if isinstance(field_value, list) and field_value and isinstance(field_value[0], dict) and "text" in field_value[0]:
                     content_formatter.apply_formatted_segments_to_paragraph(field_value, p)
                 else:
                     content_formatter.apply_inline_formatting(str(field_value), p)
@@ -675,12 +569,7 @@ class SlideBuilder:
         """
         # Skip if this appears to be structured frontmatter that was already converted
         # (indicated by presence of flattened image fields like image_1, image_path)
-        has_converted_image_fields = any(
-            field_name == "image_path"
-            or field_name.endswith("_1")
-            and "image" in field_name.lower()
-            for field_name in slide_data.keys()
-        )
+        has_converted_image_fields = any(field_name == "image_path" or field_name.endswith("_1") and "image" in field_name.lower() for field_name in slide_data.keys())
 
         if has_converted_image_fields:
             # Already processed by structured frontmatter conversion
@@ -695,7 +584,5 @@ class SlideBuilder:
                 # Find the first PICTURE placeholder
                 for placeholder in slide.placeholders:
                     if placeholder.placeholder_format.type == PP_PLACEHOLDER_TYPE.PICTURE:
-                        image_placeholder_handler.handle_image_placeholder(
-                            placeholder, "media.image_path", image_path, slide_data
-                        )
+                        image_placeholder_handler.handle_image_placeholder(placeholder, "media.image_path", image_path, slide_data)
                         break

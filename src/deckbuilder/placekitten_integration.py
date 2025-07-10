@@ -53,9 +53,7 @@ class PlaceKittenIntegration:
         """
         return PLACEKITTEN_AVAILABLE and self.pk is not None
 
-    def generate_fallback(
-        self, dimensions: Tuple[int, int], context: Optional[Dict] = None
-    ) -> Optional[str]:
+    def generate_fallback(self, dimensions: Tuple[int, int], context: Optional[Dict] = None) -> Optional[str]:
         """
         Generate professional fallback image with business-appropriate styling.
 
@@ -86,9 +84,7 @@ class PlaceKittenIntegration:
             print(f"Warning: PlaceKitten fallback generation failed: {e}")
             return None
 
-    def _create_fallback_image(
-        self, width: int, height: int, cache_key: str, context: Optional[Dict] = None
-    ) -> Optional[str]:
+    def _create_fallback_image(self, width: int, height: int, cache_key: str, context: Optional[Dict] = None) -> Optional[str]:
         """
         Create new fallback image with professional styling.
 
@@ -136,9 +132,7 @@ class PlaceKittenIntegration:
         config = self.professional_config
 
         # Smart crop to exact dimensions
-        styled = processor.smart_crop(
-            width=width, height=height, strategy=config["smart_crop_strategy"]
-        )
+        styled = processor.smart_crop(width=width, height=height, strategy=config["smart_crop_strategy"])
 
         # Apply business-appropriate grayscale filter
         styled = styled.apply_filter(config["base_filter"])
@@ -182,9 +176,7 @@ class PlaceKittenIntegration:
 
         return 1  # Default fallback
 
-    def _generate_fallback_cache_key(
-        self, dimensions: Tuple[int, int], context: Optional[Dict] = None
-    ) -> str:
+    def _generate_fallback_cache_key(self, dimensions: Tuple[int, int], context: Optional[Dict] = None) -> str:
         """
         Generate cache key for fallback image.
 
@@ -229,9 +221,7 @@ class PlaceKittenIntegration:
             "smart_crop_strategy": "haar-face",  # Face-priority cropping
         }
 
-    def get_fallback_info(
-        self, dimensions: Tuple[int, int], context: Optional[Dict] = None
-    ) -> Dict:
+    def get_fallback_info(self, dimensions: Tuple[int, int], context: Optional[Dict] = None) -> Dict:
         """
         Get information about fallback image that would be generated.
 

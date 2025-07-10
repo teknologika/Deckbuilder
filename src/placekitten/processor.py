@@ -126,9 +126,7 @@ class ImageProcessor:
 
         try:
             # Use the smart crop engine for intelligent processing
-            cropped_image, crop_info = smart_crop_engine.smart_crop(
-                self.image, width, height, save_steps, output_prefix, output_folder, strategy
-            )
+            cropped_image, crop_info = smart_crop_engine.smart_crop(self.image, width, height, save_steps, output_prefix, output_folder, strategy)
 
             # Create new processor instance
             new_processor = ImageProcessor.__new__(ImageProcessor)

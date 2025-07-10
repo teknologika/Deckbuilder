@@ -25,14 +25,10 @@ class StructuredFrontmatterRegistry:
                     if layout_name:
                         # Convert string placeholders back to type objects for validation
                         if "yaml_pattern" in pattern_data:
-                            pattern_data["yaml_pattern"] = self._convert_str_to_type(
-                                pattern_data["yaml_pattern"]
-                            )
+                            pattern_data["yaml_pattern"] = self._convert_str_to_type(pattern_data["yaml_pattern"])
                         all_patterns[layout_name] = pattern_data
                     else:
-                        print(
-                            f"Warning: Skipping {json_file} due to missing 'layout' in 'yaml_pattern'."
-                        )
+                        print(f"Warning: Skipping {json_file} due to missing 'layout' in 'yaml_pattern'.")
             except json.JSONDecodeError as e:
                 print(f"Error decoding JSON from {json_file}: {e}")
             except Exception as e:
@@ -184,9 +180,7 @@ class StructuredFrontmatterConverter:
         # Check if we have lines that look like table rows
         table_lines = 0
         for line in lines:
-            if (line.startswith("|") and line.endswith("|")) or (
-                "|" in line and not line.startswith("---")
-            ):
+            if (line.startswith("|") and line.endswith("|")) or ("|" in line and not line.startswith("---")):
                 table_lines += 1
 
         return table_lines >= 2
@@ -207,15 +201,8 @@ class StructuredFrontmatterConverter:
         for line in lines:
             # Skip separator lines (markdown table separators)
             # Check for lines that are only separators (with or without pipes)
-            clean_line = (
-                line.replace("|", "").replace("-", "").replace(":", "").replace("=", "").strip()
-            )
-            if (
-                line.startswith("---")
-                or line.startswith("===")
-                or clean_line == ""
-                or ("|" in line and all(c in "|-:= " for c in line))
-            ):
+            clean_line = line.replace("|", "").replace("-", "").replace(":", "").replace("=", "").strip()
+            if line.startswith("---") or line.startswith("===") or clean_line == "" or ("|" in line and all(c in "|-:= " for c in line)):
                 continue
 
             if line.startswith("|") and line.endswith("|"):
@@ -223,18 +210,14 @@ class StructuredFrontmatterConverter:
                 cells = [cell.strip() for cell in line[1:-1].split("|")]
                 formatted_cells = []
                 for cell in cells:
-                    formatted_cells.append(
-                        {"text": cell, "formatted": self._parse_inline_formatting(cell)}
-                    )
+                    formatted_cells.append({"text": cell, "formatted": self._parse_inline_formatting(cell)})
                 table_data["data"].append(formatted_cells)
             elif "|" in line and not line.startswith("|"):
                 # Handle tables without outer pipes with inline formatting
                 cells = [cell.strip() for cell in line.split("|")]
                 formatted_cells = []
                 for cell in cells:
-                    formatted_cells.append(
-                        {"text": cell, "formatted": self._parse_inline_formatting(cell)}
-                    )
+                    formatted_cells.append({"text": cell, "formatted": self._parse_inline_formatting(cell)})
                 table_data["data"].append(formatted_cells)
 
         return table_data

@@ -5,18 +5,14 @@ try:
     from .table_styles import TABLE_BORDER_STYLES, TABLE_HEADER_STYLES, TABLE_ROW_STYLES
 except ImportError:
     # Fallback values if modules don't exist
-    TABLE_HEADER_STYLES = {
-        "dark_blue_white_text": {"bg": RGBColor(46, 89, 132), "text": RGBColor(255, 255, 255)}
-    }
+    TABLE_HEADER_STYLES = {"dark_blue_white_text": {"bg": RGBColor(46, 89, 132), "text": RGBColor(255, 255, 255)}}
     TABLE_ROW_STYLES = {
         "alternating_light_gray": {
             "primary": RGBColor(255, 255, 255),
             "alt": RGBColor(240, 240, 240),
         }
     }
-    TABLE_BORDER_STYLES = {
-        "thin_gray": {"width": Pt(1), "color": RGBColor(128, 128, 128), "style": "all"}
-    }
+    TABLE_BORDER_STYLES = {"thin_gray": {"width": Pt(1), "color": RGBColor(128, 128, 128), "style": "all"}}
 
 
 class TableBuilder:
@@ -97,9 +93,7 @@ class TableBuilder:
                 if isinstance(cell_data, dict) and "formatted" in cell_data:
                     # New formatted cell data
                     if self.content_formatter:
-                        self.content_formatter.apply_formatted_segments_to_cell(
-                            cell, cell_data["formatted"]
-                        )
+                        self.content_formatter.apply_formatted_segments_to_cell(cell, cell_data["formatted"])
                     else:
                         cell.text = cell_data.get("text", str(cell_data))
                 else:
@@ -125,12 +119,8 @@ class TableBuilder:
             header_colors = TABLE_HEADER_STYLES[header_style]
 
             # Override with custom colors if provided
-            bg_color = (
-                self._parse_custom_color(custom_colors.get("header_bg")) or header_colors["bg"]
-            )
-            text_color = (
-                self._parse_custom_color(custom_colors.get("header_text")) or header_colors["text"]
-            )
+            bg_color = self._parse_custom_color(custom_colors.get("header_bg")) or header_colors["bg"]
+            text_color = self._parse_custom_color(custom_colors.get("header_text")) or header_colors["text"]
 
             # Style header row (first row)
             for col_idx in range(len(table.columns)):
@@ -150,9 +140,7 @@ class TableBuilder:
             row_colors = TABLE_ROW_STYLES[row_style]
 
             # Override with custom colors if provided
-            primary_color = (
-                self._parse_custom_color(custom_colors.get("primary_row")) or row_colors["primary"]
-            )
+            primary_color = self._parse_custom_color(custom_colors.get("primary_row")) or row_colors["primary"]
             alt_color = self._parse_custom_color(custom_colors.get("alt_row")) or row_colors["alt"]
 
             # Style data rows (skip header row)
@@ -180,9 +168,7 @@ class TableBuilder:
             custom_colors: Custom color overrides
         """
         border_width = border_config["width"]
-        border_color = (
-            self._parse_custom_color(custom_colors.get("border_color")) or border_config["color"]
-        )
+        border_color = self._parse_custom_color(custom_colors.get("border_color")) or border_config["color"]
         border_style = border_config["style"]
 
         if border_style == "none" or border_width.cm == 0:
@@ -216,9 +202,7 @@ class TableBuilder:
                         right=is_right,
                     )
 
-    def _set_cell_borders(
-        self, cell, width, color, all_sides=False, top=False, bottom=False, left=False, right=False
-    ):
+    def _set_cell_borders(self, cell, width, color, all_sides=False, top=False, bottom=False, left=False, right=False):
         """
         Set borders for a table cell.
 

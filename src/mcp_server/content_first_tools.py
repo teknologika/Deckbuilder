@@ -72,17 +72,13 @@ async def analyze_presentation_needs_tool(
     This analysis feeds into the complete content-first workflow for intelligent presentations.
     """
     try:
-        analysis_result = analyze_presentation_needs(
-            user_input, audience, constraints, presentation_goal
-        )
+        analysis_result = analyze_presentation_needs(user_input, audience, constraints, presentation_goal)
         return json.dumps(analysis_result, indent=2)
     except Exception as e:
         return f"Error analyzing presentation needs: {str(e)}"
 
 
-async def recommend_slide_approach_tool(
-    content_piece: str, message_intent: str, presentation_context: str = None
-) -> str:
+async def recommend_slide_approach_tool(content_piece: str, message_intent: str, presentation_context: str = None) -> str:
     """
     Recommend optimal slide layouts based on specific content and communication intent.
 
@@ -134,9 +130,7 @@ async def recommend_slide_approach_tool(
         return f"Error recommending slide approach: {str(e)}"
 
 
-async def optimize_content_for_layout_tool(
-    content: str, chosen_layout: str, slide_context: str = None
-) -> str:
+async def optimize_content_for_layout_tool(content: str, chosen_layout: str, slide_context: str = None) -> str:
     """
     Optimize content structure and generate ready-to-use YAML for immediate presentation creation.
 

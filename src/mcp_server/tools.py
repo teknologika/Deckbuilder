@@ -170,21 +170,15 @@ class TemplateAnalyzer:
                 for name in unique_names:
                     count = placeholder_names.count(name)
                     if count > 1:
-                        layout_errors.append(
-                            f"Duplicate placeholder name '{name}' appears {count} times"
-                        )
+                        layout_errors.append(f"Duplicate placeholder name '{name}' appears {count} times")
 
             # Check for column layouts with inconsistent naming
             if "column" in layout_name.lower():
-                self._validate_column_layout(
-                    layout_name, placeholders, layout_warnings, layout_errors
-                )
+                self._validate_column_layout(layout_name, placeholders, layout_warnings, layout_errors)
 
             # Check for comparison layouts
             if "comparison" in layout_name.lower():
-                self._validate_comparison_layout(
-                    layout_name, placeholders, layout_warnings, layout_errors
-                )
+                self._validate_comparison_layout(layout_name, placeholders, layout_warnings, layout_errors)
 
             # Track all placeholder names across layouts
             all_placeholder_names.extend(placeholder_names)
@@ -195,9 +189,7 @@ class TemplateAnalyzer:
                     "warnings": layout_warnings,
                     "errors": layout_errors,
                 }
-                validation_results["warnings"].extend(
-                    [f"{layout_name}: {w}" for w in layout_warnings]
-                )
+                validation_results["warnings"].extend([f"{layout_name}: {w}" for w in layout_warnings])
                 validation_results["errors"].extend([f"{layout_name}: {e}" for e in layout_errors])
 
         # Global validation checks
@@ -205,21 +197,13 @@ class TemplateAnalyzer:
 
         return validation_results
 
-    def _validate_column_layout(
-        self, layout_name: str, placeholders: Dict, warnings: list, errors: list
-    ) -> None:
+    def _validate_column_layout(self, layout_name: str, placeholders: Dict, warnings: list, errors: list) -> None:
         """Validate column-based layouts for consistent naming patterns."""
         placeholder_names = list(placeholders.values())
 
         # Check for expected column patterns
-        col_titles = [
-            name for name in placeholder_names if "col" in name.lower() and "title" in name.lower()
-        ]
-        col_contents = [
-            name
-            for name in placeholder_names
-            if "col" in name.lower() and ("text" in name.lower() or "content" in name.lower())
-        ]
+        col_titles = [name for name in placeholder_names if "col" in name.lower() and "title" in name.lower()]
+        col_contents = [name for name in placeholder_names if "col" in name.lower() and ("text" in name.lower() or "content" in name.lower())]
 
         # Extract column numbers from names and track specific placeholders that need fixing
         title_cols = []
@@ -262,16 +246,10 @@ class TemplateAnalyzer:
                     if expected_num not in content_nums:
                         # Find what column number this content actually has
                         for actual_num, content_name in content_cols:
-                            if actual_num != expected_num and expected_num not in [
-                                c[0] for c in content_cols
-                            ]:
+                            if actual_num != expected_num and expected_num not in [c[0] for c in content_cols]:
                                 # This content placeholder has wrong number
-                                correct_name = content_name.replace(
-                                    f"Col {actual_num}", f"Col {expected_num}"
-                                )
-                                fix_suggestions.append(
-                                    f"In PowerPoint: Rename '{content_name}' → '{correct_name}'"
-                                )
+                                correct_name = content_name.replace(f"Col {actual_num}", f"Col {expected_num}")
+                                fix_suggestions.append(f"In PowerPoint: Rename '{content_name}' → '{correct_name}'")
                                 break
 
                 # Also check for duplicate column numbers in content
@@ -284,75 +262,46 @@ class TemplateAnalyzer:
                 for num, names in content_num_counts.items():
                     if len(names) > 1:
                         # Multiple content placeholders have same column number
-                        for i, name in enumerate(
-                            names[1:], start=2
-                        ):  # Skip first one, fix the rest
+                        for i, name in enumerate(names[1:], start=2):  # Skip first one, fix the rest
                             # Find the next available column number
                             next_num = num + i - 1
                             while next_num in content_num_counts and next_num != num:
                                 next_num += 1
                             if next_num <= len(title_nums):
                                 correct_name = name.replace(f"Col {num}", f"Col {next_num}")
-                                fix_suggestions.append(
-                                    f"In PowerPoint: Rename '{name}' → '{correct_name}'"
-                                )
+                                fix_suggestions.append(f"In PowerPoint: Rename '{name}' → '{correct_name}'")
 
-                error_msg = (
-                    f"Column title numbers {title_nums} don't match content numbers {content_nums}"
-                )
+                error_msg = f"Column title numbers {title_nums} don't match content numbers {content_nums}"
                 if fix_suggestions:
-                    error_msg += (
-                        f". Required fixes in '{layout_name}' layout: {'; '.join(fix_suggestions)}"
-                    )
+                    error_msg += f". Required fixes in '{layout_name}' layout: {'; '.join(fix_suggestions)}"
                 errors.append(error_msg)
 
             # Check for proper sequential numbering
             if title_nums and title_nums != list(range(1, len(title_nums) + 1)):
                 expected_nums = list(range(1, len(title_nums) + 1))
-                warnings.append(
-                    f"Column numbers not sequential: {title_nums} (expected: {expected_nums})"
-                )
+                warnings.append(f"Column numbers not sequential: {title_nums} (expected: {expected_nums})")
 
         # Check for proper content numbering in content-only layouts
         elif content_cols:
             if content_nums != list(range(1, len(content_nums) + 1)):
                 expected_nums = list(range(1, len(content_nums) + 1))
-                warnings.append(
-                    f"Column numbers not sequential: {content_nums} (expected: {expected_nums})"
-                )
+                warnings.append(f"Column numbers not sequential: {content_nums} (expected: {expected_nums})")
 
-    def _validate_comparison_layout(
-        self, layout_name: str, placeholders: Dict, warnings: list, errors: list
-    ) -> None:
+    def _validate_comparison_layout(self, layout_name: str, placeholders: Dict, warnings: list, errors: list) -> None:
         """Validate comparison layouts for proper left/right structure."""
         placeholder_names = list(placeholders.values())
 
-        text_placeholders = [
-            name
-            for name in placeholder_names
-            if "text" in name.lower() and "placeholder" in name.lower()
-        ]
-        content_placeholders = [
-            name
-            for name in placeholder_names
-            if "content" in name.lower() and "placeholder" in name.lower()
-        ]
+        text_placeholders = [name for name in placeholder_names if "text" in name.lower() and "placeholder" in name.lower()]
+        content_placeholders = [name for name in placeholder_names if "content" in name.lower() and "placeholder" in name.lower()]
 
         if len(text_placeholders) < 2:
-            errors.append(
-                "Comparison layout should have at least 2 text placeholders for left/right titles"
-            )
+            errors.append("Comparison layout should have at least 2 text placeholders for left/right titles")
 
         if len(content_placeholders) < 2:
-            msg = (
-                "Comparison layout should have at least 2 content placeholders "
-                "for left/right content"
-            )
+            msg = "Comparison layout should have at least 2 content placeholders " "for left/right content"
             errors.append(msg)
 
-    def _validate_global_consistency(
-        self, all_placeholder_names: list, validation_results: Dict, layouts: Dict = None
-    ) -> None:
+    def _validate_global_consistency(self, all_placeholder_names: list, validation_results: Dict, layouts: Dict = None) -> None:
         """Validate global consistency across all layouts."""
         # Track patterns by layout for more specific reporting
         layout_patterns = {}
@@ -382,9 +331,7 @@ class TemplateAnalyzer:
 
         # Check for mixed naming conventions
         if len(unique_patterns) > 1:
-            warning_msg = (
-                f"Multiple placeholder naming patterns detected: {sorted(unique_patterns)}"
-            )
+            warning_msg = f"Multiple placeholder naming patterns detected: {sorted(unique_patterns)}"
 
             # Add specific layout information if available
             if layouts and layout_patterns:

@@ -83,14 +83,10 @@ class ContentAnalyzer:
         audience_analysis = self._analyze_audience(audience, constraints)
 
         # Recommended Structure
-        recommended_structure = self._build_recommended_structure(
-            key_messages, narrative_arc, audience_analysis, presentation_goal
-        )
+        recommended_structure = self._build_recommended_structure(key_messages, narrative_arc, audience_analysis, presentation_goal)
 
         # Presentation Strategy
-        presentation_strategy = self._develop_presentation_strategy(
-            narrative_arc, audience_analysis, presentation_goal
-        )
+        presentation_strategy = self._develop_presentation_strategy(narrative_arc, audience_analysis, presentation_goal)
 
         return {
             "content_analysis": {
@@ -189,9 +185,7 @@ class ContentAnalyzer:
             "need",
         ]
 
-        has_success = has_word_pattern(success_patterns, input_lower) or re.search(
-            r"\d+%", input_lower
-        )
+        has_success = has_word_pattern(success_patterns, input_lower) or re.search(r"\d+%", input_lower)
         has_challenge = has_word_pattern(challenge_patterns, input_lower)
         has_solution = has_word_pattern(solution_patterns, input_lower)
 
@@ -222,9 +216,7 @@ class ContentAnalyzer:
         # Count numeric mentions
         numeric_mentions = len(re.findall(r"\d+", user_input))
 
-        if numeric_mentions >= 5 or any(
-            word in user_input.lower() for word in ["data", "metrics", "numbers", "statistics"]
-        ):
+        if numeric_mentions >= 5 or any(word in user_input.lower() for word in ["data", "metrics", "numbers", "statistics"]):
             return "metrics-heavy"
         elif any(word in user_input.lower() for word in ["story", "example", "case", "experience"]):
             return "story-driven"
@@ -237,9 +229,7 @@ class ContentAnalyzer:
 
         if any(word in input_lower for word in ["urgent", "critical", "immediate", "crisis"]):
             return "urgent"
-        elif any(
-            word in input_lower for word in ["concern", "worry", "issue", "problem", "challenge"]
-        ):
+        elif any(word in input_lower for word in ["concern", "worry", "issue", "problem", "challenge"]):
             return "cautious"
         elif any(word in input_lower for word in ["success", "growth", "achievement", "win"]):
             return "positive"
@@ -252,9 +242,7 @@ class ContentAnalyzer:
 
         # Adjust based on constraints
         if constraints:
-            if "minutes" in constraints.lower() and any(
-                time in constraints for time in ["5", "10"]
-            ):
+            if "minutes" in constraints.lower() and any(time in constraints for time in ["5", "10"]):
                 profile["attention_span"] = "short"
             elif "slides" in constraints.lower():
                 profile["preferred_format"] = "high-level"
@@ -377,9 +365,7 @@ class ContentAnalyzer:
 
         return structure
 
-    def _develop_presentation_strategy(
-        self, narrative_arc: str, audience_analysis: Dict[str, str], _presentation_goal: str
-    ) -> Dict[str, Any]:
+    def _develop_presentation_strategy(self, narrative_arc: str, audience_analysis: Dict[str, str], _presentation_goal: str) -> Dict[str, Any]:
         """Develop presentation strategy."""
         strategy = {
             "opening_approach": "data-driven",

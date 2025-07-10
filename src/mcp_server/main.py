@@ -274,9 +274,7 @@ async def create_presentation_from_file(
 
             # Convert JSON data to canonical format if needed
             if "slides" not in json_data:
-                canonical_data = {
-                    "slides": [json_data] if isinstance(json_data, dict) else json_data
-                }
+                canonical_data = {"slides": [json_data] if isinstance(json_data, dict) else json_data}
             else:
                 canonical_data = json_data
 
@@ -298,10 +296,7 @@ async def create_presentation_from_file(
             # Create presentation using the new API
             result = deck.create_presentation(canonical_data, fileName, templateName)
 
-            return (
-                f"Successfully created presentation from markdown file: "
-                f"{file_path} with {len(canonical_data['slides'])} slides. {result}"
-            )
+            return f"Successfully created presentation from markdown file: " f"{file_path} with {len(canonical_data['slides'])} slides. {result}"
 
         else:
             return f"Error: Unsupported file type '{file_extension}'. Supported types: .json, .md"
@@ -403,10 +398,7 @@ async def create_presentation_from_markdown(
         # Create presentation using the new API
         result = deck.create_presentation(canonical_data, fileName, templateName)
 
-        return (
-            f"Successfully created presentation with {len(canonical_data['slides'])} slides "
-            f"from markdown. {result}"
-        )
+        return f"Successfully created presentation with {len(canonical_data['slides'])} slides " f"from markdown. {result}"
     except Exception as e:
         return f"Error creating presentation from markdown: {str(e)}"
 

@@ -99,9 +99,7 @@ class ContentProcessor:
                     missing_fields.append(field)
 
             if missing_fields:
-                print(
-                    f"Warning in structured frontmatter: Missing required fields: {missing_fields}"
-                )
+                print(f"Warning in structured frontmatter: Missing required fields: {missing_fields}")
 
             # Convert to placeholder mappings
             converted = converter.convert_structured_to_placeholders(parsed)

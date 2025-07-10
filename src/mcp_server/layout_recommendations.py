@@ -36,9 +36,7 @@ class LayoutRecommendationEngine:
         self.layout_intelligence = self._build_layout_intelligence()
         self.available_layouts = self._get_available_layouts()
 
-    def recommend_slide_approach(
-        self, content_piece: str, message_intent: str, presentation_context: Optional[Dict] = None
-    ) -> Dict[str, Any]:
+    def recommend_slide_approach(self, content_piece: str, message_intent: str, presentation_context: Optional[Dict] = None) -> Dict[str, Any]:
         """
         Analyze content and recommend optimal slide layouts.
 
@@ -57,19 +55,13 @@ class LayoutRecommendationEngine:
         intent_analysis = self._analyze_message_intent(message_intent, content_piece)
 
         # Generate layout recommendations with confidence scoring
-        layout_recommendations = self._generate_layout_recommendations(
-            content_analysis, intent_analysis, presentation_context
-        )
+        layout_recommendations = self._generate_layout_recommendations(content_analysis, intent_analysis, presentation_context)
 
         # Provide content structuring suggestions
-        content_suggestions = self._generate_content_suggestions(
-            content_analysis, intent_analysis, layout_recommendations
-        )
+        content_suggestions = self._generate_content_suggestions(content_analysis, intent_analysis, layout_recommendations)
 
         # Generate structured frontmatter preview
-        structured_frontmatter = self._generate_structured_frontmatter_preview(
-            layout_recommendations, content_piece, message_intent
-        )
+        structured_frontmatter = self._generate_structured_frontmatter_preview(layout_recommendations, content_piece, message_intent)
 
         return {
             "recommended_layouts": [
@@ -95,19 +87,10 @@ class LayoutRecommendationEngine:
         bullet_indicators = len(re.findall(r"[-*•]|\d+\.|\w\)", content_piece))
 
         # Detect content patterns
-        has_comparison = any(
-            word in content_lower for word in ["vs", "versus", "compared to", "versus", "against"]
-        )
-        has_list_structure = (
-            bullet_indicators > 2
-            or content_piece.count("\n") > 2
-            or content_piece.count(",") >= 3
-            or content_piece.count(":") >= 2
-        )
+        has_comparison = any(word in content_lower for word in ["vs", "versus", "compared to", "versus", "against"])
+        has_list_structure = bullet_indicators > 2 or content_piece.count("\n") > 2 or content_piece.count(",") >= 3 or content_piece.count(":") >= 2
         has_metrics = numbers_count >= 2
-        has_process = any(
-            word in content_lower for word in ["first", "then", "next", "finally", "step"]
-        )
+        has_process = any(word in content_lower for word in ["first", "then", "next", "finally", "step"])
 
         # Determine content type
         if has_comparison:
@@ -143,14 +126,9 @@ class LayoutRecommendationEngine:
         # Categorize communication intent
         if any(word in intent_lower for word in ["compare", "contrast", "versus", "vs"]):
             intent_category = "comparison"
-        elif any(
-            word in intent_lower for word in ["highlight", "emphasize", "showcase", "feature"]
-        ):
+        elif any(word in intent_lower for word in ["highlight", "emphasize", "showcase", "feature"]):
             intent_category = "emphasis"
-        elif any(
-            word in intent_lower
-            for word in ["explain", "show process", "demonstrate", "walk through"]
-        ):
+        elif any(word in intent_lower for word in ["explain", "show process", "demonstrate", "walk through"]):
             intent_category = "explanation"
         elif any(word in intent_lower for word in ["data", "metrics", "numbers", "performance"]):
             intent_category = "data_presentation"
@@ -636,9 +614,7 @@ content: |
 
 
 # Helper function for easy import
-def recommend_slide_approach(
-    content_piece: str, message_intent: str, presentation_context: Optional[Dict] = None
-) -> Dict[str, Any]:
+def recommend_slide_approach(content_piece: str, message_intent: str, presentation_context: Optional[Dict] = None) -> Dict[str, Any]:
     """
     Convenience function for getting slide layout recommendations.
 

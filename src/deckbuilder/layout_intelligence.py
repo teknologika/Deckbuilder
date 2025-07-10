@@ -107,9 +107,7 @@ class LayoutIntelligence:
             has_numbers=has_numbers,
         )
 
-    def recommend_layouts(
-        self, content: str, max_recommendations: int = 3
-    ) -> List[LayoutRecommendation]:
+    def recommend_layouts(self, content: str, max_recommendations: int = 3) -> List[LayoutRecommendation]:
         """
         Recommend optimal layouts based on content analysis.
 
@@ -126,19 +124,13 @@ class LayoutIntelligence:
         # Get layout compatibility data
         layout_compatibility = self.intelligence_data.get("layout_compatibility", {})
         content_patterns = self.intelligence_data.get("content_patterns", {})
-        scoring_weights = self.intelligence_data.get("recommendation_engine", {}).get(
-            "scoring_weights", {}
-        )
+        scoring_weights = self.intelligence_data.get("recommendation_engine", {}).get("scoring_weights", {})
 
         # Score each layout
         for layout_name, layout_info in layout_compatibility.items():
-            confidence, reasoning = self._score_layout(
-                analysis, layout_name, layout_info, content_patterns, scoring_weights
-            )
+            confidence, reasoning = self._score_layout(analysis, layout_name, layout_info, content_patterns, scoring_weights)
 
-            if confidence >= self.intelligence_data.get("recommendation_engine", {}).get(
-                "minimum_confidence", 0.6
-            ):
+            if confidence >= self.intelligence_data.get("recommendation_engine", {}).get("minimum_confidence", 0.6):
                 placeholder_mapping = self._generate_placeholder_mapping(analysis, layout_info)
                 optimization_hints = self._get_optimization_hints(layout_name, analysis)
 
@@ -158,9 +150,7 @@ class LayoutIntelligence:
 
     def _detect_intent(self, content_lower: str) -> str:
         """Detect primary intent from content"""
-        intent_patterns = self.intelligence_data.get("content_patterns", {}).get(
-            "intent_recognition", {}
-        )
+        intent_patterns = self.intelligence_data.get("content_patterns", {}).get("intent_recognition", {})
 
         best_intent = "overview"
         best_score = 0
@@ -229,11 +219,9 @@ class LayoutIntelligence:
     def _find_keywords(self, content_lower: str) -> List[str]:
         """Find relevant keywords in content"""
         found_keywords = []
-        intent_patterns = self.intelligence_data.get("content_patterns", {}).get(
-            "intent_recognition", {}
-        )
+        intent_patterns = self.intelligence_data.get("content_patterns", {}).get("intent_recognition", {})
 
-        for intent, pattern_info in intent_patterns.items():
+        for _intent, pattern_info in intent_patterns.items():
             keywords = pattern_info.get("keywords", [])
             for keyword in keywords:
                 if keyword in content_lower:
@@ -245,9 +233,7 @@ class LayoutIntelligence:
         """Count distinct content blocks"""
         # Count major sections (headings + paragraphs)
         headings = len(re.findall(r"^#{1,6}\s", content, re.MULTILINE))
-        paragraphs = len(
-            [p for p in content.split("\n\n") if p.strip() and not p.strip().startswith("#")]
-        )
+        paragraphs = len([p for p in content.split("\n\n") if p.strip() and not p.strip().startswith("#")])
         return max(headings, paragraphs // 2)  # Estimate content blocks
 
     def _has_image_content(self, content_lower: str) -> bool:
@@ -273,9 +259,7 @@ class LayoutIntelligence:
 
         # Content structure scoring
         optimal_for = layout_info.get("optimal_for", [])
-        structure_match = any(
-            indicator in analysis.structure_indicators for indicator in optimal_for
-        )
+        structure_match = any(indicator in analysis.structure_indicators for indicator in optimal_for)
         if structure_match:
             score += scoring_weights.get("content_structure", 0.4)
             reasoning.append(f"Content structure matches {layout_name} purpose")
@@ -308,9 +292,7 @@ class LayoutIntelligence:
 
         return min(score, 1.0), reasoning
 
-    def _generate_placeholder_mapping(
-        self, analysis: ContentAnalysis, layout_info: Dict
-    ) -> Dict[str, str]:
+    def _generate_placeholder_mapping(self, analysis: ContentAnalysis, layout_info: Dict) -> Dict[str, str]:
         """Generate placeholder mapping suggestions"""
         mapping = {}
         placeholders = layout_info.get("placeholders", {})
@@ -333,7 +315,7 @@ class LayoutIntelligence:
 
         # General content length hints
         content_length = optimization_data.get("content_length", {})
-        for placeholder, hint in content_length.items():
+        for _placeholder, hint in content_length.items():
             hints.append(hint)
 
         # Layout-specific hints

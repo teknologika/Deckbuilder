@@ -180,9 +180,7 @@ class NamingConvention:
             confidence=0.1,
         )
 
-    def _infer_column_semantic(
-        self, context: PlaceholderContext, idx: int
-    ) -> Optional[SemanticInfo]:
+    def _infer_column_semantic(self, context: PlaceholderContext, idx: int) -> Optional[SemanticInfo]:
         """Infer semantic info for column layouts"""
         # Four columns: title=13,15,17,19 content=14,16,18,20
         # Three columns: title=13,15,17 content=14,16,18
@@ -202,9 +200,7 @@ class NamingConvention:
 
         return None
 
-    def _infer_comparison_semantic(
-        self, context: PlaceholderContext, idx: int
-    ) -> Optional[SemanticInfo]:
+    def _infer_comparison_semantic(self, context: PlaceholderContext, idx: int) -> Optional[SemanticInfo]:
         """Infer semantic info for comparison layouts"""
         if idx in [1, 2]:  # Left side
             content_type = "title" if idx == 1 else "content"
@@ -215,9 +211,7 @@ class NamingConvention:
 
         return None
 
-    def _infer_picture_semantic(
-        self, context: PlaceholderContext, idx: int
-    ) -> Optional[SemanticInfo]:
+    def _infer_picture_semantic(self, context: PlaceholderContext, idx: int) -> Optional[SemanticInfo]:
         """Infer semantic info for picture layouts"""
         if idx == 1:
             return SemanticInfo(content_type="image", position="main", index=1)
@@ -226,9 +220,7 @@ class NamingConvention:
 
         return None
 
-    def _infer_agenda_semantic(
-        self, context: PlaceholderContext, idx: int
-    ) -> Optional[SemanticInfo]:
+    def _infer_agenda_semantic(self, context: PlaceholderContext, idx: int) -> Optional[SemanticInfo]:
         """Infer semantic info for agenda layouts"""
         # Agenda items mapping based on actual template structure
         agenda_mapping = {
@@ -473,16 +465,12 @@ class NamingConvention:
 
         # Calculate compliance scores
         if all_names:
-            convention_compliant = sum(
-                1 for name in all_names if self._follows_convention_format(name)
-            )
+            convention_compliant = sum(1 for name in all_names if self._follows_convention_format(name))
             validation_results["convention_compliance"] = convention_compliant / len(all_names)
 
         # Generate recommendations
         if validation_results["convention_compliance"] < 0.8:
-            validation_results["recommendations"].append(
-                "Consider using 'enhance --use-conventions' to apply standardized naming"
-            )
+            validation_results["recommendations"].append("Consider using 'enhance --use-conventions' to apply standardized naming")
 
         # Detect naming patterns
         patterns = {}
@@ -497,10 +485,7 @@ class NamingConvention:
     def _follows_convention_format(self, placeholder_name: str) -> bool:
         """Check if placeholder name follows convention format"""
         # Convention format: {ContentType}_{Position}_{Index} or {ContentType}_{Index}
-        pattern = (
-            r"^(title|subtitle|content|text|image|number|date|footer|slide_number)_"
-            r"([a-z0-9]+_)?\d+$"
-        )
+        pattern = r"^(title|subtitle|content|text|image|number|date|footer|slide_number)_" r"([a-z0-9]+_)?\d+$"
         return bool(re.match(pattern, placeholder_name.lower()))
 
     def _extract_naming_pattern(self, placeholder_name: str) -> str:

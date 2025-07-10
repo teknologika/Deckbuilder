@@ -115,18 +115,14 @@ class ContentFormatter:
         for item in content_list:
             if isinstance(item, str):
                 # Treat as paragraph text with inline formatting
-                rich_content.append(
-                    {"paragraph": item, "formatted": self.parse_inline_formatting(item)}
-                )
+                rich_content.append({"paragraph": item, "formatted": self.parse_inline_formatting(item)})
             else:
                 # Keep non-string items as-is
                 rich_content.append(item)
 
         return rich_content
 
-    def format_field_content(
-        self, content: Union[str, List[str], Dict[str, Any]]
-    ) -> Dict[str, Any]:
+    def format_field_content(self, content: Union[str, List[str], Dict[str, Any]]) -> Dict[str, Any]:
         """
         Format any field content type with inline formatting preservation.
 
@@ -144,9 +140,7 @@ class ContentFormatter:
                 "formatted_list": [
                     {
                         "text": item,
-                        "formatted": (
-                            self.parse_inline_formatting(item) if isinstance(item, str) else item
-                        ),
+                        "formatted": (self.parse_inline_formatting(item) if isinstance(item, str) else item),
                     }
                     for item in content
                 ],
@@ -189,9 +183,7 @@ class ContentFormatter:
                     formatted_row = []
                     for cell in row:
                         if isinstance(cell, str):
-                            formatted_row.append(
-                                {"text": cell, "formatted": self.parse_inline_formatting(cell)}
-                            )
+                            formatted_row.append({"text": cell, "formatted": self.parse_inline_formatting(cell)})
                         else:
                             # Keep non-string cells as-is
                             formatted_row.append(cell)
@@ -203,9 +195,7 @@ class ContentFormatter:
 
         return formatted_table
 
-    def format_rich_content_blocks(
-        self, rich_content: List[Dict[str, Any]]
-    ) -> List[Dict[str, Any]]:
+    def format_rich_content_blocks(self, rich_content: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """
         Format rich content blocks (headings, paragraphs, bullets).
 
@@ -229,24 +219,18 @@ class ContentFormatter:
 
             # Format headings
             if "heading" in block:
-                formatted_block["heading_formatted"] = self.parse_inline_formatting(
-                    block["heading"]
-                )
+                formatted_block["heading_formatted"] = self.parse_inline_formatting(block["heading"])
 
             # Format paragraphs
             if "paragraph" in block:
-                formatted_block["paragraph_formatted"] = self.parse_inline_formatting(
-                    block["paragraph"]
-                )
+                formatted_block["paragraph_formatted"] = self.parse_inline_formatting(block["paragraph"])
 
             # Format bullets
             if "bullets" in block and isinstance(block["bullets"], list):
                 formatted_bullets = []
                 for bullet in block["bullets"]:
                     if isinstance(bullet, str):
-                        formatted_bullets.append(
-                            {"text": bullet, "formatted": self.parse_inline_formatting(bullet)}
-                        )
+                        formatted_bullets.append({"text": bullet, "formatted": self.parse_inline_formatting(bullet)})
                     else:
                         formatted_bullets.append(bullet)
                 formatted_block["bullets_formatted"] = formatted_bullets
@@ -276,34 +260,24 @@ class ContentFormatter:
         # Format title and subtitle
         for field in ["title", "subtitle"]:
             if field in formatted_data and formatted_data[field]:
-                formatted_data[f"{field}_formatted"] = self.parse_inline_formatting(
-                    formatted_data[field]
-                )
+                formatted_data[f"{field}_formatted"] = self.parse_inline_formatting(formatted_data[field])
 
         # Format simple content lists to rich content
         if "content" in formatted_data and isinstance(formatted_data["content"], list):
-            formatted_data["rich_content"] = self.format_simple_content_list(
-                formatted_data["content"]
-            )
+            formatted_data["rich_content"] = self.format_simple_content_list(formatted_data["content"])
             # Keep original for compatibility
             # del formatted_data["content"]
 
         # Format rich content blocks
         if "rich_content" in formatted_data:
-            formatted_data["rich_content_formatted"] = self.format_rich_content_blocks(
-                formatted_data["rich_content"]
-            )
+            formatted_data["rich_content_formatted"] = self.format_rich_content_blocks(formatted_data["rich_content"])
 
         # Format table data
         if "table" in formatted_data:
             formatted_data["table_formatted"] = self.format_table_data(formatted_data["table"])
 
         # Format all field content (for semantic field names like content_left, content_col1)
-        content_fields = [
-            key
-            for key in formatted_data.keys()
-            if key.startswith(("content_", "title_")) and not key.endswith("_formatted")
-        ]
+        content_fields = [key for key in formatted_data.keys() if key.startswith(("content_", "title_")) and not key.endswith("_formatted")]
 
         for field in content_fields:
             content = formatted_data[field]

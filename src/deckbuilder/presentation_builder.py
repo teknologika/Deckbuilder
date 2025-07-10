@@ -29,9 +29,7 @@ class PresentationBuilder:
         cache_dir = str(self.path_manager.get_output_folder() / "temp" / "image_cache")
         self.image_handler = ImageHandler(cache_dir)
         self.placekitten = PlaceKittenIntegration(self.image_handler)
-        self.image_placeholder_handler = ImagePlaceholderHandler(
-            self.image_handler, self.placekitten
-        )
+        self.image_placeholder_handler = ImagePlaceholderHandler(self.image_handler, self.placekitten)
 
     @property
     def layout_mapping(self):
@@ -57,9 +55,7 @@ class PresentationBuilder:
             prs: PowerPoint presentation object
             slide_data: Dictionary containing slide information
         """
-        slide = self.slide_builder.add_slide(
-            prs, slide_data, self.content_formatter, self.image_placeholder_handler
-        )
+        slide = self.slide_builder.add_slide(prs, slide_data, self.content_formatter, self.image_placeholder_handler)
 
         # Add table if provided
         if "table" in slide_data:
@@ -75,6 +71,4 @@ class PresentationBuilder:
             prs: PowerPoint presentation object
             slide_data: Dictionary containing slide information
         """
-        return self.slide_builder.add_slide_with_direct_mapping(
-            prs, slide_data, self.content_formatter, self.image_placeholder_handler
-        )
+        return self.slide_builder.add_slide_with_direct_mapping(prs, slide_data, self.content_formatter, self.image_placeholder_handler)

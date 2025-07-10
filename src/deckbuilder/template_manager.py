@@ -38,9 +38,7 @@ class TemplateManager:
                 default_template = os.path.join(self.template_path, template_name)
                 if not os.path.exists(default_template):
                     # Copy from assets/templates/default.pptx
-                    assets_path = os.path.join(
-                        os.path.dirname(__file__), "..", "..", "assets", "templates"
-                    )
+                    assets_path = os.path.join(os.path.dirname(__file__), "..", "..", "assets", "templates")
                     src_template = os.path.join(assets_path, "default.pptx")
                     if os.path.exists(src_template):
                         shutil.copy2(src_template, default_template)
@@ -50,9 +48,7 @@ class TemplateManager:
                 json_template = os.path.join(self.template_path, base_name + ".json")
                 if not os.path.exists(json_template):
                     # Copy from assets/templates/default.json
-                    assets_path = os.path.join(
-                        os.path.dirname(__file__), "..", "..", "assets", "templates"
-                    )
+                    assets_path = os.path.join(os.path.dirname(__file__), "..", "..", "assets", "templates")
                     src_json = os.path.join(assets_path, base_name + ".json")
                     if os.path.exists(src_json):
                         shutil.copy2(src_json, json_template)
@@ -145,9 +141,7 @@ class TemplateManager:
         self.check_template_exists(template_name)
 
         # Load layout mapping
-        base_name = (
-            template_name.replace(".pptx", "") if template_name.endswith(".pptx") else template_name
-        )
+        base_name = template_name.replace(".pptx", "") if template_name.endswith(".pptx") else template_name
         self.load_layout_mapping(base_name)
 
         # Get template path

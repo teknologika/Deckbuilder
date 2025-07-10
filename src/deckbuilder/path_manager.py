@@ -120,9 +120,7 @@ class PathManager:
                 return Path(env_folder).resolve()
 
             # MCP requires explicit configuration
-            raise ValueError(
-                "MCP context requires DECK_TEMPLATE_FOLDER environment variable to be set"
-            )
+            raise ValueError("MCP context requires DECK_TEMPLATE_FOLDER environment variable to be set")
 
         # Library Context: constructor args > env vars > assets/templates
         else:  # library
@@ -150,9 +148,7 @@ class PathManager:
                 return Path(env_folder).resolve()
 
             # MCP requires explicit configuration
-            raise ValueError(
-                "MCP context requires DECK_OUTPUT_FOLDER environment variable to be set"
-            )
+            raise ValueError("MCP context requires DECK_OUTPUT_FOLDER environment variable to be set")
 
         # Library Context: constructor args > env vars > current directory
         else:  # library
