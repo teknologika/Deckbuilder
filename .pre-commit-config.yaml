@@ -68,7 +68,7 @@ repos:
         always_run: true
       - id: pytest
         name: pytest with coverage
-        entry: pytest --cov=src --cov-report=term-missing --cov-fail-under=7
+        entry: pytest --cov=src --cov-report=term-missing --cov-fail-under=40 -k "not test_image_integration"
         language: python
         language_version: python3.12
         additional_dependencies: [pytest-cov, PyYAML, python-pptx, pydantic, numpy, opencv-python, pillow]

@@ -113,16 +113,12 @@ class TemplateTestGenerator:
         coverage_report = {}
 
         # Generate JSON test file
-        json_file = self._generate_json_test_file(
-            template_name, layouts, output_dir, content_type, content_length
-        )
+        json_file = self._generate_json_test_file(template_name, layouts, output_dir, content_type, content_length)
         if json_file:
             generated_files.append(json_file)
 
         # Generate Markdown test file
-        md_file = self._generate_markdown_test_file(
-            template_name, layouts, output_dir, content_type, content_length
-        )
+        md_file = self._generate_markdown_test_file(template_name, layouts, output_dir, content_type, content_length)
         if md_file:
             generated_files.append(md_file)
 
@@ -152,9 +148,7 @@ class TemplateTestGenerator:
         # Generate slides for each supported layout
         for layout_name, layout_info in layouts.items():
             if layout_name in self.supported_layouts:
-                slide_data = self.supported_layouts[layout_name](
-                    layout_name, layout_info, content_type, content_length
-                )
+                slide_data = self.supported_layouts[layout_name](layout_name, layout_info, content_type, content_length)
                 if slide_data:
                     slides.append(slide_data)
 
@@ -174,9 +168,7 @@ class TemplateTestGenerator:
         # Create preview
         preview = f"Generated {len(slides)} slides for layouts: {', '.join([s.get('layout', 'Unknown') for s in slides[:3]])}..."
 
-        return GeneratedTestFile(
-            file_path=json_path, layout_name="multiple", file_type="json", content_preview=preview
-        )
+        return GeneratedTestFile(file_path=json_path, layout_name="multiple", file_type="json", content_preview=preview)
 
     def _generate_markdown_test_file(
         self,
@@ -192,9 +184,7 @@ class TemplateTestGenerator:
         # Generate markdown sections for each supported layout
         for layout_name, layout_info in layouts.items():
             if layout_name in self.supported_layouts:
-                md_section = self._generate_markdown_section(
-                    layout_name, layout_info, content_type, content_length
-                )
+                md_section = self._generate_markdown_section(layout_name, layout_info, content_type, content_length)
                 if md_section:
                     markdown_sections.append(md_section)
 
@@ -257,17 +247,13 @@ class TemplateTestGenerator:
 
         return coverage
 
-    def generate_structured_frontmatter_tests(
-        self, layouts: List[str], output_dir: Path
-    ) -> List[GeneratedTestFile]:
+    def generate_structured_frontmatter_tests(self, layouts: List[str], output_dir: Path) -> List[GeneratedTestFile]:
         """Generate structured frontmatter examples for each layout."""
         generated_files = []
 
         for layout_name in layouts:
             if layout_name in self.supported_layouts:
-                md_content = self._generate_markdown_section(
-                    layout_name, {}, ContentType.BUSINESS, ContentLength.MEDIUM
-                )
+                md_content = self._generate_markdown_section(layout_name, {}, ContentType.BUSINESS, ContentLength.MEDIUM)
 
                 if md_content:
                     filename = f"{layout_name.lower().replace(' ', '_')}_example.md"
@@ -353,12 +339,8 @@ class TemplateTestGenerator:
 
         # Add column placeholders using convention-based naming
         for i, column in enumerate(columns, 1):
-            slide_data[f"title_col{i}_1"] = self.content_generator.apply_random_formatting(
-                column["title"]
-            )
-            slide_data[f"content_col{i}_1"] = self.content_generator.apply_random_formatting(
-                column["content"]
-            )
+            slide_data[f"title_col{i}_1"] = self.content_generator.apply_random_formatting(column["title"])
+            slide_data[f"content_col{i}_1"] = self.content_generator.apply_random_formatting(column["content"])
 
         return slide_data
 
@@ -379,9 +361,7 @@ class TemplateTestGenerator:
 
         # Add column content (no titles)
         for i, column in enumerate(columns, 1):
-            slide_data[f"content_col{i}_1"] = self.content_generator.apply_random_formatting(
-                column["content"]
-            )
+            slide_data[f"content_col{i}_1"] = self.content_generator.apply_random_formatting(column["content"])
 
         return slide_data
 
@@ -401,12 +381,8 @@ class TemplateTestGenerator:
         }
 
         for i, column in enumerate(columns, 1):
-            slide_data[f"title_col{i}_1"] = self.content_generator.apply_random_formatting(
-                column["title"]
-            )
-            slide_data[f"content_col{i}_1"] = self.content_generator.apply_random_formatting(
-                column["content"]
-            )
+            slide_data[f"title_col{i}_1"] = self.content_generator.apply_random_formatting(column["title"])
+            slide_data[f"content_col{i}_1"] = self.content_generator.apply_random_formatting(column["content"])
 
         return slide_data
 
@@ -426,9 +402,7 @@ class TemplateTestGenerator:
         }
 
         for i, column in enumerate(columns, 1):
-            slide_data[f"content_col{i}_1"] = self.content_generator.apply_random_formatting(
-                column["content"]
-            )
+            slide_data[f"content_col{i}_1"] = self.content_generator.apply_random_formatting(column["content"])
 
         return slide_data
 
@@ -446,13 +420,9 @@ class TemplateTestGenerator:
             "type": layout_name,
             "title": f"{content_type.value.title()} **Comparison** Analysis",
             "title_left_1": comparison["left"]["title"],
-            "content_left_1": self.content_generator.apply_random_formatting(
-                comparison["left"]["content"]
-            ),
+            "content_left_1": self.content_generator.apply_random_formatting(comparison["left"]["content"]),
             "title_right_1": comparison["right"]["title"],
-            "content_right_1": self.content_generator.apply_random_formatting(
-                comparison["right"]["content"]
-            ),
+            "content_right_1": self.content_generator.apply_random_formatting(comparison["right"]["content"]),
         }
 
     def _generate_two_content(
@@ -470,11 +440,7 @@ class TemplateTestGenerator:
             "title": f"Two-Section {content_type.value.title()} Layout",
             "content_left_1": [
                 f"**{content_lib['bullets'][0]}**",
-                (
-                    f"*{content_lib['bullets'][1]}*"
-                    if len(content_lib["bullets"]) > 1
-                    else "*Enhanced features*"
-                ),
+                (f"*{content_lib['bullets'][1]}*" if len(content_lib["bullets"]) > 1 else "*Enhanced features*"),
             ],
             "content_right_1": [
                 f"***{content_lib['content'][0][:50]}***",
@@ -516,9 +482,7 @@ class TemplateTestGenerator:
 
         for i, item in enumerate(agenda_items, 1):
             slide_data[f"number_item{i}_1"] = item["number"]
-            slide_data[f"content_item{i}_1"] = self.content_generator.apply_random_formatting(
-                item["item"]
-            )
+            slide_data[f"content_item{i}_1"] = self.content_generator.apply_random_formatting(item["item"])
 
         return slide_data
 
@@ -556,13 +520,7 @@ class TemplateTestGenerator:
             "type": layout_name,
             "layout": layout_name,
             "title": f"Section: **{content_lib['titles'][0]}**",
-            "rich_content": [
-                {
-                    "paragraph": self.content_generator.apply_random_formatting(
-                        content_lib["content"][0]
-                    )
-                }
-            ],
+            "rich_content": [{"paragraph": self.content_generator.apply_random_formatting(content_lib["content"][0])}],
         }
 
     def _generate_title_only(
@@ -596,11 +554,7 @@ class TemplateTestGenerator:
             "layout": layout_name,
             "rich_content": [
                 {"heading": "Blank Layout Test", "level": 1},
-                {
-                    "paragraph": self.content_generator.apply_random_formatting(
-                        content_lib["content"][0]
-                    )
-                },
+                {"paragraph": self.content_generator.apply_random_formatting(content_lib["content"][0])},
             ],
         }
 
@@ -618,9 +572,7 @@ class TemplateTestGenerator:
             "type": layout_name,
             "layout": layout_name,
             "title": f"{content_type.value.title()} Content with Caption",
-            "text_caption_1": self.content_generator.apply_random_formatting(
-                content_lib["titles"][0]
-            ),
+            "text_caption_1": self.content_generator.apply_random_formatting(content_lib["titles"][0]),
             "rich_content": [{"paragraph": content_lib["content"][0]}],
         }
 
@@ -678,12 +630,8 @@ class TemplateTestGenerator:
             slide_data[f"number_item{i}_1"] = f"{i:02d}"
             title_idx = (i - 1) % len(content_lib["titles"])
             content_idx = (i - 1) % len(content_lib["bullets"])
-            slide_data[f"content_{12 + i}_1"] = self.content_generator.apply_random_formatting(
-                content_lib["titles"][title_idx]
-            )
-            slide_data[f"content_item{i}_1"] = self.content_generator.apply_random_formatting(
-                content_lib["bullets"][content_idx]
-            )
+            slide_data[f"content_{12 + i}_1"] = self.content_generator.apply_random_formatting(content_lib["titles"][title_idx])
+            slide_data[f"content_item{i}_1"] = self.content_generator.apply_random_formatting(content_lib["bullets"][content_idx])
 
         return slide_data
 
@@ -713,9 +661,7 @@ class TemplateTestGenerator:
         content_length: ContentLength,
     ) -> str:
         """Generate markdown for column layouts."""
-        columns = self.content_generator.build_column_content(
-            num_columns, content_type, content_length
-        )
+        columns = self.content_generator.build_column_content(num_columns, content_type, content_length)
 
         frontmatter = {
             "layout": layout_name,
@@ -734,9 +680,7 @@ class TemplateTestGenerator:
         yaml_str = yaml.dump(frontmatter, default_flow_style=False, allow_unicode=True)
         return f"---\n{yaml_str}---\n\nContent from {layout_name} structured frontmatter above."
 
-    def _generate_comparison_markdown(
-        self, content_type: ContentType, content_length: ContentLength
-    ) -> str:
+    def _generate_comparison_markdown(self, content_type: ContentType, content_length: ContentLength) -> str:
         """Generate markdown for comparison layout."""
         comparison = self.content_generator.build_comparison_content("features", content_type)
 
@@ -749,9 +693,7 @@ class TemplateTestGenerator:
         yaml_str = yaml.dump(frontmatter, default_flow_style=False, allow_unicode=True)
         return f"---\n{yaml_str}---\n\nContent from Comparison structured frontmatter above."
 
-    def _generate_two_content_markdown(
-        self, content_type: ContentType, content_length: ContentLength
-    ) -> str:
+    def _generate_two_content_markdown(self, content_type: ContentType, content_length: ContentLength) -> str:
         """Generate markdown for two content layout."""
         content_lib = self.content_generator.get_content_library(content_type)[content_length]
 
@@ -766,16 +708,8 @@ class TemplateTestGenerator:
                 {
                     "title": "Secondary Focus",
                     "content": [
-                        (
-                            content_lib["bullets"][1]
-                            if len(content_lib["bullets"]) > 1
-                            else "Enhanced features"
-                        ),
-                        (
-                            content_lib["content"][1]
-                            if len(content_lib["content"]) > 1
-                            else "Additional benefits"
-                        ),
+                        (content_lib["bullets"][1] if len(content_lib["bullets"]) > 1 else "Enhanced features"),
+                        (content_lib["content"][1] if len(content_lib["content"]) > 1 else "Additional benefits"),
                     ],
                 },
             ],
@@ -784,9 +718,7 @@ class TemplateTestGenerator:
         yaml_str = yaml.dump(frontmatter, default_flow_style=False, allow_unicode=True)
         return f"---\n{yaml_str}---\n\nContent from Two Content structured frontmatter above."
 
-    def _generate_picture_markdown(
-        self, content_type: ContentType, content_length: ContentLength
-    ) -> str:
+    def _generate_picture_markdown(self, content_type: ContentType, content_length: ContentLength) -> str:
         """Generate markdown for picture layout."""
         content_lib = self.content_generator.get_content_library(content_type)[content_length]
 
@@ -800,13 +732,9 @@ class TemplateTestGenerator:
         }
 
         yaml_str = yaml.dump(frontmatter, default_flow_style=False, allow_unicode=True)
-        return (
-            f"---\n{yaml_str}---\n\nContent from Picture with Caption structured frontmatter above."
-        )
+        return f"---\n{yaml_str}---\n\nContent from Picture with Caption structured frontmatter above."
 
-    def _generate_agenda_markdown(
-        self, content_type: ContentType, content_length: ContentLength
-    ) -> str:
+    def _generate_agenda_markdown(self, content_type: ContentType, content_length: ContentLength) -> str:
         """Generate markdown for agenda layout."""
         agenda_items = self.content_generator.generate_agenda_content(6)
 
@@ -817,13 +745,9 @@ class TemplateTestGenerator:
         }
 
         yaml_str = yaml.dump(frontmatter, default_flow_style=False, allow_unicode=True)
-        return (
-            f"---\n{yaml_str}---\n\nContent from Agenda, 6 Textboxes structured frontmatter above."
-        )
+        return f"---\n{yaml_str}---\n\nContent from Agenda, 6 Textboxes structured frontmatter above."
 
-    def _generate_swot_markdown(
-        self, content_type: ContentType, content_length: ContentLength
-    ) -> str:
+    def _generate_swot_markdown(self, content_type: ContentType, content_length: ContentLength) -> str:
         """Generate markdown for SWOT layout."""
         swot = self.content_generator.generate_swot_content()
 
@@ -836,9 +760,7 @@ class TemplateTestGenerator:
         yaml_str = yaml.dump(frontmatter, default_flow_style=False, allow_unicode=True)
         return f"---\n{yaml_str}---\n\nContent from SWOT Analysis structured frontmatter above."
 
-    def _generate_basic_markdown(
-        self, layout_name: str, content_type: ContentType, content_length: ContentLength
-    ) -> str:
+    def _generate_basic_markdown(self, layout_name: str, content_type: ContentType, content_length: ContentLength) -> str:
         """Generate basic markdown for simple layouts."""
         content_lib = self.content_generator.get_content_library(content_type)[content_length]
 
@@ -853,9 +775,7 @@ Additional content for {layout_name} layout testing."""
 
 
 # Convenience functions
-def generate_test_files_for_template(
-    template_path: Path, output_dir: Path, content_type: ContentType = ContentType.BUSINESS
-) -> TestGenerationReport:
+def generate_test_files_for_template(template_path: Path, output_dir: Path, content_type: ContentType = ContentType.BUSINESS) -> TestGenerationReport:
     """Convenience function to generate test files for a template."""
     generator = TemplateTestGenerator()
     return generator.generate_test_files(template_path, output_dir, content_type)

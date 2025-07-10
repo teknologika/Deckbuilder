@@ -144,9 +144,7 @@ TECHNICAL_CONTENT = {
         ],
     },
     ContentLength.LONG: {
-        "titles": [
-            "Comprehensive Technical Architecture Modernization and Performance Enhancement Initiative"
-        ],
+        "titles": ["Comprehensive Technical Architecture Modernization and Performance Enhancement Initiative"],
         "content": [
             "The comprehensive technical modernization initiative has successfully transformed our legacy monolithic architecture into a cloud-native microservices ecosystem, leveraging containerization, service mesh technology, and advanced orchestration platforms to achieve unprecedented scalability, reliability, and performance metrics while maintaining strict security protocols and regulatory compliance standards.",
             "Advanced API gateway implementation with intelligent load balancing, rate limiting, and circuit breaker patterns has revolutionized system performance, reducing average response times from 200ms to 50ms while supporting 10x traffic increases and maintaining 99.99% uptime through automated failover mechanisms and distributed caching strategies.",
@@ -206,9 +204,7 @@ MARKETING_CONTENT = {
         ],
     },
     ContentLength.LONG: {
-        "titles": [
-            "Comprehensive Integrated Marketing Campaign Strategy and Performance Analysis with Multi-Channel Attribution"
-        ],
+        "titles": ["Comprehensive Integrated Marketing Campaign Strategy and Performance Analysis with Multi-Channel Attribution"],
         "content": [
             "The comprehensive integrated marketing campaign strategy has delivered exceptional results across all key performance metrics, achieving 300% return on investment through sophisticated multi-channel attribution, advanced audience segmentation, personalized content delivery, and data-driven optimization that has fundamentally transformed our market positioning and customer acquisition capabilities.",
             "Advanced digital marketing ecosystem implementation leveraging artificial intelligence, machine learning algorithms, and predictive analytics has revolutionized customer journey optimization, reducing acquisition costs by 35% while improving lead quality scores by 45% and accelerating sales cycle velocity through personalized engagement strategies and automated nurturing workflows.",
@@ -268,9 +264,7 @@ EDUCATIONAL_CONTENT = {
         ],
     },
     ContentLength.LONG: {
-        "titles": [
-            "Advanced Pedagogical Framework Implementation with Adaptive Learning Technologies and Comprehensive Assessment Strategies"
-        ],
+        "titles": ["Advanced Pedagogical Framework Implementation with Adaptive Learning Technologies and Comprehensive Assessment Strategies"],
         "content": [
             "The advanced pedagogical framework implementation leverages cutting-edge adaptive learning technologies, artificial intelligence-driven personalization, and comprehensive assessment strategies to create an immersive, engaging, and highly effective educational experience that addresses individual learning preferences, accommodates diverse competency levels, and ensures measurable skill development through evidence-based instructional design principles.",
             "Innovative student engagement and retention strategy incorporating gamification elements, peer-to-peer learning networks, real-world project applications, and continuous feedback mechanisms has revolutionized the learning experience, achieving 90% course completion rates, 85% knowledge retention after 6 months, and 95% student satisfaction scores while preparing learners for immediate practical application in professional environments.",
@@ -304,9 +298,7 @@ class ContentGenerator:
         if seed is not None:
             random.seed(seed)
 
-    def get_content_library(
-        self, content_type: ContentType
-    ) -> Dict[ContentLength, Dict[str, List[str]]]:
+    def get_content_library(self, content_type: ContentType) -> Dict[ContentLength, Dict[str, List[str]]]:
         """Get content library for specified type."""
         libraries = {
             ContentType.BUSINESS: BUSINESS_CONTENT,
@@ -330,15 +322,11 @@ class ContentGenerator:
             title_idx = i % len(library["titles"])
             content_idx = i % len(library["content"])
 
-            columns.append(
-                {"title": library["titles"][title_idx], "content": library["content"][content_idx]}
-            )
+            columns.append({"title": library["titles"][title_idx], "content": library["content"][content_idx]})
 
         return columns
 
-    def build_comparison_content(
-        self, comparison_type: str = "features", content_type: ContentType = ContentType.BUSINESS
-    ) -> Dict[str, Dict[str, str]]:
+    def build_comparison_content(self, comparison_type: str = "features", content_type: ContentType = ContentType.BUSINESS) -> Dict[str, Dict[str, str]]:
         """Generate left/right comparison content."""
         library = self.get_content_library(content_type)[ContentLength.MEDIUM]
 
@@ -359,9 +347,7 @@ class ContentGenerator:
 
         return comparison_templates.get(comparison_type, comparison_templates["features"])
 
-    def build_table_content(
-        self, rows: int, cols: int, include_formatting: bool = True
-    ) -> Dict[str, Any]:
+    def build_table_content(self, rows: int, cols: int, include_formatting: bool = True) -> Dict[str, Any]:
         """Generate table data with optional formatting."""
         headers = ["Feature", "Status", "Priority", "Owner", "Timeline"][:cols]
 
@@ -446,9 +432,7 @@ class ContentGenerator:
             "threats": "Increased competition and regulatory changes",
         }
 
-    def generate_content_variation(
-        self, base_content: str, length: ContentLength, add_formatting: bool = False
-    ) -> ContentVariation:
+    def generate_content_variation(self, base_content: str, length: ContentLength, add_formatting: bool = False) -> ContentVariation:
         """Generate content variation with specified length and formatting."""
         # Adjust content length
         if length == ContentLength.SHORT:
@@ -457,7 +441,9 @@ class ContentGenerator:
             content = sentences[0] + "." if sentences else base_content[:50] + "..."
         elif length == ContentLength.LONG:
             # Expand content with additional details
-            content = f"{base_content} Additional details and comprehensive analysis provide deeper insights into the implementation strategy, expected outcomes, and long-term benefits for stakeholders."
+            content = (
+                f"{base_content} Additional details and comprehensive analysis provide deeper insights into the implementation strategy, expected outcomes, and long-term benefits for stakeholders."
+            )
         else:
             content = base_content
 
@@ -495,8 +481,6 @@ def get_formatted_content_samples() -> Dict[str, str]:
 
 
 # Factory function for quick content generation
-def create_content_generator(
-    content_type: ContentType = ContentType.BUSINESS, seed: Optional[int] = None
-) -> ContentGenerator:
+def create_content_generator(content_type: ContentType = ContentType.BUSINESS, seed: Optional[int] = None) -> ContentGenerator:
     """Factory function to create configured content generator."""
     return ContentGenerator(seed=seed)

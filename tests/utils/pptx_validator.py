@@ -148,9 +148,7 @@ class PowerPointValidator:
 
         return self._generate_report(str(pptx_path))
 
-    def validate_content_preservation(
-        self, pptx_path: Path, expected_content: Dict[str, Any]
-    ) -> ValidationReport:
+    def validate_content_preservation(self, pptx_path: Path, expected_content: Dict[str, Any]) -> ValidationReport:
         """Verify all expected content appears in generated PPTX."""
         self.errors = []
 
@@ -168,9 +166,7 @@ class PowerPointValidator:
 
         return self._generate_report(str(pptx_path))
 
-    def validate_layout_correctness(
-        self, pptx_path: Path, layout_mapping: Dict[str, Any]
-    ) -> ValidationReport:
+    def validate_layout_correctness(self, pptx_path: Path, layout_mapping: Dict[str, Any]) -> ValidationReport:
         """Verify correct slide layouts are used."""
         self.errors = []
 
@@ -188,9 +184,7 @@ class PowerPointValidator:
 
         return self._generate_report(str(pptx_path))
 
-    def validate_formatting_preservation(
-        self, pptx_path: Path, formatting_rules: Dict[str, Any]
-    ) -> ValidationReport:
+    def validate_formatting_preservation(self, pptx_path: Path, formatting_rules: Dict[str, Any]) -> ValidationReport:
         """Verify bold/italic/underline formatting is preserved."""
         self.errors = []
 
@@ -226,9 +220,7 @@ class PowerPointValidator:
 
         return self._generate_report(str(pptx_path))
 
-    def _validate_slide_count(
-        self, presentation: Presentation, expected_content: Dict[str, Any]
-    ) -> None:
+    def _validate_slide_count(self, presentation: Presentation, expected_content: Dict[str, Any]) -> None:
         """Validate expected number of slides."""
         expected_slides = len(expected_content.get("presentation", {}).get("slides", []))
         actual_slides = len(presentation.slides)
@@ -244,9 +236,7 @@ class PowerPointValidator:
                 )
             )
 
-    def _validate_content_preservation(
-        self, presentation: Presentation, expected_content: Dict[str, Any]
-    ) -> None:
+    def _validate_content_preservation(self, presentation: Presentation, expected_content: Dict[str, Any]) -> None:
         """Validate content preservation in slides."""
         slides_data = expected_content.get("presentation", {}).get("slides", [])
 
@@ -283,9 +273,7 @@ class PowerPointValidator:
                         message=f"Expected title not found in slide {slide_index}",
                         slide_index=slide_index,
                         expected_value=expected_title,
-                        actual_value=(
-                            slide_text[:100] + "..." if len(slide_text) > 100 else slide_text
-                        ),
+                        actual_value=(slide_text[:100] + "..." if len(slide_text) > 100 else slide_text),
                     )
                 )
 
@@ -302,9 +290,7 @@ class PowerPointValidator:
                             slide_index=slide_index,
                             placeholder_name=key,
                             expected_value=expected_text,
-                            actual_value=(
-                                slide_text[:100] + "..." if len(slide_text) > 100 else slide_text
-                            ),
+                            actual_value=(slide_text[:100] + "..." if len(slide_text) > 100 else slide_text),
                         )
                     )
 
@@ -312,9 +298,7 @@ class PowerPointValidator:
         if "rich_content" in slide_data:
             self._validate_rich_content(slide_text, slide_data["rich_content"], slide_index)
 
-    def _validate_rich_content(
-        self, slide_text: str, rich_content: List[Dict], slide_index: int
-    ) -> None:
+    def _validate_rich_content(self, slide_text: str, rich_content: List[Dict], slide_index: int) -> None:
         """Validate rich content elements."""
         for content_item in rich_content:
             if "heading" in content_item:
@@ -357,9 +341,7 @@ class PowerPointValidator:
                             )
                         )
 
-    def _validate_layout_correctness(
-        self, presentation: Presentation, layout_mapping: Dict[str, Any]
-    ) -> None:
+    def _validate_layout_correctness(self, presentation: Presentation, layout_mapping: Dict[str, Any]) -> None:
         """Validate slide layout usage."""
         layouts = layout_mapping.get("layouts", {})
 
@@ -378,9 +360,7 @@ class PowerPointValidator:
                     )
                 )
 
-    def _validate_formatting_preservation(
-        self, presentation: Presentation, formatting_rules: Dict[str, Any]
-    ) -> None:
+    def _validate_formatting_preservation(self, presentation: Presentation, formatting_rules: Dict[str, Any]) -> None:
         """Validate formatting preservation."""
         for slide_index, slide in enumerate(presentation.slides):
             self.current_slide_index = slide_index
@@ -389,9 +369,7 @@ class PowerPointValidator:
                 if hasattr(shape, "text_frame") and shape.text_frame:
                     self._validate_shape_formatting(shape, slide_index, formatting_rules)
 
-    def _validate_shape_formatting(
-        self, shape, slide_index: int, formatting_rules: Dict[str, Any]
-    ) -> None:
+    def _validate_shape_formatting(self, shape, slide_index: int, formatting_rules: Dict[str, Any]) -> None:
         """Validate formatting of individual shape."""
         try:
             text_frame = shape.text_frame
@@ -555,9 +533,7 @@ class PowerPointValidator:
             errors=self.errors.copy(),
         )
 
-    def generate_validation_report(
-        self, report: ValidationReport, output_path: Optional[Path] = None
-    ) -> str:
+    def generate_validation_report(self, report: ValidationReport, output_path: Optional[Path] = None) -> str:
         """Generate detailed validation report."""
         report_lines = [
             "PowerPoint Validation Report",
@@ -580,14 +556,10 @@ class PowerPointValidator:
             report_lines.append("-" * 30)
 
             for error in report.errors:
-                slide_info = (
-                    f" (Slide {error.slide_index})" if error.slide_index is not None else ""
-                )
+                slide_info = f" (Slide {error.slide_index})" if error.slide_index is not None else ""
                 placeholder_info = f" [{error.placeholder_name}]" if error.placeholder_name else ""
 
-                report_lines.append(
-                    f"{error.severity.value.upper()}: {error.check_name}{slide_info}{placeholder_info}"
-                )
+                report_lines.append(f"{error.severity.value.upper()}: {error.check_name}{slide_info}{placeholder_info}")
                 report_lines.append(f"  Message: {error.message}")
 
                 if error.expected_value:
@@ -606,9 +578,7 @@ class PowerPointValidator:
 
 
 # Convenience functions for testing
-def validate_presentation_file(
-    pptx_path: Path, expected_content: Dict[str, Any], strict_mode: bool = False
-) -> ValidationReport:
+def validate_presentation_file(pptx_path: Path, expected_content: Dict[str, Any], strict_mode: bool = False) -> ValidationReport:
     """Convenience function to validate a presentation file."""
     validator = PowerPointValidator(strict_mode=strict_mode)
     return validator.validate_presentation(pptx_path, expected_content)

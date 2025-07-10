@@ -37,18 +37,8 @@ def asset_paths():
         "project_root": project_root,
         "assets_dir": project_root / "src" / "deckbuilder" / "assets",
         "templates_dir": project_root / "src" / "deckbuilder" / "assets" / "templates",
-        "default_pptx": project_root
-        / "src"
-        / "deckbuilder"
-        / "assets"
-        / "templates"
-        / "default.pptx",
-        "default_json": project_root
-        / "src"
-        / "deckbuilder"
-        / "assets"
-        / "templates"
-        / "default.json",
+        "default_pptx": project_root / "src" / "deckbuilder" / "assets" / "templates" / "default.pptx",
+        "default_json": project_root / "src" / "deckbuilder" / "assets" / "templates" / "default.json",
         # Legacy template env var path for backward compatibility in some tests
         "template_env_path": str(project_root / "src" / "deckbuilder" / "assets" / "templates"),
     }
@@ -308,9 +298,7 @@ def table_data_sample():
                 },
                 {
                     "text": "***In Progress***",
-                    "formatted": [
-                        {"text": "In Progress", "format": {"bold": True, "italic": True}}
-                    ],
+                    "formatted": [{"text": "In Progress", "format": {"bold": True, "italic": True}}],
                 },
                 {
                     "text": "___Medium___",
@@ -406,6 +394,28 @@ def cli_temp_env():
 
     # Clean up temp directory
     shutil.rmtree(temp_base, ignore_errors=True)
+
+
+@pytest.fixture(autouse=True)
+def reset_singleton():
+    """Reset Deckbuilder singleton before each test to ensure clean state."""
+    try:
+        from deckbuilder.engine import Deckbuilder
+
+        # Clear singleton instance
+        Deckbuilder._instance = None
+    except (ImportError, AttributeError):
+        pass
+
+    yield
+
+    # Clean up after test
+    try:
+        from deckbuilder.engine import Deckbuilder
+
+        Deckbuilder._instance = None
+    except (ImportError, AttributeError):
+        pass
 
 
 @pytest.fixture(autouse=True)
