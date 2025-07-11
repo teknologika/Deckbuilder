@@ -245,12 +245,43 @@ class TestPatternLoaderIntegration:
     
     def test_integration_with_template_metadata_loader(self):
         """Test PatternLoader integrates with TemplateMetadataLoader."""
-        # This test will FAIL until we implement integration
+        from src.deckbuilder.template_metadata import TemplateMetadataLoader
+        from pathlib import Path
         
-        # Expected behavior: TemplateMetadataLoader uses PatternLoader for 
-        # layout descriptions instead of hard-coded generation
+        # Test that TemplateMetadataLoader uses PatternLoader for layout descriptions
+        loader = TemplateMetadataLoader()
         
-        assert False, "PatternLoader integration with TemplateMetadataLoader not implemented"
+        # Test that we can get enhanced layout metadata from patterns
+        layout_meta = loader.get_enhanced_layout_metadata('Four Columns')
+        assert layout_meta is not None
+        assert layout_meta.display_name == 'Four Columns'
+        assert 'four-column' in layout_meta.description.lower()
+        assert 'content_col1' in layout_meta.placeholders
+        assert 'content_col2' in layout_meta.placeholders
+        assert 'content_col3' in layout_meta.placeholders
+        assert 'content_col4' in layout_meta.placeholders
+        
+        # Test that we can create template metadata from patterns
+        metadata = loader.create_template_metadata_from_patterns('default')
+        assert metadata.total_layouts > 0
+        assert 'Four Columns' in metadata.layouts
+        assert 'Title Slide' in metadata.layouts
+        
+        # Test that the full load_template_metadata uses patterns
+        full_metadata = loader.load_template_metadata('default')
+        assert full_metadata.total_layouts == 19  # All pattern layouts
+        assert 'Four Columns' in full_metadata.layouts
+        
+        # Test pattern example parsing
+        example = loader.get_pattern_example('Title Slide')
+        assert isinstance(example, dict)
+        assert 'title' in example
+        
+        # Test validation info
+        validation = loader.get_layout_validation_info('Four Columns')
+        assert 'required_fields' in validation
+        assert 'optional_fields' in validation
+        assert 'available_fields' in validation
     
     @pytest.mark.asyncio 
     async def test_integration_with_get_template_layouts_mcp_tool(self):
