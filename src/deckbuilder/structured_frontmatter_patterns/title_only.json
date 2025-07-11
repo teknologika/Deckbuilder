@@ -1,15 +1,17 @@
 {
-  "description": "Simple slide with only a title, useful for section breaks or discussion prompts",
-  "yaml_pattern": {
-    "layout": "Title Only",
-    "title": "str"
-  },
-  "validation": {
-    "required_fields": ["title"],
-    "optional_fields": [],
-    "field_types": {
-      "title": "string"
-    }
-  },
-  "example": "---\nlayout: Title Only\ntitle: Questions & Discussion\n---\n# Title Only\n\nThis slide contains only a title and is perfect for section breaks, discussion prompts, or interactive moments."
+    "description": "Simple slide with only a title, useful for section breaks or discussion prompts",
+    "yaml_pattern": {
+        "layout": "Title Only",
+        "title": "str"
+    },
+    "validation": {
+        "required_fields": [
+            "title"
+        ],
+        "optional_fields": [],
+        "field_types": {
+            "title": "string"
+        }
+    },
+    "example": "---\nlayout: Title Only\ntitle: Questions & Discussion\n---\n# Title Only\n\nThis slide contains only a title and is perfect for section breaks, discussion prompts, or interactive moments."
 }

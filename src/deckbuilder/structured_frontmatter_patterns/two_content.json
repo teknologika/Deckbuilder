@@ -1,5 +1,4 @@
 {
-    "structure_type": "direct_fields",
     "description": "Side-by-side layout with two content areas",
     "yaml_pattern": {
         "layout": "Two Content",
@@ -7,13 +6,12 @@
         "content_left": "str",
         "content_right": "str"
     },
-    "mapping_rules": {
-        "title": "title",
-        "content_left": "content_left",
-        "content_right": "content_right"
-    },
     "validation": {
-        "required_fields": ["title", "content_left", "content_right"]
+        "required_fields": [
+            "title",
+            "content_left",
+            "content_right"
+        ]
     },
     "example": "---\nlayout: Two Content\ntitle: \"Deckbuilder Core Features\"\ncontent_left: |\n  **Semantic** layout detection\n  *Automatic* content optimization\n  ***Smart*** placeholder mapping\ncontent_right: |\n  ___Enterprise-grade___ presentations\n  **Consistent** branding\n  *Polished* formatting\n---"
 }

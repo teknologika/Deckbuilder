@@ -1,17 +1,21 @@
 {
-  "description": "Standard slide with title and content area for general presentations, bullet points, and explanations",
-  "yaml_pattern": {
-    "layout": "Title and Content",
-    "title": "str",
-    "content": "str"
-  },
-  "validation": {
-    "required_fields": ["title"],
-    "optional_fields": ["content"],
-    "field_types": {
-      "title": "string",
-      "content": "string"
-    }
-  },
-  "example": "---\nlayout: Title and Content\ntitle: Key Benefits\ncontent: |\n  Our solution provides several key advantages:\n  \n  • **Increased Efficiency**: Streamlined workflows reduce processing time by 40%\n  • **Cost Savings**: Automation reduces manual labor costs significantly\n  • **Improved Accuracy**: Automated validation eliminates human error\n  • **Scalability**: System grows with your business needs\n  \n  Implementation can begin immediately with minimal disruption to existing operations.\n---"
+    "description": "Standard slide with title and content area for general presentations, bullet points, and explanations",
+    "yaml_pattern": {
+        "layout": "Title and Content",
+        "title": "str",
+        "content": "str"
+    },
+    "validation": {
+        "required_fields": [
+            "title"
+        ],
+        "optional_fields": [
+            "content"
+        ],
+        "field_types": {
+            "title": "string",
+            "content": "string"
+        }
+    },
+    "example": "---\nlayout: Title and Content\ntitle: Key Benefits\ncontent: |\n  Our solution provides several key advantages:\n  \n  • **Increased Efficiency**: Streamlined workflows reduce processing time by 40%\n  • **Cost Savings**: Automation reduces manual labor costs significantly\n  • **Improved Accuracy**: Automated validation eliminates human error\n  • **Scalability**: System grows with your business needs\n  \n  Implementation can begin immediately with minimal disruption to existing operations.\n---"
 }

@@ -1,5 +1,4 @@
 {
-    "structure_type": "direct_fields",
     "description": "Three-column layout with content only (no titles)",
     "yaml_pattern": {
         "layout": "Three Columns",
@@ -8,14 +7,13 @@
         "content_col2": "str",
         "content_col3": "str"
     },
-    "mapping_rules": {
-        "title": "title",
-        "content_col1": "content_col1",
-        "content_col2": "content_col2",
-        "content_col3": "content_col3"
-    },
     "validation": {
-        "required_fields": ["title", "content_col1", "content_col2", "content_col3"]
+        "required_fields": [
+            "title",
+            "content_col1",
+            "content_col2",
+            "content_col3"
+        ]
     },
     "example": "---\nlayout: Three Columns\ntitle: \"Three Column Layout Without Titles Test\"\ncontent_col1: \"**Fast processing** with optimized algorithms and *sub-millisecond* response times\"\ncontent_col2: \"***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance\"\ncontent_col3: \"*Intuitive* interface with **minimal** learning curve and comprehensive docs\"\n---"
 }

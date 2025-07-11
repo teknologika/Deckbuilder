@@ -1,5 +1,4 @@
 {
-    "structure_type": "direct_fields",
     "description": "Three-column layout with individual titles and content",
     "yaml_pattern": {
         "layout": "Three Columns With Titles",
@@ -11,17 +10,16 @@
         "title_col3": "str",
         "content_col3": "str"
     },
-    "mapping_rules": {
-        "title": "title",
-        "title_col1": "title_col1",
-        "content_col1": "content_col1",
-        "title_col2": "title_col2",
-        "content_col2": "content_col2",
-        "title_col3": "title_col3",
-        "content_col3": "content_col3"
-    },
     "validation": {
-        "required_fields": ["title", "title_col1", "content_col1", "title_col2", "content_col2", "title_col3", "content_col3"]
+        "required_fields": [
+            "title",
+            "title_col1",
+            "content_col1",
+            "title_col2",
+            "content_col2",
+            "title_col3",
+            "content_col3"
+        ]
     },
     "example": "---\nlayout: Three Columns With Titles\ntitle: \"Three Column Layout With Titles Test\"\ntitle_col1: \"Performance\"\ncontent_col1: \"**Fast processing** with optimized algorithms\"\ntitle_col2: \"Security\"\ncontent_col2: \"***Enterprise-grade*** encryption with ___SOC2___ compliance\"\ntitle_col3: \"Usability\"\ncontent_col3: \"*Intuitive* interface with **minimal** learning curve\"\n---"
 }

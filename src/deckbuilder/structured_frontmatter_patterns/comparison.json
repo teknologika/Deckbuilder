@@ -1,5 +1,4 @@
 {
-    "structure_type": "direct_fields",
     "description": "Side-by-side comparison layout for contrasting two options",
     "yaml_pattern": {
         "layout": "Comparison",
@@ -8,13 +7,6 @@
         "content_left": "str",
         "title_right": "str",
         "content_right": "str"
-    },
-    "mapping_rules": {
-        "title": "title",
-        "title_left": "title_left",
-        "content_left": "content_left",
-        "title_right": "title_right",
-        "content_right": "content_right"
     },
     "validation": {
         "required_fields": [

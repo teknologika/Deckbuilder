@@ -1,5 +1,4 @@
 {
-    "structure_type": "direct_fields",
     "description": "Media slide with image placeholder and caption text",
     "yaml_pattern": {
         "layout": "Picture with Caption",
@@ -7,13 +6,12 @@
         "image": "str",
         "text_caption": "str"
     },
-    "mapping_rules": {
-        "title": "title",
-        "image": "image",
-        "text_caption": "text_caption"
-    },
     "validation": {
-        "required_fields": ["title", "image", "text_caption"]
+        "required_fields": [
+            "title",
+            "image",
+            "text_caption"
+        ]
     },
     "example": "---\nlayout: Picture with Caption\ntitle: \"Picture Layout **Test**\"\nimage: \"placeholder_image.jpg\"\ntext_caption: \"Picture placeholder with ***formatted*** captions\"\n---"
 }

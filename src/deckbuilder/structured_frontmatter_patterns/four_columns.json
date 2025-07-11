@@ -1,5 +1,4 @@
 {
-    "structure_type": "direct_fields",
     "description": "Four-column layout with content only (no titles)",
     "yaml_pattern": {
         "layout": "Four Columns",
@@ -9,15 +8,14 @@
         "content_col3": "str",
         "content_col4": "str"
     },
-    "mapping_rules": {
-        "title": "title",
-        "content_col1": "content_col1",
-        "content_col2": "content_col2",
-        "content_col3": "content_col3",
-        "content_col4": "content_col4"
-    },
     "validation": {
-        "required_fields": ["title", "content_col1", "content_col2", "content_col3", "content_col4"]
+        "required_fields": [
+            "title",
+            "content_col1",
+            "content_col2",
+            "content_col3",
+            "content_col4"
+        ]
     },
     "example": "---\nlayout: Four Columns\ntitle: \"Four Column Layout Without Titles Test\"\ncontent_col1: \"**Fast processing** with optimized algorithms and *sub-millisecond* response times\"\ncontent_col2: \"***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance\"\ncontent_col3: \"*Intuitive* interface with **minimal** learning curve and comprehensive docs\"\ncontent_col4: \"___Transparent___ pricing with **flexible** plans and *proven* ROI\"\n---"
 }

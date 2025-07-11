@@ -1,12 +1,12 @@
 {
-  "description": "Blank slide with no content placeholders for custom layouts or creative presentations",
-  "yaml_pattern": {
-    "layout": "Blank"
-  },
-  "validation": {
-    "required_fields": [],
-    "optional_fields": [],
-    "field_types": {}
-  },
-  "example": "---\nlayout: Blank\n---\n# Blank Slide\n\nThis is a completely blank slide with no predefined content placeholders. Use it for custom layouts, images, or creative presentations."
+    "description": "Blank slide with no content placeholders for custom layouts or creative presentations",
+    "yaml_pattern": {
+        "layout": "Blank"
+    },
+    "validation": {
+        "required_fields": [],
+        "optional_fields": [],
+        "field_types": {}
+    },
+    "example": "---\nlayout: Blank\n---\n# Blank Slide\n\nThis is a completely blank slide with no predefined content placeholders. Use it for custom layouts, images, or creative presentations."
 }

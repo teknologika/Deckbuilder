@@ -1,17 +1,15 @@
 {
-    "structure_type": "direct_fields",
     "description": "Title and content with vertical text orientation",
     "yaml_pattern": {
         "layout": "Title and Vertical Text",
         "title": "str",
         "content": "str"
     },
-    "mapping_rules": {
-        "title": "title",
-        "content": "content"
-    },
     "validation": {
-        "required_fields": ["title", "content"]
+        "required_fields": [
+            "title",
+            "content"
+        ]
     },
     "example": "---\nlayout: Title and Vertical Text\ntitle: \"**Vertical Text** Layout Test\"\ncontent: \"This layout demonstrates vertical text capabilities with **formatted** content and *enhanced* presentation features for ___specialized___ content.\"\n---"
 }

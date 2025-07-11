@@ -1,5 +1,4 @@
 {
-    "structure_type": "direct_fields",
     "description": "Six-item agenda layout with numbered items",
     "yaml_pattern": {
         "layout": "Agenda, 6 Textboxes",
@@ -11,17 +10,16 @@
         "content_item5": "str",
         "content_item6": "str"
     },
-    "mapping_rules": {
-        "title": "title",
-        "content_item1": "content_item1",
-        "content_item2": "content_item2",
-        "content_item3": "content_item3",
-        "content_item4": "content_item4",
-        "content_item5": "content_item5",
-        "content_item6": "content_item6"
-    },
     "validation": {
-        "required_fields": ["title", "content_item1", "content_item2", "content_item3", "content_item4", "content_item5", "content_item6"]
+        "required_fields": [
+            "title",
+            "content_item1",
+            "content_item2",
+            "content_item3",
+            "content_item4",
+            "content_item5",
+            "content_item6"
+        ]
     },
     "example": "---\nlayout: Agenda, 6 Textboxes\ntitle: \"**Agenda** Layout Test\"\ncontent_item1: \"01 - **Opening** remarks and introductions\"\ncontent_item2: \"02 - *Market* analysis and trends\"\ncontent_item3: \"03 - ***Product*** roadmap updates\"\ncontent_item4: \"04 - ___Financial___ performance review\"\ncontent_item5: \"05 - **Strategic** initiatives overview\"\ncontent_item6: \"06 - *Q&A* session and next steps\"\n---"
 }

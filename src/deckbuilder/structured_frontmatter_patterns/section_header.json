@@ -1,17 +1,21 @@
 {
-  "description": "Section header slide for introducing new sections or topics in your presentation",
-  "yaml_pattern": {
-    "layout": "Section Header",
-    "title": "str",
-    "text": "str"
-  },
-  "validation": {
-    "required_fields": ["title"],
-    "optional_fields": ["text"],
-    "field_types": {
-      "title": "string",
-      "text": "string"
-    }
-  },
-  "example": "---\nlayout: Section Header\ntitle: Financial Analysis\ntext: Q4 2024 Performance Review\n---\n# Section Header\n\nThis slide introduces a new section of your presentation with a clear title and optional descriptive text."
+    "description": "Section header slide for introducing new sections or topics in your presentation",
+    "yaml_pattern": {
+        "layout": "Section Header",
+        "title": "str",
+        "text": "str"
+    },
+    "validation": {
+        "required_fields": [
+            "title"
+        ],
+        "optional_fields": [
+            "text"
+        ],
+        "field_types": {
+            "title": "string",
+            "text": "string"
+        }
+    },
+    "example": "---\nlayout: Section Header\ntitle: Financial Analysis\ntext: Q4 2024 Performance Review\n---\n# Section Header\n\nThis slide introduces a new section of your presentation with a clear title and optional descriptive text."
 }

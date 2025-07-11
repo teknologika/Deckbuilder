@@ -1,5 +1,4 @@
 {
-    "structure_type": "direct_fields",
     "description": "Six-item list layout with numbers, titles, and content",
     "yaml_pattern": {
         "layout": "Title and 6-item Lists",
@@ -16,21 +15,6 @@
         "Content5": "str",
         "Title6": "str",
         "Content6": "str"
-    },
-    "mapping_rules": {
-        "slide_title": "slide_title",
-        "Title1": "Title1",
-        "Content1": "Content1",
-        "Title2": "Title2",
-        "Content2": "Content2",
-        "Title3": "Title3",
-        "Content3": "Content3",
-        "Title4": "Title4",
-        "Content4": "Content4",
-        "Title5": "Title5",
-        "Content5": "Content5",
-        "Title6": "Title6",
-        "Content6": "Content6"
     },
     "validation": {
         "required_fields": [

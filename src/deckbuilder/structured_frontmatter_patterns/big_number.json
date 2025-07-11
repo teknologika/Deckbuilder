@@ -1,17 +1,21 @@
 {
-  "description": "Big number slide for highlighting key statistics, metrics, or KPIs with visual impact",
-  "yaml_pattern": {
-    "layout": "Big Number",
-    "title": "str",
-    "content": "str"
-  },
-  "validation": {
-    "required_fields": ["title"],
-    "optional_fields": ["content"],
-    "field_types": {
-      "title": "string",
-      "content": "string"
-    }
-  },
-  "example": "---\nlayout: Big Number\ntitle: Revenue Growth\ncontent: 147%\n---\n# Big Number\n\nThis slide emphasizes important metrics with large, visually impactful numbers. Perfect for KPIs, statistics, or key achievements."
+    "description": "Big number slide for highlighting key statistics, metrics, or KPIs with visual impact",
+    "yaml_pattern": {
+        "layout": "Big Number",
+        "title": "str",
+        "content": "str"
+    },
+    "validation": {
+        "required_fields": [
+            "title"
+        ],
+        "optional_fields": [
+            "content"
+        ],
+        "field_types": {
+            "title": "string",
+            "content": "string"
+        }
+    },
+    "example": "---\nlayout: Big Number\ntitle: Revenue Growth\ncontent: 147%\n---\n# Big Number\n\nThis slide emphasizes important metrics with large, visually impactful numbers. Perfect for KPIs, statistics, or key achievements."
 }
