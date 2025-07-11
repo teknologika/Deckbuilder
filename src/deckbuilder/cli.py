@@ -611,6 +611,251 @@ class DeckbuilderCLI:
             print(f"❌ Error processing presentation: {e}")
             return False
 
+    # Pattern Management Methods
+
+    def list_patterns(self, source: str = "all", verbose: bool = False):
+        """List all available patterns with optional filtering"""
+        try:
+            from deckbuilder.pattern_loader import PatternLoader
+        except ImportError:
+            from src.deckbuilder.pattern_loader import PatternLoader
+
+        loader = PatternLoader(self.path_manager.get_template_folder())
+        patterns = loader.load_patterns()
+
+        if not patterns:
+            print("📋 No patterns found")
+            return
+
+        print(f"📋 Available Patterns ({len(patterns)} total)")
+        print()
+
+        for layout_name, pattern_data in sorted(patterns.items()):
+            # Determine source
+            pattern_source = (
+                "user"
+                if loader.user_patterns_dir.exists() and any(p.name.replace(".json", "") == layout_name.lower().replace(" ", "_") for p in loader.user_patterns_dir.glob("*.json"))
+                else "builtin"
+            )
+
+            # Apply source filter
+            if source != "all" and source != pattern_source:
+                continue
+
+            source_icon = "👤" if pattern_source == "user" else "📦"
+            print(f"{source_icon} {layout_name}")
+
+            if verbose:
+                description = pattern_data.get("description", "No description")
+                validation = pattern_data.get("validation", {})
+                required_fields = validation.get("required_fields", [])
+                optional_fields = validation.get("optional_fields", [])
+
+                print(f"   Description: {description}")
+                print(f"   Required fields: {', '.join(required_fields) if required_fields else 'None'}")
+                print(f"   Optional fields: {', '.join(optional_fields) if optional_fields else 'None'}")
+                print()
+
+    def validate_patterns(self, pattern_name: str = None, show_fixes: bool = False):
+        """Validate pattern files and show any errors"""
+        try:
+            from deckbuilder.pattern_loader import PatternLoader
+        except ImportError:
+            from src.deckbuilder.pattern_loader import PatternLoader
+
+        loader = PatternLoader(self.path_manager.get_template_folder())
+
+        if pattern_name:
+            # Validate specific pattern
+            patterns = loader.load_patterns()
+            if pattern_name not in patterns:
+                print(f"❌ Pattern '{pattern_name}' not found")
+                return False
+
+            pattern_data = patterns[pattern_name]
+            errors = loader.validator.validate_pattern(pattern_data)
+
+            if errors:
+                print(f"❌ Pattern '{pattern_name}' validation failed:")
+                for error in errors:
+                    print(f"   • {error}")
+                if show_fixes:
+                    print("\n💡 Suggestions:")
+                    print("   • Check that all required fields are present")
+                    print("   • Verify YAML syntax in examples")
+                    print("   • Ensure layout name matches yaml_pattern.layout")
+            else:
+                print(f"✅ Pattern '{pattern_name}' is valid")
+
+        else:
+            # Validate all patterns
+            all_valid = True
+            validation_count = 0
+
+            # Check built-in patterns
+            if loader.builtin_patterns_dir.exists():
+                for pattern_file in loader.builtin_patterns_dir.glob("*.json"):
+                    pattern_data = loader._load_pattern_file(pattern_file)
+                    validation_count += 1
+                    if pattern_data is None:
+                        all_valid = False
+                        print(f"❌ Built-in pattern {pattern_file.name} failed validation")
+
+            # Check user patterns
+            if loader.user_patterns_dir.exists():
+                for pattern_file in loader.user_patterns_dir.glob("*.json"):
+                    pattern_data = loader._load_pattern_file(pattern_file)
+                    validation_count += 1
+                    if pattern_data is None:
+                        all_valid = False
+                        print(f"❌ User pattern {pattern_file.name} failed validation")
+
+            if all_valid:
+                print(f"✅ All {validation_count} patterns are valid")
+            else:
+                print("❌ Some patterns failed validation")
+                if show_fixes:
+                    print("\n💡 Run with --fix flag for specific suggestions")
+
+        return all_valid
+
+    def show_pattern_info(self, pattern_name: str, show_example: bool = False):
+        """Show detailed information about a specific pattern"""
+        try:
+            from deckbuilder.pattern_loader import PatternLoader
+        except ImportError:
+            from src.deckbuilder.pattern_loader import PatternLoader
+
+        loader = PatternLoader(self.path_manager.get_template_folder())
+        patterns = loader.load_patterns()
+
+        if pattern_name not in patterns:
+            print(f"❌ Pattern '{pattern_name}' not found")
+            available = ", ".join(sorted(patterns.keys()))
+            print(f"💡 Available patterns: {available}")
+            return
+
+        pattern_data = patterns[pattern_name]
+
+        print(f"📋 Pattern: {pattern_name}")
+        print()
+        print(f"Description: {pattern_data.get('description', 'No description')}")
+        print()
+
+        # Show validation info
+        validation = pattern_data.get("validation", {})
+        required_fields = validation.get("required_fields", [])
+        optional_fields = validation.get("optional_fields", [])
+
+        print("Required fields:")
+        for field in required_fields:
+            print(f"  • {field}")
+
+        print("\nOptional fields:")
+        for field in optional_fields:
+            print(f"  • {field}")
+
+        if show_example:
+            example = pattern_data.get("example", "")
+            if example:
+                print("\nExample frontmatter:")
+                print("```yaml")
+                print(example)
+                print("```")
+            else:
+                print("\nNo example available")
+
+    def copy_patterns(self, copy_all: bool = False, pattern_name: str = None, overwrite: bool = False, backup: bool = False):
+        """Copy built-in patterns to user override directory"""
+        try:
+            from deckbuilder.pattern_loader import PatternLoader
+            import shutil
+            from datetime import datetime
+        except ImportError:
+            from src.deckbuilder.pattern_loader import PatternLoader
+            import shutil
+            from datetime import datetime
+
+        loader = PatternLoader(self.path_manager.get_template_folder())
+
+        # Create user patterns directory if it doesn't exist
+        loader.user_patterns_dir.mkdir(parents=True, exist_ok=True)
+
+        if not loader.builtin_patterns_dir.exists():
+            print("❌ Built-in patterns directory not found")
+            return False
+
+        if not copy_all and not pattern_name:
+            print("❌ Must specify either --all or --pattern <name>")
+            return False
+
+        copied_count = 0
+
+        if copy_all:
+            print("📋 Copying all built-in patterns to user override directory...")
+            pattern_files = list(loader.builtin_patterns_dir.glob("*.json"))
+        else:
+            # Find specific pattern file
+            pattern_files = []
+            for pattern_file in loader.builtin_patterns_dir.glob("*.json"):
+                try:
+                    pattern_data = loader._load_pattern_file(pattern_file)
+                    if pattern_data and pattern_data.get("yaml_pattern", {}).get("layout") == pattern_name:
+                        pattern_files = [pattern_file]
+                        break
+                except Exception:
+                    continue
+
+            if not pattern_files:
+                print(f"❌ Pattern '{pattern_name}' not found in built-in patterns")
+                return False
+
+        for pattern_file in pattern_files:
+            try:
+                # Load pattern to get layout name
+                pattern_data = loader._load_pattern_file(pattern_file)
+                if not pattern_data:
+                    print(f"⚠️ Skipping invalid pattern file: {pattern_file.name}")
+                    continue
+
+                layout_name = pattern_data.get("yaml_pattern", {}).get("layout")
+                if not layout_name:
+                    print(f"⚠️ Skipping pattern file without layout name: {pattern_file.name}")
+                    continue
+
+                # Create target filename
+                target_filename = layout_name.lower().replace(" ", "_") + ".json"
+                target_path = loader.user_patterns_dir / target_filename
+
+                # Check if file exists
+                if target_path.exists() and not overwrite:
+                    print(f"⚠️ User pattern '{layout_name}' already exists (use --overwrite to replace)")
+                    continue
+
+                # Create backup if requested
+                if backup and target_path.exists():
+                    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                    backup_path = target_path.with_suffix(f".backup_{timestamp}.json")
+                    shutil.copy2(target_path, backup_path)
+                    print(f"💾 Created backup: {backup_path.name}")
+
+                # Copy the pattern file
+                shutil.copy2(pattern_file, target_path)
+                print(f"✅ Copied: {layout_name} → {target_filename}")
+                copied_count += 1
+
+            except Exception as e:
+                print(f"❌ Error copying {pattern_file.name}: {e}")
+
+        if copied_count > 0:
+            print(f"\n✅ Successfully copied {copied_count} pattern(s)")
+            print(f"📁 Location: {loader.user_patterns_dir}")
+            print("\n💡 You can now customize these patterns to override built-in behavior")
+        else:
+            print("❌ No patterns were copied")
+
+        return copied_count > 0
+
     def show_completion_help(self):
         """Show tab completion installation instructions"""
         print("🔧 Tab Completion Setup")
@@ -715,6 +960,44 @@ def create_parser():
     list_parser = template_subs.add_parser("list", help="List all available templates", add_help=False)
     list_parser.add_argument("-h", "--help", action="store_true", help="Show help for list command")
 
+    # Pattern management commands (grouped)
+    pattern_parser = subparsers.add_parser("pattern", help="Manage structured frontmatter patterns", add_help=False)
+    pattern_parser.add_argument("-h", "--help", action="store_true", help="Show help for pattern commands")
+    pattern_subs = pattern_parser.add_subparsers(dest="pattern_command", help="Pattern subcommands", metavar="<subcommand>")
+
+    # Pattern list
+    pattern_list_parser = pattern_subs.add_parser("list", help="List all available patterns", add_help=False)
+    pattern_list_parser.add_argument("--source", choices=["all", "builtin", "user"], default="all", help="Pattern source filter")
+    pattern_list_parser.add_argument("--verbose", "-v", action="store_true", help="Show detailed pattern information")
+    pattern_list_parser.add_argument("-h", "--help", action="store_true", help="Show help for pattern list command")
+
+    # Pattern validate
+    pattern_validate_parser = pattern_subs.add_parser("validate", help="Validate pattern files and schema", add_help=False)
+    pattern_validate_parser.add_argument("pattern", nargs="?", help="Specific pattern name to validate (default: all)")
+    pattern_validate_parser.add_argument("--fix", action="store_true", help="Show suggestions for fixing validation errors")
+    pattern_validate_parser.add_argument("-h", "--help", action="store_true", help="Show help for pattern validate command")
+
+    # Pattern info
+    pattern_info_parser = pattern_subs.add_parser("info", help="Show detailed information about a pattern", add_help=False)
+    pattern_info_parser.add_argument("pattern", help="Pattern name to show information for")
+    pattern_info_parser.add_argument("--example", action="store_true", help="Show example frontmatter")
+    pattern_info_parser.add_argument("-h", "--help", action="store_true", help="Show help for pattern info command")
+
+    # Pattern create
+    pattern_create_parser = pattern_subs.add_parser("create", help="Create a new user pattern", add_help=False)
+    pattern_create_parser.add_argument("layout_name", help="Layout name for the new pattern")
+    pattern_create_parser.add_argument("--template", help="Template to base the pattern on")
+    pattern_create_parser.add_argument("--interactive", "-i", action="store_true", help="Interactive pattern creation")
+    pattern_create_parser.add_argument("-h", "--help", action="store_true", help="Show help for pattern create command")
+
+    # Pattern copy
+    pattern_copy_parser = pattern_subs.add_parser("copy", help="Copy built-in patterns to user override directory", add_help=False)
+    pattern_copy_parser.add_argument("--all", action="store_true", help="Copy all built-in patterns")
+    pattern_copy_parser.add_argument("--pattern", help="Copy specific pattern by name")
+    pattern_copy_parser.add_argument("--overwrite", action="store_true", help="Overwrite existing user patterns")
+    pattern_copy_parser.add_argument("--backup", action="store_true", help="Create backup of existing patterns")
+    pattern_copy_parser.add_argument("-h", "--help", action="store_true", help="Show help for pattern copy command")
+
     # Image processing commands (grouped)
     image_parser = subparsers.add_parser("image", help="Process and generate images with PlaceKitten", add_help=False)
     image_parser.add_argument("-h", "--help", action="store_true", help="Show help for image commands")
@@ -796,6 +1079,7 @@ Deckbuilder CLI - Intelligent PowerPoint presentation generation © Bruce McLeod
 Commands:
   create                    Generate presentations from markdown or JSON
   template                  Manage PowerPoint templates and mappings
+  pattern                   Manage structured frontmatter patterns
   image                     Process and generate images with PlaceKitten
   config                    Configuration and system information
   remap                     Update language and font settings in existing PowerPoint files
@@ -845,6 +1129,40 @@ Examples:
 
 For detailed help on a subcommand:
   deckbuilder help template <subcommand>
+"""
+    )
+
+
+def show_pattern_help():
+    """Show pattern command help"""
+    print(
+        """Pattern management commands:
+
+Usage: deckbuilder pattern <subcommand> [options]
+
+Subcommands:
+  list                    List all available patterns (builtin + user)
+  validate [pattern]      Validate pattern files and schema
+  info <pattern>          Show detailed pattern information
+  copy --all|--pattern    Copy built-in patterns to user override directory
+  create <layout>         Create new user pattern (planned)
+
+Options:
+  --source all|builtin|user  Filter patterns by source (for list)
+  --verbose, -v             Show detailed information
+  --example                 Show example frontmatter (for info)
+  --overwrite              Overwrite existing patterns (for copy)
+  --backup                 Create backup before overwrite (for copy)
+  --fix                    Show fix suggestions (for validate)
+
+Examples:
+  deckbuilder pattern list --verbose
+  deckbuilder pattern copy --all --backup
+  deckbuilder pattern info "Four Columns" --example
+  deckbuilder pattern validate "Two Content" --fix
+
+For detailed help on a subcommand:
+  deckbuilder help pattern <subcommand>
 """
     )
 
@@ -921,6 +1239,28 @@ def handle_help_command(args):
                 print(f"Unknown template subcommand: {args.help_subcommand}")
         else:
             show_template_help()
+    elif args.help_command == "pattern":
+        if hasattr(args, "help_subcommand") and args.help_subcommand:
+            # Show specific pattern subcommand help
+            if args.help_subcommand == "list":
+                print("List all available patterns")
+                print("Usage: deckbuilder pattern list [--source all|builtin|user] [--verbose]")
+            elif args.help_subcommand == "validate":
+                print("Validate pattern files and schema")
+                print("Usage: deckbuilder pattern validate [pattern_name] [--fix]")
+            elif args.help_subcommand == "info":
+                print("Show detailed information about a pattern")
+                print("Usage: deckbuilder pattern info <pattern_name> [--example]")
+            elif args.help_subcommand == "copy":
+                print("Copy built-in patterns to user override directory")
+                print("Usage: deckbuilder pattern copy --all|--pattern <name> [--overwrite] [--backup]")
+            elif args.help_subcommand == "create":
+                print("Create a new user pattern")
+                print("Usage: deckbuilder pattern create <layout_name> [--template template] [--interactive]")
+            else:
+                print(f"Unknown pattern subcommand: {args.help_subcommand}")
+        else:
+            show_pattern_help()
     elif args.help_command == "image":
         if hasattr(args, "help_subcommand") and args.help_subcommand:
             if args.help_subcommand == "generate":
@@ -1025,6 +1365,57 @@ def handle_template_command(cli, args):
     else:
         print(f"Unknown template subcommand: {args.template_command}")
         show_template_help()
+
+
+def handle_pattern_command(cli, args):
+    """Handle pattern subcommands"""
+    if hasattr(args, "help") and args.help:
+        show_pattern_help()
+        return
+
+    if not hasattr(args, "pattern_command") or not args.pattern_command:
+        show_pattern_help()
+        return
+
+    if args.pattern_command == "list":
+        if hasattr(args, "help") and args.help:
+            print("List all available patterns")
+            print("Usage: deckbuilder pattern list [--source all|builtin|user] [--verbose]")
+            return
+        cli.list_patterns(args.source, args.verbose)
+
+    elif args.pattern_command == "validate":
+        if hasattr(args, "help") and args.help:
+            print("Validate pattern files and schema")
+            print("Usage: deckbuilder pattern validate [pattern_name] [--fix]")
+            return
+        cli.validate_patterns(args.pattern, args.fix)
+
+    elif args.pattern_command == "info":
+        if hasattr(args, "help") and args.help:
+            print("Show detailed information about a pattern")
+            print("Usage: deckbuilder pattern info <pattern_name> [--example]")
+            return
+        cli.show_pattern_info(args.pattern, args.example)
+
+    elif args.pattern_command == "copy":
+        if hasattr(args, "help") and args.help:
+            print("Copy built-in patterns to user override directory")
+            print("Usage: deckbuilder pattern copy --all|--pattern <name> [--overwrite] [--backup]")
+            return
+        cli.copy_patterns(args.all, args.pattern, args.overwrite, args.backup)
+
+    elif args.pattern_command == "create":
+        if hasattr(args, "help") and args.help:
+            print("Create a new user pattern")
+            print("Usage: deckbuilder pattern create <layout_name> [--template template_name] [--interactive]")
+            return
+        print("❌ Pattern creation not yet implemented")
+        print("💡 Use 'deckbuilder pattern copy' to copy built-in patterns for customization")
+
+    else:
+        print(f"Unknown pattern subcommand: {args.pattern_command}")
+        show_pattern_help()
 
 
 def handle_image_command(cli, args):
@@ -1141,6 +1532,8 @@ def main():
             cli.create_presentation(input_file=args.input_file, output_name=args.output, template=args.template)
         elif args.command == "template":
             handle_template_command(cli, args)
+        elif args.command == "pattern":
+            handle_pattern_command(cli, args)
         elif args.command == "image":
             handle_image_command(cli, args)
         elif args.command == "config":
