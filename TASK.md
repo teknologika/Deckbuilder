@@ -6,10 +6,46 @@ Tasks are organized by phase and component.
 
 ---
 
-## 🚧 IN PROGRESS: TDD Template Discovery for MCP Server (GitHub Issue #38)
+## 🚧 IN PROGRESS: User-Supplied Pattern Support (GitHub Issue #39)
 
-### **TDD Implementation: Enhanced Template Discovery for MCP Server** - 🚧 IN PROGRESS 2025-07-10
-**Status**: 🚧 Sprint 1 COMPLETED, Starting Sprint 2
+### **User-Supplied Pattern Support for Dynamic Layout Intelligence** - 🚧 STARTING 2025-07-10
+**Status**: 🚧 Foundation Complete, Starting Pattern Implementation
+**GitHub Issue**: https://github.com/teknologika/Deckbuilder/issues/39
+
+**Project Goal**: Eliminate hard-coding in MCP template discovery tools and enable user customization via dynamic pattern loading system.
+
+### **Problem to Solve**
+- **Hard-coding issue**: MCP tools generate layout descriptions/examples instead of using existing pattern files
+- **User limitation**: Cannot customize layouts without modifying core codebase
+- **Technical debt**: Duplication between structured frontmatter patterns and hard-coded logic
+
+### **Solution Overview**
+- **Pattern discovery system**: Load from built-in + user patterns directories
+- **User patterns location**: `{DECK_TEMPLATE_FOLDER}/patterns/` subfolder
+- **Priority system**: User patterns override built-in patterns by layout name
+- **Layout name mapping**: PowerPoint names → snake_case pattern files
+- **Backward compatibility**: Works without user patterns folder
+
+### **Implementation Tasks**
+1. **📋 Create PatternLoader class** - Multi-directory pattern discovery and validation
+2. **📋 Add layout name mapping** - PowerPoint layout names → pattern file names  
+3. **📋 Update get_template_layouts()** - Use pattern data instead of hard-coded generation
+4. **📋 Remove hard-coded functions** - Delete `_generate_layout_example()` etc.
+5. **📋 Write comprehensive TDD tests** - Pattern loading, override behavior, validation
+6. **📋 Add error handling** - Graceful fallback for missing/invalid patterns
+
+### **Success Criteria**
+- ✅ Zero hard-coded layout generation in MCP tools
+- ✅ User patterns in `{template_folder}/patterns/` override built-in patterns
+- ✅ Layout name mapping system handles all PowerPoint → pattern file conversions
+- ✅ Comprehensive TDD test coverage for pattern loading functionality
+- ✅ Graceful error handling for invalid/missing pattern files
+- ✅ Backward compatibility maintained (works without user patterns)
+
+## ✅ COMPLETED: TDD Template Discovery for MCP Server (GitHub Issue #38)
+
+### **TDD Implementation: Enhanced Template Discovery for MCP Server** - ✅ COMPLETED 2025-07-10
+**Status**: ✅ All Sprints Completed
 **GitHub Issue**: https://github.com/teknologika/Deckbuilder/issues/38
 
 **Project Goal**: Implement comprehensive template discovery tools for the MCP server using Test-Driven Development, optimizing for LLM token efficiency and user experience.

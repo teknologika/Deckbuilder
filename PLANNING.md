@@ -33,12 +33,20 @@ This is a comprehensive Python library and MCP (Model Context Protocol) Server f
 - Built `list_available_templates()` MCP tool for 50-token efficient discovery
 - Successfully completed Red → Green TDD transition for core functionality
 
-**Sprint 3 🚧 MVP APPROACH**:
-- Implement `get_template_layouts()` MCP tool for 20-token efficient layout details (markdown-only)
-- Focus on minimal viable implementation - smart recommendations parked for Phase 2
-- Complete core template discovery workflow foundation
+**Sprint 3 ✅ COMPLETED**:
+- Implemented `get_template_layouts()` MCP tool for 20-token efficient layout details
+- Completed core template discovery workflow foundation with comprehensive functionality
+- Successfully achieved all TDD goals for template discovery MVP
 
 **GitHub Issue**: https://github.com/teknologika/Deckbuilder/issues/38
+
+**Current Sprint 🚧 USER-SUPPLIED PATTERN SUPPORT**:
+- Eliminate hard-coding in MCP tools by using structured frontmatter patterns dynamically
+- Add user customization support via `{DECK_TEMPLATE_FOLDER}/patterns/` subfolder
+- Implement pattern discovery system with built-in + user pattern loading
+- Create comprehensive TDD test coverage for pattern functionality
+
+**GitHub Issue**: https://github.com/teknologika/Deckbuilder/issues/39
 
 ## System Architecture
 
@@ -87,7 +95,7 @@ This is a comprehensive Python library and MCP (Model Context Protocol) Server f
 ### Template Discovery Tools Status
 ```
 ✅ list_available_templates()         # 50 tokens → comprehensive metadata (COMPLETED)
-🚧 get_template_layouts()             # 20 tokens → detailed layout info (SPRINT 3 MVP)
+✅ get_template_layouts()             # 20 tokens → detailed layout info (COMPLETED)
 📋 recommend_template_for_content()   # variable → smart recommendations (PARKED - PHASE 2)
 📋 validate_presentation_file()       # 25 tokens → early error detection (FUTURE)
 ```
