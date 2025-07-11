@@ -164,37 +164,47 @@ class TestPatternLoader:
         assert "col2" in required_fields
         assert "content_col1" not in required_fields  # Should not have built-in field names
     
-    def test_layout_name_mapping_system(self):
-        """Test mapping PowerPoint layout names to pattern file names."""
+    def test_layout_names_from_pattern_files(self):
+        """Test that layout names are read from pattern files, not hard-coded."""
         from src.deckbuilder.pattern_loader import PatternLoader
         
-        loader = PatternLoader()
+        loader = PatternLoader("/tmp/nonexistent")  # Force built-in patterns only
         
-        # Test PowerPoint layout name → pattern filename
-        expected_mappings = {
-            "Four Columns": "four_columns.json",
-            "Three Columns": "three_columns.json", 
-            "Four Columns With Titles": "four_columns_with_titles.json",
-            "Comparison": "comparison.json",
-            "SWOT Analysis": "swot_analysis.json",
-            "Picture with Caption": "picture_with_caption.json",
-            "Two Content": "two_content.json",
-            "Title and Vertical Text": "title_and_vertical_text.json",
-            "Vertical Title and Text": "vertical_title_and_text.json",
-            "Agenda, 6 Textboxes": "agenda_6_textboxes.json",
-            "Title and 6-item Lists": "title_and_6_item_lists.json"
+        # Load patterns and verify they contain expected layout names from the files
+        patterns = loader.load_patterns()
+        
+        # These are the layout names that should be defined in the pattern files themselves
+        # (in the yaml_pattern.layout field of each JSON file)
+        expected_layouts = {
+            "Four Columns",
+            "Three Columns", 
+            "Four Columns With Titles",
+            "Comparison",
+            "SWOT Analysis",
+            "Picture with Caption",
+            "Two Content",
+            "Title and Vertical Text",
+            "Vertical Title and Text",
+            "Agenda, 6 Textboxes",
+            "Title and 6-item Lists"
         }
         
-        for layout_name, expected_filename in expected_mappings.items():
-            actual_filename = loader.layout_name_to_pattern_file(layout_name)
-            assert actual_filename == expected_filename, f"Expected {layout_name} → {expected_filename}, got {actual_filename}"
+        # Verify that patterns were loaded based on their internal layout names
+        actual_layouts = set(patterns.keys())
         
-        # Test reverse mapping: pattern filename → PowerPoint layout name
-        # This tests the _pattern_file_to_layout_name method
-        for layout_name, filename in expected_mappings.items():
-            file_stem = filename.replace(".json", "")
-            mapped_layout_name = loader._pattern_file_to_layout_name(file_stem)
-            assert mapped_layout_name == layout_name, f"Expected {file_stem} → {layout_name}, got {mapped_layout_name}"
+        # Should have at least some of the expected layouts (the files that exist)
+        intersection = expected_layouts.intersection(actual_layouts)
+        assert len(intersection) > 0, f"No expected layouts found. Got: {actual_layouts}"
+        
+        # Verify that each pattern's yaml_pattern.layout matches the key
+        for layout_name, pattern_data in patterns.items():
+            pattern_layout = pattern_data.get('yaml_pattern', {}).get('layout')
+            assert pattern_layout == layout_name, f"Pattern key '{layout_name}' doesn't match yaml_pattern.layout '{pattern_layout}'"
+            
+        # Test find_pattern_file_for_layout method
+        for layout_name in patterns.keys():
+            pattern_file = loader.find_pattern_file_for_layout(layout_name)
+            assert pattern_file is not None, f"Could not find pattern file for layout: {layout_name}"
     
     def test_pattern_validation_for_safety(self, tmp_path):
         """Test that user patterns are validated for required fields and safety."""

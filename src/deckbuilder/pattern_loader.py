@@ -96,12 +96,17 @@ class PatternLoader:
         
         for pattern_file in self.builtin_patterns_dir.glob("*.json"):
             try:
-                layout_name = self._pattern_file_to_layout_name(pattern_file.stem)
                 pattern_data = self._load_pattern_file(pattern_file)
                 
                 if pattern_data:
-                    patterns[layout_name] = pattern_data
-                    self.logger.debug(f"Loaded built-in pattern: {layout_name}")
+                    # Get layout name from the pattern data itself, not filename
+                    layout_name = pattern_data.get('yaml_pattern', {}).get('layout')
+                    
+                    if layout_name:
+                        patterns[layout_name] = pattern_data
+                        self.logger.debug(f"Loaded built-in pattern: {layout_name} from {pattern_file.name}")
+                    else:
+                        self.logger.warning(f"Pattern {pattern_file} missing layout name in yaml_pattern.layout")
                     
             except Exception as e:
                 self.logger.error(f"Error loading built-in pattern {pattern_file}: {e}")
@@ -118,54 +123,51 @@ class PatternLoader:
         
         for pattern_file in self.user_patterns_dir.glob("*.json"):
             try:
-                layout_name = self._pattern_file_to_layout_name(pattern_file.stem)
                 pattern_data = self._load_pattern_file(pattern_file)
                 
                 if pattern_data:
-                    patterns[layout_name] = pattern_data
-                    self.logger.info(f"Loaded user pattern: {layout_name} (overrides built-in)")
+                    # Get layout name from the pattern data itself, not filename
+                    layout_name = pattern_data.get('yaml_pattern', {}).get('layout')
+                    
+                    if layout_name:
+                        patterns[layout_name] = pattern_data
+                        self.logger.info(f"Loaded user pattern: {layout_name} from {pattern_file.name} (overrides built-in)")
+                    else:
+                        self.logger.warning(f"User pattern {pattern_file} missing layout name in yaml_pattern.layout")
                     
             except Exception as e:
                 self.logger.error(f"Error loading user pattern {pattern_file}: {e}")
         
         return patterns
     
-    def _pattern_file_to_layout_name(self, file_stem: str) -> str:
+    def find_pattern_file_for_layout(self, layout_name: str) -> Optional[Path]:
         """
-        Convert pattern filename to PowerPoint layout name.
+        Find the pattern file that defines a specific layout.
         
-        Examples:
-            "four_columns" -> "Four Columns"
-            "comparison" -> "Comparison" 
-            "swot_analysis" -> "SWOT Analysis"
+        This scans all pattern files to find one with matching yaml_pattern.layout value.
+        Used for reverse lookup when users want to override a specific layout.
         """
-        # Split by underscores and title case each word
-        words = file_stem.split('_')
+        # Check built-in patterns first
+        if self.builtin_patterns_dir.exists():
+            for pattern_file in self.builtin_patterns_dir.glob("*.json"):
+                try:
+                    pattern_data = self._load_pattern_file(pattern_file)
+                    if pattern_data and pattern_data.get('yaml_pattern', {}).get('layout') == layout_name:
+                        return pattern_file
+                except Exception:
+                    continue
         
-        # Handle special cases
-        if file_stem == "swot_analysis":
-            return "SWOT Analysis"
-        elif file_stem == "title_and_6_item_lists":
-            return "Title and 6-item Lists"
-        elif "columns" in file_stem and "with" in file_stem and "titles" in file_stem:
-            # four_columns_with_titles -> Four Columns With Titles
-            return " ".join(word.title() for word in words)
-        elif "columns" in file_stem:
-            # four_columns -> Four Columns
-            return " ".join(word.title() for word in words)
-        elif "and" in words:
-            # title_and_vertical_text -> Title and Vertical Text
-            # vertical_title_and_text -> Vertical Title and Text  
-            return " ".join(word if word == "and" else word.title() for word in words)
-        elif file_stem.startswith("agenda"):
-            # agenda_6_textboxes -> Agenda, 6 Textboxes
-            if "6" in words:
-                return "Agenda, 6 Textboxes"
-        elif file_stem == "picture_with_caption":
-            return "Picture with Caption"
-        else:
-            # Default: title case each word
-            return " ".join(word.title() for word in words)
+        # Check user patterns
+        if self.user_patterns_dir.exists():
+            for pattern_file in self.user_patterns_dir.glob("*.json"):
+                try:
+                    pattern_data = self._load_pattern_file(pattern_file)
+                    if pattern_data and pattern_data.get('yaml_pattern', {}).get('layout') == layout_name:
+                        return pattern_file
+                except Exception:
+                    continue
+        
+        return None
     
     def _load_pattern_file(self, pattern_file: Path) -> Optional[Dict[str, Any]]:
         """Load and validate a single pattern file."""
@@ -200,30 +202,17 @@ class PatternLoader:
         patterns = self.load_patterns()
         return list(patterns.keys())
     
-    def layout_name_to_pattern_file(self, layout_name: str) -> str:
+    def get_patterns_by_file_source(self) -> Dict[str, Dict[str, Any]]:
         """
-        Convert PowerPoint layout name to pattern filename.
+        Get patterns organized by their source (built-in vs user).
         
-        Examples:
-            "Four Columns" -> "four_columns.json"
-            "Comparison" -> "comparison.json"
-            "SWOT Analysis" -> "swot_analysis.json"
+        Returns:
+            Dictionary with 'builtin' and 'user' keys containing pattern data
         """
-        # Handle special cases first
-        if layout_name == "Agenda, 6 Textboxes":
-            return "agenda_6_textboxes.json"
-        elif layout_name == "Title and 6-item Lists":
-            return "title_and_6_item_lists.json"
-        elif layout_name.startswith("Title and"):
-            # Keep "and" lowercase: "Title and Vertical Text" -> "title_and_vertical_text"
-            file_name = layout_name.replace(" and ", "_and_").lower().replace(' ', '_')
-        elif layout_name == "Picture with Caption":
-            return "picture_with_caption.json"
-        else:
-            # Convert to lowercase and replace spaces with underscores
-            file_name = layout_name.lower().replace(' ', '_')
-        
-        return f"{file_name}.json"
+        return {
+            'builtin': self._load_builtin_patterns(),
+            'user': self._load_user_patterns()
+        }
     
     def clear_cache(self) -> None:
         """Clear pattern cache to force reloading."""
