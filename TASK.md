@@ -6,41 +6,54 @@ Tasks are organized by phase and component.
 
 ---
 
-## 🚧 IN PROGRESS: User-Supplied Pattern Support (GitHub Issue #39)
+## 🚧 IN PROGRESS: User-Supplied Pattern Support - Phase 3 (GitHub Issue #39)
 
-### **User-Supplied Pattern Support for Dynamic Layout Intelligence** - 🚧 STARTING 2025-07-10
-**Status**: 🚧 Foundation Complete, Starting Pattern Implementation
+### **Phase 3: Complete Hard-Coding Elimination & Pattern System Finalization** - 🚧 IN PROGRESS 2025-07-11
+**Status**: 🚧 Core Integration Complete, Finalizing Hard-Coding Elimination
 **GitHub Issue**: https://github.com/teknologika/Deckbuilder/issues/39
 
-**Project Goal**: Eliminate hard-coding in MCP template discovery tools and enable user customization via dynamic pattern loading system.
+**Phase Goal**: Complete elimination of all hard-coded layout generation and achieve 100% pattern coverage for all PowerPoint layouts.
 
-### **Problem to Solve**
-- **Hard-coding issue**: MCP tools generate layout descriptions/examples instead of using existing pattern files
-- **User limitation**: Cannot customize layouts without modifying core codebase
-- **Technical debt**: Duplication between structured frontmatter patterns and hard-coded logic
+### ✅ **COMPLETED: Phase 1 & 2 Foundation** 
+- **✅ PatternLoader Core System**: Dynamic pattern loading from built-in + user directories
+- **✅ MCP Integration**: `get_template_layouts()` uses PatternLoader data (7/17 TDD tests passing)
+- **✅ Dynamic Layout Discovery**: Layout names read from `yaml_pattern.layout` (not filename mapping)
+- **✅ User Override System**: User patterns override built-in patterns by layout name
+- **✅ Zero Regressions**: 224/224 existing tests still passing
 
-### **Solution Overview**
-- **Pattern discovery system**: Load from built-in + user patterns directories
-- **User patterns location**: `{DECK_TEMPLATE_FOLDER}/patterns/` subfolder
-- **Priority system**: User patterns override built-in patterns by layout name
-- **Layout name mapping**: PowerPoint names → snake_case pattern files
-- **Backward compatibility**: Works without user patterns folder
+### 🚧 **SPRINT 1: Complete Hard-Coding Elimination (IN PROGRESS)**
 
-### **Implementation Tasks**
-1. **📋 Create PatternLoader class** - Multi-directory pattern discovery and validation
-2. **📋 Add layout name mapping** - PowerPoint layout names → pattern file names  
-3. **📋 Update get_template_layouts()** - Use pattern data instead of hard-coded generation
-4. **📋 Remove hard-coded functions** - Delete `_generate_layout_example()` etc.
-5. **📋 Write comprehensive TDD tests** - Pattern loading, override behavior, validation
-6. **📋 Add error handling** - Graceful fallback for missing/invalid patterns
+#### **Current Problem**
+System has hybrid approach with hard-coded fallback:
+- ✅ **Primary**: Uses PatternLoader data when pattern files exist (12/19 layouts)
+- ❌ **Fallback**: Uses hard-coded functions when patterns don't exist (7/19 layouts)
 
-### **Success Criteria**
-- ✅ Zero hard-coded layout generation in MCP tools
-- ✅ User patterns in `{template_folder}/patterns/` override built-in patterns
-- ✅ Layout name mapping system handles all PowerPoint → pattern file conversions
-- ✅ Comprehensive TDD test coverage for pattern loading functionality
-- ✅ Graceful error handling for invalid/missing pattern files
-- ✅ Backward compatibility maintained (works without user patterns)
+#### **Hard-coded Functions to Remove** (~100 lines in `src/mcp_server/main.py`):
+- `_generate_layout_example()` (lines 500-553)
+- `_get_title_example_for_layout()` (lines 556-575)  
+- `_get_content_example_for_layout()` (lines 578-589)
+
+#### **Sprint 1 Tasks**
+1. **🚧 Create missing pattern files** - 7 layouts need pattern files: "Title Slide", "Title and Content", "Section Header", "Title Only", "Blank", "Content with Caption", "Big Number"
+2. **📋 Remove hard-coded fallback functions** - Eliminate all `_generate_layout_example()` code
+3. **📋 Comprehensive pattern validation** - JSON schema validation, required fields, security checks
+
+### **📋 SPRINT 2: System Robustness (PLANNED)**
+- **TemplateMetadataLoader integration**: Use PatternLoader for consistent descriptions
+- **Error handling**: Invalid JSON, permissions, missing files with helpful messages
+- **Performance optimization**: Improved caching and file modification detection
+
+### **📋 SPRINT 3: Advanced Features (FUTURE)**
+- **Pattern management CLI tools**: Validate, create, manage pattern files
+- **Documentation generation**: Auto-generate pattern guides
+- **User experience enhancements**: Better validation feedback and examples
+
+### **Success Criteria for Phase 3**
+- ✅ **100% pattern coverage**: All 19 PowerPoint layouts have pattern files
+- ✅ **Zero hard-coded functions**: No `_generate_layout_example()` code remaining
+- ✅ **All TDD tests passing**: 17/17 PatternLoader tests green
+- ✅ **Zero regressions**: 224+ existing tests still passing
+- ✅ **Complete user customization**: Users can override any layout with custom patterns
 
 ## ✅ COMPLETED: TDD Template Discovery for MCP Server (GitHub Issue #38)
 

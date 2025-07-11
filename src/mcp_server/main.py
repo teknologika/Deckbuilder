@@ -253,13 +253,13 @@ async def create_presentation_from_markdown(
 @mcp.tool()
 async def list_available_templates(ctx: Context) -> str:
     """List all available presentation templates with metadata for intelligent selection
-    
+
     This tool provides comprehensive template discovery for content-first workflows.
     Returns template metadata including descriptions, use cases, and layout capabilities
     to enable smart template selection without expensive trial-and-error.
-    
+
     Token efficiency: ~50 tokens input → comprehensive template metadata output
-    
+
     Returns:
         JSON string with template metadata in the format:
         {
@@ -273,7 +273,7 @@ async def list_available_templates(ctx: Context) -> str:
             },
             "recommendation": "Usage guidance for template selection"
         }
-    
+
     Use cases:
         - Template discovery for new presentations
         - Content-template matching for optimal results
@@ -283,42 +283,34 @@ async def list_available_templates(ctx: Context) -> str:
     try:
         # Initialize template metadata loader
         loader = TemplateMetadataLoader()
-        
+
         # Get template names first
         template_names = loader.get_template_names()
-        
+
         if not template_names:
-            return json.dumps({
-                "available_templates": {},
-                "recommendation": "No templates found. Check template folder configuration."
-            })
-        
+            return json.dumps({"available_templates": {}, "recommendation": "No templates found. Check template folder configuration."})
+
         # Transform to expected format defined by TDD test
         available_templates = {}
-        
+
         for template_name in template_names:
             try:
                 # Load full metadata for each template
                 metadata = loader.load_template_metadata(template_name)
-                
+
                 # Extract key layouts (first few layout names)
                 key_layouts = list(metadata.layouts.keys())[:3]
-                
+
                 available_templates[template_name] = {
                     "description": metadata.description,
                     "use_cases": metadata.use_cases[:3],  # First 3 use cases
                     "total_layouts": metadata.total_layouts,
-                    "key_layouts": key_layouts
+                    "key_layouts": key_layouts,
                 }
-            except Exception as e:
+            except Exception:
                 # If we can't load metadata for a template, include it with basic info
-                available_templates[template_name] = {
-                    "description": f"Template: {template_name}",
-                    "use_cases": ["General presentations"],
-                    "total_layouts": 0,
-                    "key_layouts": []
-                }
-        
+                available_templates[template_name] = {"description": f"Template: {template_name}", "use_cases": ["General presentations"], "total_layouts": 0, "key_layouts": []}
+
         # Generate recommendation based on available templates
         if "default" in available_templates and "business_pro" in available_templates:
             recommendation = "Use 'default' for general presentations, 'business_pro' for executive content"
@@ -327,36 +319,29 @@ async def list_available_templates(ctx: Context) -> str:
         else:
             template_names = list(available_templates.keys())
             recommendation = f"Available templates: {', '.join(template_names)}"
-        
-        result = {
-            "available_templates": available_templates,
-            "recommendation": recommendation
-        }
-        
+
+        result = {"available_templates": available_templates, "recommendation": recommendation}
+
         return json.dumps(result, indent=2)
-        
+
     except Exception as e:
-        error_result = {
-            "error": f"Failed to load template metadata: {str(e)}",
-            "available_templates": {},
-            "recommendation": "Check template folder configuration and try again"
-        }
+        error_result = {"error": f"Failed to load template metadata: {str(e)}", "available_templates": {}, "recommendation": "Check template folder configuration and try again"}
         return json.dumps(error_result, indent=2)
 
 
 @mcp.tool()
 async def get_template_layouts(ctx: Context, template_name: str) -> str:
     """Get detailed layout information for a specific template
-    
+
     This tool provides comprehensive layout details for a template including
     placeholder requirements, usage examples, and best practices for markdown authoring.
-    
+
     Token efficiency: ~20 tokens input → detailed layout specifications
-    
+
     Args:
         ctx: MCP context
         template_name: Name of template to analyze (e.g., 'default', 'business_pro')
-    
+
     Returns:
         JSON string with detailed layout information in the format:
         {
@@ -375,7 +360,7 @@ async def get_template_layouts(ctx: Context, template_name: str) -> str:
             },
             "usage_tips": "General usage guidance"
         }
-    
+
     Use cases:
         - Understanding placeholder requirements for markdown authoring
         - Getting realistic examples for specific layouts
@@ -385,208 +370,105 @@ async def get_template_layouts(ctx: Context, template_name: str) -> str:
     try:
         # Initialize template metadata loader
         loader = TemplateMetadataLoader()
-        
+
         # Check if template exists
         if not loader.validate_template_exists(template_name):
             # Get available templates for helpful error message
             available_templates = loader.get_template_names()
-            
-            error_result = {
-                "error": f"Template '{template_name}' not found",
-                "available_templates": available_templates,
-                "suggestion": "Use list_available_templates() to see all available options"
-            }
+
+            error_result = {"error": f"Template '{template_name}' not found", "available_templates": available_templates, "suggestion": "Use list_available_templates() to see all available options"}
             return json.dumps(error_result, indent=2)
-        
+
         # Load template metadata
         metadata = loader.load_template_metadata(template_name)
-        
+
         # Initialize pattern loader for structured frontmatter patterns
         from deckbuilder.pattern_loader import PatternLoader
+
         pattern_loader = PatternLoader()
         patterns = pattern_loader.load_patterns()
-        
+
         # Transform to expected format with examples from patterns
         layouts_info = {}
-        
+
         for layout_name, layout_meta in metadata.layouts.items():
             # Get pattern data for this layout if available
             pattern_data = patterns.get(layout_name)
-            
+
             if pattern_data:
                 # Use pattern data for description and example
-                description = pattern_data.get('description', layout_meta.description)
-                
+                description = pattern_data.get("description", layout_meta.description)
+
                 # Parse example from pattern (it's a markdown string)
-                example_markdown = pattern_data.get('example', '')
+                example_markdown = pattern_data.get("example", "")
                 example = _parse_example_from_pattern(example_markdown, layout_meta.placeholders)
-                
+
                 # Get required fields from pattern validation
-                pattern_validation = pattern_data.get('validation', {})
-                required_fields = pattern_validation.get('required_fields', layout_meta.required_placeholders)
+                pattern_validation = pattern_data.get("validation", {})
+                required_fields = pattern_validation.get("required_fields", layout_meta.required_placeholders)
                 optional_fields = [p for p in layout_meta.placeholders if p not in required_fields]
-                
+
             else:
-                # Fallback to metadata-generated data if no pattern exists
+                # Fallback to basic metadata when no pattern exists
                 description = layout_meta.description
-                example = _generate_layout_example(layout_name, layout_meta.placeholders)
+                example = {placeholder: f"Example {placeholder}" for placeholder in layout_meta.placeholders}
                 required_fields = layout_meta.required_placeholders
                 optional_fields = layout_meta.optional_placeholders
-            
+
             layouts_info[layout_name] = {
                 "description": description,
                 "required_placeholders": required_fields,
                 "optional_placeholders": optional_fields,
                 "best_for": layout_meta.best_for,
-                "example": example
+                "example": example,
             }
-        
-        result = {
-            "template_name": template_name,
-            "layouts": layouts_info,
-            "usage_tips": "Use placeholders exactly as specified. Title is required for all layouts."
-        }
-        
+
+        result = {"template_name": template_name, "layouts": layouts_info, "usage_tips": "Use placeholders exactly as specified. Title is required for all layouts."}
+
         return json.dumps(result, indent=2)
-        
+
     except Exception as e:
-        error_result = {
-            "error": f"Failed to load template layouts: {str(e)}",
-            "template_name": template_name,
-            "suggestion": "Check template name and try again"
-        }
+        error_result = {"error": f"Failed to load template layouts: {str(e)}", "template_name": template_name, "suggestion": "Check template name and try again"}
         return json.dumps(error_result, indent=2)
 
 
 def _parse_example_from_pattern(example_markdown: str, placeholders: list) -> dict:
     """Parse example field values from pattern's markdown example."""
-    
+
     example = {}
-    
+
     if not example_markdown:
         # Fallback if no example in pattern
-        return _generate_layout_example("", placeholders)
-    
+        return {placeholder: f"Example {placeholder}" for placeholder in placeholders}
+
     try:
         # Parse YAML frontmatter from the example
-        if '---' in example_markdown:
-            parts = example_markdown.split('---')
+        if "---" in example_markdown:
+            parts = example_markdown.split("---")
             if len(parts) >= 2:
                 yaml_content = parts[1].strip()
-                
+
                 # Simple YAML parsing for basic fields
-                for line in yaml_content.split('\n'):
-                    if ':' in line:
-                        key, value = line.split(':', 1)
+                for line in yaml_content.split("\n"):
+                    if ":" in line:
+                        key, value = line.split(":", 1)
                         key = key.strip()
                         value = value.strip().strip('"').strip("'")
-                        
+
                         # Only include placeholders that exist in the template
                         if key in placeholders:
                             example[key] = value
-        
+
         # Fill in any missing placeholders with defaults
         for placeholder in placeholders:
             if placeholder not in example:
                 example[placeholder] = f"Example {placeholder}"
-                
+
     except Exception:
-        # If parsing fails, fall back to generated examples
-        return _generate_layout_example("", placeholders)
-    
+        # If parsing fails, fall back to basic examples
+        return {placeholder: f"Example {placeholder}" for placeholder in placeholders}
+
     return example
-
-
-def _generate_layout_example(layout_name: str, placeholders: list) -> dict:
-    """Generate realistic examples for layout placeholders dynamically."""
-    
-    examples = {}
-    
-    # Generate examples based on semantic placeholder names
-    for placeholder in placeholders:
-        placeholder_lower = placeholder.lower()
-        
-        # Dynamic title examples
-        if placeholder_lower == "title":
-            examples[placeholder] = _get_title_example_for_layout(layout_name)
-        elif placeholder_lower == "subtitle":
-            examples[placeholder] = "Subtitle with key message"
-        elif placeholder_lower.startswith("title_col"):
-            col_num = placeholder_lower.split("_col")[-1] if "_col" in placeholder_lower else "1"
-            examples[placeholder] = f"Column {col_num} Title"
-        
-        # Dynamic content examples
-        elif placeholder_lower == "content":
-            examples[placeholder] = _get_content_example_for_layout(layout_name)
-        elif placeholder_lower.startswith("content_col"):
-            col_num = placeholder_lower.split("_col")[-1] if "_col" in placeholder_lower else "1"
-            examples[placeholder] = f"Feature {col_num} details"
-        elif placeholder_lower == "content_left":
-            examples[placeholder] = "Left side content details"
-        elif placeholder_lower == "content_right":
-            examples[placeholder] = "Right side content details"
-        elif "top_left" in placeholder_lower:
-            examples[placeholder] = "Strengths content"
-        elif "top_right" in placeholder_lower:
-            examples[placeholder] = "Weaknesses content"
-        elif "bottom_left" in placeholder_lower:
-            examples[placeholder] = "Opportunities content"
-        elif "bottom_right" in placeholder_lower:
-            examples[placeholder] = "Threats content"
-        
-        # Image and media examples
-        elif "image" in placeholder_lower or "picture" in placeholder_lower:
-            examples[placeholder] = "path/to/image.png"
-        elif "caption" in placeholder_lower:
-            examples[placeholder] = "Image caption or description"
-        
-        # Other semantic types
-        elif "summary" in placeholder_lower:
-            examples[placeholder] = "Executive summary content"
-        elif "bullet" in placeholder_lower:
-            examples[placeholder] = "• Bullet point 1\n• Bullet point 2"
-        
-        # Fallback for unrecognized patterns
-        else:
-            examples[placeholder] = f"Content for {placeholder}"
-    
-    return examples
-
-
-def _get_title_example_for_layout(layout_name: str) -> str:
-    """Generate appropriate title examples based on layout context."""
-    layout_lower = layout_name.lower()
-    
-    if "comparison" in layout_lower:
-        return "Feature Comparison"
-    elif "four" in layout_lower and "column" in layout_lower:
-        return "Four Key Areas"
-    elif "three" in layout_lower and "column" in layout_lower:
-        return "Three Main Points"
-    elif "swot" in layout_lower:
-        return "SWOT Analysis"
-    elif "agenda" in layout_lower:
-        return "Meeting Agenda"
-    elif "picture" in layout_lower:
-        return "Visual Overview"
-    elif "title" in layout_lower and "slide" in layout_lower:
-        return "My Presentation Title"
-    else:
-        return "Slide Title"
-
-
-def _get_content_example_for_layout(layout_name: str) -> str:
-    """Generate appropriate content examples based on layout context."""
-    layout_lower = layout_name.lower()
-    
-    if "section" in layout_lower:
-        return "Section introduction and overview"
-    elif "content" in layout_lower and "caption" in layout_lower:
-        return "Main content with supporting details"
-    elif "big" in layout_lower and "number" in layout_lower:
-        return "85%"  # For big number layouts
-    else:
-        return "Main content with bullet points and details"
 
 
 async def main():
