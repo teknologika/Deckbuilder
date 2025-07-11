@@ -181,12 +181,17 @@ class TestLayoutCapabilityAnalyzer:
     
     def test_layout_analyzer_creation(self):
         """Test that LayoutCapabilityAnalyzer can be created."""
-        # This test will FAIL until we implement the class
+        # Test that LayoutCapabilityAnalyzer can be imported and instantiated
         
-        with pytest.raises(ImportError):
-            from src.deckbuilder.layout_analyzer import LayoutCapabilityAnalyzer
-            
-        assert False, "LayoutCapabilityAnalyzer class not implemented"
+        from src.deckbuilder.layout_analyzer import LayoutCapabilityAnalyzer
+        
+        # Should be able to create instance
+        analyzer = LayoutCapabilityAnalyzer()
+        assert analyzer is not None
+        
+        # Should have expected methods
+        assert hasattr(analyzer, 'analyze_layout_capabilities')
+        assert hasattr(analyzer, 'generate_layout_recommendations')
     
     def test_analyze_layout_capabilities(self):
         """Test analyzing layout capabilities from template structure."""
@@ -242,12 +247,17 @@ class TestContentTemplateMatcher:
     
     def test_content_matcher_creation(self):
         """Test that ContentTemplateMatcher can be created."""
-        # This test will FAIL until we implement the class
+        # Test that ContentTemplateMatcher can be imported and instantiated
         
-        with pytest.raises(ImportError):
-            from src.deckbuilder.content_matcher import ContentTemplateMatcher
-            
-        assert False, "ContentTemplateMatcher class not implemented"
+        from src.deckbuilder.content_matcher import ContentTemplateMatcher
+        
+        # Should be able to create instance
+        matcher = ContentTemplateMatcher()
+        assert matcher is not None
+        
+        # Should have expected methods
+        assert hasattr(matcher, 'analyze_content_description')
+        assert hasattr(matcher, 'match_content_to_templates')
     
     def test_analyze_content_description(self):
         """Test analyzing content description to determine type and requirements."""
