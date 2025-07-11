@@ -21,67 +21,64 @@ class TestPatternLoader:
     
     def test_pattern_loader_class_exists(self):
         """Test that PatternLoader class exists and is importable."""
-        # This test will FAIL until we implement the PatternLoader class
+        # PatternLoader class should now be importable
         
-        with pytest.raises(ImportError):
-            from src.deckbuilder.pattern_loader import PatternLoader
-            
-        assert False, "PatternLoader class not implemented yet"
+        from src.deckbuilder.pattern_loader import PatternLoader
+        
+        # Should be able to create an instance
+        loader = PatternLoader()
+        assert loader is not None
+        assert hasattr(loader, 'load_patterns')
+        assert hasattr(loader, 'get_pattern_for_layout')
     
     def test_pattern_loader_initialization(self):
         """Test PatternLoader can be initialized with template folder."""
-        # This test will FAIL until we implement the PatternLoader class
+        from src.deckbuilder.pattern_loader import PatternLoader
         
-        # Expected behavior: Initialize with template folder path
-        # Should automatically discover built-in and user patterns
+        # Test initialization with template folder path
+        test_folder = "/tmp/test_templates"
+        loader = PatternLoader(test_folder)
         
-        assert False, "PatternLoader initialization not implemented"
+        assert loader.template_folder == Path(test_folder)
+        assert loader.user_patterns_dir == Path(test_folder) / "patterns"
+        assert hasattr(loader, 'builtin_patterns_dir')
+        
+        # Test initialization without folder (should use defaults)
+        loader_default = PatternLoader()
+        assert loader_default.template_folder is not None
     
     def test_load_built_in_patterns_only(self):
         """Test loading built-in patterns when no user patterns exist."""
-        # This test will FAIL until we implement pattern loading
+        from src.deckbuilder.pattern_loader import PatternLoader
         
-        # Expected behavior: Load patterns from /src/deckbuilder/structured_frontmatter_patterns/
-        # Should return dictionary with pattern data for each layout
+        # Create loader with a temp folder (no user patterns)
+        loader = PatternLoader("/tmp/nonexistent")
         
-        expected_patterns = {
-            "Four Columns": {
-                "description": "Four-column layout with content only (no titles)",
-                "yaml_pattern": {
-                    "layout": "Four Columns",
-                    "title": "str",
-                    "content_col1": "str",
-                    "content_col2": "str",
-                    "content_col3": "str",
-                    "content_col4": "str"
-                },
-                "validation": {
-                    "required_fields": ["title", "content_col1", "content_col2", "content_col3", "content_col4"]
-                },
-                "example": "---\nlayout: Four Columns\ntitle: \"Four Column Layout Without Titles Test\"\ncontent_col1: \"**Fast processing** with optimized algorithms and *sub-millisecond* response times\"\ncontent_col2: \"***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance\"\ncontent_col3: \"*Intuitive* interface with **minimal** learning curve and comprehensive docs\"\ncontent_col4: \"___Transparent___ pricing with **flexible** plans and *proven* ROI\"\n---"
-            },
-            "Comparison": {
-                "description": "Side-by-side comparison layout for contrasting two options",
-                "yaml_pattern": {
-                    "layout": "Comparison",
-                    "title": "str",
-                    "title_left": "str",
-                    "content_left": "str",
-                    "title_right": "str",
-                    "content_right": "str"
-                },
-                "validation": {
-                    "required_fields": ["title", "title_left", "content_left", "title_right", "content_right"]
-                },
-                "example": "---\nlayout: Comparison\ntitle: \"Deckbuilder Advantage Analysis\"\ntitle_left: \"Traditional Approach\"\ncontent_left: \"**Manual** slide creation with *time-consuming* layout decisions and ***inconsistent*** formatting\"\ntitle_right: \"Deckbuilder Solution\"\ncontent_right: \"___Intelligent___ automation with **content-first** design and *professional* output quality\"\n---"
-            }
-        }
+        # Load patterns - should get built-in patterns only
+        patterns = loader.load_patterns()
         
-        assert False, "Built-in pattern loading not implemented"
+        # Should have loaded some built-in patterns
+        assert len(patterns) > 0
+        
+        # Check that specific expected patterns exist
+        assert "Four Columns" in patterns
+        assert "Comparison" in patterns
+        
+        # Verify pattern structure for Four Columns
+        four_columns = patterns["Four Columns"]
+        assert "description" in four_columns
+        assert "yaml_pattern" in four_columns
+        assert "validation" in four_columns
+        assert "example" in four_columns
+        
+        # Verify pattern structure for Comparison
+        comparison = patterns["Comparison"]
+        assert "description" in comparison
+        assert comparison["description"] == "Side-by-side comparison layout for contrasting two options"
     
     def test_load_user_patterns_from_subfolder(self, tmp_path):
         """Test loading user patterns from {template_folder}/patterns/ subfolder."""
-        # This test will FAIL until we implement user pattern discovery
+        from src.deckbuilder.pattern_loader import PatternLoader
         
         # Setup: Create template folder with patterns subfolder
         template_folder = tmp_path / "templates"
@@ -92,22 +89,36 @@ class TestPatternLoader:
         # Create user pattern file
         user_pattern = {
             "description": "User custom layout",
-            "yaml_pattern": {"layout": "Custom", "title": "str", "content": "str"},
+            "yaml_pattern": {"layout": "Custom Layout", "title": "str", "content": "str"},
             "validation": {"required_fields": ["title", "content"]},
-            "example": "---\nlayout: Custom\ntitle: Example\ncontent: Content\n---"
+            "example": "---\nlayout: Custom Layout\ntitle: Example\ncontent: Content\n---"
         }
         
         custom_pattern_file = patterns_folder / "custom_layout.json"
         with open(custom_pattern_file, 'w') as f:
             json.dump(user_pattern, f)
         
-        # Expected behavior: PatternLoader finds and loads user patterns
+        # Create PatternLoader with this template folder
+        loader = PatternLoader(template_folder)
         
-        assert False, "User pattern loading from subfolder not implemented"
+        # Load patterns - should include both built-in and user patterns
+        patterns = loader.load_patterns()
+        
+        # Should have both built-in and user patterns
+        assert len(patterns) > 0
+        
+        # Should include the custom user pattern
+        assert "Custom Layout" in patterns
+        
+        # Verify the user pattern was loaded correctly
+        custom = patterns["Custom Layout"]
+        assert custom["description"] == "User custom layout"
+        assert custom["yaml_pattern"]["layout"] == "Custom Layout"
+        assert "title" in custom["validation"]["required_fields"]
     
     def test_user_patterns_override_built_in_patterns(self, tmp_path):
         """Test that user patterns override built-in patterns with same layout name."""
-        # This test will FAIL until we implement override behavior
+        from src.deckbuilder.pattern_loader import PatternLoader
         
         # Setup: Create user pattern that overrides "Four Columns"
         template_folder = tmp_path / "templates"
@@ -134,15 +145,32 @@ class TestPatternLoader:
         with open(override_file, 'w') as f:
             json.dump(user_override, f)
         
-        # Expected behavior: User pattern takes priority over built-in pattern
+        # Create PatternLoader with this template folder
+        loader = PatternLoader(template_folder)
         
-        assert False, "User pattern override behavior not implemented"
+        # Load patterns
+        patterns = loader.load_patterns()
+        
+        # Should have "Four Columns" pattern
+        assert "Four Columns" in patterns
+        
+        # Should be the user override, not the built-in pattern
+        four_columns = patterns["Four Columns"]
+        assert four_columns["description"] == "Custom four-column layout with user modifications"
+        
+        # Should use user's field names (col1, col2, etc.) not built-in (content_col1, content_col2, etc.)
+        required_fields = four_columns["validation"]["required_fields"]
+        assert "col1" in required_fields
+        assert "col2" in required_fields
+        assert "content_col1" not in required_fields  # Should not have built-in field names
     
     def test_layout_name_mapping_system(self):
         """Test mapping PowerPoint layout names to pattern file names."""
-        # This test will FAIL until we implement layout name mapping
+        from src.deckbuilder.pattern_loader import PatternLoader
         
-        # Expected mappings:
+        loader = PatternLoader()
+        
+        # Test PowerPoint layout name → pattern filename
         expected_mappings = {
             "Four Columns": "four_columns.json",
             "Three Columns": "three_columns.json", 
@@ -157,7 +185,16 @@ class TestPatternLoader:
             "Title and 6-item Lists": "title_and_6_item_lists.json"
         }
         
-        assert False, "Layout name mapping system not implemented"
+        for layout_name, expected_filename in expected_mappings.items():
+            actual_filename = loader.layout_name_to_pattern_file(layout_name)
+            assert actual_filename == expected_filename, f"Expected {layout_name} → {expected_filename}, got {actual_filename}"
+        
+        # Test reverse mapping: pattern filename → PowerPoint layout name
+        # This tests the _pattern_file_to_layout_name method
+        for layout_name, filename in expected_mappings.items():
+            file_stem = filename.replace(".json", "")
+            mapped_layout_name = loader._pattern_file_to_layout_name(file_stem)
+            assert mapped_layout_name == layout_name, f"Expected {file_stem} → {layout_name}, got {mapped_layout_name}"
     
     def test_pattern_validation_for_safety(self, tmp_path):
         """Test that user patterns are validated for required fields and safety."""
