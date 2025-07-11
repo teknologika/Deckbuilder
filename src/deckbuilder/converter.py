@@ -129,28 +129,29 @@ class StructuredFrontmatterConverter:
                     result[field_name] = self._process_content_field(result[field_name])
             return result
 
-        # Create result with type field for supported layouts
-        result = {"type": layout_name}
+        # Extract fields directly from yaml_pattern instead of using mapping_rules
+        yaml_pattern = structure_def.get("yaml_pattern", {})
+        result = {}
 
-        # Copy title and subtitle if present
-        if "title" in structured_data:
-            result["title"] = self._process_content_field(structured_data["title"])
-        if "subtitle" in structured_data:
-            result["subtitle"] = self._process_content_field(structured_data["subtitle"])
+        # Preserve the layout field from structured_data
+        if "layout" in structured_data:
+            result["layout"] = structured_data["layout"]
 
-        mapping_rules = structure_def.get("mapping_rules", {})
+        # Process each field defined in yaml_pattern (except layout)
+        for field_name, _field_type in yaml_pattern.items():
+            if field_name == "layout":
+                continue  # Skip layout field - already preserved above
 
-        # Process each mapping rule
-        for structured_path, placeholder_target in mapping_rules.items():
-            value = self._extract_value_by_path(structured_data, structured_path)
-            if value is not None:
+            if field_name in structured_data:
+                value = structured_data[field_name]
+
                 # Convert arrays to newline-separated strings for content placeholders
                 if isinstance(value, list):
                     value = "\n".join(str(item) for item in value)
+
                 # Process content to convert markdown to LLM-friendly JSON
                 processed_value = self._process_content_field(value)
-                # In the new canonical model, we directly use the target name
-                result[placeholder_target] = processed_value
+                result[field_name] = processed_value
 
         return result
 
