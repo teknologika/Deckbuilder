@@ -20,9 +20,15 @@ Create complete PowerPoint presentations from JSON or Markdown with YAML frontma
 
 ### 🎨 **Rich Content Support**
 - **Advanced Formatting**: `**bold**`, `*italic*`, `___underline___`, `***bold italic***`
-- **Language & Font updating**:The aility to update the fonts and language of all slide objects using the command line tools using the CLI.
+- **Language & Font updating**: The ability to update the fonts and language of all slide objects using the command line tools using the CLI.
 - **Professional Tables**: Custom styling with themes and colors.
 - **Supported Layouts**: Progressive library of templates being added.
+
+### 🧠 **Intelligent Template System**
+- **Pattern-Based Architecture**: Dynamic pattern loading with user customization support
+- **Content-First Intelligence**: Smart layout recommendations based on content analysis
+- **Enhanced Metadata**: Rich template descriptions and usage examples from structured patterns
+- **User Customization**: Override any layout with custom patterns in `{template_folder}/patterns/`
 
 ### 🖼️ **Smart Image Processing** 
 - **Placekitten Generation**: Professional placeholder generation 
@@ -255,6 +261,21 @@ placeholder = (pk.generate(1920, 1080, image_id=1)
 - ✅ **Performance Optimized**: Intelligent caching prevents duplicate processing
 - ✅ **Seamless Integration**: Zero user intervention required
 
+## 🚀 Recent Major Updates
+
+### **Phase 4 Sprint 1 Complete (July 2025)**
+- **✅ Enhanced Template Intelligence**: TemplateMetadataLoader now integrates with PatternLoader for richer metadata
+- **✅ Comprehensive Pattern Validation**: JSON schema validation with security checks and helpful error messages
+- **✅ Improved Error Handling**: Graceful fallbacks for invalid JSON, missing files, and permission issues
+- **✅ Pattern-Based Metadata**: Template descriptions and examples now sourced from structured pattern files
+- **✅ User Customization**: Full pattern override capability in `{template_folder}/patterns/` directory
+
+### **Phase 3 Complete (July 2025)**
+- **✅ 100% Pattern Coverage**: All 19 PowerPoint layouts now use pattern files (zero hard-coding)
+- **✅ User Pattern Override**: Custom patterns can override any built-in layout
+- **✅ Simplified Architecture**: Eliminated redundant mapping rules, streamlined converter system
+- **✅ Zero Regressions**: All 225+ existing tests continue passing
+
 ## 🏗️ Architecture
 
 ```
@@ -275,7 +296,7 @@ placeholder = (pk.generate(1920, 1080, image_id=1)
 ├───────────┴─────────────────────────────────────────┤
 │                Content Intelligence                 │
 │  ┌─────────────────┐        ┌────────────────────┐  │
-│  │  Layout         │        │   PlaceKitten      │  │
+│  │  Pattern-Based  │        │   PlaceKitten      │  │
 │  │  Intelligence   │        │   Processing       │  │
 │  └─────────────────┘        └────────────────────┘  │
 └─────────────────────────────────────────────────────┘
