@@ -401,17 +401,42 @@ async def get_template_layouts(ctx: Context, template_name: str) -> str:
         # Load template metadata
         metadata = loader.load_template_metadata(template_name)
         
-        # Transform to expected format with examples
+        # Initialize pattern loader for structured frontmatter patterns
+        from deckbuilder.pattern_loader import PatternLoader
+        pattern_loader = PatternLoader()
+        patterns = pattern_loader.load_patterns()
+        
+        # Transform to expected format with examples from patterns
         layouts_info = {}
         
         for layout_name, layout_meta in metadata.layouts.items():
-            # Generate realistic examples for this layout
-            example = _generate_layout_example(layout_name, layout_meta.placeholders)
+            # Get pattern data for this layout if available
+            pattern_data = patterns.get(layout_name)
+            
+            if pattern_data:
+                # Use pattern data for description and example
+                description = pattern_data.get('description', layout_meta.description)
+                
+                # Parse example from pattern (it's a markdown string)
+                example_markdown = pattern_data.get('example', '')
+                example = _parse_example_from_pattern(example_markdown, layout_meta.placeholders)
+                
+                # Get required fields from pattern validation
+                pattern_validation = pattern_data.get('validation', {})
+                required_fields = pattern_validation.get('required_fields', layout_meta.required_placeholders)
+                optional_fields = [p for p in layout_meta.placeholders if p not in required_fields]
+                
+            else:
+                # Fallback to metadata-generated data if no pattern exists
+                description = layout_meta.description
+                example = _generate_layout_example(layout_name, layout_meta.placeholders)
+                required_fields = layout_meta.required_placeholders
+                optional_fields = layout_meta.optional_placeholders
             
             layouts_info[layout_name] = {
-                "description": layout_meta.description,
-                "required_placeholders": layout_meta.required_placeholders,
-                "optional_placeholders": layout_meta.optional_placeholders,
+                "description": description,
+                "required_placeholders": required_fields,
+                "optional_placeholders": optional_fields,
                 "best_for": layout_meta.best_for,
                 "example": example
             }
@@ -431,6 +456,45 @@ async def get_template_layouts(ctx: Context, template_name: str) -> str:
             "suggestion": "Check template name and try again"
         }
         return json.dumps(error_result, indent=2)
+
+
+def _parse_example_from_pattern(example_markdown: str, placeholders: list) -> dict:
+    """Parse example field values from pattern's markdown example."""
+    
+    example = {}
+    
+    if not example_markdown:
+        # Fallback if no example in pattern
+        return _generate_layout_example("", placeholders)
+    
+    try:
+        # Parse YAML frontmatter from the example
+        if '---' in example_markdown:
+            parts = example_markdown.split('---')
+            if len(parts) >= 2:
+                yaml_content = parts[1].strip()
+                
+                # Simple YAML parsing for basic fields
+                for line in yaml_content.split('\n'):
+                    if ':' in line:
+                        key, value = line.split(':', 1)
+                        key = key.strip()
+                        value = value.strip().strip('"').strip("'")
+                        
+                        # Only include placeholders that exist in the template
+                        if key in placeholders:
+                            example[key] = value
+        
+        # Fill in any missing placeholders with defaults
+        for placeholder in placeholders:
+            if placeholder not in example:
+                example[placeholder] = f"Example {placeholder}"
+                
+    except Exception:
+        # If parsing fails, fall back to generated examples
+        return _generate_layout_example("", placeholders)
+    
+    return example
 
 
 def _generate_layout_example(layout_name: str, placeholders: list) -> dict:

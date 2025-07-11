@@ -252,14 +252,73 @@ class TestPatternLoaderIntegration:
         
         assert False, "PatternLoader integration with TemplateMetadataLoader not implemented"
     
-    def test_integration_with_get_template_layouts_mcp_tool(self):
+    @pytest.mark.asyncio 
+    async def test_integration_with_get_template_layouts_mcp_tool(self):
         """Test PatternLoader provides data to get_template_layouts() MCP tool."""
-        # This test will FAIL until we implement MCP tool integration
+        import os
+        import json
+        from pathlib import Path
         
-        # Expected behavior: get_template_layouts() uses PatternLoader data
-        # instead of hard-coded _generate_layout_example() functions
-        
-        assert False, "PatternLoader integration with get_template_layouts() not implemented"
+        # Set up environment variables for MCP server
+        original_env = os.environ.copy()
+        try:
+            os.environ['DECK_OUTPUT_FOLDER'] = '/tmp/test_output'
+            os.environ['DECK_TEMPLATE_FOLDER'] = str(Path(__file__).parent.parent / 'src' / 'deckbuilder' / 'assets' / 'templates')
+            os.environ['DECK_TEMPLATE_NAME'] = 'default'
+            
+            # Import and test the actual MCP tool
+            from src.mcp_server.main import get_template_layouts
+            
+            # Create a real context object (not a mock)
+            class TestContext:
+                pass
+            
+            ctx = TestContext()
+            result = await get_template_layouts(ctx, 'default')
+            
+            # Should return valid JSON
+            assert isinstance(result, str)
+            data = json.loads(result)
+            
+            # Should have expected structure
+            assert "template_name" in data
+            assert "layouts" in data
+            assert data["template_name"] == "default"
+            
+            # Should have layouts with pattern data
+            layouts = data["layouts"]
+            assert len(layouts) > 0
+            
+            # Check if layouts with pattern files are using pattern descriptions
+            pattern_layouts_found = False
+            for layout_name, layout_info in layouts.items():
+                if layout_name in ["Four Columns", "Comparison"]:
+                    pattern_layouts_found = True
+                    
+                    # Should have description from pattern file, not hard-coded
+                    description = layout_info.get("description", "")
+                    assert len(description) > 0
+                    
+                    # Verify it's using pattern description by checking for specific pattern text
+                    if layout_name == "Four Columns":
+                        assert "four-column" in description.lower() or "content only" in description.lower()
+                    elif layout_name == "Comparison":
+                        assert "side-by-side" in description.lower() or "comparison" in description.lower()
+                    
+                    # Should have required_placeholders from pattern validation
+                    required = layout_info.get("required_placeholders", [])
+                    assert len(required) > 0
+                    
+                    # Should have example (either from pattern or fallback)
+                    example = layout_info.get("example", {})
+                    assert len(example) > 0
+            
+            assert pattern_layouts_found, "No layouts with pattern files found for testing"
+            
+        finally:
+            # Restore original environment
+            os.environ.clear()
+            os.environ.update(original_env)
     
     def test_pattern_data_replaces_hard_coded_examples(self):
         """Test that pattern examples replace hard-coded layout generation."""
