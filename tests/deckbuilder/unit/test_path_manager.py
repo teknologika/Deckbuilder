@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Unit tests for PathManager - Centralized path management testing
 
@@ -8,7 +7,6 @@ and validation methods in the PathManager class.
 
 import os
 import tempfile
-import pytest
 from pathlib import Path
 from unittest.mock import patch, MagicMock
 
@@ -319,7 +317,3 @@ class TestPathManagerIntegration:
 
                 # Use resolve() to handle macOS /private symlinks
                 assert str(template_folder.resolve()) == str(Path(temp_dir).resolve())
-
-
-if __name__ == "__main__":
-    pytest.main([__file__, "-v"])

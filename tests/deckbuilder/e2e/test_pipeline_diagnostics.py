@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Pipeline Diagnostics Tests
 
@@ -15,7 +14,6 @@ import subprocess
 import tempfile
 from pathlib import Path
 from pptx import Presentation
-import pytest
 import sys
 
 # Add src to path
@@ -641,7 +639,3 @@ This slide should have left and right comparison content.
             else:
                 print("❌ No PowerPoint file generated")
                 return {"success": False, "error": "No file generated"}
-
-
-if __name__ == "__main__":
-    pytest.main([__file__, "-v", "-s"])

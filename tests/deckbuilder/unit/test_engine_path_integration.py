@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Unit tests for Engine PathManager integration
 
@@ -11,7 +10,6 @@ import sys
 from pathlib import Path
 from unittest.mock import patch, Mock
 
-import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
@@ -286,7 +284,3 @@ class TestEngineEnvironmentIsolation:
         # Should reflect different PathManager states
         assert path1 == "/first"
         assert path2 == "/second"
-
-
-if __name__ == "__main__":
-    pytest.main([__file__, "-v"])

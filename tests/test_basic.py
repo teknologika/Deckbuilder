@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Basic test to ensure the package can be imported and meets coverage requirements.
 """

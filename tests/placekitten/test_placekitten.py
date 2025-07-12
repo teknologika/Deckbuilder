@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Test script for PlaceKitten library - Phase 2 functionality testing.
 Tests computer vision pipeline, smart cropping, and step visualization.
@@ -130,7 +129,3 @@ def main():
         print(f"\n📁 Generated {len(generated_files)} test files in {test_output_dir}:")
         for f in sorted(generated_files):
             print(f"   📄 {f.name}")
-
-
-if __name__ == "__main__":
-    main()

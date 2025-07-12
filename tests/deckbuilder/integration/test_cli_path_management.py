@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Integration tests for CLI path management
 
@@ -294,7 +293,3 @@ class TestEnvironmentIntegration:
             assert str(cli.path_manager.get_output_folder()) == str(Path.cwd())
             # Environment variables should remain unchanged (anti-pattern fixed)
             assert os.getenv("DECK_TEMPLATE_FOLDER") == "/env/templates"
-
-
-if __name__ == "__main__":
-    pytest.main([__file__, "-v"])

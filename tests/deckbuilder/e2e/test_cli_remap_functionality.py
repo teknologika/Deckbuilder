@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 E2E tests for CLI remap functionality.
 

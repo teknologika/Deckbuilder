@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Pytest test suite for PlaceKitten library.
 Tests computer vision pipeline, smart cropping, and filter functionality.
@@ -213,7 +212,3 @@ class TestCleanup:
             for file in test_output_dir.iterdir():
                 if file.is_file() and not file.name.startswith("."):
                     assert file.suffix in [".jpg", ".jpeg", ".png"], f"Unexpected file type: {file}"
-
-
-if __name__ == "__main__":
-    pytest.main([__file__, "-v"])

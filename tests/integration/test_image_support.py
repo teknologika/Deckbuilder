@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Integration tests for PlaceKitten-Deckbuilder image support.
 Tests the end-to-end image workflow including fallback generation.
@@ -79,9 +78,3 @@ def test_placekitten_availability():
     except Exception as e:
         print(f"❌ PlaceKitten error: {e}")
         return False
-
-
-if __name__ == "__main__":
-    import pytest
-
-    pytest.main([__file__, "-v", "-s"])

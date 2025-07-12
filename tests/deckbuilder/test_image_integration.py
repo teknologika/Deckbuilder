@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Pytest test suite for Deckbuilder-PlaceKitten image integration.
 Tests image insertion, fallback functionality, and PowerPoint generation.
@@ -340,7 +339,3 @@ media:
         canonical_data = markdown_to_canonical_json(markdown)
         result = deck.create_presentation(canonical_data, "test_no_fallback")
         assert "Successfully created presentation" in result
-
-
-if __name__ == "__main__":
-    pytest.main([__file__, "-v"])

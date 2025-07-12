@@ -1,6 +1,14 @@
-# PlaceKitten Library
+# PlaceKitten Library v1.2.0
 
-The PlaceKitten library is a tool for generating placeholder images from kitten photos. It provides a simple and intuitive API for creating images with different dimensions, filters, and other effects.
+The PlaceKitten library is an advanced image processing tool for generating professional placeholder images from kitten photos. Enhanced in v1.2.0 with **crop-first approach** for exact dimensions and business-appropriate styling.
+
+## 🎉 What's New in v1.2.0
+
+*   **🖼️ Crop-First Approach**: Smart cropping instead of scaling for exact dimensions
+*   **🎯 Better Visual Results**: Proper composition instead of distorted stretching
+*   **👁️ Enhanced Smart Cropping**: Improved face detection and rule-of-thirds composition
+*   **🎨 Professional Styling**: Optimized filters for business presentations
+*   **⚡ Performance Optimized**: Intelligent caching and fallback systems
 
 ## `PlaceKitten` Class
 
@@ -8,10 +16,10 @@ The `PlaceKitten` class is the main entry point for generating placeholder image
 
 ### Methods
 
-*   `generate(width, height, filter_type, image_id, random_selection)`: Generates a placeholder image.
+*   `generate(width, height, filter_type, image_id, random_selection)`: **ENHANCED** - Now uses smart cropping for exact dimensions when both width and height specified
 *   `list_available_images()`: Lists the available kitten images.
 *   `get_image_count()`: Gets the number of available kitten images.
-*   `batch_process(configs, output_folder)`: Processes multiple images in batch.
+*   `batch_process(configs, output_folder)`: Processes multiple images in batch with crop-first approach
 
 ## `ImageProcessor` Class
 

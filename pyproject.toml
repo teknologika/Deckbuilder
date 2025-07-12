@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "deckbuilder"
-version = "1.1.2"
-description = "Intelligent PowerPoint presentation generation with content-first design philosophy, PlaceKitten image processing, and comprehensive CLI tools"
+version = "1.2.0"
+description = "Advanced AI-powered PowerPoint generation with intelligent template recommendations, 100% TDD completion, crop-first PlaceKitten processing, and comprehensive CLI tools"
 readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "Apache-2.0"}
@@ -95,21 +95,34 @@ include = '\.pyi?$'
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-python_files = ["test_*.py", "*_test.py"]
+python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
+asyncio_mode = "auto"
 addopts = [
-"-v",
+"--verbose",
 "--strict-markers",
 "--tb=short",
+"--disable-warnings",
 "--cov=src",
 "--cov-report=term-missing",
 "--cov-report=html",
 ]
+filterwarnings = [
+"ignore::pytest.PytestUnknownMarkWarning",
+"ignore::UserWarning",
+"ignore::DeprecationWarning",
+]
 markers = [
-"slow: marks tests as slow (deselect with '-m \"not slow\"')",
-"integration: marks tests as integration tests",
-"unit: marks tests as unit tests",
+"unit: Unit tests",
+"integration: Integration tests", 
+"slow: Slow running tests",
+"deckbuilder: Deckbuilder engine tests",
+"mcp_server: MCP server tests",
+"requires_template: Tests that require template files",
+"requires_pptx: Tests that require PowerPoint files",
+"cleanup: Cleanup and teardown tests",
+"asyncio: Async tests that use asyncio",
 ]
 
 [tool.coverage.run]

@@ -1,6 +1,6 @@
-# Command-Line Interface (CLI)
+# Command-Line Interface (CLI) v1.2.0
 
-The Deckbuilder CLI provides a command-line interface for generating presentations, managing templates, and processing images. It is built using `argparse` and provides a hierarchical command structure.
+The Deckbuilder CLI provides a professional command-line interface for generating presentations, managing templates, and processing images. Enhanced in v1.2.0 with improved template management and better image processing.
 
 ## Usage
 

@@ -82,6 +82,10 @@ class PlaceKitten:
 
         Returns:
             ImageProcessor instance for further manipulation
+
+        Note:
+            When both width and height are specified, uses smart cropping for exact dimensions.
+            When only one dimension is specified, preserves aspect ratio using scaling.
         """
 
         # Get available images
@@ -99,13 +103,13 @@ class PlaceKitten:
         # Create ImageProcessor with the selected image
         processor = ImageProcessor(str(selected_image))
 
-        # Handle dimensions - preserve aspect ratio or use original size
+        # Handle dimensions - crop for exact dimensions or preserve aspect ratio
         if width is None and height is None:
             # Return full size image - no resizing
             pass
         elif width is not None and height is not None:
-            # Both specified - resize to exact dimensions
-            processor = processor.resize(width, height)
+            # Both specified - use smart crop to exact dimensions (crop-first approach)
+            processor = processor.smart_crop(width, height)
         elif width is not None:
             # Only width specified - calculate height preserving aspect ratio
             original_width, original_height = processor.get_size()

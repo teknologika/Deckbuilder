@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 End-to-End Golden File Validation Tests
 
@@ -16,7 +15,6 @@ import os
 import shutil
 import subprocess
 import tempfile
-import pytest
 from pathlib import Path
 from pptx import Presentation
 
@@ -427,7 +425,3 @@ class TestCLIErrorHandling:
 
             finally:
                 os.unlink(temp_file.name)
-
-
-if __name__ == "__main__":
-    pytest.main([__file__, "-v"])

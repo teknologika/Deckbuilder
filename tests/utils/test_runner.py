@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Test Runner for Deck Builder MCP
 
@@ -267,8 +266,3 @@ Examples:
         exit_code = run_all_tests(verbose)
 
     return exit_code
-
-
-if __name__ == "__main__":
-    exit_code = main()
-    sys.exit(exit_code)

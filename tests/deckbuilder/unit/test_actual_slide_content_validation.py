@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Actual Slide Content Validation Tests
 
@@ -280,7 +279,3 @@ class TestActualSlideContentValidation:
 
         assert content_slides > blank_slides, f"Too many blank slides: {blank_slides} blank vs {content_slides} with content"
         assert content_slides >= 3, f"Expected at least 3 slides with content, got {content_slides}"
-
-
-if __name__ == "__main__":
-    pytest.main([__file__, "-v", "-s"])

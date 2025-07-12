@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Test JSON Field Mapping with CORRECT Expected Behavior
 
@@ -17,7 +16,6 @@ import subprocess
 import tempfile
 from pathlib import Path
 from pptx import Presentation
-import pytest
 import sys
 
 # Add src to path
@@ -368,7 +366,3 @@ class TestJSONFieldMappingCorrect:
 
             # Should succeed
             assert result.returncode == 0, f"CLI failed: {result.stderr}"
-
-
-if __name__ == "__main__":
-    pytest.main([__file__, "-v", "-s"])

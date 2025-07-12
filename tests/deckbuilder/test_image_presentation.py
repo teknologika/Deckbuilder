@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Test script for enhanced image support in Deckbuilder presentations.
 Demonstrates both valid images and PlaceKitten fallback functionality.
@@ -126,25 +125,3 @@ def demonstrate_image_features():
     except Exception as e:
         print(f"❌ Feature demonstration failed: {e}")
         return False
-
-
-if __name__ == "__main__":
-    print("🧪 Enhanced Deckbuilder Image Support Test Suite")
-    print("=" * 60)
-
-    # Run main presentation test
-    presentation_success = run_image_presentation_test()
-
-    # Demonstrate features
-    features_success = demonstrate_image_features()
-
-    print("\n📊 Test Results:")
-    print(f"  Presentation Test: {'✅' if presentation_success else '❌'}")
-    print(f"  Feature Demo: {'✅' if features_success else '❌'}")
-
-    if presentation_success and features_success:
-        print("\n🎉 All tests passed! Enhanced image support is working perfectly.")
-        sys.exit(0)
-    else:
-        print("\n❌ Some tests failed. Check output above for details.")
-        sys.exit(1)

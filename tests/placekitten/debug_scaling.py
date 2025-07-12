@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Debug script to test PlaceKitten scaling behavior."""
 
 import sys
@@ -71,7 +70,3 @@ def test_scaling():
         print("   ✅ Aspect ratios preserved!")
     else:
         print("   ❌ Aspect ratios NOT preserved!")
-
-
-if __name__ == "__main__":
-    test_scaling()

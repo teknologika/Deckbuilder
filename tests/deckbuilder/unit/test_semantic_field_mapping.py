@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Test Semantic Field Mapping (CORRECT Expected Behavior)
 
@@ -11,7 +10,6 @@ These tests SHOULD FAIL initially, then pass after template updates.
 """
 
 import json
-import pytest
 from pathlib import Path
 import sys
 
@@ -237,7 +235,3 @@ class TestSemanticFieldMapping:
 
                 # This SHOULD pass after template update
                 assert actual_name == expected_name, f"Placeholder {placeholder_id} should map to {expected_name}, got {actual_name}"
-
-
-if __name__ == "__main__":
-    pytest.main([__file__, "-v", "-s"])

@@ -1,6 +1,6 @@
-# Deckbuilder Library
+# Deckbuilder Library v1.2.0
 
-The Deckbuilder library is the core component of the Deckbuilder suite. It provides a Python API for creating and manipulating PowerPoint presentations.
+The Deckbuilder library is a powerful Python API for creating professional PowerPoint presentations from structured content. Enhanced in v1.2.0 with smart template recommendations and improved content processing.
 
 ## `Deckbuilder` Class
 

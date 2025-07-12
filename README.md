@@ -4,14 +4,11 @@
 # 🎯 Deckbuilder
 [![PyPI version](https://badge.fury.io/py/deckbuilder.svg)](https://badge.fury.io/py/deckbuilder)
 [![Test Suite](https://github.com/teknologika/deckbuilder/actions/workflows/test.yml/badge.svg)](https://github.com/teknologika/deckbuilder/actions/workflows/test.yml)
-[![PlaceKitten Integrated](https://img.shields.io/badge/PlaceKitten-Integrated-blue)](src/placekitten/README.md)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 
-Deckbuilder is a powerful Python library, Command Line, and MCP (Model Context Protocol) server for PowerPoint presentation generation.
+**Create professional PowerPoint presentations from Markdown or JSON**
 
-Deckbuilder CLI and the library currently supports JSON and Frontmatter formatted Markdown for content.
-
-To minimise token usage, the MCP server supports file based (JSON or MD) and Markdown in the prompt window.
+Deckbuilder is a Python library, Command Line tool, and MCP server that generates PowerPoint presentations from structured content. Focus on your content - Deckbuilder handles the formatting and layout.
 
 ## ✨ Key Features
 
@@ -24,18 +21,15 @@ Create complete PowerPoint presentations from JSON or Markdown with YAML frontma
 - **Professional Tables**: Custom styling with themes and colors.
 - **Supported Layouts**: Progressive library of templates being added.
 
-### 🧠 **Intelligent Template System**
-- **Pattern-Based Architecture**: Dynamic pattern loading with user customization support
-- **Content-First Intelligence**: Smart layout recommendations based on content analysis
-- **Enhanced Metadata**: Rich template descriptions and usage examples from structured patterns
-- **User Customization**: Override any layout with custom patterns in `{template_folder}/patterns/`
+### 🧠 **Smart Template System**
+- **Intelligent Layout Selection**: Automatic layout recommendations based on content type
+- **Pattern-Based Architecture**: Customize any layout with your own templates
+- **Rich Content Support**: Tables, images, multi-column layouts with professional styling
 
-### 🖼️ **Smart Image Processing** 
-- **Placekitten Generation**: Professional placeholder generation 
-- **Intelligent Fallbacks**: Automatic handling of missing/invalid images
-- **Smart Cropping**: Face detection and rule-of-thirds composition
-- **Professional Filters**: 10+ effects optimised for business presentations
-- **Performance Optimized**: <2s generation, intelligent caching
+### 🖼️ **Smart Image Processing**
+- **Automatic Image Fallbacks**: Missing images? Deckbuilder generates professional placeholders automatically
+- **Smart Cropping**: Face detection and intelligent composition for perfect image sizing
+- **Professional Filters**: Business-appropriate styling with grayscale and other effects
 
 ### ⚡ **Enhanced CLI Experience**
 - **Professional Hierarchical Interface**: Clean command structure (`deckbuilder <command> <subcommand>`)
@@ -77,12 +71,14 @@ deckbuilder create presentation.md --language "Spanish (Spain)" --font "Times Ne
 # View supported languages
 deckbuilder config languages
 
-# Template management
+# Template management & intelligence
 deckbuilder template analyze default --verbose
 deckbuilder template validate default
 deckbuilder template list
 
-# Image generation  
+# Smart template recommendations available through MCP tools
+
+# Image generation with crop-first approach
 deckbuilder image generate 800 600 --filter grayscale
 deckbuilder image crop image.jpg 800 600
 
@@ -261,45 +257,38 @@ placeholder = (pk.generate(1920, 1080, image_id=1)
 - ✅ **Performance Optimized**: Intelligent caching prevents duplicate processing
 - ✅ **Seamless Integration**: Zero user intervention required
 
-## 🚀 Recent Major Updates
+## 🚀 What's New in v1.2.0
 
-### **Phase 4 Sprint 1 Complete (July 2025)**
-- **✅ Enhanced Template Intelligence**: TemplateMetadataLoader now integrates with PatternLoader for richer metadata
-- **✅ Comprehensive Pattern Validation**: JSON schema validation with security checks and helpful error messages
-- **✅ Improved Error Handling**: Graceful fallbacks for invalid JSON, missing files, and permission issues
-- **✅ Pattern-Based Metadata**: Template descriptions and examples now sourced from structured pattern files
-- **✅ User Customization**: Full pattern override capability in `{template_folder}/patterns/` directory
+### Smart Template Recommendations
+- **Content Analysis**: Automatically analyzes your content to suggest the best layouts
+- **MCP Integration**: Available through Claude Desktop with intelligent recommendations
 
-### **Phase 3 Complete (July 2025)**
-- **✅ 100% Pattern Coverage**: All 19 PowerPoint layouts now use pattern files (zero hard-coding)
-- **✅ User Pattern Override**: Custom patterns can override any built-in layout
-- **✅ Simplified Architecture**: Eliminated redundant mapping rules, streamlined converter system
-- **✅ Zero Regressions**: All 225+ existing tests continue passing
+### Enhanced Image Processing  
+- **Better Image Sizing**: Smart cropping ensures images fit perfectly without distortion
+- **Automatic Fallbacks**: Professional placeholder images when your images are missing
+
+### Improved Pattern System
+- **User Customization**: Create custom layout patterns in `{template_folder}/patterns/`
+- **Dynamic Loading**: All layouts now use flexible pattern files instead of hard-coded templates
 
 ## 🏗️ Architecture
 
 ```
-┌─────────────────────────────────────────────────────┐
-│                    MCP Server Layer                 │
-│  ┌─────────────────┐        ┌────────────────────┐  │
-│  │   FastMCP       │        │   Content-First    │  │
-│  │   Endpoints     │◄──────►│   MCP Tools        │  │
-│  └────────┬────────┘        └────────────────────┘  │
-│           │                                         │
-├───────────┴─────────────────────────────────────────┤
-│                 Presentation Engine                 │
-│  ┌─────────────────┐        ┌────────────────────┐  │
-│  │  PowerPoint     │        │   Template         │  │
-│  │  Generation     │◄──────►│   Management       │  │
-│  └────────┬────────┘        └────────────────────┘  │
-│           │                                         │
-├───────────┴─────────────────────────────────────────┤
-│                Content Intelligence                 │
-│  ┌─────────────────┐        ┌────────────────────┐  │
-│  │  Pattern-Based  │        │   PlaceKitten      │  │
-│  │  Intelligence   │        │   Processing       │  │
-│  └─────────────────┘        └────────────────────┘  │
-└─────────────────────────────────────────────────────┘
+    Your Content (Markdown/JSON)
+              ↓
+    ┌─────────────────────┐
+    │   Content Analysis  │  ← Analyzes your content type and audience
+    └─────────┬───────────┘
+              ↓
+    ┌─────────────────────┐
+    │ Template Selection  │  ← Recommends best layouts for your content
+    └─────────┬───────────┘
+              ↓
+    ┌─────────────────────┐
+    │  PowerPoint Engine  │  ← Generates professional presentations
+    └─────────┬───────────┘
+              ↓
+    Your Professional Presentation
 ```
 
 ## 🎨 Supported Markdown Layouts
@@ -320,7 +309,7 @@ placeholder = (pk.generate(1920, 1080, image_id=1)
 - Dashboard, Metrics, Financial layouts
 - And 40+ more business presentation layouts
 
-See [Supported Templates](docs/Features/SupportedTemplates.md) for complete roadmap.
+See [Feature Documentation](docs/old_docs/Features/) for detailed specifications.
 
 ## 🛠️ Development
 
@@ -361,11 +350,12 @@ pytest tests/
 
 ## 📚 Documentation
 
-- **[PLANNING.md](PLANNING.md)** - Project architecture and design principles
-- **[TASK.md](TASK.md)** - Current to-do list and planned features
-- **[API Documentation](docs/API.md)** - Complete API reference
-- **[Feature Specifications](docs/Features/)** - Detailed feature documentation
-- **[PlaceKitten Library](src/placekitten/README.md)** - Image processing documentation
+- **[Complete Documentation](docs/)** - Full documentation index
+- **[Deckbuilder Library](docs/deckbuilder.md)** - Python API reference and classes
+- **[Command-Line Interface](docs/cli.md)** - CLI commands and usage examples
+- **[MCP Server](docs/mcp_server.md)** - Smart template recommendations and MCP tools
+- **[PlaceKitten Library](docs/placekitten.md)** - Image processing with crop-first approach
+- **[PlaceKitten Source](src/placekitten/README.md)** - Technical implementation details
 
 ## 🔧 Technology Stack
 
