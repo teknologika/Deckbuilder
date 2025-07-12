@@ -184,13 +184,13 @@ class TestTemplateMetadataLoader:
         loader = TemplateMetadataLoader()
         
         # Test with default template (should exist in our test environment)
-        assert loader.validate_template_exists("default") == True
+        assert loader.validate_template_exists("default") is True
         
         # Test with non-existent template
-        assert loader.validate_template_exists("nonexistent_template_xyz") == False
+        assert loader.validate_template_exists("nonexistent_template_xyz") is False
         
         # Test with empty string
-        assert loader.validate_template_exists("") == False
+        assert loader.validate_template_exists("") is False
 
 
 class TestLayoutCapabilityAnalyzer:
@@ -232,8 +232,8 @@ class TestLayoutCapabilityAnalyzer:
         assert "Process steps" in result["best_for"]
         assert "Categories" in result["best_for"]
         assert result["placeholder_count"] == 5
-        assert result["supports_images"] == False
-        assert result["supports_tables"] == False
+        assert result["supports_images"] is False
+        assert result["supports_tables"] is False
         assert "comparison" in result["recommended_use_cases"]
         assert "process" in result["recommended_use_cases"]
         assert "categorization" in result["recommended_use_cases"]

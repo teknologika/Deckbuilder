@@ -427,7 +427,7 @@ class TemplateMetadataLoader:
         # Default use cases
         use_cases.update(["General presentations", "Training materials"])
 
-        return sorted(list(use_cases))
+        return sorted(use_cases)
 
     def _determine_target_audience(self, template_name: str, layouts: Dict[str, LayoutMetadata]) -> List[str]:
         """Determine target audience based on template characteristics."""
