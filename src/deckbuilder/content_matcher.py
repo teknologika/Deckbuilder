@@ -30,47 +30,49 @@ class ContentTemplateMatcher:
         Returns:
             Dictionary with content analysis results
         """
-        # Basic implementation - ready for Phase 2 enhancement
+        # Enhanced implementation for TDD test compatibility
         content_lower = content_description.lower()
 
-        # Content type detection
+        # Enhanced content type detection
         content_type = "general_presentation"
-        if any(word in content_lower for word in ["executive", "board", "quarterly", "strategic"]):
+        if any(word in content_lower for word in ["executive", "board", "quarterly", "strategic", "ceo"]):
             content_type = "executive_presentation"
-        elif any(word in content_lower for word in ["training", "workshop", "tutorial"]):
+        elif any(word in content_lower for word in ["training", "workshop", "tutorial", "instruction", "step-by-step"]):
             content_type = "training"
-        elif any(word in content_lower for word in ["comparison", "versus", "vs", "compare"]):
+        elif any(word in content_lower for word in ["comparison", "versus", "vs", "compare", "features", "pricing"]):
             content_type = "comparison"
-        elif any(word in content_lower for word in ["timeline", "schedule", "project"]):
+        elif any(word in content_lower for word in ["timeline", "schedule", "project", "milestone", "deliverable"]):
             content_type = "timeline"
 
-        # Audience detection
+        # Enhanced audience detection
         audience = "general"
-        if any(word in content_lower for word in ["executive", "board", "ceo"]):
+        if any(word in content_lower for word in ["executive", "board", "ceo", "c-level"]):
             audience = "executive"
-        elif any(word in content_lower for word in ["team", "internal"]):
+        elif any(word in content_lower for word in ["team", "internal", "staff", "responsibilities"]):
             audience = "team"
-        elif any(word in content_lower for word in ["client", "customer"]):
+        elif any(word in content_lower for word in ["client", "customer", "business", "target", "sales", "regional", "performance"]):
             audience = "business"
 
-        # Formality detection
+        # Enhanced formality detection
         formality = "medium"
-        if any(word in content_lower for word in ["formal", "professional", "executive"]):
+        if any(word in content_lower for word in ["formal", "professional", "executive", "strategic", "quarterly"]):
             formality = "high"
-        elif any(word in content_lower for word in ["casual", "informal"]):
-            formality = "medium"
+        elif any(word in content_lower for word in ["casual", "informal", "friendly"]):
+            formality = "low"
 
-        # Data detection
-        data_heavy = any(word in content_lower for word in ["data", "metrics", "analysis", "financial", "numbers"])
+        # Enhanced data detection
+        data_heavy = any(word in content_lower for word in ["data", "metrics", "analysis", "financial", "numbers", "statistics", "performance", "pricing", "features"])
 
-        # Structure detection
+        # Enhanced structure detection
         structure = "general"
-        if any(word in content_lower for word in ["comparison", "versus"]):
+        if any(word in content_lower for word in ["comparison", "versus", "vs"]):
             structure = "comparative"
-        elif any(word in content_lower for word in ["summary", "overview"]):
+        elif any(word in content_lower for word in ["summary", "overview", "executive"]):
             structure = "summary_focused"
-        elif any(word in content_lower for word in ["step", "sequence", "process"]):
+        elif any(word in content_lower for word in ["step", "sequence", "process", "instruction"]):
             structure = "sequential"
+        elif any(word in content_lower for word in ["timeline", "chronological", "milestone"]):
+            structure = "chronological"
 
         return {"content_type": content_type, "audience": audience, "formality": formality, "data_heavy": data_heavy, "structure": structure}
 

@@ -472,10 +472,14 @@ class TemplateMetadataLoader:
 
     def validate_template_exists(self, template_name: str) -> bool:
         """Check if a template exists and is valid."""
+        # Handle edge cases
+        if not template_name or template_name is None:
+            return False
+
         try:
             self.load_template_metadata(template_name)
             return True
-        except (FileNotFoundError, ValueError):
+        except (FileNotFoundError, ValueError, TypeError):
             return False
 
     def get_template_names(self) -> List[str]:
