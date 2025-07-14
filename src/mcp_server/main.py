@@ -939,7 +939,7 @@ async def validate_presentation_file(ctx: Context, file_path: str, template_name
 
 
 async def async_main():
-    transport = os.getenv("TRANSPORT", "sse")
+    transport = os.getenv("TRANSPORT", "stdio")
     if transport == "sse":
         # Run the MCP server with sse transport
         await mcp.run_sse_async()
