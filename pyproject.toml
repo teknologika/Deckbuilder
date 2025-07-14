@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "deckbuilder"
-version = "1.2.0"
-description = "Advanced AI-powered PowerPoint generation with intelligent template recommendations, 100% TDD completion, crop-first PlaceKitten processing, and comprehensive CLI tools"
+version = "1.2.1"
+description = "Microsoft PowerPoint, presentation slide library, MCP server and CLI tools. Designed for LLM generation of PPTX slides."
 readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "Apache-2.0"}
@@ -15,8 +15,8 @@ authors = [
 keywords = ["mcp", "powerpoint", "presentations", "automation", "content-first", "template-management", "image-processing", "cli"]
 classifiers = [
 "Development Status :: 4 - Beta",
-"Intended Audience :: Developers",
 "Intended Audience :: End Users/Desktop",
+"Intended Audience :: Developers",
 "License :: OSI Approved :: Apache Software License",
 "Programming Language :: Python :: 3",
 "Programming Language :: Python :: 3.11",
@@ -116,7 +116,7 @@ filterwarnings = [
 ]
 markers = [
 "unit: Unit tests",
-"integration: Integration tests", 
+"integration: Integration tests",
 "slow: Slow running tests",
 "deckbuilder: Deckbuilder engine tests",
 "mcp_server: MCP server tests",

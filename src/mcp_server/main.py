@@ -931,7 +931,7 @@ async def validate_presentation_file(ctx: Context, file_path: str, template_name
         return json.dumps(error_result, indent=2)
 
 
-async def main():
+async def async_main():
     transport = os.getenv("TRANSPORT", "sse")
     if transport == "sse":
         # Run the MCP server with sse transport
@@ -941,5 +941,10 @@ async def main():
         await mcp.run_stdio_async()
 
 
+def main():
+    """Entry point for the MCP server."""
+    asyncio.run(async_main())
+
+
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()

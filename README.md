@@ -96,11 +96,31 @@ deckbuilder --help
 
 Add to your Claude Desktop configuration:
 
+**Option 1: Direct installation (recommended)**
 ```json
 {
   "mcpServers": {
     "deckbuilder": {
       "command": "deckbuilder-server",
+      "env": {
+        "DECK_TEMPLATE_FOLDER": "/Users/username/Documents/Deckbuilder/Templates",
+        "DECK_TEMPLATE_NAME": "default",
+        "DECK_OUTPUT_FOLDER": "/Users/username/Documents/Deckbuilder",
+        "DECK_PROOFING_LANGUAGE": "en-AU",
+        "DECK_DEFAULT_FONT": "Calibri"
+      }
+    }
+  }
+}
+```
+
+**Option 2: Using uvx (no global installation)**
+```json
+{
+  "mcpServers": {
+    "deckbuilder": {
+      "command": "uvx",
+      "args": ["--from", "deckbuilder", "deckbuilder-server"],
       "env": {
         "DECK_TEMPLATE_FOLDER": "/Users/username/Documents/Deckbuilder/Templates",
         "DECK_TEMPLATE_NAME": "default",
