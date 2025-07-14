@@ -16,11 +16,18 @@ from deckbuilder.template_metadata import TemplateMetadataLoader  # noqa: E402
 
 # Content-first tools moved to content_first_tools.py to keep core server focused
 
-
-deck = get_deckbuilder_client()
-
-
 load_dotenv()
+
+# Initialize client lazily to ensure environment variables are available
+deck = None
+
+
+def get_deck_client():
+    """Lazy initialization of deckbuilder client."""
+    global deck
+    if deck is None:
+        deck = get_deckbuilder_client()
+    return deck
 
 
 # Create a dataclass for our application context
@@ -126,7 +133,7 @@ async def create_presentation_from_file(
                 canonical_data = json_data
 
             # Create presentation using the new API
-            result = deck.create_presentation(canonical_data, fileName, templateName)
+            result = get_deck_client().create_presentation(canonical_data, fileName, templateName)
 
             return f"Successfully created presentation from JSON file: {file_path}. {result}"
 
@@ -141,7 +148,7 @@ async def create_presentation_from_file(
             canonical_data = markdown_to_canonical_json(markdown_content)
 
             # Create presentation using the new API
-            result = deck.create_presentation(canonical_data, fileName, templateName)
+            result = get_deck_client().create_presentation(canonical_data, fileName, templateName)
 
             return f"Successfully created presentation from markdown file: " f"{file_path} with {len(canonical_data['slides'])} slides. {result}"
 
@@ -243,7 +250,7 @@ async def create_presentation_from_markdown(
         canonical_data = markdown_to_canonical_json(markdown_content)
 
         # Create presentation using the new API
-        result = deck.create_presentation(canonical_data, fileName, templateName)
+        result = get_deck_client().create_presentation(canonical_data, fileName, templateName)
 
         return f"Successfully created presentation with {len(canonical_data['slides'])} slides " f"from markdown. {result}"
     except Exception as e:
