@@ -1,0 +1,21 @@
+{
+    "description": "Advantages and disadvantages analysis layout",
+    "yaml_pattern": {
+        "layout": "pros_and_cons",
+        "title": "str",
+        "title_left": "str",
+        "content_left": "str",
+        "title_right": "str",
+        "content_right": "str"
+    },
+    "validation": {
+        "required_fields": [
+            "title",
+            "title_left",
+            "content_left",
+            "title_right",
+            "content_right"
+        ]
+    },
+    "example": "---\nlayout: pros_and_cons\ntitle: \"Cloud Migration Analysis\"\ntitle_left: \"Pros\"\ncontent_left: \"**Cost savings** through reduced infrastructure and *scalability* benefits\"\ntitle_right: \"Cons\"\ncontent_right: \"***Migration complexity*** and potential ___vendor lock-in___ risks\"\n---"
+}

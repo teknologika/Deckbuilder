@@ -1,0 +1,21 @@
+{
+    "description": "Before and after comparison layout for showing transformation",
+    "yaml_pattern": {
+        "layout": "before_and_after",
+        "title": "str",
+        "title_left": "str",
+        "content_left": "str",
+        "title_right": "str",
+        "content_right": "str"
+    },
+    "validation": {
+        "required_fields": [
+            "title",
+            "title_left",
+            "content_left",
+            "title_right",
+            "content_right"
+        ]
+    },
+    "example": "---\nlayout: before_and_after\ntitle: \"Digital Transformation Results\"\ntitle_left: \"Before\"\ncontent_left: \"**Manual processes** with *paper-based* workflows and ___time-consuming___ approvals\"\ntitle_right: \"After\"\ncontent_right: \"***Automated systems*** with *digital workflows* and **instant** approvals\"\n---"
+}

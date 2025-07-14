@@ -1,0 +1,15 @@
+{
+    "description": "Chronological timeline layout for showing events or project phases",
+    "yaml_pattern": {
+        "layout": "timeline",
+        "title": "str",
+        "content": "str"
+    },
+    "validation": {
+        "required_fields": [
+            "title",
+            "content"
+        ]
+    },
+    "example": "---\nlayout: timeline\ntitle: \"Project Implementation Timeline\"\ncontent: |\n  **Q1 2024:** Requirements gathering and *stakeholder* alignment\n  **Q2 2024:** System design and ***architecture*** planning\n  **Q3 2024:** Development and ___testing___ phases\n  **Q4 2024:** Deployment and **go-live** support\n---"
+}

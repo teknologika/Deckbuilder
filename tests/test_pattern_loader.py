@@ -164,6 +164,7 @@ class TestPatternLoader:
 
         # These are the layout names that should be defined in the pattern files themselves
         # (in the yaml_pattern.layout field of each JSON file)
+        # Now includes semantic aliases for improved discoverability
         expected_layouts = {
             "Four Columns",
             "Three Columns",
@@ -176,6 +177,14 @@ class TestPatternLoader:
             "Vertical Title and Text",
             "Agenda, 6 Textboxes",
             "Title and 6-item Lists",
+            # Semantic aliases for improved layout discoverability
+            "pros_and_cons",
+            "before_and_after",
+            "problem_solution",
+            "timeline",
+            "process_steps",
+            "team_members",
+            "key_metrics",
         }
 
         # Verify that patterns were loaded based on their internal layout names
@@ -305,7 +314,7 @@ class TestPatternLoaderIntegration:
 
         # Test that the full load_template_metadata uses patterns
         full_metadata = loader.load_template_metadata("default")
-        assert full_metadata.total_layouts == 19  # All pattern layouts
+        assert full_metadata.total_layouts == 26  # All pattern layouts including semantic aliases
         assert "Four Columns" in full_metadata.layouts
 
         # Test pattern example parsing

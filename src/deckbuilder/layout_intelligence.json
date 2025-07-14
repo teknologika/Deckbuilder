@@ -2,14 +2,14 @@
   "layout_intelligence": {
     "version": "1.0",
     "description": "Semantic metadata for content-first layout recommendations using convention-based placeholder names",
-    "last_updated": "2025-06-23"
+    "last_updated": "2025-07-14"
   },
   "content_patterns": {
     "intent_recognition": {
       "comparison": {
-        "keywords": ["vs", "versus", "compare", "contrast", "option", "alternative", "pros", "cons"],
+        "keywords": ["vs", "versus", "compare", "contrast", "option", "alternative", "pros", "cons", "before", "after", "advantages", "disadvantages"],
         "structure": ["paired_content", "left_right", "side_by_side"],
-        "layouts": ["Comparison", "Two Content"],
+        "layouts": ["Comparison", "Two Content", "pros_and_cons", "before_and_after"],
         "confidence": 0.9
       },
       "overview": {
@@ -25,15 +25,15 @@
         "confidence": 0.85
       },
       "process": {
-        "keywords": ["step", "process", "workflow", "procedure", "method"],
+        "keywords": ["step", "process", "workflow", "procedure", "method", "timeline", "chronological", "sequential"],
         "structure": ["sequential", "numbered", "timeline"],
-        "layouts": ["Agenda, 6 Textboxes", "Title and 6-item Lists"],
+        "layouts": ["Agenda, 6 Textboxes", "Title and 6-item Lists", "timeline", "process_steps"],
         "confidence": 0.8
       },
       "statistics": {
-        "keywords": ["number", "percent", "metric", "data", "result", "performance"],
-        "structure": ["big_number", "key_metric", "single_focus"],
-        "layouts": ["Big Number", "Title and Content"],
+        "keywords": ["number", "percent", "metric", "data", "result", "performance", "kpi", "dashboard", "metrics"],
+        "structure": ["big_number", "key_metric", "single_focus", "multiple_metrics"],
+        "layouts": ["Big Number", "Title and Content", "key_metrics"],
         "confidence": 0.9
       },
       "analysis": {
@@ -41,6 +41,18 @@
         "structure": ["four_quadrant", "categorized_analysis"],
         "layouts": ["SWOT Analysis", "Four Columns With Titles"],
         "confidence": 0.95
+      },
+      "problem_solving": {
+        "keywords": ["problem", "solution", "issue", "resolve", "fix", "challenge", "answer"],
+        "structure": ["problem_solution_pair", "issue_resolution"],
+        "layouts": ["Two Content", "problem_solution", "Comparison"],
+        "confidence": 0.85
+      },
+      "team_people": {
+        "keywords": ["team", "member", "staff", "people", "profile", "bio", "employee", "leadership"],
+        "structure": ["people_profiles", "team_grid", "member_info"],
+        "layouts": ["Four Columns", "team_members", "Four Columns With Titles"],
+        "confidence": 0.8
       }
     },
     "content_type_mapping": {
@@ -249,6 +261,141 @@
         "four_categories": 0.9,
         "analysis_structure": 0.85
       }
+    },
+    "pros_and_cons": {
+      "optimal_for": ["advantages_disadvantages", "pros_cons_analysis", "decision_making"],
+      "semantic_alias_for": "Comparison",
+      "placeholders": {
+        "required": ["title", "left_title", "left_content", "right_title", "right_content"],
+        "optional": ["date_footer_1", "footer_footer_1", "slide_number_footer_1"]
+      },
+      "content_hints": {
+        "title": "Decision or topic being analyzed",
+        "left_title": "Pros/Advantages",
+        "left_content": "Positive aspects and benefits",
+        "right_title": "Cons/Disadvantages", 
+        "right_content": "Negative aspects and drawbacks"
+      },
+      "confidence_factors": {
+        "pros_cons_keywords": 0.95,
+        "advantages_disadvantages": 0.9,
+        "decision_context": 0.85
+      }
+    },
+    "before_and_after": {
+      "optimal_for": ["transformation", "improvement", "change_comparison"],
+      "semantic_alias_for": "Comparison",
+      "placeholders": {
+        "required": ["title", "left_title", "left_content", "right_title", "right_content"],
+        "optional": ["date_footer_1", "footer_footer_1", "slide_number_footer_1"]
+      },
+      "content_hints": {
+        "title": "Transformation or change topic",
+        "left_title": "Before/Current State",
+        "left_content": "Current situation or starting point",
+        "right_title": "After/Future State",
+        "right_content": "Desired outcome or end result"
+      },
+      "confidence_factors": {
+        "before_after_keywords": 0.95,
+        "transformation_context": 0.9,
+        "temporal_comparison": 0.85
+      }
+    },
+    "problem_solution": {
+      "optimal_for": ["issue_resolution", "challenge_response", "problem_solving"],
+      "semantic_alias_for": "Two Content",
+      "placeholders": {
+        "required": ["title", "left_content", "right_content"],
+        "optional": ["date_footer_1", "footer_footer_1", "slide_number_footer_1"]
+      },
+      "content_hints": {
+        "title": "Problem and solution overview",
+        "left_content": "Problem description and challenges",
+        "right_content": "Solution approach and benefits"
+      },
+      "confidence_factors": {
+        "problem_solution_keywords": 0.9,
+        "issue_resolution_context": 0.85,
+        "challenge_response": 0.8
+      }
+    },
+    "timeline": {
+      "optimal_for": ["chronological_events", "project_timeline", "historical_sequence"],
+      "semantic_alias_for": "Title and Content",
+      "placeholders": {
+        "required": ["title", "content"],
+        "optional": ["date_footer_1", "footer_footer_1", "slide_number_footer_1"]
+      },
+      "content_hints": {
+        "title": "Timeline or chronological topic",
+        "content": "Time-sequenced events or milestones"
+      },
+      "confidence_factors": {
+        "timeline_keywords": 0.9,
+        "chronological_structure": 0.85,
+        "temporal_sequence": 0.8
+      }
+    },
+    "process_steps": {
+      "optimal_for": ["sequential_process", "workflow_steps", "procedure_guide"],
+      "semantic_alias_for": "Four Columns",
+      "placeholders": {
+        "required": ["title", "content_col1", "content_col2", "content_col3", "content_col4"],
+        "optional": ["date_footer_1", "footer_footer_1", "slide_number_footer_1"]
+      },
+      "content_hints": {
+        "title": "Process or workflow name",
+        "content_col1": "Step 1: First action or phase",
+        "content_col2": "Step 2: Second action or phase",
+        "content_col3": "Step 3: Third action or phase",
+        "content_col4": "Step 4: Final action or phase"
+      },
+      "confidence_factors": {
+        "process_keywords": 0.9,
+        "sequential_structure": 0.85,
+        "step_indicators": 0.8
+      }
+    },
+    "team_members": {
+      "optimal_for": ["team_introduction", "staff_profiles", "leadership_overview"],
+      "semantic_alias_for": "Four Columns",
+      "placeholders": {
+        "required": ["title", "content_col1", "content_col2", "content_col3", "content_col4"],
+        "optional": ["date_footer_1", "footer_footer_1", "slide_number_footer_1"]
+      },
+      "content_hints": {
+        "title": "Team or group name",
+        "content_col1": "Team member 1: Name, role, and background",
+        "content_col2": "Team member 2: Name, role, and background",
+        "content_col3": "Team member 3: Name, role, and background",
+        "content_col4": "Team member 4: Name, role, and background"
+      },
+      "confidence_factors": {
+        "team_keywords": 0.9,
+        "people_profiles": 0.85,
+        "member_structure": 0.8
+      }
+    },
+    "key_metrics": {
+      "optimal_for": ["kpi_dashboard", "performance_metrics", "data_summary"],
+      "semantic_alias_for": "Four Columns",
+      "placeholders": {
+        "required": ["title", "content_col1", "content_col2", "content_col3", "content_col4"],
+        "optional": ["date_footer_1", "footer_footer_1", "slide_number_footer_1"]
+      },
+      "content_hints": {
+        "title": "Metrics dashboard or KPI overview",
+        "content_col1": "Metric 1: Name, value, and context",
+        "content_col2": "Metric 2: Name, value, and context",
+        "content_col3": "Metric 3: Name, value, and context",
+        "content_col4": "Metric 4: Name, value, and context"
+      },
+      "confidence_factors": {
+        "metrics_keywords": 0.95,
+        "kpi_structure": 0.9,
+        "data_presentation": 0.85
+      }
     }
   },
   "recommendation_engine": {
@@ -260,6 +407,15 @@
     },
     "minimum_confidence": 0.6,
     "fallback_layouts": ["Title and Content", "Title Slide"],
+    "semantic_aliases": {
+      "pros_and_cons": "Comparison",
+      "before_and_after": "Comparison", 
+      "problem_solution": "Two Content",
+      "timeline": "Title and Content",
+      "process_steps": "Four Columns",
+      "team_members": "Four Columns",
+      "key_metrics": "Four Columns"
+    },
     "recommendation_rules": {
       "multiple_recommendations": true,
       "max_recommendations": 3,
@@ -282,7 +438,14 @@
     "layout_specific": {
       "Comparison": "Keep left/right content balanced in length",
       "Four Columns With Titles": "Aim for parallel structure across columns",
-      "Agenda, 6 Textboxes": "Use consistent numbering format (01, 02, etc.)"
+      "Agenda, 6 Textboxes": "Use consistent numbering format (01, 02, etc.)",
+      "pros_and_cons": "Balance positive and negative points equally",
+      "before_and_after": "Show clear contrast between current and future states",
+      "problem_solution": "Clearly define the problem before presenting the solution",
+      "timeline": "Use chronological order and consistent date formatting",
+      "process_steps": "Number steps clearly and maintain logical sequence",
+      "team_members": "Include consistent information for each team member",
+      "key_metrics": "Use consistent units and provide context for each metric"
     }
   }
 }

@@ -1,0 +1,21 @@
+{
+    "description": "Key performance metrics layout with four KPI areas",
+    "yaml_pattern": {
+        "layout": "key_metrics",
+        "title": "str",
+        "content_col1": "str",
+        "content_col2": "str",
+        "content_col3": "str",
+        "content_col4": "str"
+    },
+    "validation": {
+        "required_fields": [
+            "title",
+            "content_col1",
+            "content_col2",
+            "content_col3",
+            "content_col4"
+        ]
+    },
+    "example": "---\nlayout: key_metrics\ntitle: \"Q4 Performance Dashboard\"\ncontent_col1: \"**Revenue Growth**\\n***23%*** increase\\n*Year-over-year* improvement\"\ncontent_col2: \"**Customer Satisfaction**\\n___94%___ positive rating\\n*Above* industry average\"\ncontent_col3: \"**Market Share**\\n**12%** expansion\\nLeading in ***enterprise*** segment\"\ncontent_col4: \"**Team Productivity**\\n*31%* efficiency gain\\n___Automated___ workflows\"\n---"
+}

@@ -113,26 +113,6 @@ Add to your Claude Desktop configuration:
   }
 }
 ```
-
-**Option 2: Using uvx (no global installation)**
-```json
-{
-  "mcpServers": {
-    "deckbuilder": {
-      "command": "uvx",
-      "args": ["--from", "deckbuilder", "deckbuilder-server"],
-      "env": {
-        "DECK_TEMPLATE_FOLDER": "/Users/username/Documents/Deckbuilder/Templates",
-        "DECK_TEMPLATE_NAME": "default",
-        "DECK_OUTPUT_FOLDER": "/Users/username/Documents/Deckbuilder",
-        "DECK_PROOFING_LANGUAGE": "en-AU",
-        "DECK_DEFAULT_FONT": "Calibri"
-      }
-    }
-  }
-}
-```
-
 **New Environment Variables:**
 - `DECK_PROOFING_LANGUAGE`: Set proofing language for spell-check and grammar (accepts both "en-AU" and "English (Australia)" formats)
 - `DECK_DEFAULT_FONT`: Set default font family for all presentations
@@ -371,6 +351,7 @@ pytest tests/
 ## 📚 Documentation
 
 - **[Complete Documentation](docs/)** - Full documentation index
+- **[Supported Templates](docs/supported_templates.md)** - Complete layout library (26+ patterns)
 - **[Deckbuilder Library](docs/deckbuilder.md)** - Python API reference and classes
 - **[Command-Line Interface](docs/cli.md)** - CLI commands and usage examples
 - **[MCP Server](docs/mcp_server.md)** - Smart template recommendations and MCP tools

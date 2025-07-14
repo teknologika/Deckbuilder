@@ -1,0 +1,21 @@
+{
+    "description": "Team member introduction layout with four profiles",
+    "yaml_pattern": {
+        "layout": "team_members",
+        "title": "str",
+        "content_col1": "str",
+        "content_col2": "str",
+        "content_col3": "str",
+        "content_col4": "str"
+    },
+    "validation": {
+        "required_fields": [
+            "title",
+            "content_col1",
+            "content_col2",
+            "content_col3",
+            "content_col4"
+        ]
+    },
+    "example": "---\nlayout: team_members\ntitle: \"Project Leadership Team\"\ncontent_col1: \"**Sarah Chen** - *Project Manager*\\n5 years experience in ___enterprise___ solutions\"\ncontent_col2: \"**Mike Johnson** - ***Technical Lead***\\nSpecialist in *cloud* architecture\"\ncontent_col3: \"**Lisa Rodriguez** - **UX Designer**\\nExpert in ___user-centered___ design\"\ncontent_col4: \"**David Kim** - *Business Analyst*\\n***Stakeholder*** engagement specialist\"\n---"
+}

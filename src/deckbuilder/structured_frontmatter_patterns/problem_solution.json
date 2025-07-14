@@ -1,0 +1,17 @@
+{
+    "description": "Problem and solution layout for identifying issues and resolutions",
+    "yaml_pattern": {
+        "layout": "problem_solution",
+        "title": "str",
+        "content_left": "str",
+        "content_right": "str"
+    },
+    "validation": {
+        "required_fields": [
+            "title",
+            "content_left",
+            "content_right"
+        ]
+    },
+    "example": "---\nlayout: problem_solution\ntitle: \"Customer Retention Challenge\"\ncontent_left: |\n  **Problem:**\n  • High customer churn rate (*25%* annually)\n  • ***Lack of engagement*** post-purchase\n  • ___Poor___ onboarding experience\ncontent_right: |\n  **Solution:**\n  • Implement **automated** onboarding\n  • Create *personalized* engagement campaigns\n  • Establish ___proactive___ customer success program\n---"
+}
