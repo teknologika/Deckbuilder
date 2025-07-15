@@ -600,6 +600,7 @@ class DeckbuilderCLI:
                 print(f"   Text runs processed: {stats['total_runs_processed']}")
                 if language_code:
                     print(f"   Language applied: {stats['total_language_applied']} runs")
+                    print(f"   Text replaced: {stats['total_text_replaced']} runs")
                 if font_name:
                     print(f"   Font applied: {stats['total_font_applied']} runs")
                 return True

@@ -7,7 +7,9 @@ Provides language ID constants, font validation, and unified presentation proces
 that updates both master slides and content slides.
 """
 
+import json
 import os
+import re
 from difflib import get_close_matches
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
@@ -71,7 +73,7 @@ class FormattingSupport:
 
     def __init__(self):
         """Initialize formatting support"""
-        pass
+        self._language_mappings = {}
 
     # Language name to code mapping for backward compatibility
     LANGUAGE_NAME_TO_CODE = {
@@ -239,9 +241,160 @@ class FormattingSupport:
         except Exception:
             return False
 
+    def load_language_mapping(self, language_code: str) -> Optional[Dict]:
+        """
+        Load language mapping configuration for text replacement.
+
+        Args:
+            language_code: Target language code (e.g., 'en-AU')
+
+        Returns:
+            Language mapping dictionary or None if not found
+        """
+        if language_code in self._language_mappings:
+            return self._language_mappings[language_code]
+
+        # Find language mapping file
+        current_dir = Path(__file__).parent
+        mapping_file = current_dir / "language_mappings" / f"{language_code}.json"
+
+        if not mapping_file.exists():
+            return None
+
+        try:
+            with open(mapping_file, "r", encoding="utf-8") as f:
+                mapping_data = json.load(f)
+            self._language_mappings[language_code] = mapping_data
+            return mapping_data
+        except Exception as e:
+            print(f"⚠️  Warning: Could not load language mapping for {language_code}: {e}")
+            return None
+
+    def preserve_case(self, original_word: str, replacement_word: str) -> str:
+        """
+        Preserve the case pattern of the original word in the replacement.
+
+        Args:
+            original_word: Original word with case pattern
+            replacement_word: Replacement word in lowercase
+
+        Returns:
+            Replacement word with preserved case pattern
+        """
+        if original_word.isupper():
+            return replacement_word.upper()
+        elif original_word.islower():
+            return replacement_word.lower()
+        elif original_word.istitle():
+            # Handle title case for phrases (e.g., "Cell Phone" -> "Mobile Phone")
+            return replacement_word.title()
+        else:
+            # Mixed case - attempt to preserve pattern character by character
+            result = ""
+            for i, char in enumerate(replacement_word):
+                if i < len(original_word):
+                    if original_word[i].isupper():
+                        result += char.upper()
+                    else:
+                        result += char.lower()
+                else:
+                    result += char.lower()
+            return result
+
+    def is_context_exception(self, text: str, word_position: int, word: str, except_contexts: List[str]) -> bool:
+        """
+        Check if a word should be excluded from replacement based on context.
+
+        Args:
+            text: Full text containing the word
+            word_position: Position of the word in the text
+            word: The word to check
+            except_contexts: List of context words that should prevent replacement
+
+        Returns:
+            True if word should be excluded from replacement
+        """
+        if not except_contexts:
+            return False
+
+        # Get surrounding context (30 characters before and after)
+        start = max(0, word_position - 30)
+        end = min(len(text), word_position + len(word) + 30)
+        context = text[start:end].lower()
+
+        # Check if any exception context is present
+        for exception_context in except_contexts:
+            if exception_context.lower() in context:
+                return True
+
+        return False
+
+    def apply_text_replacements(self, text: str, language_code: str) -> str:
+        """
+        Apply text replacements based on language mapping configuration.
+
+        Args:
+            text: Text to process
+            language_code: Target language code
+
+        Returns:
+            Text with language-specific replacements applied
+        """
+        if not text:
+            return text
+
+        mapping = self.load_language_mapping(language_code)
+        if not mapping:
+            return text
+
+        result_text = text
+
+        # Apply spelling pattern replacements
+        if "spelling_patterns" in mapping:
+            for source_word, target_word in mapping["spelling_patterns"].items():
+                # Use word boundaries for exact matches
+                pattern = r"\b" + re.escape(source_word) + r"\b"
+                matches = list(re.finditer(pattern, result_text, re.IGNORECASE))
+
+                # Process matches in reverse order to preserve positions
+                for match in reversed(matches):
+                    original_word = match.group()
+                    replacement = self.preserve_case(original_word, target_word)
+                    result_text = result_text[: match.start()] + replacement + result_text[match.end() :]
+
+        # Apply conditional mappings (like program/programme)
+        if "conditional_mappings" in mapping:
+            for source_word, config in mapping["conditional_mappings"].items():
+                target_word = config["to"]
+                except_contexts = config.get("except_contexts", [])
+
+                pattern = r"\b" + re.escape(source_word) + r"\b"
+                matches = list(re.finditer(pattern, result_text, re.IGNORECASE))
+
+                for match in reversed(matches):
+                    # Check if this occurrence should be excluded
+                    if not self.is_context_exception(result_text, match.start(), source_word, except_contexts):
+                        original_word = match.group()
+                        replacement = self.preserve_case(original_word, target_word)
+                        result_text = result_text[: match.start()] + replacement + result_text[match.end() :]
+
+        # Apply vocabulary replacements (phrases)
+        if "vocabulary" in mapping:
+            for source_phrase, target_phrase in mapping["vocabulary"].items():
+                # Use word boundaries for phrase matching
+                pattern = r"\b" + re.escape(source_phrase) + r"\b"
+                matches = list(re.finditer(pattern, result_text, re.IGNORECASE))
+
+                for match in reversed(matches):
+                    original_phrase = match.group()
+                    replacement = self.preserve_case(original_phrase, target_phrase)
+                    result_text = result_text[: match.start()] + replacement + result_text[match.end() :]
+
+        return result_text
+
     def process_text_frame(self, text_frame, language_code: Optional[str] = None, font_name: Optional[str] = None) -> Dict[str, int]:
         """
-        Process all text runs in a text frame, applying language and/or font settings.
+        Process all text runs in a text frame, applying text replacements, language and/or font settings.
 
         Args:
             text_frame: python-pptx TextFrame object
@@ -251,17 +404,27 @@ class FormattingSupport:
         Returns:
             Dictionary with processing statistics
         """
-        stats = {"runs_processed": 0, "language_applied": 0, "font_applied": 0}
+        stats = {"runs_processed": 0, "language_applied": 0, "font_applied": 0, "text_replaced": 0}
 
         try:
             for paragraph in text_frame.paragraphs:
                 for run in paragraph.runs:
                     stats["runs_processed"] += 1
 
+                    # Apply text replacements first if language code is provided
+                    if language_code and run.text:
+                        original_text = run.text
+                        replaced_text = self.apply_text_replacements(original_text, language_code)
+                        if replaced_text != original_text:
+                            run.text = replaced_text
+                            stats["text_replaced"] += 1
+
+                    # Apply language ID changes
                     if language_code:
                         if self.apply_language_to_run(run, language_code):
                             stats["language_applied"] += 1
 
+                    # Apply font changes
                     if font_name:
                         if self.apply_font_to_run(run, font_name):
                             stats["font_applied"] += 1
@@ -284,7 +447,7 @@ class FormattingSupport:
         Returns:
             Dictionary with processing statistics
         """
-        stats = {"runs_processed": 0, "language_applied": 0, "font_applied": 0}
+        stats = {"runs_processed": 0, "language_applied": 0, "font_applied": 0, "text_replaced": 0}
 
         try:
             # Handle text frames
@@ -361,6 +524,7 @@ class FormattingSupport:
                 "total_runs_processed": 0,
                 "total_language_applied": 0,
                 "total_font_applied": 0,
+                "total_text_replaced": 0,
             }
 
             # Process master slides
@@ -374,6 +538,7 @@ class FormattingSupport:
                         total_stats["total_runs_processed"] += shape_stats["runs_processed"]
                         total_stats["total_language_applied"] += shape_stats["language_applied"]
                         total_stats["total_font_applied"] += shape_stats["font_applied"]
+                        total_stats["total_text_replaced"] += shape_stats["text_replaced"]
 
                     # Process slide layouts
                     for slide_layout in slide_master.slide_layouts:
@@ -382,6 +547,7 @@ class FormattingSupport:
                             total_stats["total_runs_processed"] += shape_stats["runs_processed"]
                             total_stats["total_language_applied"] += shape_stats["language_applied"]
                             total_stats["total_font_applied"] += shape_stats["font_applied"]
+                            total_stats["total_text_replaced"] += shape_stats["text_replaced"]
 
             except Exception as e:
                 print(f"⚠️  Warning: Error processing master slides: {e}")
@@ -395,6 +561,7 @@ class FormattingSupport:
                     total_stats["total_runs_processed"] += shape_stats["runs_processed"]
                     total_stats["total_language_applied"] += shape_stats["language_applied"]
                     total_stats["total_font_applied"] += shape_stats["font_applied"]
+                    total_stats["total_text_replaced"] += shape_stats["text_replaced"]
 
             # Save presentation
             save_path = output_path if output_path else presentation_path
