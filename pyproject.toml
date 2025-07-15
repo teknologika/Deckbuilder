@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "deckbuilder"
-version = "1.2.3"
+version = "1.2.4"
 description = "Microsoft PowerPoint, presentation slide library, MCP server and CLI tools. Designed for LLM generation of PPTX slides."
 readme = "README.md"
 requires-python = ">=3.11"

@@ -6,15 +6,17 @@
             "placeholders": {
                 "title": "**Deckbuilder: Intelligent PowerPoint Generation**",
                 "subtitle": "Showcasing all ___19 layouts___ with **professional** *formatting* capabilities"
-            }
+            },
+            "content": []
         },
         {
             "layout": "Title and Content",
             "style": "default_style",
             "placeholders": {
                 "title": "Rich Content with **Professional** *Formatting*",
-                "content": "Deckbuilder Features\n\nDeckbuilder delivers intelligent presentation generation with comprehensive formatting support.\n\n- **Content-first** design philosophy\n- *Semantic* layout recommendations\n- ***Advanced*** template management\n- ___Professional___ formatting preservation\n\nTransform your ideas into polished presentations with **automated** *intelligence* and ___consistent___ styling."
-            }
+                "content": "Deckbuilder Features\n\nDeckbuilder delivers intelligent presentation generation with comprehensive formatting support.\n\n\u2022 **Content-first** design philosophy\n\u2022 *Semantic* layout recommendations\n\u2022 ***Advanced*** template management\n\u2022 ___Professional___ formatting preservation\n\nTransform your ideas into polished presentations with **automated** *intelligence* and ___consistent___ styling."
+            },
+            "content": []
         },
         {
             "layout": "Section Header",
@@ -22,7 +24,8 @@
             "placeholders": {
                 "title": "**Deckbuilder** *Capabilities*",
                 "text": "Comprehensive presentation intelligence with ___professional___ **layout** automation for streamlined content creation."
-            }
+            },
+            "content": []
         },
         {
             "layout": "Two Content",
@@ -31,7 +34,8 @@
                 "title": "Deckbuilder **Core** Features",
                 "content_left": "**Semantic** layout detection\n*Automatic* content optimization\n***Smart*** placeholder mapping",
                 "content_right": "___Enterprise-grade___ presentations\n**Consistent** branding\n*Polished* formatting"
-            }
+            },
+            "content": []
         },
         {
             "layout": "Comparison",
@@ -42,28 +46,32 @@
                 "content_left": "**Manual** slide creation with *time-consuming* layout decisions and ***inconsistent*** formatting",
                 "title_right": "Deckbuilder Solution",
                 "content_right": "___Intelligent___ automation with **content-first** design and *professional* output quality"
-            }
+            },
+            "content": []
         },
         {
             "layout": "Title Only",
             "style": "default_style",
             "placeholders": {
                 "title": "Deckbuilder: **Intelligent** *Presentation* ___Generation___"
-            }
+            },
+            "content": []
         },
         {
             "layout": "Blank",
             "style": "default_style",
-            "placeholders": {}
+            "placeholders": {},
+            "content": []
         },
         {
             "layout": "Content with Caption",
             "style": "default_style",
             "placeholders": {
                 "title": "Advanced Layout Capabilities",
-                "content": "Professional Features\n\nDeckbuilder provides sophisticated layout management with intelligent content placement:\n\n- **Template** analysis and optimization\n- *Automatic* placeholder detection\n- ***Semantic*** content mapping",
+                "content": "Professional Features\n\nDeckbuilder provides sophisticated layout management with intelligent content placement:\n\n\u2022 **Template** analysis and optimization\n\u2022 *Automatic* placeholder detection\n\u2022 ***Semantic*** content mapping",
                 "text_caption": "Enterprise-grade presentation generation with ___professional___ output and **consistent** formatting."
-            }
+            },
+            "content": []
         },
         {
             "layout": "Picture with Caption",
@@ -72,7 +80,8 @@
                 "title": "Picture Layout **Test**",
                 "image": "placeholder_image.jpg",
                 "text_caption": "Picture placeholder with ***formatted*** captions"
-            }
+            },
+            "content": []
         },
         {
             "layout": "Title and Vertical Text",
@@ -80,7 +89,8 @@
             "placeholders": {
                 "title": "**Vertical Text** Layout Test",
                 "content": "This layout demonstrates vertical text capabilities with **formatted** content and *enhanced* presentation features for ___specialized___ content."
-            }
+            },
+            "content": []
         },
         {
             "layout": "Vertical Title and Text",
@@ -88,7 +98,8 @@
             "placeholders": {
                 "title_top": "Vertical Title Layout",
                 "content": "This layout demonstrates vertical title and text capabilities with **formatted** content and *enhanced* presentation features for ___specialized___ content."
-            }
+            },
+            "content": []
         },
         {
             "layout": "Three Columns With Titles",
@@ -101,7 +112,8 @@
                 "content_col2": "***Enterprise-grade*** encryption with ___SOC2___ compliance",
                 "title_col3": "Usability",
                 "content_col3": "*Intuitive* interface with **minimal** learning curve"
-            }
+            },
+            "content": []
         },
         {
             "layout": "Three Columns",
@@ -111,7 +123,8 @@
                 "content_col1": "**Fast processing** with optimized algorithms and *sub-millisecond* response times",
                 "content_col2": "***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance",
                 "content_col3": "*Intuitive* interface with **minimal** learning curve and comprehensive docs"
-            }
+            },
+            "content": []
         },
         {
             "layout": "Four Columns With Titles",
@@ -126,7 +139,8 @@
                 "content_col3": "*Intuitive* interface with **minimal** learning curve",
                 "title_col4": "Cost",
                 "content_col4": "___Transparent___ pricing with **flexible** plans"
-            }
+            },
+            "content": []
         },
         {
             "layout": "Four Columns",
@@ -137,7 +151,8 @@
                 "content_col2": "***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance",
                 "content_col3": "*Intuitive* interface with **minimal** learning curve and comprehensive docs",
                 "content_col4": "___Transparent___ pricing with **flexible** plans and *proven* ROI"
-            }
+            },
+            "content": []
         },
         {
             "layout": "Agenda, 6 Textboxes",
@@ -150,7 +165,8 @@
                 "content_item4": "04 - ___Financial___ performance review",
                 "content_item5": "05 - **Strategic** initiatives overview",
                 "content_item6": "06 - *Q&A* session and next steps"
-            }
+            },
+            "content": []
         },
         {
             "layout": "Title and 6-item Lists",
@@ -169,7 +185,8 @@
                 "Content5": "5- *Monitoring*",
                 "Title6": "6- ***Support***",
                 "Content6": "6- **Documentation**"
-            }
+            },
+            "content": []
         },
         {
             "layout": "Big Number",
@@ -177,7 +194,8 @@
             "placeholders": {
                 "title": "**42%**",
                 "content": "Improvement in *performance* with ___new___ architecture"
-            }
+            },
+            "content": []
         },
         {
             "layout": "SWOT Analysis",
@@ -188,7 +206,8 @@
                 "content_top_right": "___Limited___ geographic presence and **high** costs",
                 "content_bottom_left": "*Emerging* markets and ***digital*** transformation",
                 "content_bottom_right": "**Competition** and ___regulatory___ changes"
-            }
+            },
+            "content": []
         },
         {
             "layout": "Title and Content",
@@ -373,7 +392,8 @@
                     "border_style": "thin_gray",
                     "custom_colors": {}
                 }
-            }
+            },
+            "content": []
         }
     ]
 }

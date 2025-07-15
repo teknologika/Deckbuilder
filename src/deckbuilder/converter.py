@@ -156,7 +156,7 @@ class StructuredFrontmatterConverter:
         return result
 
     def _process_content_field(self, content: str) -> Any:
-        """Process content field - detect and parse tables, process headings, otherwise return content as-is"""
+        """Process content field - detect and parse tables, lists, blockquotes, and headings"""
         if not content or not isinstance(content, str):
             return content
 
@@ -166,7 +166,11 @@ class StructuredFrontmatterConverter:
         if self._is_table_content(content):
             return self._parse_markdown_table(content)
 
-        # Process headings and other markdown content
+        # Check if content contains lists or other markdown elements
+        if self._is_structured_markdown_content(content):
+            return self._parse_structured_markdown(content)
+
+        # Process headings and other simple markdown content
         processed_content = self._process_markdown_headings(content)
         return processed_content
 
@@ -289,7 +293,7 @@ class StructuredFrontmatterConverter:
         return segments
 
     def _process_markdown_headings(self, content: str) -> str:
-        """Process markdown headings by removing ## and ### prefixes"""
+        """Process markdown headings by removing #, ##, and ### prefixes"""
         if not content:
             return content
 
@@ -297,13 +301,69 @@ class StructuredFrontmatterConverter:
         processed_lines = []
 
         for line in lines:
-            # Remove markdown heading prefixes
-            if line.strip().startswith("## "):
-                processed_lines.append(line.strip()[3:])  # Remove "## "
-            elif line.strip().startswith("### "):
+            # Remove markdown heading prefixes (order matters - longest first)
+            if line.strip().startswith("### "):
                 processed_lines.append(line.strip()[4:])  # Remove "### "
+            elif line.strip().startswith("## "):
+                processed_lines.append(line.strip()[3:])  # Remove "## "
+            elif line.strip().startswith("# "):
+                processed_lines.append(line.strip()[2:])  # Remove "# "
             else:
                 processed_lines.append(line)
+
+        return "\n".join(processed_lines)
+
+    def _is_structured_markdown_content(self, content: str) -> bool:
+        """Check if content contains structured markdown elements like lists or blockquotes"""
+        lines = [line.strip() for line in content.split("\n") if line.strip()]
+
+        # Check for bullet lists (- or *)
+        bullet_lines = sum(1 for line in lines if line.startswith("- ") or line.startswith("* "))
+
+        # Check for numbered lists (1. 2. 3.)
+        numbered_lines = sum(1 for line in lines if self._is_numbered_list_line(line))
+
+        # Check for blockquotes (>)
+        blockquote_lines = sum(1 for line in lines if line.startswith("> "))
+
+        # Return True if we have at least one structured element
+        return bullet_lines > 0 or numbered_lines > 0 or blockquote_lines > 0
+
+    def _is_numbered_list_line(self, line: str) -> bool:
+        """Check if a line is a numbered list item (1. 2. 3. etc.)"""
+        import re
+
+        return bool(re.match(r"^\d+\.\s+", line))
+
+    def _parse_structured_markdown(self, content: str) -> str:
+        """Parse structured markdown content with lists and blockquotes"""
+        lines = content.split("\n")
+        processed_lines = []
+
+        for line in lines:
+            original_line = line
+            line = line.strip()
+
+            # Process headings first (order matters - longest first)
+            if line.startswith("### "):
+                processed_lines.append(line[4:])  # Remove "### "
+            elif line.startswith("## "):
+                processed_lines.append(line[3:])  # Remove "## "
+            elif line.startswith("# "):
+                processed_lines.append(line[2:])  # Remove "# "
+            # Process bullet lists
+            elif line.startswith("- "):
+                processed_lines.append("• " + line[2:])  # Replace "- " with "• "
+            elif line.startswith("* "):
+                processed_lines.append("• " + line[2:])  # Replace "* " with "• "
+            # Process numbered lists
+            elif self._is_numbered_list_line(line):
+                processed_lines.append(line)  # Keep numbered lists as-is for now
+            # Process blockquotes
+            elif line.startswith("> "):
+                processed_lines.append(line[2:])  # Remove "> "
+            else:
+                processed_lines.append(original_line)  # Keep original indentation for non-markdown lines
 
         return "\n".join(processed_lines)
 
