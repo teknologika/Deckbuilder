@@ -669,3 +669,165 @@ class TestRemapBackupValidation:
             prs.save(str(test_file))
 
             yield test_file
+
+
+class TestRemapThemeFonts:
+    """Tests specifically for theme font update functionality."""
+
+    @pytest.fixture
+    def sample_presentation(self):
+        """Create a sample PowerPoint presentation for testing theme font updates."""
+        # Create a minimal but valid presentation
+        with tempfile.TemporaryDirectory() as temp_dir:
+            prs = Presentation()
+            slide = prs.slides.add_slide(prs.slide_layouts[0])
+            slide.shapes.title.text = "Test Slide with Theme Fonts"
+
+            test_file = Path(temp_dir) / "theme_font_test.pptx"
+            prs.save(str(test_file))
+
+            yield test_file
+
+    def test_remap_font_updates_theme(self, sample_presentation):
+        """Test that font remapping updates theme fonts (majorFont and minorFont)."""
+        # Get original theme fonts
+        original_prs = Presentation(str(sample_presentation))
+        original_major_font, original_minor_font = self._get_theme_fonts(original_prs)
+
+        # Run remap with new font
+        test_font = "Times New Roman"
+        result = subprocess.run(
+            [
+                "python",
+                str(Path(__file__).parent.parent.parent.parent / "src" / "deckbuilder" / "cli.py"),
+                "remap",
+                str(sample_presentation),
+                "--font",
+                test_font,
+                "--no-backup",
+            ],
+            capture_output=True,
+            text=True,
+        )
+
+        assert result.returncode == 0
+        assert f"font to '{test_font}'" in result.stdout
+        assert "Theme fonts updated: 1 (majorFont + minorFont)" in result.stdout
+
+        # Verify theme fonts were actually updated
+        updated_prs = Presentation(str(sample_presentation))
+        updated_major_font, updated_minor_font = self._get_theme_fonts(updated_prs)
+
+        # Both should be updated to the new font
+        assert updated_major_font == test_font
+        assert updated_minor_font == test_font
+
+        # Should be different from original (unless original was already Times New Roman)
+        if original_major_font != test_font:
+            assert updated_major_font != original_major_font
+        if original_minor_font != test_font:
+            assert updated_minor_font != original_minor_font
+
+    def test_remap_language_only_preserves_theme_fonts(self, sample_presentation):
+        """Test that language-only remapping doesn't modify theme fonts."""
+        # Get original theme fonts
+        original_prs = Presentation(str(sample_presentation))
+        original_major_font, original_minor_font = self._get_theme_fonts(original_prs)
+
+        # Run remap with language only (no font)
+        result = subprocess.run(
+            [
+                "python",
+                str(Path(__file__).parent.parent.parent.parent / "src" / "deckbuilder" / "cli.py"),
+                "remap",
+                str(sample_presentation),
+                "--language",
+                "en-US",
+                "--no-backup",
+            ],
+            capture_output=True,
+            text=True,
+        )
+
+        assert result.returncode == 0
+        assert "language to en-US" in result.stdout
+        # Should NOT show theme fonts updated
+        assert "Theme fonts updated" not in result.stdout
+
+        # Verify theme fonts were NOT changed
+        updated_prs = Presentation(str(sample_presentation))
+        updated_major_font, updated_minor_font = self._get_theme_fonts(updated_prs)
+
+        assert updated_major_font == original_major_font
+        assert updated_minor_font == original_minor_font
+
+    def test_remap_font_and_language_updates_theme(self, sample_presentation):
+        """Test that combined font and language remapping updates theme fonts."""
+        test_font = "Arial"
+        result = subprocess.run(
+            [
+                "python",
+                str(Path(__file__).parent.parent.parent.parent / "src" / "deckbuilder" / "cli.py"),
+                "remap",
+                str(sample_presentation),
+                "--font",
+                test_font,
+                "--language",
+                "en-AU",
+                "--no-backup",
+            ],
+            capture_output=True,
+            text=True,
+        )
+
+        assert result.returncode == 0
+        assert f"font to '{test_font}'" in result.stdout
+        assert "language to en-AU" in result.stdout
+        assert "Theme fonts updated: 1 (majorFont + minorFont)" in result.stdout
+
+        # Verify theme fonts were updated
+        updated_prs = Presentation(str(sample_presentation))
+        updated_major_font, updated_minor_font = self._get_theme_fonts(updated_prs)
+
+        assert updated_major_font == test_font
+        assert updated_minor_font == test_font
+
+    def _get_theme_fonts(self, presentation):
+        """
+        Helper method to extract theme font names from a presentation.
+
+        Returns:
+            Tuple of (majorFont, minorFont) typeface names
+        """
+        try:
+            # Access theme part through presentation relationships
+            theme_part = None
+            for rel in presentation.part.rels.values():
+                if "theme" in rel.target_ref:
+                    theme_part = rel.target_part
+                    break
+
+            if not theme_part:
+                return None, None
+
+            # Parse theme XML from blob
+            from lxml import etree  # nosec B410 - parsing trusted PowerPoint XML
+
+            theme_xml_bytes = theme_part.blob
+            theme_xml = etree.fromstring(theme_xml_bytes)  # nosec B320 - parsing trusted PowerPoint XML
+
+            # Define DrawingML namespace
+            DRAWINGML_NS = {"a": "http://schemas.openxmlformats.org/drawingml/2006/main"}
+
+            # Find theme font elements
+            major_latin_elements = theme_xml.xpath(".//a:majorFont/a:latin", namespaces=DRAWINGML_NS)
+            minor_latin_elements = theme_xml.xpath(".//a:minorFont/a:latin", namespaces=DRAWINGML_NS)
+
+            major_font = major_latin_elements[0].get("typeface") if major_latin_elements else None
+            minor_font = minor_latin_elements[0].get("typeface") if minor_latin_elements else None
+
+            return major_font, minor_font
+
+        except Exception as e:
+            pytest.fail(f"Failed to extract theme fonts: {e}")
+            return None, None

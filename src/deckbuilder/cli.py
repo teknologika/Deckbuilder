@@ -603,6 +603,8 @@ class DeckbuilderCLI:
                     print(f"   Text replaced: {stats['total_text_replaced']} runs")
                 if font_name:
                     print(f"   Font applied: {stats['total_font_applied']} runs")
+                    if stats.get("theme_fonts_updated", 0) > 0:
+                        print(f"   Theme fonts updated: {stats['theme_fonts_updated']} (majorFont + minorFont)")
                 return True
             else:
                 print(f"❌ {result['error']}")

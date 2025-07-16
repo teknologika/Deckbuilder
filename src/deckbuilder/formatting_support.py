@@ -477,6 +477,58 @@ class FormattingSupport:
 
         return stats
 
+    def update_theme_fonts(self, presentation, font_name: str) -> bool:
+        """
+        Update theme majorFont and minorFont to use the specified font.
+
+        Args:
+            presentation: python-pptx Presentation object
+            font_name: Font name to apply to both major and minor theme fonts
+
+        Returns:
+            True if theme fonts were updated successfully, False otherwise
+        """
+        try:
+            # Access theme part through presentation relationships
+            theme_part = None
+            for rel in presentation.part.rels.values():
+                if "theme" in rel.target_ref:
+                    theme_part = rel.target_part
+                    break
+
+            if not theme_part:
+                return False
+
+            # Parse theme XML from blob
+            from lxml import etree  # nosec B410 - parsing trusted PowerPoint XML
+
+            theme_xml_bytes = theme_part.blob
+            theme_xml = etree.fromstring(theme_xml_bytes)  # nosec B320 - parsing trusted PowerPoint XML
+
+            # Define DrawingML namespace
+            DRAWINGML_NS = {"a": "http://schemas.openxmlformats.org/drawingml/2006/main"}
+
+            # Find and update majorFont latin typeface
+            major_latin_elements = theme_xml.xpath(".//a:majorFont/a:latin", namespaces=DRAWINGML_NS)
+            minor_latin_elements = theme_xml.xpath(".//a:minorFont/a:latin", namespaces=DRAWINGML_NS)
+
+            if major_latin_elements and minor_latin_elements:
+                # Update both major and minor fonts to use the same font
+                major_latin_elements[0].set("typeface", font_name)
+                minor_latin_elements[0].set("typeface", font_name)
+
+                # Save the modified XML back to the theme part
+                modified_xml_bytes = etree.tostring(theme_xml, encoding="utf-8", xml_declaration=True)
+                theme_part._blob = modified_xml_bytes
+
+                return True
+
+            return False
+
+        except Exception as e:
+            print(f"⚠️  Warning: Could not update theme fonts: {e}")
+            return False
+
     def update_presentation(
         self,
         presentation_path: str,
@@ -525,7 +577,13 @@ class FormattingSupport:
                 "total_language_applied": 0,
                 "total_font_applied": 0,
                 "total_text_replaced": 0,
+                "theme_fonts_updated": 0,
             }
+
+            # Update theme fonts if font name is provided
+            if font_name:
+                if self.update_theme_fonts(prs, font_name):
+                    total_stats["theme_fonts_updated"] = 1
 
             # Process master slides
             try:
