@@ -29,20 +29,28 @@ class ImageHandler:
             cache_dir: Directory for caching processed images
         """
         self.cache_dir = Path(cache_dir)
-        try:
-            self.cache_dir.mkdir(parents=True, exist_ok=True)
-        except OSError:
-            # Fallback to a temporary directory if cache_dir is not writable
-            import tempfile
-
-            self.cache_dir = Path(tempfile.gettempdir()) / "deckbuilder_image_cache"
-            self.cache_dir.mkdir(parents=True, exist_ok=True)
+        self._cache_initialized = False
 
         # Supported image formats for PowerPoint
         self.supported_formats = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".gif"}
 
         # Quality settings for output
         self.quality_settings = {"high": 95, "medium": 85, "low": 70}
+
+    def _ensure_cache_dir(self):
+        """
+        Ensure cache directory exists. Called lazily when cache is first needed.
+        """
+        if not self._cache_initialized:
+            try:
+                self.cache_dir.mkdir(parents=True, exist_ok=True)
+            except OSError:
+                # Fallback to a temporary directory if cache_dir is not writable
+                import tempfile
+
+                self.cache_dir = Path(tempfile.gettempdir()) / "deckbuilder_image_cache"
+                self.cache_dir.mkdir(parents=True, exist_ok=True)
+            self._cache_initialized = True
 
     def validate_image(self, image_path: str) -> bool:
         """
@@ -203,6 +211,7 @@ class ImageHandler:
         Returns:
             str: Path to cached image, or None if not cached
         """
+        self._ensure_cache_dir()
         cached_path = self.cache_dir / f"{cache_key}.jpg"
 
         if cached_path.exists():
@@ -222,6 +231,7 @@ class ImageHandler:
         Returns:
             Path: Path to saved image file
         """
+        self._ensure_cache_dir()
         output_path = self.cache_dir / f"{cache_key}.jpg"
 
         # Get quality setting
@@ -239,6 +249,8 @@ class ImageHandler:
         Args:
             max_size_mb: Maximum cache size in megabytes
         """
+        if not self._cache_initialized:
+            return  # No cache to clean up
         try:
             # Calculate total cache size
             total_size = sum(f.stat().st_size for f in self.cache_dir.glob("*.jpg") if f.is_file())
@@ -270,6 +282,8 @@ class ImageHandler:
         Returns:
             dict: Cache statistics including file count and total size
         """
+        if not self._cache_initialized:
+            return {"file_count": 0, "total_size_mb": 0.0, "cache_dir": str(self.cache_dir)}
         try:
             cache_files = list(self.cache_dir.glob("*.jpg"))
             total_size = sum(f.stat().st_size for f in cache_files if f.is_file())

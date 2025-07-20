@@ -53,7 +53,12 @@ class Deckbuilder:
         self.presentation_builder = PresentationBuilder(self._path_manager)
 
         # Initialize image-related components
-        self.image_handler = ImageHandler()
+        output_folder = self._path_manager.get_output_folder()
+        if isinstance(output_folder, str):
+            image_cache_dir = Path(output_folder) / "image_cache"
+        else:
+            image_cache_dir = output_folder / "image_cache"
+        self.image_handler = ImageHandler(str(image_cache_dir))
         self.placekitten = PlaceKitten()
 
         # Ensure default template exists in templates folder
