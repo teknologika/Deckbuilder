@@ -188,39 +188,37 @@ content: |
 ---
 layout: Title and Content
 title: "**Table Dimensions:** Custom Column Widths"
----
-Demonstrating individual column width control with light grey borders:
+style: dark_blue_white_text
+row_style: alternating_light_gray
+border_style: thin_gray
+column_widths: [8, 6, 4, 5]
+row_height: 0.9
+content: |
+  Sales Performance Report with individual column width control:
 
-**Configuration:**
-- Column widths: [8, 6, 4, 5] cm
-- Row height: 2.0 cm  
-- Border style: thin_gray
-- Style: dark_blue_white_text
-
-| **Product Category** | **Q1 Sales** | **Q2** | **Growth %** |
-| Enterprise Software | $125,000 | $142,000 | +13.6% |
-| SaaS Solutions | $89,500 | $98,200 | +9.7% |
-| Cloud Services | $156,000 | $178,000 | +14.1% |
-| Mobile Apps | $67,300 | $73,800 | +9.7% |
-
+  | **Product Category** | **Q1 Sales** | **Q2** | **Growth %** |
+  | Enterprise Software | $125,000 | $142,000 | +13.6% |
+  | SaaS Solutions | $89,500 | $98,200 | +9.7% |
+  | Cloud Services | $156,000 | $178,000 | +14.1% |
+  | Mobile Apps | $67,300 | $73,800 | +9.7% |
 ---
 
 ---
-layout: Title and Content  
+layout: Title and Content
 title: "**Table Dimensions:** Equal Column Distribution"
+style: light_blue_dark_text
+row_style: alternating_light_gray
+border_style: thin_gray
+table_width: 22
+row_height: 0.9
+content: |
+  Team Performance Dashboard with equal column distribution:
+
+  | **Team Member** | **Projects** | **Completed** | **Success Rate** |
+  | Alice Johnson | 25 | 24 | 96% |
+  | Bob Smith | 18 | 17 | 94% |
+  | Carol Davis | 32 | 31 | 97% |
+  | David Wilson | 21 | 20 | 95% |
 ---
-Demonstrating table width with equal column distribution:
-
-**Configuration:**
-- Table width: 22 cm (equal columns)
-- Row height: 1.8 cm
-- Border style: thin_gray  
-- Style: light_blue_dark_text
-
-| **Team Member** | **Projects** | **Completed** | **Success Rate** |
-| Alice Johnson | 25 | 24 | 96% |
-| Bob Smith | 18 | 17 | 94% |
-| Carol Davis | 32 | 31 | 97% |
-| David Wilson | 21 | 20 | 95% |
 
 ---

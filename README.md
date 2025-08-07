@@ -18,7 +18,7 @@ Create complete PowerPoint presentations from JSON or Markdown with YAML frontma
 ### 🎨 **Rich Content Support**
 - **Advanced Formatting**: `**bold**`, `*italic*`, `___underline___`, `***bold italic***`
 - **Language & Font updating**: The ability to update the fonts and language of all slide objects using the command line tools using the CLI.
-- **Professional Tables**: Custom styling with themes and colors.
+- **Professional Tables**: Custom styling with themes, colors, and precise dimension controls (column widths, row heights, table sizing).
 - **Supported Layouts**: Progressive library of templates being added.
 
 ### 🧠 **Smart Template System**
@@ -151,6 +151,41 @@ media:
   alt_text: "Revenue growth chart"
   caption: "**Q4 Revenue Growth** - 23% increase"
 ---
+
+---
+layout: Title and Content
+title: "**Table Dimensions:** Custom Column Widths"
+style: dark_blue_white_text
+row_style: alternating_light_gray
+border_style: thin_gray
+column_widths: [8, 6, 4, 5]
+row_height: 0.9
+content: |
+  Sales Performance Report with individual column width control:
+
+  | **Product Category** | **Q1 Sales** | **Q2** | **Growth %** |
+  | Enterprise Software | $125,000 | $142,000 | +13.6% |
+  | SaaS Solutions | $89,500 | $98,200 | +9.7% |
+  | Cloud Services | $156,000 | $178,000 | +14.1% |
+  | Mobile Apps | $67,300 | $73,800 | +9.7% |
+---
+
+---
+layout: Title and Content
+title: "**Table Dimensions:** Equal Column Distribution"
+style: light_blue_dark_text
+row_style: alternating_light_gray
+border_style: thin_gray
+table_width: 22
+row_height: 0.9
+content: |
+  Team Performance Dashboard with equal column distribution:
+
+  | **Team Member** | **Projects** | **Completed** | **Success Rate** |
+  | Alice Johnson | 25 | 24 | 96% |
+  | Bob Smith | 18 | 17 | 94% |
+  | Carol Davis | 32 | 31 | 97% |
+  | David Wilson | 21 | 20 | 95% |
 ```
 
 ### JSON Format (Programmatic)
@@ -172,6 +207,23 @@ media:
           "*Semantic* layout recommendations",
           "***Professional*** template system"
         ]
+      },
+      {
+        "type": "Title and Content",
+        "title": "Team Performance Dashboard",
+        "table": {
+          "column_widths": [6, 4, 5, 3],
+          "row_height": 1.8,
+          "data": [
+            ["**Team Member**", "**Projects**", "**Completed**", "**Rate**"],
+            ["Alice Johnson", "25", "24", "96%"],
+            ["Bob Smith", "18", "17", "94%"],
+            ["Carol Davis", "32", "31", "97%"]
+          ],
+          "header_style": "dark_blue_white_text",
+          "row_style": "alternating_light_gray",
+          "border_style": "thin_gray"
+        }
       }
     ]
   }
