@@ -137,6 +137,10 @@ class StructuredFrontmatterConverter:
         if "layout" in structured_data:
             result["layout"] = structured_data["layout"]
 
+        # Check if this slide has table properties that will create a separate table object
+        table_properties = ["column_widths", "row_height", "table_width", "style", "row_style", "border_style"]
+        has_table_properties = any(prop in structured_data for prop in table_properties)
+
         # Process each field defined in yaml_pattern (except layout)
         for field_name, _field_type in yaml_pattern.items():
             if field_name == "layout":
@@ -149,9 +153,21 @@ class StructuredFrontmatterConverter:
                 if isinstance(value, list):
                     value = "\n".join(str(item) for item in value)
 
-                # Process content to convert markdown to LLM-friendly JSON
-                processed_value = self._process_content_field(value)
+                # Special handling for content field when table properties exist
+                if field_name == "content" and has_table_properties and isinstance(value, str):
+                    # Keep content as raw text when table properties exist
+                    # The table object will handle the actual table creation
+                    processed_value = value
+                else:
+                    # Process content to convert markdown to LLM-friendly JSON
+                    processed_value = self._process_content_field(value)
+
                 result[field_name] = processed_value
+
+        # Preserve table-related properties that aren't in the yaml_pattern
+        for prop in table_properties:
+            if prop in structured_data and prop not in yaml_pattern:
+                result[prop] = structured_data[prop]
 
         return result
 
@@ -521,6 +537,76 @@ class FrontmatterConverter(StructuredFrontmatterConverter):
     pass
 
 
+def _extract_table_from_content(content: str, slide_data: dict) -> Optional[dict]:
+    """
+    Extract table data from content and combine with frontmatter styling properties.
+
+    Args:
+        content: The content string which may contain markdown tables
+        slide_data: The slide data containing frontmatter properties
+
+    Returns:
+        Dictionary with table data and styling, or None if no table found
+    """
+    if not content or not isinstance(content, str):
+        return None
+
+    # Check if content contains table markdown
+    lines = [line.strip() for line in content.split("\n") if line.strip()]
+
+    # Find table lines
+    table_lines = []
+    for line in lines:
+        # Skip separator lines and non-table lines
+        if line.startswith("|") and line.endswith("|"):
+            table_lines.append(line)
+        elif "|" in line and not line.startswith("---") and not line.startswith("==="):
+            table_lines.append(line)
+
+    if len(table_lines) < 2:  # Need at least header + 1 data row
+        return None
+
+    # Parse table data
+    table_data = []
+    for line in table_lines:
+        # Clean up separators
+        clean_line = line.replace("|", "").replace("-", "").replace(":", "").replace("=", "").strip()
+        if clean_line == "" or all(c in "|-:= " for c in line):
+            continue  # Skip separator lines
+
+        # Parse cells
+        if line.startswith("|") and line.endswith("|"):
+            cells = [cell.strip() for cell in line[1:-1].split("|")]
+        else:
+            cells = [cell.strip() for cell in line.split("|")]
+
+        table_data.append(cells)
+
+    if not table_data:
+        return None
+
+    # Create table object with styling from frontmatter
+    table_obj = {"data": table_data, "header_style": "dark_blue_white_text", "row_style": "alternating_light_gray", "border_style": "thin_gray", "custom_colors": {}}  # default  # default  # default
+
+    # Apply frontmatter styling properties
+    if "style" in slide_data:
+        table_obj["header_style"] = slide_data["style"]
+    if "row_style" in slide_data:
+        table_obj["row_style"] = slide_data["row_style"]
+    if "border_style" in slide_data:
+        table_obj["border_style"] = slide_data["border_style"]
+
+    # Apply dimension properties
+    if "column_widths" in slide_data:
+        table_obj["column_widths"] = slide_data["column_widths"]
+    if "row_height" in slide_data:
+        table_obj["row_height"] = slide_data["row_height"]
+    if "table_width" in slide_data:
+        table_obj["table_width"] = slide_data["table_width"]
+
+    return table_obj
+
+
 def markdown_to_canonical_json(markdown_content: str) -> Dict[str, Any]:
     """
     Converts a Markdown string with frontmatter into the canonical JSON presentation model.
@@ -577,16 +663,57 @@ def markdown_to_canonical_json(markdown_content: str) -> Dict[str, Any]:
                 # Put content blocks in the placeholders so slide builder can find them
                 slide_obj["placeholders"]["content"] = content_blocks
 
-        # Add other placeholder fields from frontmatter (exclude internal fields)
+        # Check for table-related frontmatter properties to determine table handling
+        table_properties = ["column_widths", "row_height", "table_width", "row_style", "border_style"]
+        has_table_properties = any(key in slide_data for key in table_properties)
+
+        # Check if we need to create a table object from content field
+        content_field = slide_data.get("content")
+        table_data = None
+
+        if has_table_properties and content_field:
+            # When table properties exist, we need to create a table object
+            if isinstance(content_field, dict) and content_field.get("type") == "table":
+                # Content field is already a parsed table structure
+                table_data = content_field.copy()
+            elif isinstance(content_field, str):
+                # Content field is raw text containing table markdown - parse it
+                table_data = _extract_table_from_content(content_field, slide_data)
+
+            # Apply frontmatter styling properties to the table data
+            if table_data:
+                if "style" in slide_data:
+                    table_data["header_style"] = slide_data["style"]
+                if "row_style" in slide_data:
+                    table_data["row_style"] = slide_data["row_style"]
+                if "border_style" in slide_data:
+                    table_data["border_style"] = slide_data["border_style"]
+
+                # Apply dimension properties
+                if "column_widths" in slide_data:
+                    table_data["column_widths"] = slide_data["column_widths"]
+                if "row_height" in slide_data:
+                    table_data["row_height"] = slide_data["row_height"]
+                if "table_width" in slide_data:
+                    table_data["table_width"] = slide_data["table_width"]
+
+        # Add table object to slide if table data was found
+        if table_data:
+            slide_obj["table"] = table_data
+
+        # Add other placeholder fields from frontmatter (exclude internal fields and table properties)
+        excluded_fields = ["type", "rich_content", "style", "layout", "title_formatted", "subtitle_formatted"]
+
+        # Also exclude table properties from placeholders since they go in the table object
+        if has_table_properties:
+            excluded_fields.extend(table_properties)
+
+        # NOTE: We do NOT exclude "content" field here anymore to maintain compatibility
+        # The content field should go in placeholders.content even when table exists
+        # This ensures markdown and JSON processing produce identical placeholder content
+
         for key, value in slide_data.items():
-            if key not in [
-                "type",
-                "rich_content",
-                "style",
-                "layout",
-                "title_formatted",
-                "subtitle_formatted",
-            ]:
+            if key not in excluded_fields:
                 # Don't duplicate title and subtitle since they're already handled above
                 if key not in ["title", "subtitle"] or key not in slide_obj["placeholders"]:
                     slide_obj["placeholders"][key] = value

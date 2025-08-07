@@ -806,7 +806,7 @@ class DeckbuilderCLI:
                     if pattern_data and pattern_data.get("yaml_pattern", {}).get("layout") == pattern_name:
                         pattern_files = [pattern_file]
                         break
-                except Exception:
+                except Exception:  # nosec B112
                     continue
 
             if not pattern_files:

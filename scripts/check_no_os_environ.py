@@ -25,11 +25,7 @@ def check_file_for_os_environ(file_path: Path) -> list[str]:
         for node in ast.walk(tree):
             # Check for os.environ attribute access
             if isinstance(node, ast.Attribute):
-                if (
-                    isinstance(node.value, ast.Name)
-                    and node.value.id == "os"
-                    and node.attr == "environ"
-                ):
+                if isinstance(node.value, ast.Name) and node.value.id == "os" and node.attr == "environ":
                     violations.append(f"{file_path}:{node.lineno}: Found os.environ usage")
 
             # Check for direct environ import and usage

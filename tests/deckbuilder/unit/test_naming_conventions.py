@@ -177,7 +177,7 @@ class TestNamingConvention:
             (10, "footer"),  # High index usually footer
         ]
 
-        for placeholder_index, expected_position in position_tests:
+        for placeholder_index, _expected_position in position_tests:
             context = PlaceholderContext(
                 layout_name="Custom Layout",
                 placeholder_idx=str(placeholder_index),

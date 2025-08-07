@@ -357,6 +357,9 @@ class SlideBuilder:
         # Process nested structures like media.image_path
         self._process_nested_image_fields(slide, slide_data, image_placeholder_handler)
 
+        # Process table data if present
+        self._process_table_data(slide, slide_data, content_formatter)
+
     def _resolve_field_name_variations(self, field_name: str, field_to_index: dict) -> str:
         """
         Resolve field name variations to handle user flexibility.
@@ -586,3 +589,52 @@ class SlideBuilder:
                     if placeholder.placeholder_format.type == PP_PLACEHOLDER_TYPE.PICTURE:
                         image_placeholder_handler.handle_image_placeholder(placeholder, "media.image_path", image_path, slide_data)
                         break
+
+    def _process_table_data(self, slide, slide_data, content_formatter):
+        """
+        Process table data from slide_data and add table to slide.
+
+        This handles table data that was skipped during placeholder processing.
+        The table data should contain styling and dimension information.
+
+        Args:
+            slide: PowerPoint slide object
+            slide_data: Dictionary containing slide content (may include table data)
+            content_formatter: ContentFormatter instance for table creation
+        """
+        # Check if slide has table data
+        table_data = slide_data.get("table")
+        if not table_data:
+            return
+
+        # Check if table was already created through content placeholder processing
+        # This happens when content field contains a table structure (from markdown conversion)
+        existing_tables = []
+        for shape in slide.shapes:
+            try:
+                # Check for table using multiple approaches
+                if hasattr(shape, "shape_type"):
+                    shape_type_str = str(shape.shape_type)
+                    if "TABLE" in shape_type_str and "19" in shape_type_str:
+                        existing_tables.append(shape)
+                # Also check for table using pptx table detection
+                elif hasattr(shape, "table"):
+                    existing_tables.append(shape)
+            except Exception:  # nosec B110
+                pass  # Skip shapes that can't be inspected
+
+        if existing_tables:
+            # Table already created through content processing, skip duplicate creation
+            debug_print(f"  Table already exists ({len(existing_tables)} found), skipping duplicate table creation")
+            return
+
+        # Set slide context for content formatter
+        content_formatter._current_slide = slide
+
+        # Import TableBuilder for table creation
+        from .table_builder import TableBuilder
+
+        table_builder = TableBuilder(content_formatter)
+
+        # Add table to slide
+        table_builder.add_table_to_slide(slide, table_data)

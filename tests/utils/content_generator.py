@@ -385,7 +385,7 @@ class ContentGenerator:
         """Add bold/italic/underline variations to content."""
         variations = {}
 
-        for format_name, (pattern, description) in FORMATTING_PATTERNS.items():
+        for format_name, (pattern, _description) in FORMATTING_PATTERNS.items():
             variations[format_name] = pattern.format(content)
 
         return variations
@@ -474,7 +474,7 @@ def get_formatted_content_samples() -> Dict[str, str]:
     base_text = "Important information"
     samples = {}
 
-    for format_name, (pattern, description) in FORMATTING_PATTERNS.items():
+    for format_name, (pattern, _description) in FORMATTING_PATTERNS.items():
         samples[format_name] = pattern.format(base_text)
 
     return samples

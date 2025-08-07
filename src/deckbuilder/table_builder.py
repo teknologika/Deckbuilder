@@ -56,18 +56,17 @@ class TableBuilder:
                 content_placeholder = shape
                 break
 
-        if content_placeholder:
-            # Remove placeholder and create table in its place
-            left = content_placeholder.left
-            top = content_placeholder.top
-            width = dimensions["table_width"] or content_placeholder.width
-            height = dimensions["table_height"] or content_placeholder.height
+        if content_placeholder and hasattr(content_placeholder, "text_frame"):
+            # Insert table within the content placeholder bounds
 
-            # Remove the placeholder
-            sp = content_placeholder._element
-            sp.getparent().remove(sp)
+            # Position table below the text content within the placeholder bounds
+            left = content_placeholder.left
+            top = content_placeholder.top + Cm(1)  # Leave space for text above
+            width = dimensions["table_width"] or (content_placeholder.width - Cm(1))
+            height = dimensions["table_height"] or Cm(10)  # Reasonable default
+
         else:
-            # Default positioning if no placeholder found
+            # Default positioning if no content placeholder found
             left = Cm(2.5)
             top = Cm(5)
             width = dimensions["table_width"] or Cm(20)

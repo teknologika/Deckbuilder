@@ -33,7 +33,7 @@ class TestTemplateProcessing:
 
         # Verify layout structure
         layouts = default_template_json["layouts"]
-        for layout_name, layout_data in layouts.items():
+        for _layout_name, layout_data in layouts.items():
             assert "index" in layout_data
             assert "placeholders" in layout_data
             assert isinstance(layout_data["placeholders"], dict)

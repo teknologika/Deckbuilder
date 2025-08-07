@@ -466,7 +466,7 @@ class PowerPointValidator:
 
         # Check for consistent footer elements
         footer_elements = []
-        for slide_index, slide in enumerate(presentation.slides):
+        for _slide_index, slide in enumerate(presentation.slides):
             slide_footers = []
             for shape in slide.shapes:
                 if hasattr(shape, "text_frame") and shape.text_frame:

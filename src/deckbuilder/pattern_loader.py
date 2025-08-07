@@ -159,7 +159,7 @@ class PatternLoader:
                     pattern_data = self._load_pattern_file(pattern_file)
                     if pattern_data and pattern_data.get("yaml_pattern", {}).get("layout") == layout_name:
                         return pattern_file
-                except Exception:
+                except Exception:  # nosec B112
                     continue
 
         # Check user patterns
@@ -169,7 +169,7 @@ class PatternLoader:
                     pattern_data = self._load_pattern_file(pattern_file)
                     if pattern_data and pattern_data.get("yaml_pattern", {}).get("layout") == layout_name:
                         return pattern_file
-                except Exception:
+                except Exception:  # nosec B112
                     continue
 
         return None
