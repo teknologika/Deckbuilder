@@ -175,12 +175,17 @@ content_bottom_right: "**Competition** and ___regulatory___ changes"
 ---
 
 ---
-layout: Title and Content
+layout: table
 title: "Table Slide with **Formatted** Content"
-content: |
-  | **Feature** | *Status* | ___Priority___ |
-  | Authentication | **Complete** | *High* |
-  | User Management | ***In Progress*** | ___Medium___ |
-  | Reporting | *Planned* | **Low** |
-  | API Integration | ___Blocked___ | ***Critical*** |
+style: dark_blue_white_text
+row_style: alternating_light_gray
+border_style: thin_gray
+table_width: 20
+row_height: 2
 ---
+# Table Slide with **Formatted** Content
+| **Feature** | *Status* | ___Priority___ |
+| Authentication | **Complete** | *High* |
+| User Management | ***In Progress*** | ___Medium___ |
+| Reporting | *Planned* | **Low** |
+| API Integration | ___Blocked___ | ***Critical*** |

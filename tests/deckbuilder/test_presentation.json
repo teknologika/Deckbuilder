@@ -112,11 +112,13 @@
             ["Authentication", "**Complete**", "*High*"],
             ["User Management", "***In Progress***", "___Medium___"],
             ["Reporting", "*Planned*", "**Low**"],
-            ["API Integration", "___Blocked___", "***Critical***"]
+            ["API Integration", "___Blocked___", "***Critical___"]
           ],
           "header_style": "dark_blue_white_text",
           "row_style": "alternating_light_gray",
           "border_style": "thin_gray",
+          "column_widths": [8, 6, 4],
+          "row_height": 1.8,
           "custom_colors": {}
         }
       },

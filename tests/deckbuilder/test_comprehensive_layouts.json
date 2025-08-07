@@ -390,6 +390,8 @@
                     "header_style": "dark_blue_white_text",
                     "row_style": "alternating_light_gray",
                     "border_style": "thin_gray",
+                    "table_width": 20,
+                    "row_height": 2,
                     "custom_colors": {}
                 }
             },

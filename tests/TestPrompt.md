@@ -22,7 +22,11 @@ We deliver three core benefits that set us apart from competitors.
 - Cost Savings: Average 25% reduction in operational expenses
 
 ---
-layout: table style: dark_blue_white_text row_style: alternating_light_gray
+layout: table
+style: dark_blue_white_text
+row_style: alternating_light_gray
+column_widths: [6, 4, 6, 4]
+row_height: 1.5
 ---
 # Performance Metrics
  | Metric | Baseline | With AI Solution | Improvement |

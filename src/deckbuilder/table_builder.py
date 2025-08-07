@@ -46,6 +46,9 @@ class TableBuilder:
         border_style = table_data.get("border_style", "thin_gray")
         custom_colors = table_data.get("custom_colors", {})
 
+        # Parse dimension options
+        dimensions = self._parse_dimensions(table_data, len(data[0]) if data else 0)
+
         # Find content placeholder or create table in available space
         content_placeholder = None
         for shape in slide.placeholders:
@@ -57,8 +60,8 @@ class TableBuilder:
             # Remove placeholder and create table in its place
             left = content_placeholder.left
             top = content_placeholder.top
-            width = content_placeholder.width
-            height = content_placeholder.height
+            width = dimensions["table_width"] or content_placeholder.width
+            height = dimensions["table_height"] or content_placeholder.height
 
             # Remove the placeholder
             sp = content_placeholder._element
@@ -67,8 +70,8 @@ class TableBuilder:
             # Default positioning if no placeholder found
             left = Cm(2.5)
             top = Cm(5)
-            width = Cm(20)
-            height = Cm(12)
+            width = dimensions["table_width"] or Cm(20)
+            height = dimensions["table_height"] or Cm(12)
 
         # Create the table
         rows = len(data)
@@ -99,6 +102,12 @@ class TableBuilder:
                 else:
                     # Old string cell data
                     cell.text = str(cell_data)
+
+        # Apply dimension controls
+        if dimensions["column_widths"]:
+            self._apply_column_widths(table, dimensions["column_widths"])
+        if dimensions["row_height"]:
+            self._apply_row_heights(table, dimensions["row_height"])
 
         # Apply styling
         self._apply_table_styling(table, header_style, row_style, border_style, custom_colors)
@@ -266,3 +275,105 @@ class TableBuilder:
             pass
 
         return None
+
+    def _parse_dimensions(self, table_data, column_count):
+        """
+        Parse and validate table dimension parameters.
+
+        Args:
+            table_data: Dictionary containing table configuration
+            column_count: Number of columns in the table data
+
+        Returns:
+            Dictionary with parsed dimensions or None values
+        """
+        dimensions = {"table_width": None, "table_height": None, "column_widths": None, "row_height": None}
+
+        # Parse table width
+        if "table_width" in table_data:
+            try:
+                width_value = float(table_data["table_width"])
+                if width_value > 0:
+                    dimensions["table_width"] = Cm(width_value)
+            except (ValueError, TypeError):
+                print(f"Warning: Invalid table_width '{table_data['table_width']}', using default")
+
+        # Parse table height
+        if "table_height" in table_data:
+            try:
+                height_value = float(table_data["table_height"])
+                if height_value > 0:
+                    dimensions["table_height"] = Cm(height_value)
+            except (ValueError, TypeError):
+                print(f"Warning: Invalid table_height '{table_data['table_height']}', using default")
+
+        # Parse column widths
+        if "column_widths" in table_data:
+            column_widths_raw = table_data["column_widths"]
+            if isinstance(column_widths_raw, list):
+                try:
+                    column_widths = [float(w) for w in column_widths_raw if float(w) > 0]
+
+                    # Validate column count
+                    if len(column_widths) < column_count:
+                        # Extend with default width (average of specified widths or 5cm)
+                        default_width = sum(column_widths) / len(column_widths) if column_widths else 5.0
+                        missing_count = column_count - len(column_widths)
+                        column_widths.extend([default_width] * missing_count)
+                        print(f"Warning: Only {len(column_widths_raw)} column widths specified for {column_count} columns. Extended with {default_width}cm default.")
+
+                    elif len(column_widths) > column_count:
+                        # Truncate to match actual columns
+                        column_widths = column_widths[:column_count]
+                        print(f"Warning: {len(column_widths_raw)} column widths specified for {column_count} columns. Truncated to match.")
+
+                    # Convert to Cm objects
+                    dimensions["column_widths"] = [Cm(w) for w in column_widths]
+
+                    # Calculate total table width from column widths
+                    dimensions["table_width"] = Cm(sum(column_widths))
+
+                except (ValueError, TypeError) as e:
+                    print(f"Warning: Invalid column_widths '{column_widths_raw}', using default: {e}")
+            else:
+                print(f"Warning: column_widths must be a list, got {type(column_widths_raw)}")
+
+        # Parse row height
+        if "row_height" in table_data:
+            try:
+                row_height_value = float(table_data["row_height"])
+                if row_height_value > 0:
+                    dimensions["row_height"] = Cm(row_height_value)
+            except (ValueError, TypeError):
+                print(f"Warning: Invalid row_height '{table_data['row_height']}', using default")
+
+        return dimensions
+
+    def _apply_column_widths(self, table, column_widths):
+        """
+        Apply individual column widths to a table.
+
+        Args:
+            table: The table object
+            column_widths: List of Cm objects for column widths
+        """
+        try:
+            for i, width in enumerate(column_widths):
+                if i < len(table.columns):
+                    table.columns[i].width = width
+        except Exception as e:
+            print(f"Warning: Failed to apply column widths: {e}")
+
+    def _apply_row_heights(self, table, row_height):
+        """
+        Apply uniform row height to all table rows.
+
+        Args:
+            table: The table object
+            row_height: Cm object for row height
+        """
+        try:
+            for i in range(len(table.rows)):
+                table.rows[i].height = row_height
+        except Exception as e:
+            print(f"Warning: Failed to apply row height: {e}")

@@ -48,6 +48,7 @@ def get_allowed_items():
         "build/",  # Build artifacts
         "dist/",  # Distribution artifacts
         "scripts/",  # Utility scripts
+        ".specs/",  # Spec server specifications
         # Python build artifacts
         "src/deckbuilder.egg-info/",
         ".pytest_cache/",
