@@ -175,7 +175,10 @@ class ContentProcessor:
                 if "title" not in config or not config.get("title"):
                     slide_data["title"] = title_text
                     slide_data["title_formatted"] = self._parse_inline_formatting(title_text)
-                title_found = True
+                    title_found = True
+                else:
+                    # Keep H1 in content since we already have a frontmatter title
+                    content_lines.append(line)
             elif line.startswith("## ") and slide_data["type"] == "title":
                 subtitle_text = line[3:].strip()
                 slide_data["subtitle"] = subtitle_text
@@ -220,15 +223,35 @@ class ContentProcessor:
                 level = 1 if indent_level < 2 else 2
                 current_block["bullet_levels"].append(level)
 
-            elif line.startswith("## "):  # Subheading
+            elif line.startswith("###### "):  # H6 heading
+                if current_block:
+                    blocks.append(current_block)
+                current_block = {"heading": line[7:].strip(), "level": 6}
+
+            elif line.startswith("##### "):  # H5 heading
+                if current_block:
+                    blocks.append(current_block)
+                current_block = {"heading": line[6:].strip(), "level": 5}
+
+            elif line.startswith("#### "):  # H4 heading
+                if current_block:
+                    blocks.append(current_block)
+                current_block = {"heading": line[5:].strip(), "level": 4}
+
+            elif line.startswith("### "):  # H3 heading
+                if current_block:
+                    blocks.append(current_block)
+                current_block = {"heading": line[4:].strip(), "level": 3}
+
+            elif line.startswith("## "):  # H2 heading
                 if current_block:
                     blocks.append(current_block)
                 current_block = {"heading": line[3:].strip(), "level": 2}
 
-            elif line.startswith("### "):  # Sub-subheading
+            elif line.startswith("# "):  # H1 heading
                 if current_block:
                     blocks.append(current_block)
-                current_block = {"heading": line[4:].strip(), "level": 3}
+                current_block = {"heading": line[2:].strip(), "level": 1}
 
             else:  # Regular paragraph
                 if not current_block or "paragraph" not in current_block:

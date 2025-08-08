@@ -309,13 +309,21 @@ class StructuredFrontmatterConverter:
         return segments
 
     def _process_markdown_headings(self, content: str) -> str:
-        """Process markdown headings by removing #, ##, and ### prefixes"""
+        """Process markdown headings - preserve markers for semantic processing, strip for legacy content"""
         if not content:
             return content
 
+        # Check if content should preserve heading markers for semantic processing
+        # This allows the rich content parser to detect and format headings properly
         lines = content.split("\n")
-        processed_lines = []
+        has_headings = any(line.strip().startswith(("###### ", "##### ", "#### ", "### ", "## ", "# ")) for line in lines)
 
+        # If content has headings, preserve them for semantic processing
+        if has_headings:
+            return content
+
+        # Legacy behavior: strip heading markers from simple content
+        processed_lines = []
         for line in lines:
             # Remove markdown heading prefixes (order matters - longest first)
             if line.strip().startswith("### "):
@@ -648,7 +656,7 @@ def markdown_to_canonical_json(markdown_content: str) -> Dict[str, Any]:
             content_blocks = []
             for block in slide_data["rich_content"]:
                 if "heading" in block:
-                    content_blocks.append({"type": "heading", "text": block["heading"]})
+                    content_blocks.append({"type": "heading", "text": block["heading"], "level": block.get("level", 2)})
                 elif "paragraph" in block:
                     content_blocks.append({"type": "paragraph", "text": block["paragraph"]})
                 elif "bullets" in block:

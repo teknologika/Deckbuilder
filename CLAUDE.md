@@ -315,3 +315,125 @@ Generated presentations should demonstrate:
 - Proper layout selection based on content structure
 - Accurate placeholder mapping using semantic detection + JSON fallback
 - Professional appearance matching structured frontmatter specifications
+
+## 🔄 Content Processing Consolidation Plan
+
+**STATUS**: Planned for implementation to eliminate multiple overlapping content paths
+
+### Current State Problems
+The system currently has **multiple overlapping content processing paths** that create complexity and maintenance burden:
+
+#### Key Files with Content Processing:
+1. **`content_processor.py`** - Markdown→slide data with legacy rich content format
+2. **`converter.py`** - `markdown_to_canonical_json()` and structured frontmatter  
+3. **`content_formatter.py`** - Content→PowerPoint rendering with dual format support
+4. **`content_formatting.py`** - Universal formatting module (underutilized)
+5. **`structured_frontmatter.py`** - Alternative structured frontmatter registry
+
+#### Format Conflicts:
+- **Legacy Format**: `{"heading": "Text", "level": 1}`
+- **Canonical Format**: `{"type": "heading", "text": "Text", "level": 1}`
+- **Dual Support**: ContentFormatter handles both, creating complexity
+
+### Consolidation Strategy
+
+#### Phase 0: Baseline (REQUIRED FIRST STEP)
+**CRITICAL**: Must be completed before any consolidation work begins
+```bash
+# Run full test suite to establish baseline
+pytest tests/
+
+# Check code quality 
+flake8 src/ tests/ --max-line-length=200 --ignore=E203,W503,E501
+
+# Format code
+black --line-length 200 src/
+
+# Commit baseline state
+git add -A
+git commit -m "Baseline: Pre-content consolidation state
+
+All tests passing, code formatted, ready for content processing consolidation.
+Establishes known good state before structural changes.
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>"
+```
+
+#### Phase 1: Format Unification
+**Goal**: Standardize on canonical JSON format throughout system
+
+**Actions:**
+1. **Remove Legacy Format Support** from `content_formatter.py`
+   - Remove `{"heading": "text"}` format handling
+   - Keep only `{"type": "heading", "text": "text"}` format
+   - Simplify detection logic in `add_simple_content_to_placeholder`
+
+2. **Update content_processor.py** to output canonical format
+   - Modify `_parse_rich_content()` to use `{"type": "heading"}` format
+   - Ensure consistency with converter.py output
+
+3. **Run tests after each change** - Phase 1 checkpoint
+
+#### Phase 2: Method Cleanup  
+**Goal**: Clear, single-responsibility methods with intuitive names
+
+**Actions:**
+1. **Rename Methods** for clarity:
+   ```python
+   # OLD                              # NEW
+   add_simple_content_to_placeholder  → add_content_to_placeholder
+   _add_rich_content_list_to_placeholder → _add_content_blocks_to_placeholder  
+   _add_single_rich_content_block_to_placeholder → _add_content_block_to_placeholder
+   ```
+
+2. **Remove Deprecated Methods**:
+   - `add_rich_content_to_slide` (marked DEPRECATED)
+   - `add_simple_content_to_slide` (marked DEPRECATED)
+
+3. **Run tests after each change** - Phase 2 checkpoint
+
+#### Phase 3: File Consolidation
+**Goal**: Clear separation of concerns with minimal overlap
+
+**Proposed Structure:**
+```
+src/deckbuilder/
+├── content/
+│   ├── __init__.py
+│   ├── processor.py        # Markdown → Canonical JSON 
+│   ├── formatter.py        # Canonical JSON → PowerPoint
+│   └── frontmatter.py      # Structured frontmatter handling
+└── [other modules]
+```
+
+**Actions:**
+1. Create new `content/` package
+2. Migrate and consolidate functionality
+3. Update all imports throughout codebase
+4. Remove old files after migration
+5. **Full test suite** - Phase 3 checkpoint
+
+#### Phase 4: Final Validation
+**Goal**: Ensure no regressions, clean up
+
+**Actions:**
+1. **Full regression testing**
+2. **Verify heading hierarchy** still works 
+3. **Check MCP tools** functionality
+4. **Update documentation**
+5. **Final commit**
+
+### Expected Benefits
+- ✅ **Single Content Format** - No more dual format handling
+- ✅ **Clear Method Names** - Intuitive, self-documenting code
+- ✅ **Reduced Complexity** - Fewer code paths, fewer bugs
+- ✅ **Easier Maintenance** - Single source of truth
+- ✅ **Better Performance** - No format detection overhead
+
+### Implementation Requirements
+1. **MUST start with Phase 0** - Establish baseline
+2. **Test after each phase** - No regressions allowed
+3. **Commit after each phase** - Rollback safety
+4. **Keep heading hierarchy working** - Recent implementation must be preserved

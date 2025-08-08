@@ -211,7 +211,7 @@ content: Some content here.
         assert slide["content"] == []
 
     def test_h1_heading_processing(self):
-        """Test that H1 headings (# H1) are processed correctly in content fields."""
+        """Test that H1 headings (# H1) are preserved for semantic processing."""
         markdown_input = """---
 layout: Title and Content
 title: Test Slide
@@ -222,13 +222,13 @@ content: "# Main Heading\\nThis is content after the heading."
         slide = result["slides"][0]
         content = slide["placeholders"]["content"]
 
-        # H1 heading should be processed (# removed)
+        # H1 heading should be preserved for semantic processing by content formatter
         assert "Main Heading" in content
-        assert "# Main Heading" not in content
+        assert "# Main Heading" in content  # Markers preserved for font scaling
         assert "This is content after the heading." in content
 
     def test_h1_h2_h3_heading_processing(self):
-        """Test that all heading levels are processed correctly."""
+        """Test that all heading levels are preserved for semantic processing."""
         markdown_input = """---
 layout: Title and Content
 title: Test Slide
@@ -239,13 +239,13 @@ content: "# H1 Heading\\n## H2 Heading\\n### H3 Heading\\nRegular text"
         slide = result["slides"][0]
         content = slide["placeholders"]["content"]
 
-        # All heading prefixes should be removed
+        # All heading prefixes should be preserved for semantic processing
         assert "H1 Heading" in content
         assert "H2 Heading" in content
         assert "H3 Heading" in content
-        assert "# H1 Heading" not in content
-        assert "## H2 Heading" not in content
-        assert "### H3 Heading" not in content
+        assert "# H1 Heading" in content  # Markers preserved for font scaling
+        assert "## H2 Heading" in content  # Markers preserved for font scaling
+        assert "### H3 Heading" in content  # Markers preserved for font scaling
         assert "Regular text" in content
 
     def test_bullet_list_processing(self):

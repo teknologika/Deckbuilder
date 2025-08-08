@@ -1,4 +1,5 @@
 import re
+from pptx.util import Pt
 
 try:
     from .formatting_support import FormattingSupport, get_default_language, get_default_font
@@ -27,6 +28,8 @@ class ContentFormatter:
         self.formatting_support = FormattingSupport()
         self.default_language = get_default_language()
         self.default_font = get_default_font()
+        # Cache for base font size to ensure consistent scaling
+        self._cached_base_font_size = None
 
     def add_simple_content_to_placeholder(self, placeholder, content):
         """Add content to a placeholder with support for rich content blocks and formatted lists."""
@@ -35,6 +38,9 @@ class ContentFormatter:
 
         text_frame = placeholder.text_frame
         text_frame.clear()
+
+        # Reset base font size cache for new content to ensure consistent detection
+        self._cached_base_font_size = None
 
         # Debug logging to track content processing pipeline decisions
         content_type = type(content).__name__
@@ -99,14 +105,19 @@ class ContentFormatter:
                     p = text_frame.paragraphs[0]
                     self.apply_formatted_segments_to_paragraph(content, p)
                     return
-                # Check if this is a list of rich content blocks
+                # Check if this is a list of rich content blocks (canonical JSON format)
+                elif "type" in content[0] and content[0]["type"] in ["heading", "paragraph", "bullets"]:
+                    self._debug_log("Processing list of canonical rich content blocks")
+                    self._add_rich_content_list_to_placeholder(text_frame, content)
+                    return
+                # Check if this is a list of rich content blocks (legacy format)
                 elif any(key in content[0] for key in ["heading", "paragraph", "bullets"]):
-                    self._debug_log("Processing list of rich content blocks")
+                    self._debug_log("Processing list of legacy rich content blocks")
                     self._add_rich_content_list_to_placeholder(text_frame, content)
                     return
                 else:
-                    # Other dict list - treat as rich content list for now
-                    self._debug_log("Processing dict list as rich content (general)")
+                    # Other dict list - fallback
+                    self._debug_log("Processing dict list as rich content (fallback)")
                     self._add_rich_content_list_to_placeholder(text_frame, content)
                     return
             else:
@@ -149,8 +160,8 @@ class ContentFormatter:
                 self.apply_inline_formatting(item, p)
 
             elif isinstance(item, dict):
-                # Check if this is a rich content block (heading, paragraph, bullets)
-                if any(key in item for key in ["heading", "paragraph", "bullets"]):
+                # Check if this is a rich content block (canonical or legacy format)
+                if ("type" in item and item["type"] in ["heading", "paragraph", "bullets"]) or any(key in item for key in ["heading", "paragraph", "bullets"]):
                     self._debug_log(f"Processing rich content block in list: {list(item.keys())}")
                     # Process as rich content block using the specialized handler
                     self._add_single_rich_content_block_to_placeholder(text_frame, item, paragraph_added)
@@ -185,15 +196,33 @@ class ContentFormatter:
 
     def _add_single_rich_content_block_to_placeholder(self, text_frame, content_block, paragraph_added):
         """Add a single rich content block (heading, paragraph, or bullets) to placeholder."""
-        # Handle heading
+        # Handle canonical format (type: "heading")
+        if content_block.get("type") == "heading":
+            p = text_frame.paragraphs[0] if not paragraph_added else text_frame.add_paragraph()
+            heading_text = content_block["text"]
+            heading_level = content_block.get("level", 2)  # Default to H2 if not specified
+            # Apply dynamic heading formatting (includes bold + scaled font size)
+            self._apply_heading_formatting(p, heading_text, heading_level, text_frame)
+            self._debug_log(f"Added H{heading_level} heading: '{heading_text}'")
+            return
+
+        # Handle canonical format (type: "paragraph")
+        elif content_block.get("type") == "paragraph":
+            p = text_frame.paragraphs[0] if not paragraph_added else text_frame.add_paragraph()
+            paragraph_text = content_block["text"]
+            self.apply_inline_formatting(paragraph_text, p)
+            self._debug_log(f"Added paragraph: '{paragraph_text[:50]}...'")
+            return
+
+        # Handle legacy format - heading
         if "heading" in content_block:
             p = text_frame.paragraphs[0] if not paragraph_added else text_frame.add_paragraph()
             heading_text = content_block["heading"]
-            self.apply_inline_formatting(heading_text, p)
-            # Make heading bold by default
-            for run in p.runs:
-                run.font.bold = True
-            self._debug_log(f"Added heading: '{heading_text}'")
+            heading_level = content_block.get("level", 2)  # Default to H2 if not specified
+
+            # Apply dynamic heading formatting (includes bold + scaled font size)
+            self._apply_heading_formatting(p, heading_text, heading_level, text_frame)
+            self._debug_log(f"Added H{heading_level} heading: '{heading_text}'")
 
         # Handle paragraph
         if "paragraph" in content_block:
@@ -251,10 +280,10 @@ class ContentFormatter:
             if "heading" in content_dict:
                 p = text_frame.paragraphs[0] if not paragraph_added else text_frame.add_paragraph()
                 heading_text = content_dict["heading"]
-                self.apply_inline_formatting(heading_text, p)
-                # Make heading bold by default
-                for run in p.runs:
-                    run.font.bold = True
+                heading_level = content_dict.get("level", 2)  # Default to H2 if not specified
+
+                # Apply dynamic heading formatting (includes bold + scaled font size)
+                self._apply_heading_formatting(p, heading_text, heading_level, text_frame)
                 paragraph_added = True
 
             # Handle paragraph
@@ -668,11 +697,11 @@ class ContentFormatter:
                 else:
                     p = text_frame.add_paragraph()
                 text_content = block.get("text", "")
-                self._debug_log(f"    Adding heading: '{text_content[:50]}{'...' if len(text_content) > 50 else ''}'")
-                self.apply_inline_formatting(text_content, p)
-                # Make headings bold
-                for run in p.runs:
-                    run.font.bold = True
+                heading_level = block.get("level", 2)  # Default to H2 if not specified
+                self._debug_log(f"    Adding H{heading_level} heading: '{text_content[:50]}{'...' if len(text_content) > 50 else ''}'")
+
+                # Apply dynamic heading formatting (includes bold + scaled font size)
+                self._apply_heading_formatting(p, text_content, heading_level, text_frame)
 
             elif block_type == "bullets":
                 items = block.get("items", [])
@@ -978,3 +1007,107 @@ class ContentFormatter:
             print("      Placeholder removed from slide")
         except Exception as e:
             print(f"      Error removing placeholder: {e}")
+
+    def _get_base_font_size(self, text_frame):
+        """
+        Detect the base font size for this text frame/placeholder.
+        Uses cached value to ensure consistent scaling across all headings.
+
+        Args:
+            text_frame: The text frame to analyze
+
+        Returns:
+            float: Base font size in points (18pt PowerPoint default)
+        """
+        # Return cached base size if already detected
+        if self._cached_base_font_size is not None:
+            return self._cached_base_font_size
+
+        # Try to detect base size from clean text frame (before any heading formatting)
+        for para in text_frame.paragraphs:
+            for run in para.runs:
+                if run.font.size and not run.font.bold:  # Look for non-bold text (regular content)
+                    self._cached_base_font_size = run.font.size.pt
+                    self._debug_log(f"Detected base font size: {self._cached_base_font_size}pt")
+                    return self._cached_base_font_size
+
+        # Fallback to PowerPoint's default content size
+        self._cached_base_font_size = 18.0
+        self._debug_log(f"Using default base font size: {self._cached_base_font_size}pt")
+        return self._cached_base_font_size
+
+    def _scale_heading_font_size(self, base_size, heading_level):
+        """
+        Scale heading font size relative to base content font size.
+        Uses Moderate with Light H1/H2 hierarchy for elegant contrast.
+
+        Args:
+            base_size: Base font size in points
+            heading_level: Heading level (1-6)
+
+        Returns:
+            int: Scaled font size in points
+        """
+        # Scale factors for Moderate with Light H1/H2 hierarchy
+        scale_factors = {
+            1: 2.0,  # H1 = 200% of base (36pt from 18pt base) - Light weight
+            2: 1.33,  # H2 = 133% of base (24pt from 18pt base) - Light weight
+            3: 1.0,  # H3 = Same as base content (18pt) - Bold weight
+            4: 0.89,  # H4 = 89% of base (16pt from 18pt base) - Bold weight
+            5: 0.78,  # H5 = 78% of base (14pt from 18pt base) - Bold weight
+            6: 0.67,  # H6 = 67% of base (12pt from 18pt base) - Bold weight
+        }
+
+        factor = scale_factors.get(heading_level, 1.0)
+        scaled_size = base_size * factor
+
+        # Ensure minimum readable size (10pt) and reasonable maximum (72pt)
+        return max(10, min(72, int(scaled_size)))
+
+    def _apply_heading_formatting(self, paragraph, text_content, heading_level, text_frame):
+        """
+        Apply appropriate formatting to a heading paragraph.
+
+        Args:
+            paragraph: The paragraph to format
+            text_content: The heading text content
+            heading_level: Heading level (1-6)
+            text_frame: The text frame (for base font size detection)
+        """
+        # Apply inline formatting (bold, italic, underline) first
+        self.apply_inline_formatting(text_content, paragraph)
+
+        # Detect base font size from the text frame
+        base_size = self._get_base_font_size(text_frame)
+
+        # If we couldn't detect base size, check if we just added content
+        if base_size is None and paragraph.runs:
+            # Check if the run we just added has a resolved font size
+            first_run = paragraph.runs[0]
+            if first_run.font.size:
+                base_size = first_run.font.size.pt
+            else:
+                # Use PowerPoint default for content (18pt)
+                base_size = 18
+
+        if base_size is None:
+            base_size = 18  # Fallback to standard PowerPoint content size
+
+        # Calculate scaled font size for this heading level
+        heading_font_size = self._scale_heading_font_size(base_size, heading_level)
+
+        # Apply font weight and scaled font size to all runs
+        # Moderate with Light H1/H2 hierarchy: Light for H1/H2, Bold for H3-H6
+        for run in paragraph.runs:
+            if heading_level in [1, 2]:
+                # H1 and H2: Light weight for elegant large headings
+                run.font.bold = False  # Try to set as light/regular weight
+                weight_description = "light"
+            else:
+                # H3-H6: Bold weight to differentiate from body text
+                run.font.bold = True
+                weight_description = "bold"
+
+            run.font.size = Pt(heading_font_size)
+
+        self._debug_log(f"Applied H{heading_level} formatting: {heading_font_size}pt, {weight_description} weight (base: {base_size}pt)")
