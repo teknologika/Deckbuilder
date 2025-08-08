@@ -68,7 +68,7 @@ repos:
         always_run: true
       - id: pytest
         name: pytest with coverage
-        entry: pytest --cov=src --cov-report=term-missing --cov-fail-under=35 -k "not test_image_integration and not test_pattern_loader_loads_semantic_aliases and not test_semantic_aliases_discoverable_through_mcp_tools" --ignore=tests/test_mcp_template_discovery.py --ignore=tests/test_pattern_loader.py --ignore=tests/test_template_metadata.py --ignore=tests/test_template_recommendation.py
+        entry: pytest --cov=src --cov-report=term-missing --cov-fail-under=35 -k "not test_image_integration" --ignore=tests/test_mcp_template_discovery.py --ignore=tests/test_pattern_loader.py --ignore=tests/test_template_metadata.py --ignore=tests/test_template_recommendation.py
         language: python
         language_version: python3.12
         additional_dependencies: [pytest-cov, pytest-asyncio, PyYAML, python-pptx, pydantic, numpy, opencv-python, pillow]

@@ -664,14 +664,15 @@ def markdown_to_canonical_json(markdown_content: str) -> Dict[str, Any]:
                 slide_obj["placeholders"]["content"] = content_blocks
 
         # Check for table-related frontmatter properties to determine table handling
-        table_properties = ["column_widths", "row_height", "table_width", "row_style", "border_style"]
-        has_table_properties = any(key in slide_data for key in table_properties)
+        table_properties = ["column_widths", "row_height", "table_width", "row_style", "border_style", "style"]
+        has_table_properties = any(key in slide_data for key in table_properties) or "table_data" in slide_data
 
-        # Check if we need to create a table object from content field
+        # Check if we need to create a table object from content or table_data field
         content_field = slide_data.get("content")
+        table_data_field = slide_data.get("table_data")
         table_data = None
 
-        if has_table_properties and content_field:
+        if has_table_properties and (content_field or table_data_field):
             # When table properties exist, we need to create a table object
             if isinstance(content_field, dict) and content_field.get("type") == "table":
                 # Content field is already a parsed table structure
@@ -679,6 +680,9 @@ def markdown_to_canonical_json(markdown_content: str) -> Dict[str, Any]:
             elif isinstance(content_field, str):
                 # Content field is raw text containing table markdown - parse it
                 table_data = _extract_table_from_content(content_field, slide_data)
+            elif isinstance(table_data_field, str):
+                # table_data field contains raw table markdown - parse it
+                table_data = _extract_table_from_content(table_data_field, slide_data)
 
             # Apply frontmatter styling properties to the table data
             if table_data:

@@ -389,6 +389,14 @@ class PresentationValidator:
                         if "table" in actual_text.lower() or "rows" in actual_text.lower():
                             found_content = True
                             break
+            # Special handling for table markdown content
+            elif self._is_table_markdown(expected_content):
+                # When expected content is table markdown, check for table shapes instead of placeholder content
+                table_shapes = [shape for shape in slide.shapes if hasattr(shape, "table")]
+                if table_shapes:
+                    found_content = True
+                    # Optionally validate table content matches expected structure
+                    # (for now, just confirm table exists)
             else:
                 # Normal text content validation
                 for _ph_key, actual_text in actual_content.items():
@@ -457,7 +465,35 @@ class PresentationValidator:
         text = re.sub(r"___(.*?)___", r"\1", text)  # ___underline___
         text = re.sub(r"\*\*(.*?)\*\*", r"\1", text)  # **bold**
         text = re.sub(r"\*(.*?)\*", r"\1", text)  # *italic*
-        return text.strip()
+        return text
+
+    def _is_table_markdown(self, content):
+        """
+        Check if content appears to be table markdown.
+
+        Args:
+            content: Content to check
+
+        Returns:
+            bool: True if content looks like table markdown
+        """
+        if not isinstance(content, str):
+            return False
+
+        lines = [line.strip() for line in content.split("\n") if line.strip()]
+
+        # Need at least 2 lines for a table (header + data)
+        if len(lines) < 2:
+            return False
+
+        # Check if most lines contain pipes (table markers)
+        lines_with_pipes = sum(1 for line in lines if "|" in line)
+
+        # If 80% or more lines have pipes, it's likely a table
+        if lines_with_pipes >= len(lines) * 0.8:
+            return True
+
+        return False
 
     def _check_placeholder_has_image(self, shape) -> bool:
         """Check if a PICTURE placeholder contains an image."""

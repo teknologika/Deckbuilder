@@ -59,9 +59,10 @@ class TableBuilder:
         if content_placeholder and hasattr(content_placeholder, "text_frame"):
             # Insert table within the content placeholder bounds
 
-            # Position table below the text content within the placeholder bounds
+            # Calculate smart positioning based on content line count
+            content_offset = self._calculate_content_offset(content_placeholder)
             left = content_placeholder.left
-            top = content_placeholder.top + Cm(1)  # Leave space for text above
+            top = content_placeholder.top + content_offset
             width = dimensions["table_width"] or (content_placeholder.width - Cm(1))
             height = dimensions["table_height"] or Cm(10)  # Reasonable default
 
@@ -108,10 +109,10 @@ class TableBuilder:
         if dimensions["row_height"]:
             self._apply_row_heights(table, dimensions["row_height"])
 
-        # Apply styling
-        self._apply_table_styling(table, header_style, row_style, border_style, custom_colors)
+        # Apply styling with font size control
+        self._apply_table_styling(table, header_style, row_style, border_style, custom_colors, table_data)
 
-    def _apply_table_styling(self, table, header_style, row_style, border_style, custom_colors):
+    def _apply_table_styling(self, table, header_style, row_style, border_style, custom_colors, table_data=None):
         """
         Apply styling to a table.
 
@@ -137,11 +138,13 @@ class TableBuilder:
                 cell.fill.solid()
                 cell.fill.fore_color.rgb = bg_color
 
-                # Set text color and formatting
+                # Set text color, formatting, and font size
+                header_font_size = self._get_font_size(table_data, "header_font_size", 12)
                 for paragraph in cell.text_frame.paragraphs:
                     for run in paragraph.runs:
                         run.font.color.rgb = text_color
                         run.font.bold = True
+                        run.font.size = Pt(header_font_size)
 
         # Apply row styling
         if row_style in TABLE_ROW_STYLES and len(table.rows) > 1:
@@ -157,10 +160,16 @@ class TableBuilder:
                 bg_color = alt_color if is_alt_row else primary_color
 
                 if bg_color is not None:
+                    data_font_size = self._get_font_size(table_data, "data_font_size", 10)
                     for col_idx in range(len(table.columns)):
                         cell = table.cell(row_idx, col_idx)
                         cell.fill.solid()
                         cell.fill.fore_color.rgb = bg_color
+
+                        # Apply font size to data cells
+                        for paragraph in cell.text_frame.paragraphs:
+                            for run in paragraph.runs:
+                                run.font.size = Pt(data_font_size)
 
         # Apply border styling
         if border_style in TABLE_BORDER_STYLES:
@@ -347,6 +356,96 @@ class TableBuilder:
                 print(f"Warning: Invalid row_height '{table_data['row_height']}', using default")
 
         return dimensions
+
+    def _calculate_content_offset(self, content_placeholder):
+        """
+        Calculate intelligent positioning offset based on content analysis.
+
+        Args:
+            content_placeholder: The content placeholder shape
+
+        Returns:
+            Cm object representing the offset from placeholder top
+        """
+        try:
+            if not hasattr(content_placeholder, "text_frame") or not content_placeholder.text_frame:
+                return Cm(0.8)  # Default fallback for placeholder without text frame
+
+            # Analyze the actual text content
+            total_text_length = 0
+            line_count = 0
+            has_bullets = False
+            has_long_lines = False
+
+            for paragraph in content_placeholder.text_frame.paragraphs:
+                text = paragraph.text.strip()
+                if text:  # Only count non-empty paragraphs
+                    line_count += 1
+                    total_text_length += len(text)
+
+                    # Check for bullet points or list items
+                    if text.startswith(("•", "-", "*", "1.", "2.", "3.")) or "\\n•" in text or "\\n-" in text:
+                        has_bullets = True
+
+                    # Check for long lines that might wrap
+                    if len(text) > 80:  # Approximate wrapping threshold
+                        has_long_lines = True
+                        # Add extra line for wrapping
+                        line_count += len(text) // 80
+
+            # Enhanced offset calculation based on content characteristics:
+            base_offset = 0.5  # Minimum spacing
+
+            if line_count == 0:
+                # Empty placeholder - minimal offset
+                return Cm(base_offset)
+
+            # Calculate offset based on estimated content height
+            line_height = 0.6  # Approximate cm per line
+            content_height = line_count * line_height
+
+            # Add extra spacing for different content types
+            if has_bullets:
+                content_height += 0.3  # Extra space for bullet formatting
+
+            if has_long_lines:
+                content_height += 0.4  # Extra space for text wrapping
+
+            # Add base spacing plus content-based spacing
+            total_offset = base_offset + content_height + 0.5  # 0.5cm buffer between content and table
+
+            # Cap the maximum offset to prevent tables from going off-slide
+            return Cm(min(total_offset, 6.0))  # Max 6cm offset
+
+        except Exception:
+            # Fallback to safe default if analysis fails
+            return Cm(1.2)
+
+    def _get_font_size(self, table_data, font_key, default_size):
+        """
+        Get font size from table design settings.
+
+        Args:
+            table_data: Dictionary containing table configuration
+            font_key: Key to look for (header_font_size, data_font_size)
+            default_size: Default font size if not specified
+
+        Returns:
+            Font size in points
+        """
+        if not table_data:
+            return default_size
+
+        try:
+            if font_key in table_data:
+                size = float(table_data[font_key])
+                # Validate reasonable font size range
+                if 6 <= size <= 72:
+                    return size
+        except (ValueError, TypeError):
+            pass
+
+        return default_size
 
     def _apply_column_widths(self, table, column_widths):
         """

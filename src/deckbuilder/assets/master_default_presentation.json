@@ -399,8 +399,7 @@
             "layout": "Title and Content",
             "style": "default_style",
             "placeholders": {
-                "title": "**Table Dimensions:** Custom Column Widths",
-                "content": "Sales Performance Report with individual column width control:\n\n| **Product Category** | **Q1 Sales** | **Q2** | **Growth %** |\n| Enterprise Software | $125,000 | $142,000 | +13.6% |\n| SaaS Solutions | $89,500 | $98,200 | +9.7% |\n| Cloud Services | $156,000 | $178,000 | +14.1% |\n| Mobile Apps | $67,300 | $73,800 | +9.7% |"
+                "title": "**Table Dimensions:** Custom Column Widths"
             },
             "table": {
                 "style": "dark_blue_white_text",
@@ -422,8 +421,7 @@
             "layout": "Title and Content",
             "style": "default_style",
             "placeholders": {
-                "title": "**Table Dimensions:** Equal Column Distribution",
-                "content": "Team Performance Dashboard with equal column distribution:\n\n| **Team Member** | **Projects** | **Completed** | **Success Rate** |\n| Alice Johnson | 25 | 24 | 96% |\n| Bob Smith | 18 | 17 | 94% |\n| Carol Davis | 32 | 31 | 97% |\n| David Wilson | 21 | 20 | 95% |"
+                "title": "**Table Dimensions:** Equal Column Distribution"
             },
             "table": {
                 "style": "light_blue_dark_text",

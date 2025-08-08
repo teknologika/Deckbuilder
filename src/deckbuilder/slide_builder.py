@@ -628,6 +628,10 @@ class SlideBuilder:
             debug_print(f"  Table already exists ({len(existing_tables)} found), skipping duplicate table creation")
             return
 
+        # CRITICAL FIX: Clear content placeholders that contain table text
+        # This prevents duplication when both content and table objects exist
+        self._clear_table_content_from_placeholders(slide, slide_data)
+
         # Set slide context for content formatter
         content_formatter._current_slide = slide
 
@@ -638,3 +642,57 @@ class SlideBuilder:
 
         # Add table to slide
         table_builder.add_table_to_slide(slide, table_data)
+
+    def _clear_table_content_from_placeholders(self, slide, slide_data):
+        """
+        Clear table text content from placeholders when a table object will be created.
+
+        This prevents duplication when both content placeholders contain table markdown
+        AND a separate table object exists with table data.
+
+        Args:
+            slide: PowerPoint slide object
+            slide_data: Dictionary containing slide content including placeholders
+        """
+        from .logging_config import debug_print
+
+        # Check which placeholders might contain table content
+        placeholders_data = slide_data.get("placeholders", {})
+
+        for field_name, field_value in placeholders_data.items():
+            if isinstance(field_value, str) and self._contains_table_content(field_value):
+                # Find the corresponding placeholder shape and clear its text
+                for shape in slide.shapes:
+                    if hasattr(shape, "text_frame") and shape.text_frame and hasattr(shape, "placeholder_format"):
+                        # Clear text from placeholder shapes that contain table content
+                        if shape.text_frame.text and self._contains_table_content(shape.text_frame.text):
+                            debug_print(f"  Clearing table content from placeholder: {field_name}")
+                            shape.text_frame.clear()
+                            # Add a simple text indicating table will be created
+                            p = shape.text_frame.paragraphs[0] if shape.text_frame.paragraphs else shape.text_frame.add_paragraph()
+                            p.text = ""  # Leave empty since table will replace this content
+                            break
+
+    def _contains_table_content(self, text_content):
+        """
+        Check if text content contains markdown table syntax.
+
+        Args:
+            text_content: String content to check
+
+        Returns:
+            bool: True if content appears to contain table markdown
+        """
+        if not isinstance(text_content, str):
+            return False
+
+        lines = text_content.split("\n")
+        table_line_count = 0
+
+        for line in lines:
+            # Check for table rows (contain | characters and aren't separator lines)
+            if "|" in line and not all(c in "|-:= \t" for c in line.strip()):
+                table_line_count += 1
+
+        # Consider it a table if we have at least 2 lines with pipes (header + data)
+        return table_line_count >= 2

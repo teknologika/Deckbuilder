@@ -194,8 +194,6 @@ border_style: thin_gray
 column_widths: [8, 6, 4, 5]
 row_height: 0.9
 content: |
-  Sales Performance Report with individual column width control:
-
   | **Product Category** | **Q1 Sales** | **Q2** | **Growth %** |
   | Enterprise Software | $125,000 | $142,000 | +13.6% |
   | SaaS Solutions | $89,500 | $98,200 | +9.7% |
@@ -212,8 +210,6 @@ border_style: thin_gray
 table_width: 22
 row_height: 0.9
 content: |
-  Team Performance Dashboard with equal column distribution:
-
   | **Team Member** | **Projects** | **Completed** | **Success Rate** |
   | Alice Johnson | 25 | 24 | 96% |
   | Bob Smith | 18 | 17 | 94% |
