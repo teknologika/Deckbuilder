@@ -214,39 +214,6 @@ class ContentFormatter:
             self._debug_log(f"Added paragraph: '{paragraph_text[:50]}...'")
             return
 
-        # Handle legacy format - heading
-        if "heading" in content_block:
-            p = text_frame.paragraphs[0] if not paragraph_added else text_frame.add_paragraph()
-            heading_text = content_block["heading"]
-            heading_level = content_block.get("level", 2)  # Default to H2 if not specified
-
-            # Apply dynamic heading formatting (includes bold + scaled font size)
-            self._apply_heading_formatting(p, heading_text, heading_level, text_frame)
-            self._debug_log(f"Added H{heading_level} heading: '{heading_text}'")
-
-        # Handle paragraph
-        if "paragraph" in content_block:
-            p = text_frame.paragraphs[0] if not paragraph_added else text_frame.add_paragraph()
-            paragraph_text = content_block["paragraph"]
-            self.apply_inline_formatting(paragraph_text, p)
-            self._debug_log(f"Added paragraph: '{paragraph_text[:50]}...'")
-
-        # Handle bullets with proper level support
-        if "bullets" in content_block and isinstance(content_block["bullets"], list):
-            bullet_levels = content_block.get("bullet_levels", [])
-            for i, bullet_text in enumerate(content_block["bullets"]):
-                p = text_frame.paragraphs[0] if not paragraph_added else text_frame.add_paragraph()
-                self.apply_inline_formatting(bullet_text, p)
-
-                # Set bullet level from bullet_levels array or default to level 1
-                if i < len(bullet_levels):
-                    # Convert level (1-based) to PowerPoint level (0-based)
-                    p.level = max(0, bullet_levels[i] - 1)
-                else:
-                    p.level = 0  # Default to top level bullets
-
-                self._debug_log(f"Added bullet: '{bullet_text}' at level {p.level}")
-                paragraph_added = True
 
     def _add_rich_content_blocks_to_placeholder(self, text_frame, content_dict):
         """Add rich content blocks (headings, paragraphs, bullets) to placeholder."""
@@ -482,36 +449,6 @@ class ContentFormatter:
             if format_dict.get("underline"):
                 run.font.underline = True
 
-    def add_rich_content_to_slide(self, slide, rich_content: list):
-        """DEPRECATED: Use add_content_to_slide instead"""
-        print("Warning: add_rich_content_to_slide is deprecated, using unified add_content_to_slide")
-
-        # Convert legacy rich content format to canonical format
-        canonical_content = []
-        for block in rich_content:
-            if isinstance(block, dict):
-                if "heading" in block:
-                    canonical_content.append(
-                        {
-                            "type": "heading",
-                            "text": block["heading"],
-                            "level": block.get("level", 2),
-                        }
-                    )
-                elif "paragraph" in block:
-                    canonical_content.append({"type": "paragraph", "text": block["paragraph"]})
-                elif "bullets" in block:
-                    # Convert bullets format
-                    items = []
-                    bullets = block["bullets"]
-                    bullet_levels = block.get("bullet_levels", [1] * len(bullets))
-
-                    for bullet, level in zip(bullets, bullet_levels):
-                        items.append({"text": bullet, "level": level})
-
-                    canonical_content.append({"type": "bullets", "items": items})
-
-        self.add_content_to_slide(slide, canonical_content)
 
     def add_content_to_slide(self, slide, content):
         """
@@ -808,10 +745,6 @@ class ContentFormatter:
         p = text_frame.paragraphs[0]
         self.apply_inline_formatting(content_string, p)
 
-    def add_simple_content_to_slide(self, slide, content):
-        """DEPRECATED: Use add_content_to_slide instead"""
-        print("Warning: add_simple_content_to_slide is deprecated, using unified add_content_to_slide")
-        self.add_content_to_slide(slide, content)
 
     def auto_parse_json_formatting(self, slide_data):
         """Auto-parse inline formatting in JSON slide data."""

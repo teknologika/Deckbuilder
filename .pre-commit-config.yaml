@@ -1,4 +1,14 @@
 repos:
+  # Root directory pollution check (first to catch early)
+  - repo: local
+    hooks:
+      - id: check-root-pollution
+        name: Check for root directory pollution
+        entry: python scripts/check_root_pollution.py
+        language: python
+        pass_filenames: false
+        always_run: true
+
   # Auto-formatting (PEP8)
   - repo: https://github.com/psf/black
     rev: 25.1.0
@@ -51,15 +61,9 @@ repos:
   #     - id: check-yaml
   #     - id: check-added-large-files
 
-  # Testing with coverage threshold
+  # Additional local checks and testing
   - repo: local
     hooks:
-      - id: check-root-pollution
-        name: Check for root directory pollution
-        entry: python scripts/check_root_pollution.py
-        language: python
-        pass_filenames: false
-        always_run: true
       - id: check-no-os-environ
         name: Prevent os.environ usage
         entry: python scripts/check_no_os_environ.py

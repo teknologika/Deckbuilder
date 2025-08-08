@@ -213,53 +213,52 @@ class ContentProcessor:
                 indent_level = len(original_line) - len(original_line.lstrip())
                 bullet_text = line[2:].strip()
 
-                if not current_block or "bullets" not in current_block:
+                if not current_block or current_block.get("type") != "bullets":
                     if current_block:
                         blocks.append(current_block)
-                    current_block = {"bullets": [], "bullet_levels": []}
+                    current_block = {"type": "bullets", "items": []}
 
-                current_block["bullets"].append(bullet_text)
                 # Map indentation to bullet levels (0 indent = level 1, 2+ spaces = level 2, etc.)
                 level = 1 if indent_level < 2 else 2
-                current_block["bullet_levels"].append(level)
+                current_block["items"].append({"text": bullet_text, "level": level})
 
             elif line.startswith("###### "):  # H6 heading
                 if current_block:
                     blocks.append(current_block)
-                current_block = {"heading": line[7:].strip(), "level": 6}
+                current_block = {"type": "heading", "text": line[7:].strip(), "level": 6}
 
             elif line.startswith("##### "):  # H5 heading
                 if current_block:
                     blocks.append(current_block)
-                current_block = {"heading": line[6:].strip(), "level": 5}
+                current_block = {"type": "heading", "text": line[6:].strip(), "level": 5}
 
             elif line.startswith("#### "):  # H4 heading
                 if current_block:
                     blocks.append(current_block)
-                current_block = {"heading": line[5:].strip(), "level": 4}
+                current_block = {"type": "heading", "text": line[5:].strip(), "level": 4}
 
             elif line.startswith("### "):  # H3 heading
                 if current_block:
                     blocks.append(current_block)
-                current_block = {"heading": line[4:].strip(), "level": 3}
+                current_block = {"type": "heading", "text": line[4:].strip(), "level": 3}
 
             elif line.startswith("## "):  # H2 heading
                 if current_block:
                     blocks.append(current_block)
-                current_block = {"heading": line[3:].strip(), "level": 2}
+                current_block = {"type": "heading", "text": line[3:].strip(), "level": 2}
 
             elif line.startswith("# "):  # H1 heading
                 if current_block:
                     blocks.append(current_block)
-                current_block = {"heading": line[2:].strip(), "level": 1}
+                current_block = {"type": "heading", "text": line[2:].strip(), "level": 1}
 
             else:  # Regular paragraph
-                if not current_block or "paragraph" not in current_block:
+                if not current_block or current_block.get("type") != "paragraph":
                     if current_block:
                         blocks.append(current_block)
-                    current_block = {"paragraph": line}
+                    current_block = {"type": "paragraph", "text": line}
                 else:
-                    current_block["paragraph"] += " " + line
+                    current_block["text"] += " " + line
 
         if current_block:
             blocks.append(current_block)
