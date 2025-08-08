@@ -31,7 +31,7 @@ class ContentFormatter:
         # Cache for base font size to ensure consistent scaling
         self._cached_base_font_size = None
 
-    def add_simple_content_to_placeholder(self, placeholder, content):
+    def add_content_to_placeholder(self, placeholder, content):
         """Add content to a placeholder with support for rich content blocks and formatted lists."""
         if not hasattr(placeholder, "text_frame"):
             return
@@ -57,12 +57,12 @@ class ContentFormatter:
                 self._debug_log("Processing formatted_list from content_formatting")
                 # This case means content is a dict like {'formatted_list': [...]}
                 # We need to pass the list itself to the handler
-                self._add_rich_content_list_to_placeholder(text_frame, content["formatted_list"])
+                self._add_content_blocks_to_placeholder(text_frame, content["formatted_list"])
                 return
             elif any(key in content for key in ["heading", "paragraph", "bullets"]):
                 self._debug_log("Processing direct rich content structure (single block)")
                 # Wrap single rich content block in a list for consistent handling
-                self._add_rich_content_list_to_placeholder(text_frame, [content])
+                self._add_content_blocks_to_placeholder(text_frame, [content])
                 return
             elif "text" in content and "formatted" in content:
                 self._debug_log("Processing formatted content segments (single text field)")
@@ -108,22 +108,22 @@ class ContentFormatter:
                 # Check if this is a list of rich content blocks (canonical JSON format)
                 elif "type" in content[0] and content[0]["type"] in ["heading", "paragraph", "bullets"]:
                     self._debug_log("Processing list of canonical rich content blocks")
-                    self._add_rich_content_list_to_placeholder(text_frame, content)
+                    self._add_content_blocks_to_placeholder(text_frame, content)
                     return
                 # Check if this is a list of rich content blocks (legacy format)
                 elif any(key in content[0] for key in ["heading", "paragraph", "bullets"]):
                     self._debug_log("Processing list of legacy rich content blocks")
-                    self._add_rich_content_list_to_placeholder(text_frame, content)
+                    self._add_content_blocks_to_placeholder(text_frame, content)
                     return
                 else:
                     # Other dict list - fallback
                     self._debug_log("Processing dict list as rich content (fallback)")
-                    self._add_rich_content_list_to_placeholder(text_frame, content)
+                    self._add_content_blocks_to_placeholder(text_frame, content)
                     return
             else:
                 # Handle list of simple strings
                 self._debug_log("Processing simple string list")
-                self._add_rich_content_list_to_placeholder(text_frame, content)
+                self._add_content_blocks_to_placeholder(text_frame, content)
                 return
 
         # Priority 3: Handle plain text strings
@@ -145,7 +145,7 @@ class ContentFormatter:
 
         content_processor_print(f"[ContentFormatter] {message}")
 
-    def _add_rich_content_list_to_placeholder(self, text_frame, content_list):
+    def _add_content_blocks_to_placeholder(self, text_frame, content_list):
         """Add list content with proper formatting and bullet support."""
         paragraph_added = False
 
@@ -164,7 +164,7 @@ class ContentFormatter:
                 if ("type" in item and item["type"] in ["heading", "paragraph", "bullets"]) or any(key in item for key in ["heading", "paragraph", "bullets"]):
                     self._debug_log(f"Processing rich content block in list: {list(item.keys())}")
                     # Process as rich content block using the specialized handler
-                    self._add_single_rich_content_block_to_placeholder(text_frame, item, paragraph_added)
+                    self._add_content_block_to_placeholder(text_frame, item, paragraph_added)
                     paragraph_added = True
                 elif "text" in item:
                     # Simple text item
@@ -194,7 +194,7 @@ class ContentFormatter:
                     text_content = item.get("text", str(item))
                     self.apply_inline_formatting(text_content, p)
 
-    def _add_single_rich_content_block_to_placeholder(self, text_frame, content_block, paragraph_added):
+    def _add_content_block_to_placeholder(self, text_frame, content_block, paragraph_added):
         """Add a single rich content block (heading, paragraph, or bullets) to placeholder."""
         # Handle canonical format (type: "heading")
         if content_block.get("type") == "heading":

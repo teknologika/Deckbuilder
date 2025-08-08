@@ -484,7 +484,7 @@ class SlideBuilder:
 
             # Handle main content placeholders (for simple content)
             elif "content" in slide_data and is_content_placeholder(placeholder_type):
-                content_formatter.add_simple_content_to_placeholder(shape, slide_data["content"])
+                content_formatter.add_content_to_placeholder(shape, slide_data["content"])
 
     def _apply_content_by_semantic_type(
         self,
@@ -524,7 +524,7 @@ class SlideBuilder:
 
         elif is_content_placeholder(placeholder_type):
             # Content placeholders - handle text, lists, etc. with inline formatting
-            content_formatter.add_simple_content_to_placeholder(placeholder, field_value)
+            content_formatter.add_content_to_placeholder(placeholder, field_value)
 
         elif is_media_placeholder(placeholder_type):
             # Media placeholders - handle images, charts, etc.
@@ -532,7 +532,7 @@ class SlideBuilder:
                 image_placeholder_handler.handle_image_placeholder(placeholder, field_name, field_value, slide_data)
             elif placeholder_type == PP_PLACEHOLDER_TYPE.OBJECT and hasattr(placeholder, "text_frame"):
                 # OBJECT placeholders with text_frame should be treated as content placeholders
-                content_formatter.add_simple_content_to_placeholder(placeholder, field_value)
+                content_formatter.add_content_to_placeholder(placeholder, field_value)
             else:
                 # Other media types - fallback to text for now
                 if hasattr(placeholder, "text_frame") and placeholder.text_frame:
