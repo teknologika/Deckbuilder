@@ -75,7 +75,7 @@ class ContentFormatter:
                 # Handle table content using TableBuilder
                 slide = getattr(self, "_current_slide", None)
                 if slide:
-                    from .table_builder import TableBuilder
+                    from ..table_builder import TableBuilder
 
                     table_builder = TableBuilder(self)
                     table_builder.add_table_to_slide(slide, content)
@@ -141,7 +141,7 @@ class ContentFormatter:
 
     def _debug_log(self, message):
         """Debug logging for content processing pipeline"""
-        from .logging_config import content_processor_print
+        from ..logging_config import content_processor_print
 
         content_processor_print(f"[ContentFormatter] {message}")
 
@@ -213,7 +213,6 @@ class ContentFormatter:
             self.apply_inline_formatting(paragraph_text, p)
             self._debug_log(f"Added paragraph: '{paragraph_text[:50]}...'")
             return
-
 
     def _add_rich_content_blocks_to_placeholder(self, text_frame, content_dict):
         """Add rich content blocks (headings, paragraphs, bullets) to placeholder."""
@@ -448,7 +447,6 @@ class ContentFormatter:
                 run.font.italic = True
             if format_dict.get("underline"):
                 run.font.underline = True
-
 
     def add_content_to_slide(self, slide, content):
         """
@@ -744,7 +742,6 @@ class ContentFormatter:
 
         p = text_frame.paragraphs[0]
         self.apply_inline_formatting(content_string, p)
-
 
     def auto_parse_json_formatting(self, slide_data):
         """Auto-parse inline formatting in JSON slide data."""

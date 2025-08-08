@@ -1,5 +1,5 @@
 from .slide_builder import SlideBuilder
-from .content_formatter import ContentFormatter
+from .content.formatter import ContentFormatter
 from .table_builder import TableBuilder
 from .image_placeholder_handler import ImagePlaceholderHandler
 from .image_handler import ImageHandler

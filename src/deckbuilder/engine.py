@@ -8,7 +8,7 @@ from pptx import Presentation
 
 from .path_manager import path_manager, PathManager
 from .presentation_builder import PresentationBuilder
-from .content_processor import ContentProcessor
+from .content.processor import ContentProcessor
 from .template_manager import TemplateManager
 from .image_handler import ImageHandler
 

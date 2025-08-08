@@ -67,7 +67,7 @@ class ContentProcessor:
 
     def _parse_structured_frontmatter(self, frontmatter_content: str) -> dict:
         """Parse structured frontmatter and convert to placeholder mappings"""
-        from .converter import StructuredFrontmatterConverter
+        from .frontmatter import StructuredFrontmatterConverter
 
         try:
             parsed = yaml.safe_load(frontmatter_content)
@@ -106,7 +106,7 @@ class ContentProcessor:
             return converted
 
         # Regular frontmatter processing - still process content fields
-        from .converter import FrontmatterConverter
+        from .frontmatter import FrontmatterConverter
 
         converter_instance = FrontmatterConverter()
 
