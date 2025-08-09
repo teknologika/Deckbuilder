@@ -298,8 +298,8 @@ def create_presentation_placeholder(width, height):
              .save(f"placeholder_{width}x{height}.jpg"))
 
 # Direct integration usage (automatic in Deckbuilder):
-from deckbuilder.placekitten_integration import PlaceKittenIntegration
-from deckbuilder.image_handler import ImageHandler
+from deckbuilder.image.placeholder import PlaceKittenIntegration
+from deckbuilder.image.image_handler import ImageHandler
 
 # This happens automatically when image_path is invalid:
 image_handler = ImageHandler("cache/")

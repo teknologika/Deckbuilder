@@ -1,9 +1,9 @@
+from ..content.formatter import ContentFormatter
+from ..image.image_handler import ImageHandler
+from ..image.placeholder import ImagePlaceholderHandler
+from ..image.placekitten_integration import PlaceKittenIntegration
 from .slide_builder import SlideBuilder
-from .content.formatter import ContentFormatter
 from .table_builder import TableBuilder
-from .image_placeholder_handler import ImagePlaceholderHandler
-from .image_handler import ImageHandler
-from .placekitten_integration import PlaceKittenIntegration
 
 
 class PresentationBuilder:
@@ -56,7 +56,7 @@ class PresentationBuilder:
             slide_data: Dictionary containing slide information
         """
         # Show progress message
-        from .logging_config import progress_print
+        from ..utils.logging import progress_print
 
         slide_number = len(prs.slides) + 1
         layout_name = slide_data.get("layout", "Unknown Layout")

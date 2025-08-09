@@ -21,7 +21,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / "src"))  # n
 HAS_MCP_TOOLS = False
 try:
     from mcp_server.tools import analyze_pptx_template  # noqa: E402
-    from deckbuilder.engine import get_deckbuilder_client  # noqa: E402
+    from deckbuilder.core.engine import get_deckbuilder_client  # noqa: E402
 
     HAS_MCP_TOOLS = True
 except ImportError as e:
@@ -150,7 +150,7 @@ class TestMCPToolsIntegration:
         assert "template_info" in result
         assert "layouts" in result
 
-    @patch("deckbuilder.engine.Deckbuilder")
+    @patch("deckbuilder.core.engine.Deckbuilder")
     def test_presentation_creation_from_json(self, mock_deckbuilder_class, mock_deckbuilder_env, sample_test_data):
         """Test creating a presentation from canonical JSON data."""
         # Mock the deckbuilder instance
@@ -180,7 +180,7 @@ class TestMCPToolsIntegration:
         # Verify calls
         mock_deck.create_presentation.assert_called_once_with(presentation_data=canonical_data, fileName="test_json", templateName="default")
 
-    @patch("deckbuilder.engine.Deckbuilder")
+    @patch("deckbuilder.core.engine.Deckbuilder")
     def test_presentation_creation_from_markdown(self, mock_deckbuilder_class, mock_deckbuilder_env, sample_markdown_content):
         """Test creating a presentation from markdown with structured frontmatter."""
         # Mock the deckbuilder instance
@@ -193,7 +193,7 @@ class TestMCPToolsIntegration:
         # Test the workflow with mocked converter
         deck = get_deckbuilder_client()
 
-        with patch("deckbuilder.converter.markdown_to_canonical_json") as mock_converter:
+        with patch("deckbuilder.content.converter.markdown_to_canonical_json") as mock_converter:
             # Mock converter to return canonical JSON format
             mock_converter.return_value = {
                 "slides": [
@@ -237,7 +237,7 @@ class TestMCPToolsIntegration:
         assert templates_dir.exists()
         assert output_dir.exists()
 
-    @patch("deckbuilder.engine.Deckbuilder")
+    @patch("deckbuilder.core.engine.Deckbuilder")
     def test_error_handling_missing_template(self, mock_deckbuilder_class, mock_deckbuilder_env):
         """Test error handling when template is missing."""
         # Mock the deckbuilder instance to raise an error
@@ -251,7 +251,7 @@ class TestMCPToolsIntegration:
         with pytest.raises(FileNotFoundError):
             deck.create_presentation("nonexistent_template", "test")
 
-    @patch("deckbuilder.engine.Deckbuilder")
+    @patch("deckbuilder.core.engine.Deckbuilder")
     def test_error_handling_invalid_slide_data(self, mock_deckbuilder_class, mock_deckbuilder_env):
         """Test error handling when slide data is invalid."""
         # Mock the deckbuilder instance

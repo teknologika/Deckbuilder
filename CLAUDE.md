@@ -2,6 +2,14 @@
 
 ## Project Overview
 
+### IMPORTANT AI PRIME DIRECTIVES
+
+## 1. ALWAYS ENSURE CODE IS HIGH QUALITY, AND MEETS DRY PRINCIPLES
+## 2. MAKE CHANGES THAT ENHANCE AND IMPROVE THE CODEBASE
+## 3. ALWAYS TRY AND ENHANCE EXISTING CODE, AND MINIMISE CYCLOMATIC COMPLEXITY, DONT CREATE ALTERNATE CODE PATHS
+## 4. DOCUMENT CODE IN A WAY THAT MAKES IT EASY FOR AI TO NAVIGATE THE CODE BASE
+## 5. TESTS, PRE-CHECKIN HOOKS AND CI ARE GUARDRAILS. NEVER WORK AROUND THEM WITH --NO-VERIFY
+
 Deckbuilder is a Python library and accompanying MCP (Model Context Protocol) Server for intelligent PowerPoint presentation generation.
 The project has evolved beyond initial setup into a comprehensive content-first presentation intelligence system.
 

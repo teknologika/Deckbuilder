@@ -6,7 +6,7 @@ import pytest
 
 # Test imports with graceful handling
 try:
-    from deckbuilder.converter import markdown_to_canonical_json
+    from deckbuilder.content.converter import markdown_to_canonical_json
 
     HAS_CONVERTER = True
 except ImportError:

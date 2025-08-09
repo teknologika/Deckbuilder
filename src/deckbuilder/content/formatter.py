@@ -1,307 +1,40 @@
+#!/usr/bin/env python3
+"""
+Universal Content Formatting Module
+
+Handles ALL formatting types independently of structure processing.
+This module can be used by both JSON and Markdown processing without circular dependencies.
+
+Supports:
+- Inline formatting: **bold**, *italic*, ___underline___, ***bold italic***
+- Rich content blocks: headings, paragraphs, bullets with levels
+- Table cell formatting: maintaining structure while applying formatting
+- Complex combinations: mixed formatting within same text
+
+Separated from structure handling to enable clean architecture.
+"""
+
 import re
-from pptx.util import Pt
-
-try:
-    from .formatting_support import FormattingSupport, get_default_language, get_default_font
-except ImportError:
-    # Fallback if formatting support is not available
-    class FormattingSupport:
-        def apply_language_to_run(self, run, language_code):
-            return False
-
-        def apply_font_to_run(self, run, font_name):
-            return False
-
-    def get_default_language():
-        return None
-
-    def get_default_font():
-        return None
+from typing import List, Dict, Any, Union
 
 
 class ContentFormatter:
-    """Handles text formatting, rich content processing, and inline formatting."""
+    """Universal content formatting processor."""
 
     def __init__(self):
         """Initialize the content formatter."""
-        # Initialize formatting support
-        self.formatting_support = FormattingSupport()
-        self.default_language = get_default_language()
-        self.default_font = get_default_font()
-        # Cache for base font size to ensure consistent scaling
-        self._cached_base_font_size = None
+        pass
 
-    def add_content_to_placeholder(self, placeholder, content):
-        """Add content to a placeholder with support for rich content blocks and formatted lists."""
-        if not hasattr(placeholder, "text_frame"):
-            return
+    def parse_inline_formatting(self, text: str) -> List[Dict[str, Any]]:
+        """
+        Parse inline formatting and return structured formatting data.
 
-        text_frame = placeholder.text_frame
-        text_frame.clear()
+        Args:
+            text: Text with inline formatting markers
 
-        # Reset base font size cache for new content to ensure consistent detection
-        self._cached_base_font_size = None
-
-        # Debug logging to track content processing pipeline decisions
-        content_type = type(content).__name__
-        self._debug_log(f"Processing content type: {content_type}")
-
-        # Priority 1: Check for rich content blocks (from content_formatting.py)
-        if isinstance(content, dict):
-            # Check for formatted content with rich content blocks first
-            if "rich_content_blocks" in content:
-                self._debug_log("Processing rich content blocks from content_formatting")
-                self._add_rich_content_blocks_to_placeholder(text_frame, content["rich_content_blocks"])
-                return
-            elif "formatted_list" in content:
-                self._debug_log("Processing formatted_list from content_formatting")
-                # This case means content is a dict like {'formatted_list': [...]}
-                # We need to pass the list itself to the handler
-                self._add_content_blocks_to_placeholder(text_frame, content["formatted_list"])
-                return
-            elif any(key in content for key in ["heading", "paragraph", "bullets"]):
-                self._debug_log("Processing direct rich content structure (single block)")
-                # Wrap single rich content block in a list for consistent handling
-                self._add_content_blocks_to_placeholder(text_frame, [content])
-                return
-            elif "text" in content and "formatted" in content:
-                self._debug_log("Processing formatted content segments (single text field)")
-                formatted_segments = content["formatted"]
-                p = text_frame.paragraphs[0]
-                self.apply_formatted_segments_to_paragraph(formatted_segments, p)
-                return
-            elif content.get("type") == "table":
-                self._debug_log("Processing table content")
-                # Handle table content using TableBuilder
-                slide = getattr(self, "_current_slide", None)
-                if slide:
-                    from ..table_builder import TableBuilder
-
-                    table_builder = TableBuilder(self)
-                    table_builder.add_table_to_slide(slide, content)
-                    # Remove the placeholder since table has been added
-                    self._remove_placeholder_from_slide(slide, placeholder)
-                else:
-                    self._debug_log("No slide context for table, using text fallback")
-                    p = text_frame.paragraphs[0]
-                    p.text = "Table content (could not render)"
-                return
-            else:
-                # Fallback for other dict types - avoid string conversion if possible
-                self._debug_log(f"Unknown dict content structure, attempting text extraction: {list(content.keys())}")
-                p = text_frame.paragraphs[0]
-                if "text" in content:
-                    self.apply_inline_formatting(content["text"], p)
-                else:
-                    p.text = str(content)  # Final fallback to string conversion
-                return
-
-        # Priority 2: Check for list of content (can be rich content blocks or simple strings)
-        elif isinstance(content, list):
-            if content and isinstance(content[0], dict):
-                # Check if this is a list of formatted segments (e.g., from parse_inline_formatting)
-                if "text" in content[0] and "format" in content[0]:
-                    self._debug_log("Processing list of formatted segments")
-                    p = text_frame.paragraphs[0]
-                    self.apply_formatted_segments_to_paragraph(content, p)
-                    return
-                # Check if this is a list of rich content blocks (canonical JSON format)
-                elif "type" in content[0] and content[0]["type"] in ["heading", "paragraph", "bullets"]:
-                    self._debug_log("Processing list of canonical rich content blocks")
-                    self._add_content_blocks_to_placeholder(text_frame, content)
-                    return
-                # Check if this is a list of rich content blocks (legacy format)
-                elif any(key in content[0] for key in ["heading", "paragraph", "bullets"]):
-                    self._debug_log("Processing list of legacy rich content blocks")
-                    self._add_content_blocks_to_placeholder(text_frame, content)
-                    return
-                else:
-                    # Other dict list - fallback
-                    self._debug_log("Processing dict list as rich content (fallback)")
-                    self._add_content_blocks_to_placeholder(text_frame, content)
-                    return
-            else:
-                # Handle list of simple strings
-                self._debug_log("Processing simple string list")
-                self._add_content_blocks_to_placeholder(text_frame, content)
-                return
-
-        # Priority 3: Handle plain text strings
-        elif isinstance(content, str):
-            self._debug_log("Processing plain text string")
-            p = text_frame.paragraphs[0]
-            self.apply_inline_formatting(content, p)
-            return
-
-        # Fallback for unexpected content types
-        else:
-            self._debug_log(f"Fallback: Converting {content_type} to string")
-            p = text_frame.paragraphs[0]
-            p.text = str(content)
-
-    def _debug_log(self, message):
-        """Debug logging for content processing pipeline"""
-        from ..logging_config import content_processor_print
-
-        content_processor_print(f"[ContentFormatter] {message}")
-
-    def _add_content_blocks_to_placeholder(self, text_frame, content_list):
-        """Add list content with proper formatting and bullet support."""
-        paragraph_added = False
-
-        for item in content_list:
-            if isinstance(item, str):
-                # Simple string item - apply inline formatting
-                if not paragraph_added:
-                    p = text_frame.paragraphs[0]
-                    paragraph_added = True
-                else:
-                    p = text_frame.add_paragraph()
-                self.apply_inline_formatting(item, p)
-
-            elif isinstance(item, dict):
-                # Check if this is a rich content block (canonical or legacy format)
-                if ("type" in item and item["type"] in ["heading", "paragraph", "bullets"]) or any(key in item for key in ["heading", "paragraph", "bullets"]):
-                    self._debug_log(f"Processing rich content block in list: {list(item.keys())}")
-                    # Process as rich content block using the specialized handler
-                    self._add_content_block_to_placeholder(text_frame, item, paragraph_added)
-                    paragraph_added = True
-                elif "text" in item:
-                    # Simple text item
-                    if not paragraph_added:
-                        p = text_frame.paragraphs[0]
-                        paragraph_added = True
-                    else:
-                        p = text_frame.add_paragraph()
-                    self.apply_inline_formatting(item["text"], p)
-                elif "formatted" in item:
-                    # Apply formatted content segments
-                    if not paragraph_added:
-                        p = text_frame.paragraphs[0]
-                        paragraph_added = True
-                    else:
-                        p = text_frame.add_paragraph()
-                    self.apply_formatted_segments_to_paragraph(item["formatted"], p)
-                else:
-                    # Unknown dict structure - extract text if possible
-                    self._debug_log(f"Unknown dict in list, keys: {list(item.keys())}")
-                    if not paragraph_added:
-                        p = text_frame.paragraphs[0]
-                        paragraph_added = True
-                    else:
-                        p = text_frame.add_paragraph()
-                    # Try to find any text content to avoid string conversion
-                    text_content = item.get("text", str(item))
-                    self.apply_inline_formatting(text_content, p)
-
-    def _add_content_block_to_placeholder(self, text_frame, content_block, paragraph_added):
-        """Add a single rich content block (heading, paragraph, or bullets) to placeholder."""
-        # Handle canonical format (type: "heading")
-        if content_block.get("type") == "heading":
-            p = text_frame.paragraphs[0] if not paragraph_added else text_frame.add_paragraph()
-            heading_text = content_block["text"]
-            heading_level = content_block.get("level", 2)  # Default to H2 if not specified
-            # Apply dynamic heading formatting (includes bold + scaled font size)
-            self._apply_heading_formatting(p, heading_text, heading_level, text_frame)
-            self._debug_log(f"Added H{heading_level} heading: '{heading_text}'")
-            return
-
-        # Handle canonical format (type: "paragraph")
-        elif content_block.get("type") == "paragraph":
-            p = text_frame.paragraphs[0] if not paragraph_added else text_frame.add_paragraph()
-            paragraph_text = content_block["text"]
-            self.apply_inline_formatting(paragraph_text, p)
-            self._debug_log(f"Added paragraph: '{paragraph_text[:50]}...'")
-            return
-
-    def _add_rich_content_blocks_to_placeholder(self, text_frame, content_dict):
-        """Add rich content blocks (headings, paragraphs, bullets) to placeholder."""
-        # Check if this is formatted content from content_formatting.py
-        if "formatted_list" in content_dict:
-            # Handle formatted list content
-            formatted_list = content_dict["formatted_list"]
-            for i, item in enumerate(formatted_list):
-                if i == 0:
-                    p = text_frame.paragraphs[0]
-                else:
-                    p = text_frame.add_paragraph()
-
-                if "text" in item and "formatted" in item:
-                    # Apply formatted segments
-                    self.apply_formatted_segments_to_paragraph(item["formatted"], p)
-                else:
-                    # Fallback to text
-                    text = item.get("text", str(item))
-                    self.apply_inline_formatting(text, p)
-        elif "text" in content_dict and "formatted" in content_dict:
-            # Handle single formatted field content like {'text': '...', 'formatted': [...]}
-            p = text_frame.paragraphs[0]
-            formatted_segments = content_dict["formatted"]
-            self.apply_formatted_segments_to_paragraph(formatted_segments, p)
-        else:
-            # Handle direct rich content blocks
-            paragraph_added = False
-
-            # Handle heading
-            if "heading" in content_dict:
-                p = text_frame.paragraphs[0] if not paragraph_added else text_frame.add_paragraph()
-                heading_text = content_dict["heading"]
-                heading_level = content_dict.get("level", 2)  # Default to H2 if not specified
-
-                # Apply dynamic heading formatting (includes bold + scaled font size)
-                self._apply_heading_formatting(p, heading_text, heading_level, text_frame)
-                paragraph_added = True
-
-            # Handle paragraph
-            if "paragraph" in content_dict:
-                p = text_frame.paragraphs[0] if not paragraph_added else text_frame.add_paragraph()
-                paragraph_text = content_dict["paragraph"]
-                self.apply_inline_formatting(paragraph_text, p)
-                paragraph_added = True
-
-            # Handle bullets with proper level support
-            if "bullets" in content_dict and isinstance(content_dict["bullets"], list):
-                bullet_levels = content_dict.get("bullet_levels", [])
-                for i, bullet_text in enumerate(content_dict["bullets"]):
-                    p = text_frame.paragraphs[0] if not paragraph_added else text_frame.add_paragraph()
-                    self.apply_inline_formatting(bullet_text, p)
-
-                    # Set bullet level from bullet_levels array or default to level 1
-                    if i < len(bullet_levels):
-                        # Convert level (1-based) to PowerPoint level (0-based)
-                        p.level = max(0, bullet_levels[i] - 1)
-                    else:
-                        p.level = 0  # Default to top level bullets
-
-                    self._debug_log(f"Added bullet: '{bullet_text}' at level {p.level}")
-                    paragraph_added = True
-
-    def apply_formatted_segments_to_paragraph(self, formatted_segments, paragraph):
-        """Apply formatted text segments to a paragraph."""
-        if not formatted_segments:
-            return
-
-        # Clear existing runs
-        paragraph.clear()
-
-        for segment in formatted_segments:
-            if isinstance(segment, dict) and "text" in segment:
-                text = segment["text"]
-                format_info = segment.get("format", {})
-
-                run = paragraph.add_run()
-                run.text = text
-
-                # Apply formatting
-                if format_info.get("bold"):
-                    run.font.bold = True
-                if format_info.get("italic"):
-                    run.font.italic = True
-                if format_info.get("underline"):
-                    run.font.underline = True
-
-    def parse_inline_formatting(self, text):
-        """Parse inline formatting and return structured formatting data"""
+        Returns:
+            List of segments with text and formatting attributes
+        """
         if not text:
             return [{"text": "", "format": {}}]
 
@@ -365,679 +98,360 @@ class ContentFormatter:
 
         return segments
 
-    def apply_inline_formatting(self, text, paragraph):
-        """Apply inline formatting to paragraph using parsed formatting data."""
-        # Clear any existing text
-        paragraph.text = ""
+    def apply_inline_formatting(self, text: str, paragraph) -> None:
+        """
+        Apply inline formatting to a paragraph, including heading detection and font scaling.
 
-        # Parse the formatting
-        segments = self.parse_inline_formatting(text)
+        Args:
+            text: The text to format.
+            paragraph: The paragraph to apply the formatting to.
+        """
+        # Check if this text contains heading syntax - process line by line for headings
+        lines = text.split("\n")
 
-        # Apply each segment to the paragraph
-        for segment in segments:
-            run = paragraph.add_run()
-            run.text = segment["text"]
-
-            # Apply formatting
-            format_dict = segment["format"]
-            if format_dict.get("bold"):
-                run.font.bold = True
-            if format_dict.get("italic"):
-                run.font.italic = True
-            if format_dict.get("underline"):
-                run.font.underline = True
-
-            # Apply default language and font settings
-            if self.default_language:
-                self.formatting_support.apply_language_to_run(run, self.default_language)
-            if self.default_font:
-                self.formatting_support.apply_font_to_run(run, self.default_font)
-
-    def apply_formatted_segments_to_shape(self, shape, segments):
-        """Apply formatted text segments to a shape's text frame."""
-        if not hasattr(shape, "text_frame"):
-            # For shapes that don't have text_frame, fall back to simple text
-            shape.text = "".join(segment["text"] for segment in segments)
-            return
-
-        text_frame = shape.text_frame
-        text_frame.clear()
-
-        # Use the first paragraph or create one
-        if text_frame.paragraphs:
-            paragraph = text_frame.paragraphs[0]
+        if len(lines) > 1:
+            # Multi-line text - check for headings
+            self._apply_multiline_formatting_with_headings(text, paragraph)
         else:
-            paragraph = text_frame.add_paragraph()
+            # Single line - check if it's a heading
+            line = lines[0].strip()
+            heading_level = self._detect_heading_level(line)
 
-        paragraph.text = ""
+            if heading_level:
+                # Extract heading text without the # markers
+                heading_text = line[heading_level + 1 :].strip()  # +1 for the space after #
+                self._apply_heading_formatting(paragraph, heading_text, heading_level)
+            else:
+                # Regular text - apply normal inline formatting
+                segments = self.parse_inline_formatting(text)
+                for segment in segments:
+                    run = paragraph.add_run()
+                    run.text = segment["text"]
+                    if "bold" in segment["format"]:
+                        run.font.bold = True
+                    if "italic" in segment["format"]:
+                        run.font.italic = True
+                    if "underline" in segment["format"]:
+                        run.font.underline = True
 
-        # Apply each segment
-        for segment in segments:
-            run = paragraph.add_run()
-            run.text = segment["text"]
-
-            # Apply formatting
-            format_dict = segment["format"]
-            if format_dict.get("bold"):
-                run.font.bold = True
-            if format_dict.get("italic"):
-                run.font.italic = True
-            if format_dict.get("underline"):
-                run.font.underline = True
-
-    def apply_formatted_segments_to_cell(self, cell, segments):
-        """Apply formatted text segments to a table cell."""
-        text_frame = cell.text_frame
-        text_frame.clear()
-
-        # Create first paragraph
-        paragraph = text_frame.paragraphs[0]
-        paragraph.text = ""
-
-        # Apply each segment
-        for segment in segments:
-            run = paragraph.add_run()
-            run.text = segment["text"]
-
-            # Apply formatting
-            format_dict = segment["format"]
-            if format_dict.get("bold"):
-                run.font.bold = True
-            if format_dict.get("italic"):
-                run.font.italic = True
-            if format_dict.get("underline"):
-                run.font.underline = True
-
-    def add_content_to_slide(self, slide, content):
+    def add_content_to_placeholder(self, placeholder, content):
         """
-        Unified content processing for canonical JSON content blocks only.
+        Add content to a placeholder, handling lists and strings.
 
-        Uses semantic placeholder detection instead of hardcoded indices.
-        Expects all content to be in canonical JSON format: [{"type": "...", "text": "..."}, ...]
+        Args:
+            placeholder: The placeholder to add content to.
+            content: The content to add.
         """
-        # Store slide context for table creation
-        self._current_slide = slide
-
-        from .placeholder_types import is_content_placeholder, is_title_placeholder
-
-        self._debug_log(f"Processing {type(content).__name__} content with {len(content) if isinstance(content, list) else 'N/A'} blocks")
-
-        # Enhanced content analysis debugging
         if isinstance(content, list):
-            for i, block in enumerate(content):
-                if isinstance(block, dict):
-                    block_type = block.get("type", "unknown")
-                    block_keys = list(block.keys())
-                    self._debug_log(f"  Block {i + 1}: type='{block_type}', keys={block_keys}")
-                else:
-                    self._debug_log(f"  Block {i + 1}: {type(block).__name__} = {str(block)[:50]}...")
+            for item in content:
+                p = placeholder.text_frame.add_paragraph()
+                self.apply_inline_formatting(item, p)
+        else:
+            self.apply_inline_formatting(str(content), placeholder.text_frame.paragraphs[0])
+
+    def format_simple_content_list(self, content_list: List[str]) -> List[Dict[str, Any]]:
+        """
+        Convert simple content list to rich content with formatting.
+
+        Args:
+            content_list: List of strings with possible inline formatting
+
+        Returns:
+            Rich content list with formatting preserved
+        """
+        if not content_list:
+            return []
+
+        rich_content = []
+        for item in content_list:
+            if isinstance(item, str):
+                # Treat as paragraph text with inline formatting
+                rich_content.append({"paragraph": item, "formatted": self.parse_inline_formatting(item)})
+            else:
+                # Keep non-string items as-is
+                rich_content.append(item)
+
+        return rich_content
+
+    def format_field_content(self, content: Union[str, List[str], Dict[str, Any]]) -> Dict[str, Any]:
+        """
+        Format any field content type with inline formatting preservation.
+
+        Args:
+            content: Content to format (string, list, or dict)
+
+        Returns:
+            Formatted content with structure preserved
+        """
+        if isinstance(content, str):
+            return {"text": content, "formatted": self.parse_inline_formatting(content)}
+        elif isinstance(content, list):
+            return {
+                "list": content,
+                "formatted_list": [
+                    {
+                        "text": item,
+                        "formatted": (self.parse_inline_formatting(item) if isinstance(item, str) else item),
+                    }
+                    for item in content
+                ],
+            }
         elif isinstance(content, dict):
-            content_keys = list(content.keys())
-            self._debug_log(f"  Content dict keys: {content_keys}")
-        else:
-            self._debug_log(f"  Content: {str(content)[:100]}...")
-
-        # Find title placeholder to check if it needs content extracted
-        title_placeholder = None
-        for shape in slide.placeholders:
-            if is_title_placeholder(shape.placeholder_format.type):
-                if hasattr(shape, "text_frame") and shape.text_frame is not None:
-                    title_placeholder = shape
-                    break
-
-        # Check if title placeholder is empty and needs first heading extracted
-        title_needs_content = False
-        if title_placeholder:
-            has_title_content = False
-            if title_placeholder.text_frame.paragraphs:
-                for paragraph in title_placeholder.text_frame.paragraphs:
-                    if paragraph.text.strip():
-                        has_title_content = True
-                        break
-            title_needs_content = not has_title_content
-            self._debug_log(f"Title placeholder analysis: empty={title_needs_content}, needs_content={title_needs_content}")
-
-        # Extract first heading to title if needed
-        processed_content = content
-        if title_needs_content and isinstance(content, list) and content:
-            # Look for first heading in content blocks
-            first_heading_idx = None
-            for i, item in enumerate(content):
-                if isinstance(item, dict) and item.get("type") == "heading":
-                    first_heading_idx = i
-                    break
-
-            if first_heading_idx is not None:
-                heading_block = content[first_heading_idx]
-                heading_text = heading_block.get("text", "")
-                self._debug_log(f"Extracting first heading to title: '{heading_text}'")
-
-                # Add heading text to title placeholder
-                p = title_placeholder.text_frame.paragraphs[0]
-                self.apply_inline_formatting(heading_text, p)
-
-                # Remove the heading from content blocks
-                processed_content = content[:first_heading_idx] + content[first_heading_idx + 1 :]
-                self._debug_log(f"Content blocks remaining after title extraction: {len(processed_content)}")
-
-        # Find content placeholders using semantic detection
-        content_placeholders = []
-        self._debug_log("Analyzing slide placeholders for content placement:")
-
-        for shape in slide.placeholders:
-            placeholder_type = shape.placeholder_format.type
-            try:
-                placeholder_name = getattr(shape.element.nvSpPr.cNvPr, "name", "unnamed")
-            except AttributeError:
-                placeholder_name = "unnamed"
-            type_name = placeholder_type.name if hasattr(placeholder_type, "name") else str(placeholder_type)
-
-            self._debug_log(f"  Placeholder {shape.placeholder_format.idx}: {type_name} ('{placeholder_name}')")
-
-            if is_content_placeholder(placeholder_type):
-                # Skip if converted to image placeholder
-                if hasattr(shape, "text_frame") and shape.text_frame is not None:
-                    content_placeholders.append(shape)
-                    self._debug_log("    -> SELECTED for content placement")
+            # Recursively format dict content
+            formatted_dict = {}
+            for key, value in content.items():
+                if isinstance(value, str):
+                    formatted_dict[key] = {
+                        "text": value,
+                        "formatted": self.parse_inline_formatting(value),
+                    }
                 else:
-                    self._debug_log("    -> SKIPPED (no text_frame)")
-            else:
-                self._debug_log("    -> SKIPPED (not content type)")
+                    formatted_dict[key] = value
+            return formatted_dict
+        else:
+            # Return non-string/list/dict content as-is
+            return {"raw": content}
 
-        self._debug_log(f"Content placeholder summary: {len(content_placeholders)} selected")
+    def format_table_data(self, table_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Format table data while preserving structure.
 
-        if not content_placeholders:
-            self._debug_log("No content placeholders found - trying fallback options")
-            # For slides without content placeholders (e.g., Title Slide), try to use other placeholder types
-            from .placeholder_types import is_subtitle_placeholder
+        Args:
+            table_data: Table configuration with data
 
-            subtitle_placeholders = []
-            for shape in slide.placeholders:
-                if is_subtitle_placeholder(shape.placeholder_format.type):
-                    if hasattr(shape, "text_frame") and shape.text_frame is not None:
-                        # Check if subtitle placeholder already has content (from explicit subtitle field)
-                        has_existing_content = False
-                        if hasattr(shape, "text_frame") and shape.text_frame.paragraphs:
-                            for paragraph in shape.text_frame.paragraphs:
-                                if paragraph.text.strip():
-                                    has_existing_content = True
-                                    break
+        Returns:
+            Table data with formatting applied to cells
+        """
+        if not isinstance(table_data, dict) or "data" not in table_data:
+            return table_data
 
-                        if not has_existing_content:
-                            subtitle_placeholders.append(shape)
-                            self._debug_log(f"  Fallback option: subtitle placeholder {shape.placeholder_format.idx}")
+        formatted_table = table_data.copy()
+
+        if isinstance(table_data["data"], list):
+            formatted_data = []
+            for row in table_data["data"]:
+                if isinstance(row, list):
+                    formatted_row = []
+                    for cell in row:
+                        if isinstance(cell, str):
+                            formatted_row.append({"text": cell, "formatted": self.parse_inline_formatting(cell)})
                         else:
-                            self._debug_log(f"  Subtitle {shape.placeholder_format.idx} has existing content, skipping")
-
-            if subtitle_placeholders:
-                self._debug_log("Using subtitle placeholders as content fallback")
-                content_placeholders = subtitle_placeholders
-            else:
-                self._debug_log("CRITICAL: No suitable placeholders found for content - content will be lost!")
-                return
-
-        # Expect only canonical JSON content blocks
-        if isinstance(processed_content, list) and processed_content:
-            # Validate all items are canonical JSON blocks
-            for i, item in enumerate(processed_content):
-                if not isinstance(item, dict) or "type" not in item:
-                    raise ValueError(f"Content item {i} must be canonical JSON block with 'type' field. Got: {item}")
-
-            self._debug_log("Starting canonical content block processing")
-            self._process_canonical_content_blocks(content_placeholders, processed_content)
-        elif processed_content:
-            self._debug_log(f"WARNING: Expected list of canonical JSON content blocks, got: {type(processed_content)}")
-            self._debug_log(f"Content value: {str(processed_content)[:200]}...")
-        else:
-            self._debug_log("No content blocks to process")
-
-    def _process_canonical_content_blocks(self, content_placeholders, content_blocks):
-        """Process canonical JSON content blocks like {"type": "paragraph", "text": "..."}"""
-        self._debug_log(f"Processing {len(content_blocks)} canonical content blocks")
-
-        # Show content block types for debugging
-        block_types = [block.get("type", "unknown") for block in content_blocks]
-        self._debug_log(f"Block types: {block_types}")
-
-        # Use first content placeholder for now
-        # TODO: Support multi-placeholder layouts (Two Content, Four Columns)
-        placeholder = content_placeholders[0]
-        text_frame = placeholder.text_frame
-        text_frame.clear()
-
-        try:
-            placeholder_name = getattr(placeholder.element.nvSpPr.cNvPr, "name", "unnamed")
-        except AttributeError:
-            placeholder_name = "unnamed"
-        self._debug_log(f"Using placeholder {placeholder.placeholder_format.idx} ('{placeholder_name}') for content")
-
-        first_block = True
-        for i, block in enumerate(content_blocks):
-            block_type = block.get("type", "")
-            block_text = block.get("text", "")
-            self._debug_log(f"  Block {i + 1}/{len(content_blocks)}: type='{block_type}', text_length={len(block_text)}")
-
-            if block_type == "paragraph":
-                if first_block:
-                    p = text_frame.paragraphs[0]
+                            # Keep non-string cells as-is
+                            formatted_row.append(cell)
+                    formatted_data.append(formatted_row)
                 else:
-                    p = text_frame.add_paragraph()
-                text_content = block.get("text", "")
-                # print(f"    Paragraph: {text_content[:50]}...")
-                self.apply_inline_formatting(text_content, p)
+                    # Keep non-list rows as-is
+                    formatted_data.append(row)
+            formatted_table["data"] = formatted_data
 
-            elif block_type == "heading":
-                if first_block:
-                    p = text_frame.paragraphs[0]
-                else:
-                    p = text_frame.add_paragraph()
-                text_content = block.get("text", "")
-                heading_level = block.get("level", 2)  # Default to H2 if not specified
-                self._debug_log(f"    Adding H{heading_level} heading: '{text_content[:50]}{'...' if len(text_content) > 50 else ''}'")
+        return formatted_table
 
-                # Apply dynamic heading formatting (includes bold + scaled font size)
-                self._apply_heading_formatting(p, text_content, heading_level, text_frame)
+    def format_rich_content_blocks(self, rich_content: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """
+        Format rich content blocks (headings, paragraphs, bullets).
 
-            elif block_type == "bullets":
-                items = block.get("items", [])
-                self._debug_log(f"    Adding bullet list: {len(items)} items")
-                for item in items:
-                    if first_block:
-                        p = text_frame.paragraphs[0]
-                        first_block = False
+        Args:
+            rich_content: List of rich content blocks
+
+        Returns:
+            Rich content with formatting applied
+        """
+        if not rich_content:
+            return []
+
+        formatted_blocks = []
+
+        for block in rich_content:
+            if not isinstance(block, dict):
+                formatted_blocks.append(block)
+                continue
+
+            formatted_block = block.copy()
+
+            # Format headings
+            if "heading" in block:
+                formatted_block["heading_formatted"] = self.parse_inline_formatting(block["heading"])
+
+            # Format paragraphs
+            if "paragraph" in block:
+                formatted_block["paragraph_formatted"] = self.parse_inline_formatting(block["paragraph"])
+
+            # Format bullets
+            if "bullets" in block and isinstance(block["bullets"], list):
+                formatted_bullets = []
+                for bullet in block["bullets"]:
+                    if isinstance(bullet, str):
+                        formatted_bullets.append({"text": bullet, "formatted": self.parse_inline_formatting(bullet)})
                     else:
-                        p = text_frame.add_paragraph()
+                        formatted_bullets.append(bullet)
+                formatted_block["bullets_formatted"] = formatted_bullets
 
-                    # Handle both simple and complex bullet items
-                    if isinstance(item, dict):
-                        text = item.get("text", "")
-                        level = item.get("level", 1) - 1  # Convert to 0-based
-                    else:
-                        text = str(item)
-                        level = 0
+            formatted_blocks.append(formatted_block)
 
-                    p.level = level
-                    # print(f"      - {text[:30]}...")
-                    self.apply_inline_formatting(text, p)
+        return formatted_blocks
 
-            elif block_type == "columns":
-                columns = block.get("columns", [])
-                self._debug_log(f"    Processing multi-column layout: {len(columns)} columns")
+    def format_slide_data(self, slide_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Format complete slide data with ALL formatting types preserved.
 
-                # Distribute columns across available content placeholders
-                for col_idx, column in enumerate(columns):
-                    if col_idx < len(content_placeholders):
-                        placeholder = content_placeholders[col_idx]
-                        text_frame = placeholder.text_frame
-                        text_frame.clear()
+        This is the main entry point for slide formatting.
 
-                        self._debug_log(f"      Column {col_idx + 1} -> placeholder {placeholder.placeholder_format.idx}")
+        Args:
+            slide_data: Raw slide data dictionary
 
-                        # Process column content
-                        column_content = column.get("content", [])
-                        first_item = True
-                        for content_item in column_content:
-                            if isinstance(content_item, dict) and "type" in content_item:
-                                item_type = content_item.get("type", "")
-                                item_text = content_item.get("text", "")
-
-                                if first_item:
-                                    p = text_frame.paragraphs[0]
-                                    first_item = False
-                                else:
-                                    p = text_frame.add_paragraph()
-
-                                # self._debug_log(f"        {item_type}: {item_text[:30]}...")
-                                self.apply_inline_formatting(item_text, p)
-
-                                # Apply type-specific formatting
-                                if item_type == "heading":
-                                    for run in p.runs:
-                                        run.font.bold = True
-                    else:
-                        self._debug_log(f"      Column {col_idx + 1}: no available placeholder (only {len(content_placeholders)} total)")
-
-                # Mark that we've processed multi-column content, don't process individual blocks
-                return
-
-            elif block_type == "table":
-                self._debug_log("    Processing table content block")
-                # Get slide from content placeholders context - we know the slide from the calling context
-                slide = getattr(self, "_current_slide", None)
-                if slide:
-                    self._create_table_in_slide(slide, placeholder, block)
-                else:
-                    self._debug_log("      No slide context available, using text fallback")
-                    self._fallback_table_as_text(placeholder, block)
-
-            else:
-                # Unknown block type - treat as paragraph
-                self._debug_log(f"    Unknown block type '{block_type}', treating as paragraph")
-                if first_block:
-                    p = text_frame.paragraphs[0]
-                else:
-                    p = text_frame.add_paragraph()
-                text = str(block.get("text", block))
-                # print(f"      Text: {text[:50]}...")
-                self.apply_inline_formatting(text, p)
-
-            first_block = False
-
-    def _process_simple_content_list(self, placeholder, content_list):
-        """Process simple content list (legacy format)"""
-        text_frame = placeholder.text_frame
-        text_frame.clear()
-
-        for i, line in enumerate(content_list):
-            if i == 0:
-                p = text_frame.paragraphs[0]
-            else:
-                p = text_frame.add_paragraph()
-            self.apply_inline_formatting(str(line), p)
-
-    def _process_simple_content_string(self, placeholder, content_string):
-        """Process simple string content"""
-        text_frame = placeholder.text_frame
-        text_frame.clear()
-
-        p = text_frame.paragraphs[0]
-        self.apply_inline_formatting(content_string, p)
-
-    def auto_parse_json_formatting(self, slide_data):
-        """Auto-parse inline formatting in JSON slide data."""
-        # Type validation: ensure slide_data is a dictionary
+        Returns:
+            Slide data with all formatting applied
+        """
         if not isinstance(slide_data, dict):
-            raise TypeError(f"slide_data must be a dictionary, got {type(slide_data).__name__}: {slide_data}")
+            raise TypeError(f"slide_data must be a dictionary, got {type(slide_data).__name__}")
 
         # Create a copy to avoid modifying original
-        processed_data = slide_data.copy()
+        formatted_data = slide_data.copy()
 
-        # Parse title if present
-        if "title" in processed_data and processed_data["title"]:
-            title_text = processed_data["title"]
-            processed_data["title_formatted"] = self.parse_inline_formatting(title_text)
+        # Format title and subtitle
+        for field in ["title", "subtitle"]:
+            if field in formatted_data and formatted_data[field]:
+                formatted_data[f"{field}_formatted"] = self.parse_inline_formatting(formatted_data[field])
 
-        # Parse subtitle if present
-        if "subtitle" in processed_data and processed_data["subtitle"]:
-            subtitle_text = processed_data["subtitle"]
-            processed_data["subtitle_formatted"] = self.parse_inline_formatting(subtitle_text)
+        # Format simple content lists to rich content
+        if "content" in formatted_data and isinstance(formatted_data["content"], list):
+            formatted_data["rich_content"] = self.format_simple_content_list(formatted_data["content"])
+            # Keep original for compatibility
+            # del formatted_data["content"]
 
-        # Parse content list - convert legacy strings to canonical JSON format
-        if "content" in processed_data and isinstance(processed_data["content"], list):
-            content_list = processed_data["content"]
-            canonical_content = []
+        # Format rich content blocks
+        if "rich_content" in formatted_data:
+            formatted_data["rich_content_formatted"] = self.format_rich_content_blocks(formatted_data["rich_content"])
 
-            for item in content_list:
-                if isinstance(item, str):
-                    # Convert legacy string to canonical paragraph block
-                    canonical_content.append({"type": "paragraph", "text": item})
-                    print(
-                        # "Converted string to paragraph"
-                    )
-                elif isinstance(item, dict) and "type" in item:
-                    # Already canonical JSON format - keep as is
-                    canonical_content.append(item)
-                    print(
-                        # f"Preserved {item.get('type')} block"
-                    )
-                else:
-                    # Unknown format - convert to paragraph
-                    canonical_content.append({"type": "paragraph", "text": str(item)})
-                    print(
-                        # f"Converted unknown item to paragraph: {item}"
-                    )
+        # Format table data
+        if "table" in formatted_data:
+            formatted_data["table_formatted"] = self.format_table_data(formatted_data["table"])
 
-            # Replace with canonical format
-            processed_data["content"] = canonical_content
+        # Format all field content (for semantic field names like content_left, content_col1)
+        content_fields = [key for key in formatted_data.keys() if key.startswith(("content_", "title_")) and not key.endswith("_formatted")]
 
-        # Parse table data if present
-        if "table" in processed_data and "data" in processed_data["table"]:
-            table_data = processed_data["table"]
-            if isinstance(table_data["data"], list):
-                formatted_data = []
-                for row in table_data["data"]:
-                    if isinstance(row, list):
-                        formatted_row = []
-                        for cell in row:
-                            if isinstance(cell, str):
-                                formatted_row.append(
-                                    {
-                                        "text": cell,
-                                        "formatted": self.parse_inline_formatting(cell),
-                                    }
-                                )
-                            else:
-                                # Keep non-string cells as-is
-                                formatted_row.append(cell)
-                        formatted_data.append(formatted_row)
-                    else:
-                        # Keep non-list rows as-is
-                        formatted_data.append(row)
-                processed_data["table"]["data"] = formatted_data
+        for field in content_fields:
+            content = formatted_data[field]
+            if content:  # Only format non-empty content
+                formatted_data[f"{field}_formatted"] = self.format_field_content(content)
 
-        # Note: Removed complex formatting preprocessing - formatting now handled at render time
-        return processed_data
+        return formatted_data
 
-    def _create_table_in_slide(self, slide, placeholder, table_block):
-        """
-        Create a PowerPoint table in the given slide, replacing the placeholder.
+    def _detect_heading_level(self, line: str) -> int:
+        """Detect heading level from line text (H1-H6)."""
+        if line.startswith("###### "):
+            return 6
+        elif line.startswith("##### "):
+            return 5
+        elif line.startswith("#### "):
+            return 4
+        elif line.startswith("### "):
+            return 3
+        elif line.startswith("## "):
+            return 2
+        elif line.startswith("# "):
+            return 1
+        return 0
 
-        Args:
-            slide: PowerPoint slide object
-            placeholder: PowerPoint placeholder shape to replace
-            table_block: Table block with header and rows data
-        """
-        from pptx.util import Inches  # noqa: F401
+    def _apply_heading_formatting(self, paragraph, text_content, heading_level):
+        """Apply heading formatting with font scaling and proper weights."""
+        from pptx.util import Pt
 
-        try:
-            # Extract table data from block
-            header = table_block.get("header", [])
-            rows = table_block.get("rows", [])
+        # Apply inline formatting first (bold, italic, underline)
+        segments = self.parse_inline_formatting(text_content)
+        for segment in segments:
+            run = paragraph.add_run()
+            run.text = segment["text"]
+            if "bold" in segment["format"]:
+                run.font.bold = True
+            if "italic" in segment["format"]:
+                run.font.italic = True
+            if "underline" in segment["format"]:
+                run.font.underline = True
 
-            if not header and not rows:
-                print("      No table data found")
-                return
+        # Apply heading-specific font scaling and weight
+        base_size = 18  # PowerPoint default content size
 
-            # Calculate table dimensions
-            if header:
-                table_data = [header] + rows
-            else:
-                table_data = rows
+        # Calculate scaled font size
+        scale_factors = {1: 1.33, 2: 1.11, 3: 1.0, 4: 0.89, 5: 0.78, 6: 0.67}
+        heading_font_size = base_size * scale_factors.get(heading_level, 1.0)
 
-            if not table_data:
-                print("      Empty table data")
-                return
-
-            rows_count = len(table_data)
-            cols_count = max(len(row) for row in table_data) if table_data else 0
-
-            if rows_count == 0 or cols_count == 0:
-                print(f"      Invalid table dimensions: {rows_count}x{cols_count}")
-                return
-
-            print(f"      Creating {rows_count}x{cols_count} table")
-
-            # Get placeholder dimensions and position
-            left = placeholder.left
-            top = placeholder.top
-            width = placeholder.width
-            height = placeholder.height
-
-            # Remove the placeholder shape and create table in its place
-            sp = placeholder._element
-            parent = sp.getparent()
-            parent.remove(sp)
-
-            # Add table to slide
-            table_shape = slide.shapes.add_table(rows_count, cols_count, left, top, width, height)
-            table = table_shape.table
-
-            # Populate table with data
-            for row_idx, row_data in enumerate(table_data):
-                for col_idx, cell_data in enumerate(row_data):
-                    if col_idx < len(table.rows[row_idx].cells):
-                        cell = table.rows[row_idx].cells[col_idx]
-                        cell_text = str(cell_data) if cell_data is not None else ""
-
-                        # Apply inline formatting to cell text
-                        cell.text_frame.clear()
-                        p = cell.text_frame.paragraphs[0]
-                        self.apply_inline_formatting(cell_text, p)
-
-                        # Apply header formatting
-                        if row_idx == 0 and header:
-                            for run in p.runs:
-                                run.font.bold = True
-
-            print(f"      Table created successfully with {rows_count} rows and {cols_count} columns")
-
-        except Exception as e:
-            print(f"      Error creating table: {e}")
-            # Fallback: add table data as text
-            self._fallback_table_as_text(placeholder, table_block)
-
-    def _fallback_table_as_text(self, placeholder, table_block):
-        """Fallback method to display table as text when table creation fails."""
-        try:
-            header = table_block.get("header", [])
-            rows = table_block.get("rows", [])
-
-            if hasattr(placeholder, "text_frame") and placeholder.text_frame:
-                text_frame = placeholder.text_frame
-                text_frame.clear()
-                p = text_frame.paragraphs[0]
-
-                # Convert table to text representation
-                table_text = "Table data:\n"
-                if header:
-                    table_text += " | ".join(str(cell) for cell in header) + "\n"
-                    table_text += "-" * 50 + "\n"
-                for row in rows:
-                    table_text += " | ".join(str(cell) for cell in row) + "\n"
-
-                self.apply_inline_formatting(table_text, p)
-                print("      Table displayed as text fallback")
-            else:
-                print("      Could not display table - no text frame available")
-        except Exception as e:
-            print(f"      Error in table text fallback: {e}")
-
-    def _remove_placeholder_from_slide(self, slide, placeholder):
-        """Remove a placeholder from the slide after it's been replaced by a table."""
-        try:
-            # Find the placeholder shape in the slide and remove it
-            for shape in slide.shapes:
-                if shape == placeholder:
-                    # Remove the shape element from the slide
-                    sp = shape._element
-                    parent = sp.getparent()
-                    if parent is not None:
-                        parent.remove(sp)
-                    break
-            print("      Placeholder removed from slide")
-        except Exception as e:
-            print(f"      Error removing placeholder: {e}")
-
-    def _get_base_font_size(self, text_frame):
-        """
-        Detect the base font size for this text frame/placeholder.
-        Uses cached value to ensure consistent scaling across all headings.
-
-        Args:
-            text_frame: The text frame to analyze
-
-        Returns:
-            float: Base font size in points (18pt PowerPoint default)
-        """
-        # Return cached base size if already detected
-        if self._cached_base_font_size is not None:
-            return self._cached_base_font_size
-
-        # Try to detect base size from clean text frame (before any heading formatting)
-        for para in text_frame.paragraphs:
-            for run in para.runs:
-                if run.font.size and not run.font.bold:  # Look for non-bold text (regular content)
-                    self._cached_base_font_size = run.font.size.pt
-                    self._debug_log(f"Detected base font size: {self._cached_base_font_size}pt")
-                    return self._cached_base_font_size
-
-        # Fallback to PowerPoint's default content size
-        self._cached_base_font_size = 18.0
-        self._debug_log(f"Using default base font size: {self._cached_base_font_size}pt")
-        return self._cached_base_font_size
-
-    def _scale_heading_font_size(self, base_size, heading_level):
-        """
-        Scale heading font size relative to base content font size.
-        Uses Moderate with Light H1/H2 hierarchy for elegant contrast.
-
-        Args:
-            base_size: Base font size in points
-            heading_level: Heading level (1-6)
-
-        Returns:
-            int: Scaled font size in points
-        """
-        # Scale factors for Moderate with Light H1/H2 hierarchy
-        scale_factors = {
-            1: 2.0,  # H1 = 200% of base (36pt from 18pt base) - Light weight
-            2: 1.33,  # H2 = 133% of base (24pt from 18pt base) - Light weight
-            3: 1.0,  # H3 = Same as base content (18pt) - Bold weight
-            4: 0.89,  # H4 = 89% of base (16pt from 18pt base) - Bold weight
-            5: 0.78,  # H5 = 78% of base (14pt from 18pt base) - Bold weight
-            6: 0.67,  # H6 = 67% of base (12pt from 18pt base) - Bold weight
-        }
-
-        factor = scale_factors.get(heading_level, 1.0)
-        scaled_size = base_size * factor
-
-        # Ensure minimum readable size (10pt) and reasonable maximum (72pt)
-        return max(10, min(72, int(scaled_size)))
-
-    def _apply_heading_formatting(self, paragraph, text_content, heading_level, text_frame):
-        """
-        Apply appropriate formatting to a heading paragraph.
-
-        Args:
-            paragraph: The paragraph to format
-            text_content: The heading text content
-            heading_level: Heading level (1-6)
-            text_frame: The text frame (for base font size detection)
-        """
-        # Apply inline formatting (bold, italic, underline) first
-        self.apply_inline_formatting(text_content, paragraph)
-
-        # Detect base font size from the text frame
-        base_size = self._get_base_font_size(text_frame)
-
-        # If we couldn't detect base size, check if we just added content
-        if base_size is None and paragraph.runs:
-            # Check if the run we just added has a resolved font size
-            first_run = paragraph.runs[0]
-            if first_run.font.size:
-                base_size = first_run.font.size.pt
-            else:
-                # Use PowerPoint default for content (18pt)
-                base_size = 18
-
-        if base_size is None:
-            base_size = 18  # Fallback to standard PowerPoint content size
-
-        # Calculate scaled font size for this heading level
-        heading_font_size = self._scale_heading_font_size(base_size, heading_level)
-
-        # Apply font weight and scaled font size to all runs
-        # Moderate with Light H1/H2 hierarchy: Light for H1/H2, Bold for H3-H6
+        # Apply font size and weight to all runs
         for run in paragraph.runs:
             if heading_level in [1, 2]:
-                # H1 and H2: Light weight for elegant large headings
-                run.font.bold = False  # Try to set as light/regular weight
-                weight_description = "light"
+                # H1 and H2: Light weight
+                run.font.bold = False
             else:
-                # H3-H6: Bold weight to differentiate from body text
+                # H3-H6: Bold weight
                 run.font.bold = True
-                weight_description = "bold"
-
             run.font.size = Pt(heading_font_size)
 
-        self._debug_log(f"Applied H{heading_level} formatting: {heading_font_size}pt, {weight_description} weight (base: {base_size}pt)")
+    def _apply_multiline_formatting_with_headings(self, text, paragraph):
+        """Handle multi-line text with heading detection."""
+        lines = text.split("\n")
+
+        # Get text frame for adding multiple paragraphs
+        text_frame = paragraph._parent
+
+        # Clear existing content
+        text_frame.clear()
+
+        for i, line in enumerate(lines):
+            line = line.strip()
+            if not line:
+                continue
+
+            # Create paragraph for this line
+            if i == 0:
+                current_paragraph = text_frame.paragraphs[0]
+            else:
+                current_paragraph = text_frame.add_paragraph()
+
+            heading_level = self._detect_heading_level(line)
+
+            if heading_level:
+                # Extract heading text
+                heading_text = line[heading_level + 1 :].strip()
+                self._apply_heading_formatting(current_paragraph, heading_text, heading_level)
+            else:
+                # Regular text
+                segments = self.parse_inline_formatting(line)
+                for segment in segments:
+                    run = current_paragraph.add_run()
+                    run.text = segment["text"]
+                    if "bold" in segment["format"]:
+                        run.font.bold = True
+                    if "italic" in segment["format"]:
+                        run.font.italic = True
+                    if "underline" in segment["format"]:
+                        run.font.underline = True
+
+
+# Global formatter instance
+content_formatter = ContentFormatter()
+
+
+def format_slide_content(slide_data: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Convenience function for formatting slide content.
+
+    Args:
+        slide_data: Raw slide data
+
+    Returns:
+        Formatted slide data
+    """
+    return content_formatter.format_slide_data(slide_data)
+
+
+def format_inline_text(text: str) -> List[Dict[str, Any]]:
+    """
+    Convenience function for formatting inline text.
+
+    Args:
+        text: Text with inline formatting
+
+    Returns:
+        List of formatted segments
+    """
+    return content_formatter.parse_inline_formatting(text)

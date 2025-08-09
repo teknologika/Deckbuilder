@@ -15,8 +15,8 @@ src_path = project_root / "src"
 sys.path.insert(0, str(src_path))
 
 import pytest  # noqa: E402
-from deckbuilder.engine import Deckbuilder  # noqa: E402
-from deckbuilder.converter import markdown_to_canonical_json  # noqa: E402
+from deckbuilder.core.engine import Deckbuilder  # noqa: E402
+from deckbuilder.content.converter import markdown_to_canonical_json  # noqa: E402
 
 
 @pytest.fixture

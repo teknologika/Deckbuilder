@@ -2,17 +2,20 @@
 layout: Title Slide
 title: "**Test Presentation** with *Inline* Formatting"
 subtitle: "Testing all ___placeholders___ and **formatting** capabilities"
+speaker_notes: "Welcome everyone to this comprehensive test of our presentation system. **Emphasize** the key capabilities and mention the *extensive* formatting support we've built. Don't forget to highlight the ___professional___ quality of our output."
 ---
 ---
 layout: Title and Content
 title: "Content Slide Test"
 content: "This is simple plain text content without any markdown formatting that should work with structured frontmatter."
+speaker_notes: "This slide demonstrates our **content processing** pipeline. Note how the formatting is preserved from markdown to PowerPoint. *Pause here* for questions about the technical implementation."
 ---
 ---
 layout: Two Content
 title: "Two Content Layout Test"
 content_left: "**Feature A** details\n*Feature B* information\n***Critical*** updates"
 content_right: "___Important___ notices\n**Security** measures\n*Performance* metrics"
+speaker_notes: "Compare and contrast the two content areas. The left shows **development features** while the right focuses on ___operational concerns___. Ask the audience: *Which area is most critical for your use case?*"
 ---
 ---
 layout: Four Columns
@@ -21,12 +24,14 @@ content_col1: "**Fast processing** with optimized algorithms and *sub-millisecon
 content_col2: "***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance"
 content_col3: "*Intuitive* interface with **minimal** learning curve and comprehensive docs"
 content_col4: "___Transparent___ pricing with **flexible** plans and *proven* ROI"
+speaker_notes: "This is our ***core value proposition*** slide. Walk through each column **systematically**: 1) Performance advantages, 2) Security certifications, 3) User experience, 4) Business value. *Spend equal time* on each pillar and invite questions after each section."
 ---
 
 ---
 layout: Title and Content
 title: "Table Slide Test"
 content: "Feature Status Report: Authentication Complete High Priority, User Management In Progress Medium Priority, Reporting Planned Low Priority, API Integration Blocked Critical Priority"
+speaker_notes: "**Critical status update** on our development roadmap. Note that API Integration is currently ***blocked*** - we're working with the vendor to resolve dependencies. *Focus attention* on high priority items and discuss timeline adjustments for blocked features."
 ---
 ---
 layout: Section Header

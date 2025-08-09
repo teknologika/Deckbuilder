@@ -7,6 +7,7 @@
                 "title": "**Deckbuilder: Intelligent PowerPoint Generation**",
                 "subtitle": "Showcasing all ___21 slides___ with **professional** *formatting* and **table dimension** capabilities"
             },
+            "speaker_notes": "Welcome to this **comprehensive demonstration** of Deckbuilder capabilities. This presentation showcases our *intelligent PowerPoint generation* with ___professional formatting___ and advanced table dimension controls. **Emphasize** the content-first approach and semantic layout intelligence.",
             "content": []
         },
         {
@@ -16,6 +17,7 @@
                 "title": "Rich Content with **Professional** *Formatting*",
                 "content": "Deckbuilder Features\n\nDeckbuilder delivers intelligent presentation generation with comprehensive formatting support.\n\n\u2022 **Content-first** design philosophy\n\u2022 *Semantic* layout recommendations\n\u2022 ***Advanced*** template management\n\u2022 ___Professional___ formatting preservation\n\nTransform your ideas into polished presentations with **automated** *intelligence* and ___consistent___ styling."
             },
+            "speaker_notes": "This slide demonstrates our **content processing pipeline** with rich formatting preservation. Walk through each bullet point: *Content-first philosophy* means we optimize for message delivery, ***advanced template management*** provides layout intelligence, and ___professional formatting___ ensures consistent output quality.",
             "content": []
         },
         {
@@ -35,6 +37,7 @@
                 "content_left": "**Semantic** layout detection\n*Automatic* content optimization\n***Smart*** placeholder mapping",
                 "content_right": "___Enterprise-grade___ presentations\n**Consistent** branding\n*Polished* formatting"
             },
+            "speaker_notes": "**Key comparison slide** - left shows *technical capabilities*, right shows ***business benefits***. For technical audiences: Focus on semantic detection and smart mapping. For business stakeholders: Emphasize enterprise-grade quality and consistent branding. *Ask*: Which aspect is most relevant to your current needs?",
             "content": []
         },
         {
@@ -152,6 +155,7 @@
                 "content_col3": "*Intuitive* interface with **minimal** learning curve and comprehensive docs",
                 "content_col4": "___Transparent___ pricing with **flexible** plans and *proven* ROI"
             },
+            "speaker_notes": "***Core value proposition*** slide - walk through each pillar **systematically**: 1) **Performance** - mention benchmark comparisons, 2) ***Security*** - highlight compliance certifications, 3) *Usability* - emphasize quick adoption, 4) ___Value___ - discuss ROI case studies. *Spend equal time* on each column.",
             "content": []
         },
         {
@@ -393,6 +397,7 @@
                     "custom_colors": {}
                 }
             },
+            "speaker_notes": "**Status update** on development roadmap. Note that API Integration is ***blocked*** - we're working with vendor to resolve dependencies. *Focus attention* on high priority items and discuss timeline impacts. **Ask team**: What additional resources do we need to unblock the critical path?",
             "content": []
         },
         {
@@ -437,6 +442,16 @@
                     ["David Wilson", "21", "20", "95%"]
                 ]
             },
+            "content": []
+        },
+        {
+            "layout": "Title and Content",
+            "style": "default_style",
+            "placeholders": {
+                "title": "**H1-H6** *Heading* ___Hierarchy___ Test",
+                "content": "# H1 Heading - **Large** Main Title\n## H2 Heading - *Subtitle* Level\n### H3 Heading - ***Section*** Header\n#### H4 Heading - ___Subsection___ Title\n##### H5 Heading - **Minor** *Section*\n###### H6 Heading - ***Smallest*** ___Detail___\n\n**Dynamic font scaling** with template-adaptive sizing:\n- H1: 133% of base font (light weight)\n- H2: 111% of base font (light weight) \n- H3-H6: Decreasing scale with bold weights\n\n*Typography hierarchy* ensures ***professional*** ___visual___ structure."
+            },
+            "speaker_notes": "**Heading hierarchy demonstration** - this slide showcases our ***dynamic font scaling system*** with H1-H6 support. Walk through the hierarchy: *H1/H2 use light weights*, H3-H6 use bold formatting. **Key feature**: Template-adaptive sizing means headings scale properly across different PowerPoint themes. *Ask*: Notice how the visual hierarchy guides your eye through the content structure?",
             "content": []
         }
     ]

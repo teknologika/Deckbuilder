@@ -2,15 +2,15 @@
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 from pptx import Presentation
 
-from .path_manager import path_manager, PathManager
+from ..utils.path import path_manager, PathManager
 from .presentation_builder import PresentationBuilder
-from .content.processor import ContentProcessor
-from .template_manager import TemplateManager
-from .image_handler import ImageHandler
+from ..content.processor import ContentProcessor
+from ..templates.manager import TemplateManager
+from ..image.image_handler import ImageHandler
 
 # Import PlaceKitten from parent directory
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -40,7 +40,7 @@ def singleton(cls):
 
 @singleton
 class Deckbuilder:
-    def __init__(self, path_manager_instance: PathManager = None):
+    def __init__(self, path_manager_instance: Optional[PathManager] = None):
         # Use provided path manager or default global instance
         self._path_manager = path_manager_instance or path_manager
 
@@ -155,7 +155,7 @@ class Deckbuilder:
             validator.validate_post_generation(full_path)
 
         # Show completion summary
-        from .logging_config import success_print
+        from ..utils.logging import success_print
 
         slide_count = len(presentation_data["slides"])
         file_name = write_result.split("Successfully created presentation: ")[1].strip() if "Successfully created presentation:" in write_result else "presentation.pptx"
@@ -186,6 +186,6 @@ class Deckbuilder:
 
 def get_deckbuilder_client():
     # Return Deckbuilder instance with MCP context
-    from .path_manager import create_mcp_path_manager
+    from ..utils.path import create_mcp_path_manager
 
     return Deckbuilder(path_manager_instance=create_mcp_path_manager())

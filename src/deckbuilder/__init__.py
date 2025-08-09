@@ -5,8 +5,8 @@ Core presentation generation engine with template support and
 structured frontmatter processing.
 """
 
-from .engine import Deckbuilder, get_deckbuilder_client
-from .structured_frontmatter import (
+from .core.engine import Deckbuilder, get_deckbuilder_client
+from .content.frontmatter import (
     StructuredFrontmatterConverter,
     StructuredFrontmatterRegistry,
     StructuredFrontmatterValidator,

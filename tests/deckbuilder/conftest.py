@@ -12,18 +12,19 @@ import pytest
 
 # Import deckbuilder components
 try:
-    from deckbuilder.engine import Deckbuilder
-    from deckbuilder.layout_intelligence import LayoutIntelligence
-    from deckbuilder.naming_conventions import NamingConvention, PlaceholderContext
-    from deckbuilder.structured_frontmatter import (
+    from deckbuilder.core.engine import Deckbuilder
+    from deckbuilder.content.frontmatter import (
         StructuredFrontmatterConverter,
         StructuredFrontmatterRegistry,
         StructuredFrontmatterValidator,
     )
+    from deckbuilder.cli.naming_conventions import NamingConvention, PlaceholderContext
+    from deckbuilder.templates.layout_intelligence import LayoutIntelligence
 except ImportError:
     # Handle missing imports gracefully for early testing
     Deckbuilder = None
     NamingConvention = None
+    LayoutIntelligence = None
 
 
 @pytest.fixture

@@ -13,8 +13,8 @@ from unittest.mock import Mock
 
 # Test imports with graceful handling
 try:
-    from deckbuilder.converter import FrontmatterConverter, markdown_to_canonical_json
-    from deckbuilder.table_builder import TableBuilder
+    from deckbuilder.content.converter import FrontmatterConverter, markdown_to_canonical_json
+    from deckbuilder.core.table_builder import TableBuilder
 
     HAS_TABLE_MODULES = True
 except ImportError:

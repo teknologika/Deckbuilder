@@ -7,7 +7,7 @@ import pytest
 
 # Test imports with graceful handling
 try:
-    from deckbuilder.engine import Deckbuilder
+    from deckbuilder.core.engine import Deckbuilder
 
     HAS_ENGINE = True
 except ImportError:
@@ -32,10 +32,10 @@ def engine_setup():
 
     # Create engine with mocked components
     with (
-        patch("deckbuilder.engine.PresentationBuilder") as mock_pb_class,
-        patch("deckbuilder.engine.TemplateManager") as mock_tm_class,
-        patch("deckbuilder.engine.ContentProcessor") as mock_cp_class,
-        patch("deckbuilder.engine.Presentation") as mock_prs_class,
+        patch("deckbuilder.core.engine.PresentationBuilder") as mock_pb_class,
+        patch("deckbuilder.templates.manager.TemplateManager") as mock_tm_class,
+        patch("deckbuilder.content.processor.ContentProcessor") as mock_cp_class,
+        patch("pptx.Presentation") as mock_prs_class,
     ):
 
         mock_pb_class.return_value = mock_presentation_builder

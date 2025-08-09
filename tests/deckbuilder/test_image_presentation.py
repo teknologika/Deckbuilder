@@ -10,8 +10,8 @@ from pathlib import Path
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))  # noqa: E402
 
-from deckbuilder.engine import Deckbuilder  # noqa: E402
-from deckbuilder.converter import markdown_to_canonical_json  # noqa: E402
+from deckbuilder.core.engine import Deckbuilder  # noqa: E402
+from deckbuilder.content.converter import markdown_to_canonical_json  # noqa: E402
 
 
 def run_image_presentation_test():

@@ -1,10 +1,3 @@
-"""
-Unit tests for Engine PathManager integration
-
-Tests that the Deckbuilder engine properly uses PathManager
-for all path resolution instead of direct environment access.
-"""
-
 import os
 import sys
 from pathlib import Path
@@ -13,8 +6,8 @@ from unittest.mock import patch, Mock
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
-from src.deckbuilder.engine import Deckbuilder  # noqa: E402
-from src.deckbuilder.path_manager import path_manager  # noqa: E402
+from src.deckbuilder.core.engine import Deckbuilder  # noqa: E402
+from src.deckbuilder.utils.path import path_manager  # noqa: E402
 
 
 class TestEnginePathManagerIntegration:
@@ -118,10 +111,10 @@ class TestEnginePathManagerIntegration:
 
             # Mock at the presentation builder level to focus on path management testing
             with (
-                patch("src.deckbuilder.engine.Presentation") as mock_presentation_class,
+                patch("src.deckbuilder.core.engine.Presentation") as mock_presentation_class,
                 patch.object(engine.presentation_builder, "add_slide") as mock_add_slide,
                 patch.object(engine, "write_presentation") as mock_write,
-                patch("src.deckbuilder.validation.PresentationValidator") as mock_validator,
+                patch("src.deckbuilder.utils.validation.PresentationValidator") as mock_validator,
             ):
                 mock_prs = Mock()
                 mock_prs.save = Mock()
@@ -231,7 +224,7 @@ class TestEngineEnvironmentIsolation:
 
     def test_engine_paths_stable_across_env_changes(self):
         """Test engine paths don't change when environment changes after init"""
-        with patch.dict(os.environ, {"DECK_TEMPLATE_FOLDER": "/initial"}):
+        with patch.dict(os.environ, {}, clear=True):
             with (
                 patch.object(path_manager, "get_template_folder", return_value=Path("/initial")),
                 patch.object(path_manager, "get_output_folder", return_value=Path("/initial")),

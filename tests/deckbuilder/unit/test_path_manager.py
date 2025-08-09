@@ -14,7 +14,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))  # noqa: E402
 
-from src.deckbuilder.path_manager import PathManager, path_manager  # noqa: E402
+from src.deckbuilder.utils.path import PathManager, path_manager  # noqa: E402
 
 
 class TestPathManager:

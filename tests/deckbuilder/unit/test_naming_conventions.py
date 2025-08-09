@@ -6,7 +6,7 @@ import pytest
 
 # Test imports with graceful handling
 try:
-    from deckbuilder.naming_conventions import NamingConvention, PlaceholderContext
+    from deckbuilder.cli.naming_conventions import NamingConvention, PlaceholderContext
 
     HAS_NAMING_CONVENTIONS = True
 except ImportError:

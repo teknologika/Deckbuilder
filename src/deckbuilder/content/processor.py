@@ -106,7 +106,7 @@ class ContentProcessor:
             return converted
 
         # Regular frontmatter processing - still process content fields
-        from .frontmatter import FrontmatterConverter
+        from .converter import FrontmatterConverter
 
         converter_instance = FrontmatterConverter()
 

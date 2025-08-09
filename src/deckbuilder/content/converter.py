@@ -1,14 +1,18 @@
 from typing import Dict, Any, Optional
 
 # Import structured frontmatter classes from content package
-from .content.frontmatter import StructuredFrontmatterConverter
+from .frontmatter import StructuredFrontmatterConverter
 
 
 # Legacy alias for backward compatibility
 class FrontmatterConverter(StructuredFrontmatterConverter):
     """Converter to be used in the new converter module"""
 
-    pass
+    def _process_content_field(self, content: str) -> str:
+        """Process content field for basic formatting and return as-is for now."""
+        if not isinstance(content, str):
+            return str(content) if content is not None else ""
+        return content.strip()
 
 
 def _extract_table_from_content(content: str, slide_data: dict) -> Optional[dict]:
@@ -89,7 +93,7 @@ def markdown_to_canonical_json(markdown_content: str) -> Dict[str, Any]:
     Handles both pure structured frontmatter and frontmatter + content pairs.
     """
     # Import ContentProcessor to handle frontmatter + content parsing
-    from .content.processor import ContentProcessor
+    from .processor import ContentProcessor
 
     # Use ContentProcessor to properly parse frontmatter + content
     processor = ContentProcessor()

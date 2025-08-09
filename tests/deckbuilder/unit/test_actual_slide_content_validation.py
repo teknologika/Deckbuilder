@@ -21,7 +21,7 @@ from pptx import Presentation
 project_root = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(project_root / "src"))
 
-from deckbuilder.engine import Deckbuilder  # noqa: E402
+from deckbuilder.core.engine import Deckbuilder  # noqa: E402
 
 
 @pytest.fixture

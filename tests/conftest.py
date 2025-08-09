@@ -57,7 +57,7 @@ def mock_deckbuilder_env():
     """Mock environment variables for deckbuilder with proper cleanup."""
     # Clear any existing singleton instances for atomic testing
     try:
-        from deckbuilder.engine import Deckbuilder
+        from deckbuilder.core.engine import Deckbuilder
 
         # Use the new reset method for cleaner singleton management
         Deckbuilder.reset()
@@ -119,7 +119,7 @@ def mock_deckbuilder_env():
 @pytest.fixture
 def fresh_deckbuilder(mock_deckbuilder_env):
     """Provide a fresh Deckbuilder instance for each test with proper environment isolation."""
-    from deckbuilder.engine import Deckbuilder
+    from deckbuilder.core.engine import Deckbuilder
 
     # Reset singleton to ensure fresh instance
     Deckbuilder.reset()
@@ -410,7 +410,7 @@ def cli_temp_env():
 def reset_singleton():
     """Reset Deckbuilder singleton before each test to ensure clean state."""
     try:
-        from deckbuilder.engine import Deckbuilder
+        from deckbuilder.core.engine import Deckbuilder
 
         # Clear singleton instance
         Deckbuilder._instance = None
@@ -421,7 +421,7 @@ def reset_singleton():
 
     # Clean up after test
     try:
-        from deckbuilder.engine import Deckbuilder
+        from deckbuilder.core.engine import Deckbuilder
 
         Deckbuilder._instance = None
     except (ImportError, AttributeError):

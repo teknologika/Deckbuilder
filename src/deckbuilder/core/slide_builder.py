@@ -1,12 +1,12 @@
 from pptx.enum.shapes import PP_PLACEHOLDER_TYPE
 
-from .placeholder_types import (
+from ..content.placeholder_types import (
     is_content_placeholder,
     is_media_placeholder,
     is_subtitle_placeholder,
     is_title_placeholder,
 )
-from .logging_config import slide_builder_print, debug_print, error_print
+from ..utils.logging import slide_builder_print, debug_print, error_print
 
 
 class SlideBuilder:
@@ -51,7 +51,7 @@ class SlideBuilder:
         self._current_slide_index = getattr(self, "_current_slide_index", 0) + 1
 
         # Auto-parse JSON formatting for inline formatting support
-        slide_data = content_formatter.auto_parse_json_formatting(slide_data)
+        slide_data = content_formatter.format_slide_data(slide_data)
 
         # Get slide type and determine layout using JSON mapping
         # Prefer explicit "layout" field over "type" field
@@ -85,10 +85,30 @@ class SlideBuilder:
         # Add content to placeholders using template mapping + semantic detection
         self._apply_content_to_mapped_placeholders(slide, slide_data, layout_name, content_formatter, image_placeholder_handler)
 
+        # Add speaker notes if they exist in slide_data
+        if "speaker_notes" in slide_data:
+            self.add_speaker_notes(slide, slide_data["speaker_notes"], content_formatter)
+
         # All content should be processed through placeholders only - no legacy content blocks
         debug_print("  Slide completed using structured frontmatter placeholders only")
 
         return slide
+
+    def add_speaker_notes(self, slide, notes_content, content_formatter):
+        """
+        Adds speaker notes to the slide.
+
+        Args:
+            slide: The slide to add notes to.
+            notes_content: The content of the speaker notes.
+            content_formatter: ContentFormatter instance for handling content
+        """
+        if notes_content:
+            notes_slide = slide.notes_slide
+            text_frame = notes_slide.notes_text_frame
+            text_frame.clear()
+            p = text_frame.paragraphs[0] if text_frame.paragraphs else text_frame.add_paragraph()
+            content_formatter.apply_inline_formatting(notes_content, p)
 
     def add_slide_with_direct_mapping(self, prs, slide_data: dict, content_formatter, image_placeholder_handler):
         """
@@ -654,7 +674,7 @@ class SlideBuilder:
             slide: PowerPoint slide object
             slide_data: Dictionary containing slide content including placeholders
         """
-        from .logging_config import debug_print
+        from ..utils.logging import debug_print
 
         # Check which placeholders might contain table content
         placeholders_data = slide_data.get("placeholders", {})

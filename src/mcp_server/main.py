@@ -11,8 +11,8 @@ from mcp.server.fastmcp import Context, FastMCP
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
-from deckbuilder.engine import get_deckbuilder_client  # noqa: E402
-from deckbuilder.template_metadata import TemplateMetadataLoader  # noqa: E402
+from deckbuilder.core.engine import get_deckbuilder_client  # noqa: E402
+from deckbuilder.templates.metadata import TemplateMetadataLoader  # noqa: E402
 
 # Content-first tools moved to content_first_tools.py to keep core server focused
 
@@ -143,7 +143,7 @@ async def create_presentation_from_file(
                 markdown_content = f.read()
 
             # Convert markdown to canonical JSON format
-            from deckbuilder.converter import markdown_to_canonical_json
+            from deckbuilder.content.converter import markdown_to_canonical_json
 
             canonical_data = markdown_to_canonical_json(markdown_content)
 
@@ -245,7 +245,7 @@ async def create_presentation_from_markdown(
     """
     try:
         # Convert markdown to canonical JSON format
-        from deckbuilder.converter import markdown_to_canonical_json
+        from deckbuilder.content.converter import markdown_to_canonical_json
 
         canonical_data = markdown_to_canonical_json(markdown_content)
 

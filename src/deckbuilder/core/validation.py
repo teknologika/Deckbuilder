@@ -13,7 +13,7 @@ import re
 from pathlib import Path
 from typing import Dict, List, Any, Optional
 from pptx import Presentation
-from .logging_config import validation_print, error_print, success_print
+from ..utils.logging import validation_print, error_print, success_print
 
 
 class ValidationError(Exception):

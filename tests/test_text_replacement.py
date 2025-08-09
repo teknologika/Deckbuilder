@@ -7,7 +7,7 @@ in addition to changing language IDs.
 
 from unittest.mock import patch, mock_open
 
-from src.deckbuilder.formatting_support import FormattingSupport
+from deckbuilder.content.formatting_support import FormattingSupport
 
 
 class TestTextReplacement:

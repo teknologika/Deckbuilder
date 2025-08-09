@@ -1,0 +1,75 @@
+{
+  "slides": [
+    {
+      "layout": "Title Slide",
+      "style": "default_style",
+      "placeholders": {
+        "title": "Speaker Notes **Demonstration**",
+        "subtitle": "Comprehensive *Testing* of ___Professional___ Presentation Features"
+      },
+      "speaker_notes": "Welcome to this **comprehensive demonstration** of our speaker notes capability. This feature allows presenters to include *detailed guidance* and ___reminders___ for each slide. Notice how we support **bold**, *italic*, and ___underline___ formatting in speaker notes just like in slide content."
+    },
+    {
+      "layout": "Title and Content",
+      "style": "default_style",
+      "placeholders": {
+        "title": "Key **Features** Overview",
+        "content": [
+          "Professional **presentation generation**",
+          "*Intelligent* layout recommendations",
+          "___Advanced___ formatting support",
+          "**Seamless** template integration"
+        ]
+      },
+      "speaker_notes": "This slide covers our ***core capabilities***. Walk through each bullet point **methodically**: \n\n1) **Professional generation** - emphasize the quality of output\n2) *Intelligent recommendations* - highlight the AI-driven approach\n3) ___Advanced formatting___ - demonstrate the rich text support\n4) **Template integration** - show the flexibility\n\n*Pause after each point* for questions and check audience understanding."
+    },
+    {
+      "layout": "Two Content",
+      "style": "default_style",
+      "placeholders": {
+        "title": "**Technical** vs *Business* Benefits",
+        "content_left": [
+          "**Automated** content processing",
+          "*Rich* formatting preservation",
+          "___Semantic___ layout detection",
+          "**Multi-format** input support"
+        ],
+        "content_right": [
+          "***Faster*** presentation creation",
+          "*Professional* visual consistency", 
+          "___Reduced___ manual formatting time",
+          "**Improved** collaboration workflow"
+        ]
+      },
+      "speaker_notes": "**Key comparison slide** - left side shows *technical capabilities*, right side shows ***business value***. \n\nFor **technical audiences**: Focus on the left column and dive deep into implementation details. \n\nFor **business stakeholders**: Emphasize the right column and discuss ROI metrics. \n\n*Ask the audience*: Which benefits resonate most with your current challenges?"
+    },
+    {
+      "layout": "Table",
+      "style": "dark_blue_white_text",
+      "placeholders": {
+        "title": "**Feature** *Comparison* Matrix"
+      },
+      "table": {
+        "data": [
+          ["Feature", "**Basic**", "*Premium*", "___Enterprise___"],
+          ["Template Count", "5", "25", "***Unlimited***"],
+          ["Format Support", "JSON", "JSON, MD", "***All Formats***"],
+          ["Speaker Notes", "❌", "✅", "✅"],
+          ["Advanced Formatting", "❌", "✅", "***Enhanced***"]
+        ],
+        "header_style": "dark_blue_white_text",
+        "row_style": "alternating_light_gray"
+      },
+      "speaker_notes": "***Pricing and features overview***. This table shows our **tiered offering structure**. \n\n**Key talking points:**\n- Basic tier: Good for *simple presentations*\n- Premium tier: **Most popular** choice with speaker notes\n- Enterprise: ___Full-featured___ solution\n\n*Important*: Speaker notes are **Premium+ only** - this differentiates our offering. Emphasize the ***professional presentation value*** that notes provide."
+    },
+    {
+      "layout": "Title and Content", 
+      "style": "default_style",
+      "placeholders": {
+        "title": "Implementation **Timeline**",
+        "content": "**Phase 1**: Core Infrastructure ✅\n*Phase 2*: Content Integration ✅\n___Phase 3___: MCP Tools Enhancement ✅\n\n**Next Steps**: Production deployment and user training"
+      },
+      "speaker_notes": "**Project status update** - we've completed all three planned phases!\n\n***Celebrate the achievement*** with the team. All **major milestones** have been delivered:\n✅ Infrastructure is rock-solid\n✅ Content processing is *seamless*  \n✅ MCP tools are ___production-ready___\n\n*Transition to next steps*: Focus on deployment planning and user adoption strategies. **Ask for questions** about timeline or technical implementation."
+    }
+  ]
+}

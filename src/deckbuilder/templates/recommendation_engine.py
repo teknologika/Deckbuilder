@@ -16,8 +16,8 @@ Key Features:
 import logging
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
-from .template_metadata import TemplateMetadataLoader
-from .content_matcher import ContentTemplateMatcher
+from .metadata import TemplateMetadataLoader
+from ..content.matcher import ContentTemplateMatcher
 from .layout_analyzer import LayoutCapabilityAnalyzer
 
 

@@ -2,6 +2,7 @@
 layout: Title Slide
 title: "**Deckbuilder: Intelligent PowerPoint Generation**"
 subtitle: "Showcasing all ___21 slides___ with **professional** *formatting* and **table dimension** capabilities"
+speaker_notes: "Welcome to this **comprehensive demonstration** of Deckbuilder capabilities. This presentation showcases our *intelligent PowerPoint generation* with ___professional formatting___ and advanced table dimension controls. **Emphasize** the content-first approach and semantic layout intelligence."
 ---
 
 ---
@@ -18,6 +19,7 @@ content: |
   - ___Professional___ formatting preservation
 
   Transform your ideas into polished presentations with **automated** *intelligence* and ___consistent___ styling.
+speaker_notes: "This slide demonstrates our **content processing pipeline** with rich formatting preservation. Walk through each bullet point: *Content-first philosophy* means we optimize for message delivery, ***advanced template management*** provides layout intelligence, and ___professional formatting___ ensures consistent output quality."
 ---
 
 ---
@@ -37,6 +39,7 @@ content_right: |
   ___Enterprise-grade___ presentations
   **Consistent** branding
   *Polished* formatting
+speaker_notes: "**Key comparison slide** - left shows *technical capabilities*, right shows ***business benefits***. For technical audiences: Focus on semantic detection and smart mapping. For business stakeholders: Emphasize enterprise-grade quality and consistent branding. *Ask*: Which aspect is most relevant to your current needs?"
 ---
 
 ---
@@ -129,6 +132,7 @@ content_col1: "**Fast processing** with optimized algorithms and *sub-millisecon
 content_col2: "***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance"
 content_col3: "*Intuitive* interface with **minimal** learning curve and comprehensive docs"
 content_col4: "___Transparent___ pricing with **flexible** plans and *proven* ROI"
+speaker_notes: "***Core value proposition*** slide - walk through each pillar **systematically**: 1) **Performance** - mention benchmark comparisons, 2) ***Security*** - highlight compliance certifications, 3) *Usability* - emphasize quick adoption, 4) ___Value___ - discuss ROI case studies. *Spend equal time* on each column."
 ---
 
 ---
@@ -183,6 +187,7 @@ content: |
   | User Management | ***In Progress*** | ___Medium___ |
   | Reporting | *Planned* | **Low** |
   | API Integration | ___Blocked___ | ***Critical*** |
+speaker_notes: "**Status update** on development roadmap. Note that API Integration is ***blocked*** - we're working with vendor to resolve dependencies. *Focus attention* on high priority items and discuss timeline impacts. **Ask team**: What additional resources do we need to unblock the critical path?"
 ---
 
 ---
@@ -215,6 +220,26 @@ content: |
   | Bob Smith | 18 | 17 | 94% |
   | Carol Davis | 32 | 31 | 97% |
   | David Wilson | 21 | 20 | 95% |
+---
+
+---
+layout: Title and Content
+title: "**H1-H6** *Heading* ___Hierarchy___ Test"
+content: |
+  # H1 Heading - **Large** Main Title
+  ## H2 Heading - *Subtitle* Level  
+  ### H3 Heading - ***Section*** Header
+  #### H4 Heading - ___Subsection___ Title
+  ##### H5 Heading - **Minor** *Section*  
+  ###### H6 Heading - ***Smallest*** ___Detail___
+  
+  **Dynamic font scaling** with template-adaptive sizing:
+  - H1: 133% of base font (light weight)
+  - H2: 111% of base font (light weight) 
+  - H3-H6: Decreasing scale with bold weights
+  
+  *Typography hierarchy* ensures ***professional*** ___visual___ structure.
+speaker_notes: "**Heading hierarchy demonstration** - this slide showcases our ***dynamic font scaling system*** with H1-H6 support. Walk through the hierarchy: *H1/H2 use light weights*, H3-H6 use bold formatting. **Key feature**: Template-adaptive sizing means headings scale properly across different PowerPoint themes. *Ask*: Notice how the visual hierarchy guides your eye through the content structure?"
 ---
 
 ---

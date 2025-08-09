@@ -12,7 +12,7 @@ def test_package_import():
 
 def test_logging_config():
     """Test logging configuration module."""
-    from deckbuilder.logging_config import debug_print, error_print, success_print
+    from deckbuilder.utils.logging import debug_print, error_print, success_print
 
     # Test that functions exist and are callable
     assert callable(debug_print)
@@ -27,7 +27,7 @@ def test_logging_config():
 
 def test_placeholder_types():
     """Test placeholder types module."""
-    from deckbuilder.placeholder_types import (
+    from deckbuilder.content.placeholder_types import (
         is_content_placeholder,
         is_media_placeholder,
         is_subtitle_placeholder,
@@ -43,7 +43,7 @@ def test_placeholder_types():
 
 def test_table_styles():
     """Test table styles module."""
-    from deckbuilder.table_styles import TABLE_HEADER_STYLES
+    from deckbuilder.templates.table_styles import TABLE_HEADER_STYLES
 
     # Test that styles are defined
     assert TABLE_HEADER_STYLES is not None
