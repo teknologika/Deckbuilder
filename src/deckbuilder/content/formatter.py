@@ -134,6 +134,53 @@ class ContentFormatter:
                     if "underline" in segment["format"]:
                         run.font.underline = True
 
+    def apply_formatted_segments_to_paragraph(self, formatted_segments, paragraph):
+        """Apply formatted text segments to a paragraph."""
+        if not formatted_segments:
+            return
+
+        # Clear existing runs
+        paragraph.clear()
+
+        for segment in formatted_segments:
+            if isinstance(segment, dict) and "text" in segment:
+                text = segment["text"]
+                format_info = segment.get("format", {})
+
+                run = paragraph.add_run()
+                run.text = text
+
+                # Apply formatting
+                if format_info.get("bold"):
+                    run.font.bold = True
+                if format_info.get("italic"):
+                    run.font.italic = True
+                if format_info.get("underline"):
+                    run.font.underline = True
+
+    def apply_formatted_segments_to_cell(self, cell, segments):
+        """Apply formatted text segments to a table cell."""
+        text_frame = cell.text_frame
+        text_frame.clear()
+
+        # Create first paragraph
+        paragraph = text_frame.paragraphs[0]
+        paragraph.text = ""
+
+        # Apply each segment
+        for segment in segments:
+            run = paragraph.add_run()
+            run.text = segment["text"]
+
+            # Apply formatting
+            format_dict = segment["format"]
+            if format_dict.get("bold"):
+                run.font.bold = True
+            if format_dict.get("italic"):
+                run.font.italic = True
+            if format_dict.get("underline"):
+                run.font.underline = True
+
     def add_content_to_placeholder(self, placeholder, content):
         """
         Add content to a placeholder, handling lists and strings.
