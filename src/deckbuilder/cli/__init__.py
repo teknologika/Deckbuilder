@@ -1,3 +1,3 @@
-from .main import DeckbuilderCLI
+from .main import DeckbuilderCLI, main
 
-__all__ = ["DeckbuilderCLI"]
+__all__ = ["DeckbuilderCLI", "main"]

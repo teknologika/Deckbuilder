@@ -283,6 +283,7 @@ name = "deckbuilder"
 version = "1.2.7"
 source = { editable = "." }
 dependencies = [
+    { name = "click" },
     { name = "fastmcp" },
     { name = "numpy" },
     { name = "opencv-python" },
@@ -328,6 +329,7 @@ requires-dist = [
     { name = "bandit", marker = "extra == 'lint'", specifier = ">=1.7.5" },
     { name = "black", marker = "extra == 'format'", specifier = ">=22.0.0" },
     { name = "black", extras = ["jupyter"], marker = "extra == 'dev'", specifier = ">=24.4.0" },
+    { name = "click", specifier = ">=8.0.0" },
     { name = "deckbuilder", extras = ["test", "lint", "format"], marker = "extra == 'dev'" },
     { name = "fastmcp", specifier = ">=0.3.0" },
     { name = "flake8", marker = "extra == 'lint'", specifier = ">=5.0.0" },

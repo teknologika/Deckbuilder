@@ -20,7 +20,7 @@ def get_allowed_items():
         "LICENSE",
         "README.md",
         "CLAUDE.md",
-        "PLANNING.md", 
+        "PLANNING.md",
         "TASK.md",
         "DISCOVERY.md",
         "FOLDER_STRUCTURE.md",

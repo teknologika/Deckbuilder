@@ -141,7 +141,7 @@ class PresentationValidator:
         mapped_fields = []
 
         for field_name in placeholders.keys():
-            if field_name in ["style"]:  # Skip non-content fields
+            if field_name in ["style", "speaker_notes"]:  # Skip non-content fields
                 continue
 
             # Check if field can be resolved
@@ -358,7 +358,7 @@ class PresentationValidator:
         critical_missing = []
 
         for field_name, expected_content in placeholders_spec.items():
-            if field_name in ["style"]:  # Skip non-content fields
+            if field_name in ["style", "speaker_notes"]:  # Skip non-content fields
                 continue
 
             if not expected_content or str(expected_content).strip() == "":
@@ -426,7 +426,7 @@ class PresentationValidator:
             error_print(f"[Validation]   Non-empty placeholders: {list(actual_content.keys())}")
             error_print("[Validation]   Checking critical field mappings:")
             for field_name, expected_content in placeholders_spec.items():
-                if field_name in ["style"]:
+                if field_name in ["style", "speaker_notes"]:
                     continue
                 if not expected_content or str(expected_content).strip() == "":
                     error_print(f"[Validation]     '{field_name}': SKIPPED (empty expected content)")

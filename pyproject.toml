@@ -37,7 +37,8 @@ dependencies = [
 "pyyaml>=6.0.0",
 "opencv-python>=4.8.0",
 "Pillow>=10.0.0",
-"numpy>=1.24.0"
+"numpy>=1.24.0",
+"click>=8.0.0"
 ]
 
 [project.optional-dependencies]
@@ -73,7 +74,7 @@ Changelog = "https://github.com/teknologika/deckbuilder/releases"
 "Source Code" = "https://github.com/teknologika/deckbuilder"
 
 [project.scripts]
-deckbuilder = "deckbuilder.cli:main"
+deckbuilder = "deckbuilder.cli.main:main"
 deckbuilder-server = "mcp_server.main:main"
 
 [tool.setuptools.packages.find]

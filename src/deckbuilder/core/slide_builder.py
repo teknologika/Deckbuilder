@@ -85,9 +85,15 @@ class SlideBuilder:
         # Add content to placeholders using template mapping + semantic detection
         self._apply_content_to_mapped_placeholders(slide, slide_data, layout_name, content_formatter, image_placeholder_handler)
 
-        # Add speaker notes if they exist in slide_data
+        # Add speaker notes if they exist in slide_data or placeholders
+        speaker_notes = None
         if "speaker_notes" in slide_data:
-            self.add_speaker_notes(slide, slide_data["speaker_notes"], content_formatter)
+            speaker_notes = slide_data["speaker_notes"]
+        elif "placeholders" in slide_data and "speaker_notes" in slide_data["placeholders"]:
+            speaker_notes = slide_data["placeholders"]["speaker_notes"]
+        
+        if speaker_notes:
+            self.add_speaker_notes(slide, speaker_notes, content_formatter)
 
         # All content should be processed through placeholders only - no legacy content blocks
         debug_print("  Slide completed using structured frontmatter placeholders only")

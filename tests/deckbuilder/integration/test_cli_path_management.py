@@ -5,12 +5,12 @@ from pathlib import Path
 from unittest.mock import patch, MagicMock
 
 import pytest
-from click.testing import CliRunner # Added import
+from click.testing import CliRunner  # Added import
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))  # noqa: E402
 
 from deckbuilder.cli import DeckbuilderCLI  # noqa: E402
-from deckbuilder.utils.path import path_manager # Added import
+from deckbuilder.utils.path import path_manager  # Added import
 
 
 class TestCLIPathManagement:
@@ -26,7 +26,7 @@ class TestCLIPathManagement:
         assert os.getenv("DECK_TEMPLATE_FOLDER") is None
 
     def test_cli_context_aware_output_behavior(self):
-        """Test CLI always outputs to current directory (context-aware behavior)""" 
+        """Test CLI always outputs to current directory (context-aware behavior)"""
         cli = DeckbuilderCLI()
 
         # CLI context always uses current directory for output
@@ -118,7 +118,7 @@ class TestCLIPathManagement:
     def test_create_presentation_markdown(self, mock_deckbuilder):
         """Test create_presentation works with markdown files"""
         with tempfile.TemporaryDirectory() as temp_dir:
-            cli = DeckbuilderCLI(template_folder=str(path_manager.get_assets_templates_path())) # Modified line
+            cli = DeckbuilderCLI(template_folder=str(path_manager.get_assets_templates_path()))  # Modified line
 
             with tempfile.NamedTemporaryFile(mode="w", suffix=".md", delete=False, dir=temp_dir) as temp_md:
                 temp_md.write("---\nlayout: Title Slide\ntitle: Test\n---")
@@ -161,7 +161,7 @@ class TestCLIPathManagement:
     def test_create_presentation_json(self, mock_deckbuilder):
         """Test create_presentation works with JSON files"""
         with tempfile.TemporaryDirectory() as temp_dir:
-            cli = DeckbuilderCLI(template_folder=str(path_manager.get_assets_templates_path())) # Modified line
+            cli = DeckbuilderCLI(template_folder=str(path_manager.get_assets_templates_path()))  # Modified line
 
             with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, dir=temp_dir) as temp_json:
                 # Write canonical JSON format
@@ -189,8 +189,8 @@ class TestCLIVersionHandling:
 
     def test_version_flag_uses_path_manager(self):
         """Test --version flag displays version information"""
-        runner = CliRunner() # Added CliRunner
-        from deckbuilder.cli.main import main # Ensure main is imported from the correct place
+        runner = CliRunner()  # Added CliRunner
+        from deckbuilder.cli.main import main  # Ensure main is imported from the correct place
 
         result = runner.invoke(main, ["--version"])
 

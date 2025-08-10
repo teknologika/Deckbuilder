@@ -114,20 +114,9 @@ class TestEnginePathManagerIntegration:
             mock_validator_instance.validate_pre_generation.return_value = None
             mock_validator_instance.validate_post_generation.return_value = None
             mock_validator_instance._load_template_mapping.return_value = {
-                "layouts": {
-                    "Title Slide": {
-                        "placeholders": {
-                            "0": "title_top",
-                            "1": "subtitle",
-                            "2": "date_footer",
-                            "3": "footer_footer",
-                            "4": "slide_number_footer"
-                        }
-                    }
-                }
+                "layouts": {"Title Slide": {"placeholders": {"0": "title_top", "1": "subtitle", "2": "date_footer", "3": "footer_footer", "4": "slide_number_footer"}}}
             }
             MockPresentationValidator.return_value = mock_validator_instance
-
 
             engine = Deckbuilder()
 
