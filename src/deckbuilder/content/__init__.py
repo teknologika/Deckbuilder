@@ -1,5 +1,5 @@
 from .formatter import ContentFormatter
-from .frontmatter import StructuredFrontmatterConverter, StructuredFrontmatterRegistry, StructuredFrontmatterValidator
+from .frontmatter import StructuredFrontmatterConverter, StructuredFrontmatterValidator
 from .processor import ContentProcessor
 
-__all__ = ["ContentFormatter", "StructuredFrontmatterConverter", "StructuredFrontmatterRegistry", "StructuredFrontmatterValidator", "ContentProcessor"]
+__all__ = ["ContentFormatter", "StructuredFrontmatterConverter", "StructuredFrontmatterValidator", "ContentProcessor"]

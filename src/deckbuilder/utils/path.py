@@ -64,13 +64,7 @@ class PathManager:
 
     def get_assets_templates_path(self) -> Path:
         """Get the path to template assets (default.pptx, default.json)"""
-        # Try package location first (for installed package)
-        package_assets = Path(__file__).parent / "assets" / "templates"
-        if package_assets.exists():
-            return package_assets
-
-        # Fallback to project root (for development)
-        return self.get_project_root() / "assets" / "templates"
+        return self.get_project_root() / "src" / "deckbuilder" / "assets" / "templates"
 
     def get_master_presentation_files_path(self) -> Path:
         """Get the path to master presentation files (source of truth for examples and tests)"""

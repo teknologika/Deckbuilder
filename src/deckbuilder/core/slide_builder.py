@@ -121,7 +121,7 @@ class SlideBuilder:
             image_placeholder_handler: ImagePlaceholderHandler instance
         """
         # Import the universal formatting module
-        from .content_formatting import content_formatter as cf
+        from ..content.formatting_support import content_formatter as cf
 
         # Apply universal formatting to slide data
         formatted_slide = cf.format_slide_data(slide_data)
@@ -182,7 +182,7 @@ class SlideBuilder:
         """
         if not self.layout_mapping:
             # Fallback to basic semantic detection if no mapping available
-            self._add_content_to_placeholders_fallback(slide, slide_data, content_formatter)
+            self._apply_content_to_placeholder_unified(slide, slide_data, content_formatter, image_placeholder_handler, fallback_mode=True)
             return
 
         # Get layout info from template mapping
@@ -351,7 +351,7 @@ class SlideBuilder:
                 successful_mappings.append(f"{field_name} -> {mapping_method}")
 
                 # Apply content based on placeholder's semantic type
-                self._apply_content_by_semantic_type(
+                self._apply_content_to_single_placeholder(
                     slide,
                     target_placeholder,
                     field_name,
@@ -474,54 +474,44 @@ class SlideBuilder:
         # Return original if no variations found
         return field_name
 
-    def _add_content_to_placeholders_fallback(self, slide, slide_data, content_formatter):
+    def _apply_content_to_placeholder_unified(self, slide, slide_data, content_formatter, image_placeholder_handler, fallback_mode=False):
         """
-        Fallback method for basic semantic placeholder detection when no JSON mapping available.
-        Uses inline formatting (**bold**, *italic*, ___underline___) processed at render time.
+        Unified method that handles both standard and fallback content application.
+
+        Args:
+            slide: PowerPoint slide object
+            slide_data: Slide content data
+            content_formatter: ContentFormatter instance
+            image_placeholder_handler: ImagePlaceholderHandler instance
+            fallback_mode: If True, use semantic detection fallback; if False, use template mapping
         """
-        for shape in slide.placeholders:
-            placeholder_type = shape.placeholder_format.type
+        if fallback_mode:
+            # Fallback mode: Apply content using semantic detection
+            for placeholder in slide.placeholders:
+                placeholder_type = placeholder.placeholder_format.type
 
-            # Handle title placeholders
-            if "title" in slide_data and is_title_placeholder(placeholder_type):
-                if hasattr(shape, "text_frame") and shape.text_frame:
-                    text_frame = shape.text_frame
-                    text_frame.clear()
-                    p = text_frame.paragraphs[0] if text_frame.paragraphs else text_frame.add_paragraph()
-                    content_formatter.apply_inline_formatting(slide_data["title"], p)
-                else:
-                    shape.text = slide_data["title"]
+                # Apply content based on semantic type detection
+                if is_title_placeholder(placeholder_type):
+                    if "title" in slide_data:
+                        self._apply_content_to_single_placeholder(slide, placeholder, "title", slide_data["title"], slide_data, content_formatter, image_placeholder_handler)
+                elif is_subtitle_placeholder(placeholder_type):
+                    if "subtitle" in slide_data:
+                        self._apply_content_to_single_placeholder(slide, placeholder, "subtitle", slide_data["subtitle"], slide_data, content_formatter, image_placeholder_handler)
+                elif is_content_placeholder(placeholder_type):
+                    if "content" in slide_data:
+                        self._apply_content_to_single_placeholder(slide, placeholder, "content", slide_data["content"], slide_data, content_formatter, image_placeholder_handler)
+        else:
+            # Standard mode: Use template mapping (handled by caller)
+            # This method is called when template mapping is available
+            pass
 
-            # Handle subtitle placeholders
-            elif "subtitle" in slide_data and is_subtitle_placeholder(placeholder_type):
-                if hasattr(shape, "text_frame") and shape.text_frame:
-                    text_frame = shape.text_frame
-                    text_frame.clear()
-                    p = text_frame.paragraphs[0] if text_frame.paragraphs else text_frame.add_paragraph()
-                    content_formatter.apply_inline_formatting(slide_data["subtitle"], p)
-                else:
-                    shape.text = slide_data["subtitle"]
-
-            # Handle main content placeholders (for simple content)
-            elif "content" in slide_data and is_content_placeholder(placeholder_type):
-                content_formatter.add_content_to_placeholder(shape, slide_data["content"])
-
-    def _apply_content_by_semantic_type(
-        self,
-        slide,
-        placeholder,
-        field_name,
-        field_value,
-        slide_data,
-        content_formatter,
-        image_placeholder_handler,
-    ):
+    def _apply_content_to_single_placeholder(self, slide, placeholder, field_name, field_value, slide_data, content_formatter, image_placeholder_handler):
         """
-        Apply content to a placeholder based on its semantic type and the content type.
-        Uses inline formatting (**bold**, *italic*, ___underline___) processed at render time.
+        Apply content to a single placeholder based on its semantic type and content type.
+        This consolidates the logic from both _apply_content_by_semantic_type and fallback methods.
         """
         # Set slide context for content formatter (needed for table processing)
-        content_formatter._current_slide = slide
+        content_formatter._current_slide = slide_data.get("slide_object", slide)
 
         placeholder_type = placeholder.placeholder_format.type
 
@@ -554,28 +544,9 @@ class SlideBuilder:
                 # OBJECT placeholders with text_frame should be treated as content placeholders
                 content_formatter.add_content_to_placeholder(placeholder, field_value)
             else:
-                # Other media types - fallback to text for now
-                if hasattr(placeholder, "text_frame") and placeholder.text_frame:
-                    text_frame = placeholder.text_frame
-                    text_frame.clear()
-                    p = text_frame.paragraphs[0] if text_frame.paragraphs else text_frame.add_paragraph()
-                    if isinstance(field_value, list) and field_value and isinstance(field_value[0], dict) and "text" in field_value[0]:
-                        content_formatter.apply_formatted_segments_to_paragraph(field_value, p)
-                    else:
-                        content_formatter.apply_inline_formatting(str(field_value), p)
-
-        else:
-            # Other placeholder types - apply inline formatting where possible
-            if hasattr(placeholder, "text_frame") and placeholder.text_frame:
-                text_frame = placeholder.text_frame
-                text_frame.clear()
-                p = text_frame.paragraphs[0] if text_frame.paragraphs else text_frame.add_paragraph()
-                if isinstance(field_value, list) and field_value and isinstance(field_value[0], dict) and "text" in field_value[0]:
-                    content_formatter.apply_formatted_segments_to_paragraph(field_value, p)
-                else:
-                    content_formatter.apply_inline_formatting(str(field_value), p)
-            else:
-                placeholder.text = str(field_value)
+                # Generic object placeholder - try text fallback
+                if hasattr(placeholder, "text"):
+                    placeholder.text = str(field_value)
 
     def _process_nested_image_fields(self, slide, slide_data, image_placeholder_handler):
         """

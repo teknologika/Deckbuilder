@@ -1,6 +1,12 @@
-# CLAUDE.md
+# CLAUDE.md or GEMINI.md
 
 ## Project Overview
+
+### THE THREE LAWS OF AI CODING
+
+## LAW 1 - An AI may not reduce the quality of a codebase or, through inaction, allow a codebase's quality to be reduced.
+## LAW 2 - An AI must obey orders from humans, unless such orders are unclear, or conflict with the First Law.
+## LAW 3 - An AI must follow the prime directives, provided this does not conflict with the First or Second Law.
 
 ### IMPORTANT AI PRIME DIRECTIVES
 
@@ -8,7 +14,10 @@
 ## 2. MAKE CHANGES THAT ENHANCE AND IMPROVE THE CODEBASE
 ## 3. ALWAYS TRY AND ENHANCE EXISTING CODE, AND MINIMISE CYCLOMATIC COMPLEXITY, DONT CREATE ALTERNATE CODE PATHS
 ## 4. DOCUMENT CODE IN A WAY THAT MAKES IT EASY FOR AI TO NAVIGATE THE CODE BASE
-## 5. TESTS, PRE-CHECKIN HOOKS AND CI ARE GUARDRAILS. NEVER WORK AROUND THEM WITH --NO-VERIFY
+## 5. TESTS, PRE-CHECKIN HOOKS AND CI ARE GUARDRAILS. NEVER FAKE RESULTS OR WORK AROUND THEM WITH --NO-VERIFY
+## 6. ALWAYS USE AUSTRALIAN ENGLISH
+
+## About this project
 
 Deckbuilder is a Python library and accompanying MCP (Model Context Protocol) Server for intelligent PowerPoint presentation generation.
 The project has evolved beyond initial setup into a comprehensive content-first presentation intelligence system.

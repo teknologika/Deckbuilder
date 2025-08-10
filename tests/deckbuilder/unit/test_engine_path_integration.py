@@ -6,8 +6,8 @@ from unittest.mock import patch, Mock
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
-from src.deckbuilder.core.engine import Deckbuilder  # noqa: E402
-from src.deckbuilder.utils.path import path_manager  # noqa: E402
+from deckbuilder.core.engine import Deckbuilder  # noqa: E402
+from deckbuilder.utils.path import path_manager  # noqa: E402
 
 
 class TestEnginePathManagerIntegration:
@@ -97,6 +97,8 @@ class TestEnginePathManagerIntegration:
             patch.object(path_manager, "get_template_folder") as mock_template,
             patch.object(path_manager, "get_output_folder") as mock_output,
             patch.object(path_manager, "get_template_name") as mock_name,
+            # Patch the PresentationValidator class at its original location
+            patch("deckbuilder.core.validation.PresentationValidator") as MockPresentationValidator,
         ):
 
             mock_template.return_value = Path("/test/templates")
@@ -107,14 +109,32 @@ class TestEnginePathManagerIntegration:
             if hasattr(Deckbuilder, "_instances"):
                 Deckbuilder._instances.clear()
 
+            # --- Configure the mock for _load_template_mapping BEFORE Deckbuilder is instantiated ---
+            mock_validator_instance = Mock()
+            mock_validator_instance.validate_pre_generation.return_value = None
+            mock_validator_instance.validate_post_generation.return_value = None
+            mock_validator_instance._load_template_mapping.return_value = {
+                "layouts": {
+                    "Title Slide": {
+                        "placeholders": {
+                            "0": "title_top",
+                            "1": "subtitle",
+                            "2": "date_footer",
+                            "3": "footer_footer",
+                            "4": "slide_number_footer"
+                        }
+                    }
+                }
+            }
+            MockPresentationValidator.return_value = mock_validator_instance
+
+
             engine = Deckbuilder()
 
-            # Mock at the presentation builder level to focus on path management testing
             with (
                 patch("src.deckbuilder.core.engine.Presentation") as mock_presentation_class,
                 patch.object(engine.presentation_builder, "add_slide") as mock_add_slide,
                 patch.object(engine, "write_presentation") as mock_write,
-                patch("src.deckbuilder.utils.validation.PresentationValidator") as mock_validator,
             ):
                 mock_prs = Mock()
                 mock_prs.save = Mock()
@@ -125,11 +145,6 @@ class TestEnginePathManagerIntegration:
                 mock_prs.slides = mock_slides
                 mock_presentation_class.return_value = mock_prs
 
-                # Mock validator to avoid file I/O
-                mock_val_instance = mock_validator.return_value
-                mock_val_instance.validate_pre_generation.return_value = None
-                mock_val_instance.validate_post_generation.return_value = None
-
                 # Should use PathManager-resolved paths
                 # Provide minimal valid canonical JSON data
                 minimal_data = {"slides": [{"layout": "Title Slide", "placeholders": {"title": "Test"}, "content": []}]}
@@ -139,10 +154,11 @@ class TestEnginePathManagerIntegration:
                 # Verify presentation builder was called (focusing on path integration)
                 mock_add_slide.assert_called_once()
                 mock_write.assert_called_once()
-
-                # Should use PathManager-resolved paths for template operations
-                # Note: After refactoring, direct path checks are handled by template_manager
                 assert engine.template_manager is not None
+
+                # Assert that the mocked validator methods were called
+                mock_validator_instance.validate_pre_generation.assert_called_once()
+                mock_validator_instance.validate_post_generation.assert_called_once()
 
     def test_singleton_behavior_with_path_manager(self):
         """Test singleton behavior works correctly with PathManager"""

@@ -62,7 +62,7 @@ class TestSmartTemplateRecommendationSystem:
         """Test that the recommendation system can be created."""
         # Test that SmartTemplateRecommendationSystem can be imported and instantiated
 
-        from src.deckbuilder.templates.recommendation_engine import SmartTemplateRecommendationSystem
+        from deckbuilder.templates.recommendation_engine import SmartTemplateRecommendationSystem
 
         # Should be able to create an instance
         system = SmartTemplateRecommendationSystem()
@@ -83,7 +83,7 @@ class TestSmartTemplateRecommendationSystem:
         """Test that content analysis engine correctly identifies content characteristics."""
         # Test content analysis functionality
 
-        from src.deckbuilder.templates.recommendation_engine import SmartTemplateRecommendationSystem
+        from deckbuilder.templates.recommendation_engine import SmartTemplateRecommendationSystem
 
         system = SmartTemplateRecommendationSystem()
 
@@ -114,7 +114,7 @@ class TestSmartTemplateRecommendationSystem:
         """Test the template scoring algorithm for different content types."""
         # Test template scoring functionality
 
-        from src.deckbuilder.templates.recommendation_engine import SmartTemplateRecommendationSystem, ContentAnalysis
+        from deckbuilder.templates.recommendation_engine import SmartTemplateRecommendationSystem, ContentAnalysis
 
         system = SmartTemplateRecommendationSystem()
 
@@ -180,7 +180,7 @@ class TestSmartTemplateRecommendationSystem:
         # }
 
         # Test layout recommendation functionality
-        from src.deckbuilder.templates.recommendation_engine import SmartTemplateRecommendationSystem
+        from deckbuilder.templates.recommendation_engine import SmartTemplateRecommendationSystem
 
         system = SmartTemplateRecommendationSystem()
 
@@ -216,7 +216,7 @@ class TestSmartTemplateRecommendationSystem:
         # low_confidence_content = "Creative presentation with artistic elements"
 
         # Test confidence scoring accuracy
-        from src.deckbuilder.templates.recommendation_engine import SmartTemplateRecommendationSystem
+        from deckbuilder.templates.recommendation_engine import SmartTemplateRecommendationSystem
 
         system = SmartTemplateRecommendationSystem()
 
@@ -257,7 +257,7 @@ class TestSmartTemplateRecommendationSystem:
 
         # Expected behavior: reasoning should meet quality criteria
         # Test recommendation reasoning quality
-        from src.deckbuilder.templates.recommendation_engine import SmartTemplateRecommendationSystem
+        from deckbuilder.templates.recommendation_engine import SmartTemplateRecommendationSystem
 
         system = SmartTemplateRecommendationSystem()
 
@@ -298,7 +298,7 @@ class TestSmartTemplateRecommendationSystem:
         # }
 
         # Test fallback recommendation logic
-        from src.deckbuilder.templates.recommendation_engine import SmartTemplateRecommendationSystem
+        from deckbuilder.templates.recommendation_engine import SmartTemplateRecommendationSystem
 
         system = SmartTemplateRecommendationSystem()
 
@@ -342,7 +342,7 @@ class TestSmartTemplateRecommendationSystem:
         # }
 
         # Test multi-criteria optimization
-        from src.deckbuilder.templates.recommendation_engine import SmartTemplateRecommendationSystem
+        from deckbuilder.templates.recommendation_engine import SmartTemplateRecommendationSystem
 
         system = SmartTemplateRecommendationSystem()
 
@@ -375,7 +375,7 @@ class TestRecommendationSystemIntegration:
 
         # Expected behavior: Recommendation system should use metadata for scoring
         # Test template metadata integration
-        from src.deckbuilder.templates.recommendation_engine import SmartTemplateRecommendationSystem
+        from deckbuilder.templates.recommendation_engine import SmartTemplateRecommendationSystem
 
         system = SmartTemplateRecommendationSystem()
 
@@ -399,7 +399,7 @@ class TestRecommendationSystemIntegration:
 
         # Expected behavior: Recommendations should be validated against actual template capabilities
         # Test validation system integration
-        from src.deckbuilder.templates.recommendation_engine import SmartTemplateRecommendationSystem
+        from deckbuilder.templates.recommendation_engine import SmartTemplateRecommendationSystem
 
         system = SmartTemplateRecommendationSystem()
 
@@ -424,7 +424,7 @@ class TestRecommendationSystemIntegration:
 
         # Expected behavior: Similar content descriptions should use cached analysis
         # Test recommendation caching
-        from src.deckbuilder.templates.recommendation_engine import SmartTemplateRecommendationSystem
+        from deckbuilder.templates.recommendation_engine import SmartTemplateRecommendationSystem
         import time
 
         system = SmartTemplateRecommendationSystem()
@@ -457,7 +457,7 @@ class TestRecommendationSystemIntegration:
 
         # Future feature: System should improve recommendations based on usage
         # Test basic recommendation functionality (learning system placeholder)
-        from src.deckbuilder.templates.recommendation_engine import SmartTemplateRecommendationSystem
+        from deckbuilder.templates.recommendation_engine import SmartTemplateRecommendationSystem
 
         system = SmartTemplateRecommendationSystem()
 
@@ -494,7 +494,7 @@ class TestRecommendationSystemEdgeCases:
             pass
 
         # Test edge case handling for minimal content
-        from src.deckbuilder.templates.recommendation_engine import SmartTemplateRecommendationSystem
+        from deckbuilder.templates.recommendation_engine import SmartTemplateRecommendationSystem
 
         system = SmartTemplateRecommendationSystem()
 
@@ -534,7 +534,7 @@ class TestRecommendationSystemEdgeCases:
         # }
 
         # Test conflicting requirements resolution
-        from src.deckbuilder.templates.recommendation_engine import SmartTemplateRecommendationSystem
+        from deckbuilder.templates.recommendation_engine import SmartTemplateRecommendationSystem
 
         system = SmartTemplateRecommendationSystem()
 
@@ -571,7 +571,7 @@ class TestRecommendationSystemEdgeCases:
         # }
 
         # Test unknown content type handling
-        from src.deckbuilder.templates.recommendation_engine import SmartTemplateRecommendationSystem
+        from deckbuilder.templates.recommendation_engine import SmartTemplateRecommendationSystem
 
         system = SmartTemplateRecommendationSystem()
 

@@ -66,8 +66,8 @@ class ContentProcessor:
         return slides
 
     def _parse_structured_frontmatter(self, frontmatter_content: str) -> dict:
-        """Parse structured frontmatter and convert to placeholder mappings"""
-        from .frontmatter import StructuredFrontmatterConverter
+        """Parse frontmatter using PatternLoader system only"""
+        from ..templates.pattern_loader import PatternLoader
 
         try:
             parsed = yaml.safe_load(frontmatter_content)
@@ -83,16 +83,15 @@ class ContentProcessor:
         if not layout_name:
             return parsed
 
-        # Check if this is structured frontmatter
-        converter = StructuredFrontmatterConverter()
+        # Check if this layout has a pattern file
+        pattern_loader = PatternLoader()
+        pattern_data = pattern_loader.get_pattern_for_layout(layout_name)
 
-        if converter.registry.supports_structured_frontmatter(layout_name):
-            # Simple validation using JSON pattern validation rules
-            structure_def = converter.registry.get_structure_definition(layout_name)
-            validation_rules = structure_def.get("validation", {})
+        if pattern_data:
+            # Validate required fields
+            validation_rules = pattern_data.get("validation", {})
             required_fields = validation_rules.get("required_fields", [])
 
-            # Check required fields
             missing_fields = []
             for field in required_fields:
                 if field not in parsed:
@@ -101,9 +100,9 @@ class ContentProcessor:
             if missing_fields:
                 print(f"Warning in structured frontmatter: Missing required fields: {missing_fields}")
 
-            # Convert to placeholder mappings
-            converted = converter.convert_structured_to_placeholders(parsed)
-            return converted
+            # Pattern files define the correct structure directly
+            # No conversion needed - the pattern file structure matches expected placeholder names
+            return parsed
 
         # Regular frontmatter processing - still process content fields
         from .converter import FrontmatterConverter
@@ -267,65 +266,7 @@ class ContentProcessor:
 
     def _parse_inline_formatting(self, text):
         """Parse inline formatting and return structured formatting data"""
-        if not text:
-            return [{"text": "", "format": {}}]
+        from .formatter import ContentFormatter
 
-        # Patterns in order of precedence (longest patterns first to avoid conflicts)
-        patterns = [
-            (
-                r"\*\*\*___(.*?)___\*\*\*",
-                {"bold": True, "italic": True, "underline": True},
-            ),  # ***___text___***
-            (
-                r"___\*\*\*(.*?)\*\*\*___",
-                {"bold": True, "italic": True, "underline": True},
-            ),  # ___***text***___
-            (r"\*\*\*(.*?)\*\*\*", {"bold": True, "italic": True}),  # ***text***
-            (r"___(.*?)___", {"underline": True}),  # ___text___
-            (r"\*\*(.*?)\*\*", {"bold": True}),  # **text**
-            (r"\*(.*?)\*", {"italic": True}),  # *text*
-        ]
-
-        # Find all matches and their positions
-        all_matches = []
-        for pattern, format_dict in patterns:
-            for match in re.finditer(pattern, text):
-                all_matches.append((match.start(), match.end(), match.group(1), format_dict))
-
-        # Sort matches by position
-        all_matches.sort(key=lambda x: x[0])
-
-        # Remove overlapping matches (keep the first one found)
-        filtered_matches = []
-        last_end = 0
-        for start, end, content, format_dict in all_matches:
-            if start >= last_end:
-                filtered_matches.append((start, end, content, format_dict))
-                last_end = end
-
-        # Build the formatted text segments
-        segments = []
-        last_pos = 0
-
-        for start, end, content, format_dict in filtered_matches:
-            # Add plain text before the formatted text
-            if start > last_pos:
-                plain_text = text[last_pos:start]
-                if plain_text:
-                    segments.append({"text": plain_text, "format": {}})
-
-            # Add formatted text
-            segments.append({"text": content, "format": format_dict})
-            last_pos = end
-
-        # Add any remaining plain text
-        if last_pos < len(text):
-            remaining_text = text[last_pos:]
-            if remaining_text:
-                segments.append({"text": remaining_text, "format": {}})
-
-        # If no formatting found, return the original text
-        if not segments:
-            segments = [{"text": text, "format": {}}]
-
-        return segments
+        formatter = ContentFormatter()
+        return formatter.parse_inline_formatting(text)

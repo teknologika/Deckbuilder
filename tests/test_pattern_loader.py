@@ -19,7 +19,7 @@ class TestPatternLoader:
         """Test that PatternLoader class exists and is importable."""
         # PatternLoader class should now be importable
 
-        from src.deckbuilder.templates.pattern_loader import PatternLoader
+        from deckbuilder.templates.pattern_loader import PatternLoader
 
         # Should be able to create an instance
         loader = PatternLoader()
@@ -29,7 +29,7 @@ class TestPatternLoader:
 
     def test_pattern_loader_initialization(self):
         """Test PatternLoader can be initialized with template folder."""
-        from src.deckbuilder.templates.pattern_loader import PatternLoader
+        from deckbuilder.templates.pattern_loader import PatternLoader
 
         # Test initialization with template folder path
         test_folder = "/tmp/test_templates"
@@ -45,7 +45,7 @@ class TestPatternLoader:
 
     def test_load_built_in_patterns_only(self):
         """Test loading built-in patterns when no user patterns exist."""
-        from src.deckbuilder.templates.pattern_loader import PatternLoader
+        from deckbuilder.templates.pattern_loader import PatternLoader
 
         # Create loader with a temp folder (no user patterns)
         loader = PatternLoader("/tmp/nonexistent")
@@ -74,7 +74,7 @@ class TestPatternLoader:
 
     def test_load_user_patterns_from_subfolder(self, tmp_path):
         """Test loading user patterns from {template_folder}/patterns/ subfolder."""
-        from src.deckbuilder.templates.pattern_loader import PatternLoader
+        from deckbuilder.templates.pattern_loader import PatternLoader
 
         # Setup: Create template folder with patterns subfolder
         template_folder = tmp_path / "templates"
@@ -114,7 +114,7 @@ class TestPatternLoader:
 
     def test_user_patterns_override_built_in_patterns(self, tmp_path):
         """Test that user patterns override built-in patterns with same layout name."""
-        from src.deckbuilder.templates.pattern_loader import PatternLoader
+        from deckbuilder.templates.pattern_loader import PatternLoader
 
         # Setup: Create user pattern that overrides "Four Columns"
         template_folder = tmp_path / "templates"
@@ -155,7 +155,7 @@ class TestPatternLoader:
 
     def test_layout_names_from_pattern_files(self):
         """Test that layout names are read from pattern files, not hard-coded."""
-        from src.deckbuilder.templates.pattern_loader import PatternLoader
+        from deckbuilder.templates.pattern_loader import PatternLoader
 
         loader = PatternLoader("/tmp/nonexistent")  # Force built-in patterns only
 
@@ -208,7 +208,7 @@ class TestPatternLoader:
         """Test that user patterns are validated for required fields and safety."""
         # Test that PatternLoader properly validates user patterns
 
-        from src.deckbuilder.templates.pattern_loader import PatternLoader
+        from deckbuilder.templates.pattern_loader import PatternLoader
 
         # Setup: Create invalid user pattern
         template_folder = tmp_path / "templates"
@@ -261,7 +261,7 @@ class TestPatternLoader:
         """Test graceful handling when pattern file doesn't exist for a layout."""
         # Test that PatternLoader gracefully handles missing pattern files
 
-        from src.deckbuilder.templates.pattern_loader import PatternLoader
+        from deckbuilder.templates.pattern_loader import PatternLoader
 
         # Create loader with no user patterns
         loader = PatternLoader("/tmp/nonexistent")
@@ -291,7 +291,7 @@ class TestPatternLoaderIntegration:
 
     def test_integration_with_template_metadata_loader(self):
         """Test PatternLoader integrates with TemplateMetadataLoader."""
-        from src.deckbuilder.templates.metadata import TemplateMetadataLoader
+        from deckbuilder.templates.metadata import TemplateMetadataLoader
 
         # Test that TemplateMetadataLoader uses PatternLoader for layout descriptions
         loader = TemplateMetadataLoader()
@@ -426,7 +426,7 @@ class TestPatternLoaderIntegration:
         """Test system works normally when no user patterns folder exists."""
         # Test that system works with only built-in patterns when no user patterns exist
 
-        from src.deckbuilder.templates.pattern_loader import PatternLoader
+        from deckbuilder.templates.pattern_loader import PatternLoader
 
         # Create loader with template folder that has no patterns subfolder
         loader = PatternLoader("/tmp/nonexistent_patterns_folder")
@@ -464,7 +464,7 @@ class TestPatternLoaderErrorHandling:
         """Test handling of invalid JSON in user pattern files."""
         # Test that PatternLoader handles invalid JSON gracefully
 
-        from src.deckbuilder.templates.pattern_loader import PatternLoader
+        from deckbuilder.templates.pattern_loader import PatternLoader
 
         # Setup: Create pattern file with invalid JSON
         template_folder = tmp_path / "templates"
@@ -509,7 +509,7 @@ class TestPatternLoaderErrorHandling:
         """Test handling of file permission errors."""
         # Test that PatternLoader handles permission errors gracefully
 
-        from src.deckbuilder.templates.pattern_loader import PatternLoader
+        from deckbuilder.templates.pattern_loader import PatternLoader
         import os
         import tempfile
         import stat
@@ -569,7 +569,7 @@ class TestPatternLoaderErrorHandling:
         """Test validation of pattern file schema and required fields."""
         # Test that PatternLoader validates schema and reports specific errors
 
-        from src.deckbuilder.templates.pattern_loader import PatternLoader
+        from deckbuilder.templates.pattern_loader import PatternLoader
 
         # Setup: Create pattern with wrong schema
         template_folder = tmp_path / "templates"
@@ -616,7 +616,7 @@ class TestPatternLoaderPerformance:
         """Test that pattern loading is performant for multiple calls."""
         # Test that pattern loading uses caching to avoid repeated file system access
 
-        from src.deckbuilder.templates.pattern_loader import PatternLoader
+        from deckbuilder.templates.pattern_loader import PatternLoader
         import time
 
         # Create loader
@@ -659,7 +659,7 @@ class TestPatternLoaderPerformance:
         """Test that pattern cache can be manually invalidated."""
         # Test cache invalidation behavior (currently manual via clear_cache)
 
-        from src.deckbuilder.templates.pattern_loader import PatternLoader
+        from deckbuilder.templates.pattern_loader import PatternLoader
         import tempfile
         import json
 

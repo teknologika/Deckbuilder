@@ -92,7 +92,7 @@ class TestEngineCanonicalJSON:
         # Mock the write_presentation method and validation to avoid file I/O
         with (
             patch.object(engine, "write_presentation", return_value="test.pptx"),
-            patch("deckbuilder.validation.PresentationValidator") as mock_validator,
+            patch("deckbuilder.core.validation.PresentationValidator") as mock_validator,
         ):
             mock_val_instance = mock_validator.return_value
             mock_val_instance.validate_pre_generation.return_value = None
@@ -218,7 +218,7 @@ class TestEngineCanonicalJSON:
 
         with (
             patch.object(engine, "write_presentation", return_value="test.pptx"),
-            patch("deckbuilder.validation.PresentationValidator") as mock_validator,
+            patch("deckbuilder.core.validation.PresentationValidator") as mock_validator,
         ):
             mock_val_instance = mock_validator.return_value
             mock_val_instance.validate_pre_generation.return_value = None
@@ -264,7 +264,7 @@ class TestEngineCanonicalJSON:
 
         with (
             patch.object(engine, "write_presentation", return_value="test.pptx"),
-            patch("deckbuilder.validation.PresentationValidator") as mock_validator,
+            patch("deckbuilder.core.validation.PresentationValidator") as mock_validator,
         ):
             mock_val_instance = mock_validator.return_value
             mock_val_instance.validate_pre_generation.return_value = None

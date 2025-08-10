@@ -72,8 +72,8 @@ class TestCLIRemapFunctionality:
             [
                 "python",
                 str(Path(__file__).parent.parent.parent.parent / "src" / "deckbuilder" / "cli.py"),
-                "help",
                 "remap",
+                "--help",
             ],
             capture_output=True,
             text=True,
@@ -81,10 +81,10 @@ class TestCLIRemapFunctionality:
 
         assert result.returncode == 0
         assert "Update language and font settings" in result.stdout
-        assert "Usage: deckbuilder remap <file.pptx>" in result.stdout
-        assert "--language, -l" in result.stdout
-        assert "--font, -f" in result.stdout
-        assert "--output, -o" in result.stdout
+        assert "Usage: cli.py remap [OPTIONS] INPUT_FILE" in result.stdout
+        assert "-l, --language" in result.stdout
+        assert "-f, --font" in result.stdout
+        assert "-o, --output" in result.stdout
         assert "--no-backup" in result.stdout
 
     def test_remap_missing_file_error(self):
@@ -102,8 +102,8 @@ class TestCLIRemapFunctionality:
             text=True,
         )
 
-        assert result.returncode == 1
-        assert "Input file not found" in result.stdout
+        assert result.returncode == 2
+        assert "Invalid value for 'INPUT_FILE': File 'nonexistent.pptx' does not exist." in result.stderr
 
     def test_remap_invalid_file_format_error(self):
         """Test error handling for non-PowerPoint files."""
@@ -126,7 +126,7 @@ class TestCLIRemapFunctionality:
             )
 
             assert result.returncode == 1
-            assert "File must be a PowerPoint file" in result.stdout
+            assert "File must be a PowerPoint file" in result.stderr
         finally:
             os.unlink(temp_file_path)
 
@@ -152,7 +152,7 @@ class TestCLIRemapFunctionality:
             )
 
             assert result.returncode == 1
-            assert "No updates specified" in result.stdout
+            assert "No updates specified" in result.stderr
         finally:
             os.unlink(temp_file_path)
 

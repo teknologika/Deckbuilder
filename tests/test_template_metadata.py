@@ -75,7 +75,7 @@ class TestTemplateMetadataLoader:
         """Test that TemplateMetadataLoader can be created."""
         # Test now passes - class is implemented
 
-        from src.deckbuilder.templates.metadata import TemplateMetadataLoader
+        from deckbuilder.templates.metadata import TemplateMetadataLoader
 
         # Should be able to create instance
         loader = TemplateMetadataLoader()
@@ -94,7 +94,7 @@ class TestTemplateMetadataLoader:
         test_file.write_text(json.dumps(sample_enhanced_template_json, indent=2))
 
         # Test actual implementation
-        from src.deckbuilder.templates.metadata import TemplateMetadataLoader
+        from deckbuilder.templates.metadata import TemplateMetadataLoader
 
         loader = TemplateMetadataLoader(template_folder=tmp_path)
         metadata = loader.load_template_metadata("default")
@@ -148,7 +148,7 @@ class TestTemplateMetadataLoader:
             template_file.write_text('{"template_info": {"name": "' + template + '"}, "layouts": {}}')
 
         # Expected behavior - the test defines the API
-        from src.deckbuilder.templates.metadata import TemplateMetadataLoader
+        from deckbuilder.templates.metadata import TemplateMetadataLoader
 
         loader = TemplateMetadataLoader(template_folder=tmp_path)
         all_templates = loader.get_all_available_templates()
@@ -171,7 +171,7 @@ class TestTemplateMetadataLoader:
         """Test validation that template files exist."""
         # Test that the implemented validation correctly checks template existence
 
-        from src.deckbuilder.templates.metadata import TemplateMetadataLoader
+        from deckbuilder.templates.metadata import TemplateMetadataLoader
 
         loader = TemplateMetadataLoader()
 
@@ -192,7 +192,7 @@ class TestLayoutCapabilityAnalyzer:
         """Test that LayoutCapabilityAnalyzer can be created."""
         # Test that LayoutCapabilityAnalyzer can be imported and instantiated
 
-        from src.deckbuilder.templates.layout_analyzer import LayoutCapabilityAnalyzer
+        from deckbuilder.templates.layout_analyzer import LayoutCapabilityAnalyzer
 
         # Should be able to create instance
         analyzer = LayoutCapabilityAnalyzer()
@@ -206,7 +206,7 @@ class TestLayoutCapabilityAnalyzer:
         """Test analyzing layout capabilities from template structure."""
         # Test that the implemented analyzer correctly analyzes layout capabilities
 
-        from src.deckbuilder.templates.layout_analyzer import LayoutCapabilityAnalyzer
+        from deckbuilder.templates.layout_analyzer import LayoutCapabilityAnalyzer
 
         analyzer = LayoutCapabilityAnalyzer()
 
@@ -232,7 +232,7 @@ class TestLayoutCapabilityAnalyzer:
         """Test generating layout recommendations based on content analysis."""
         # Test that the implemented recommendation system works correctly
 
-        from src.deckbuilder.templates.layout_analyzer import LayoutCapabilityAnalyzer
+        from deckbuilder.templates.layout_analyzer import LayoutCapabilityAnalyzer
 
         analyzer = LayoutCapabilityAnalyzer()
 
@@ -264,7 +264,7 @@ class TestContentTemplateMatcher:
         """Test that ContentTemplateMatcher can be created."""
         # Test that ContentTemplateMatcher can be imported and instantiated
 
-        from src.deckbuilder.content.matcher import ContentTemplateMatcher
+        from deckbuilder.content.matcher import ContentTemplateMatcher
 
         # Should be able to create instance
         matcher = ContentTemplateMatcher()
@@ -278,7 +278,7 @@ class TestContentTemplateMatcher:
         """Test analyzing content description to determine type and requirements."""
         # Test that the implemented content analysis works correctly
 
-        from src.deckbuilder.content.matcher import ContentTemplateMatcher
+        from deckbuilder.content.matcher import ContentTemplateMatcher
 
         matcher = ContentTemplateMatcher()
 
@@ -317,7 +317,7 @@ class TestContentTemplateMatcher:
         """Test matching analyzed content to optimal templates."""
         # Test that the implemented template matching works correctly
 
-        from src.deckbuilder.content.matcher import ContentTemplateMatcher
+        from deckbuilder.content.matcher import ContentTemplateMatcher
 
         matcher = ContentTemplateMatcher()
 
@@ -362,9 +362,9 @@ class TestTemplateMetadataIntegration:
         """Test complete workflow from template discovery to recommendations."""
         # Test the complete workflow using implemented components
 
-        from src.deckbuilder.content.matcher import ContentTemplateMatcher
-        from src.deckbuilder.templates.layout_analyzer import LayoutCapabilityAnalyzer
-        from src.deckbuilder.templates.metadata import TemplateMetadataLoader
+        from deckbuilder.content.matcher import ContentTemplateMatcher
+        from deckbuilder.templates.layout_analyzer import LayoutCapabilityAnalyzer
+        from deckbuilder.templates.metadata import TemplateMetadataLoader
 
         # Initialize components
         matcher = ContentTemplateMatcher()
@@ -417,7 +417,7 @@ class TestTemplateMetadataIntegration:
         """Test that metadata loading is cached for performance."""
         # Test that the implemented caching works correctly
 
-        from src.deckbuilder.templates.metadata import TemplateMetadataLoader
+        from deckbuilder.templates.metadata import TemplateMetadataLoader
 
         loader = TemplateMetadataLoader()
 
@@ -443,7 +443,7 @@ class TestTemplateMetadataIntegration:
         """Test error handling for invalid or corrupted template files."""
         # Test that the implemented error handling works correctly
 
-        from src.deckbuilder.templates.metadata import TemplateMetadataLoader
+        from deckbuilder.templates.metadata import TemplateMetadataLoader
         import pytest
 
         loader = TemplateMetadataLoader()

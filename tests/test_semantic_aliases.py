@@ -231,7 +231,7 @@ class TestSemanticAliasPatternLoader:
 
     def test_pattern_loader_loads_semantic_aliases(self):
         """Test that PatternLoader loads semantic alias patterns."""
-        from src.deckbuilder.templates.pattern_loader import PatternLoader
+        from deckbuilder.templates.pattern_loader import PatternLoader
 
         loader = PatternLoader()
         patterns = loader.load_patterns()
@@ -262,7 +262,7 @@ class TestSemanticAliasPatternLoader:
             os.environ["DECK_TEMPLATE_FOLDER"] = str(Path(__file__).parent.parent / "src" / "deckbuilder" / "assets" / "templates")
             os.environ["DECK_TEMPLATE_NAME"] = "default"
 
-            from src.deckbuilder.templates.pattern_loader import PatternLoader
+            from deckbuilder.templates.pattern_loader import PatternLoader
 
             # Load patterns through same system MCP tools use
             loader = PatternLoader()

@@ -53,8 +53,8 @@ class PatternLoader:
                 # Default to built-in templates
                 self.template_folder = Path(__file__).parent / "assets" / "templates"
 
-        # Built-in patterns directory
-        self.builtin_patterns_dir = Path(__file__).parent / "structured_frontmatter_patterns"
+        # Built-in patterns directory (one level up from templates/)
+        self.builtin_patterns_dir = Path(__file__).parent.parent / "structured_frontmatter_patterns"
 
         # User patterns directory (within template folder)
         self.user_patterns_dir = self.template_folder / "patterns"

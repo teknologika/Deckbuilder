@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, field
 
+from deckbuilder.utils.path import path_manager
 from .pattern_loader import PatternLoader
 
 
@@ -66,7 +67,7 @@ class TemplateMetadataLoader:
 
     def _get_default_template_folder(self) -> Path:
         """Get default template folder from package assets."""
-        return Path(__file__).parent / "assets" / "templates"
+        return path_manager.get_assets_templates_path()
 
     def load_template_metadata(self, template_name: str) -> TemplateMetadata:
         """

@@ -15,7 +15,6 @@ try:
     from deckbuilder.core.engine import Deckbuilder
     from deckbuilder.content.frontmatter import (
         StructuredFrontmatterConverter,
-        StructuredFrontmatterRegistry,
         StructuredFrontmatterValidator,
     )
     from deckbuilder.cli.naming_conventions import NamingConvention, PlaceholderContext
@@ -25,6 +24,7 @@ except ImportError:
     Deckbuilder = None
     NamingConvention = None
     LayoutIntelligence = None
+    StructuredFrontmatterRegistry = None
 
 
 @pytest.fixture
@@ -146,10 +146,8 @@ def placeholder_context():
 
 @pytest.fixture
 def structured_frontmatter_registry(default_template_json):
-    """StructuredFrontmatterRegistry for testing."""
-    if StructuredFrontmatterRegistry is None:
-        pytest.skip("StructuredFrontmatterRegistry not available")
-    return StructuredFrontmatterRegistry(default_template_json)
+    """StructuredFrontmatterRegistry for testing - DEPRECATED/REMOVED."""
+    pytest.skip("StructuredFrontmatterRegistry removed - use PatternLoader instead")
 
 
 @pytest.fixture

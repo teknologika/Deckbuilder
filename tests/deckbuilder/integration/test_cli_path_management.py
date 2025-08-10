@@ -1,10 +1,3 @@
-"""
-Integration tests for CLI path management
-
-Tests that all CLI commands properly use PathManager for consistent
-path resolution and environment variable handling.
-"""
-
 import os
 import sys
 import tempfile
@@ -12,10 +5,12 @@ from pathlib import Path
 from unittest.mock import patch, MagicMock
 
 import pytest
+from click.testing import CliRunner # Added import
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))  # noqa: E402
 
-from src.deckbuilder.cli import DeckbuilderCLI  # noqa: E402
+from deckbuilder.cli import DeckbuilderCLI  # noqa: E402
+from deckbuilder.utils.path import path_manager # Added import
 
 
 class TestCLIPathManagement:
@@ -31,7 +26,7 @@ class TestCLIPathManagement:
         assert os.getenv("DECK_TEMPLATE_FOLDER") is None
 
     def test_cli_context_aware_output_behavior(self):
-        """Test CLI always outputs to current directory (context-aware behavior)"""
+        """Test CLI always outputs to current directory (context-aware behavior)""" 
         cli = DeckbuilderCLI()
 
         # CLI context always uses current directory for output
@@ -119,11 +114,11 @@ class TestCLIPathManagement:
             assert target_dir.exists()
             assert target_dir.is_dir()
 
-    @patch("src.deckbuilder.cli.Deckbuilder")
+    @patch("deckbuilder.core.engine.Deckbuilder")
     def test_create_presentation_markdown(self, mock_deckbuilder):
         """Test create_presentation works with markdown files"""
         with tempfile.TemporaryDirectory() as temp_dir:
-            cli = DeckbuilderCLI()  # CLI always outputs to current directory
+            cli = DeckbuilderCLI(template_folder=str(path_manager.get_assets_templates_path())) # Modified line
 
             with tempfile.NamedTemporaryFile(mode="w", suffix=".md", delete=False, dir=temp_dir) as temp_md:
                 temp_md.write("---\nlayout: Title Slide\ntitle: Test\n---")
@@ -136,8 +131,8 @@ class TestCLIPathManagement:
                 with (
                     patch.object(cli, "_validate_templates_folder", return_value=True),
                     patch("pathlib.Path.exists", return_value=True),
-                    patch("deckbuilder.converter.markdown_to_canonical_json") as mock_converter,
-                    patch("deckbuilder.validation.PresentationValidator") as mock_validator,
+                    patch("deckbuilder.content.converter.markdown_to_canonical_json") as mock_converter,
+                    patch("deckbuilder.core.validation.PresentationValidator") as mock_validator,
                 ):
                     # Mock converter to return canonical JSON format
                     mock_converter.return_value = {
@@ -162,11 +157,11 @@ class TestCLIPathManagement:
                     finally:
                         os.unlink(temp_md.name)
 
-    @patch("src.deckbuilder.cli.Deckbuilder")
+    @patch("deckbuilder.core.engine.Deckbuilder")
     def test_create_presentation_json(self, mock_deckbuilder):
         """Test create_presentation works with JSON files"""
         with tempfile.TemporaryDirectory() as temp_dir:
-            cli = DeckbuilderCLI()  # CLI always outputs to current directory
+            cli = DeckbuilderCLI(template_folder=str(path_manager.get_assets_templates_path())) # Modified line
 
             with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, dir=temp_dir) as temp_json:
                 # Write canonical JSON format
@@ -194,21 +189,14 @@ class TestCLIVersionHandling:
 
     def test_version_flag_uses_path_manager(self):
         """Test --version flag displays version information"""
-        with (
-            patch("builtins.print") as mock_print,
-            patch("sys.argv", ["deckbuilder", "--version"]),
-        ):
+        runner = CliRunner() # Added CliRunner
+        from deckbuilder.cli.main import main # Ensure main is imported from the correct place
 
-            from src.deckbuilder.cli import main
+        result = runner.invoke(main, ["--version"])
 
-            try:
-                main()
-            except SystemExit:
-                pass  # Expected for version command
-
-            # Should print version information
-            printed_text = " ".join(str(call) for call in mock_print.call_args_list)
-            assert "Deckbuilder CLI" in printed_text
+        assert result.exit_code == 0
+        assert "Deckbuilder, version" in result.stdout
+        assert "Deckbuilder, version" in result.stdout
 
 
 class TestCLIErrorHandling:

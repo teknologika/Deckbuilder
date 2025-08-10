@@ -277,7 +277,7 @@ class TestGoldenFileValidation:
         )
 
         assert result.returncode == 0, f"Version command failed: {result.stderr}"
-        assert "Deckbuilder CLI" in result.stdout, f"Unexpected version output: {result.stdout}"
+        assert "Deckbuilder, version" in result.stdout, f"Unexpected version output: {result.stdout}"
 
     def test_cli_config_show_command(self):
         """Test that CLI config show command works"""

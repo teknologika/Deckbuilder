@@ -662,7 +662,7 @@ class TestTemplateMetadataSystem:
         """Test that template metadata loading system exists."""
         # Test that TemplateMetadataLoader can be imported and instantiated
 
-        from src.deckbuilder.templates.metadata import TemplateMetadataLoader
+        from deckbuilder.templates.metadata import TemplateMetadataLoader
 
         # Should be able to create instance
         loader = TemplateMetadataLoader()
@@ -677,7 +677,7 @@ class TestTemplateMetadataSystem:
         """Test that metadata loader can load enhanced template JSON files."""
         # Test that TemplateMetadataLoader can load template metadata
 
-        from src.deckbuilder.templates.metadata import TemplateMetadataLoader
+        from deckbuilder.templates.metadata import TemplateMetadataLoader
 
         # Should be able to create instance and load metadata
         loader = TemplateMetadataLoader()
@@ -698,7 +698,7 @@ class TestTemplateMetadataSystem:
         """Test that layout capability analysis system exists."""
         # Test that LayoutCapabilityAnalyzer can be imported and instantiated
 
-        from src.deckbuilder.templates.layout_analyzer import LayoutCapabilityAnalyzer
+        from deckbuilder.templates.layout_analyzer import LayoutCapabilityAnalyzer
 
         # Should be able to create instance
         analyzer = LayoutCapabilityAnalyzer()
@@ -712,7 +712,7 @@ class TestTemplateMetadataSystem:
         """Test that content-template matching system exists."""
         # Test that ContentTemplateMatcher can be imported and instantiated
 
-        from src.deckbuilder.content.matcher import ContentTemplateMatcher
+        from deckbuilder.content.matcher import ContentTemplateMatcher
 
         # Should be able to create instance
         matcher = ContentTemplateMatcher()
