@@ -2,22 +2,65 @@
 """
 Centralized Path Management for Deckbuilder
 
-Handles all template and asset path resolution in a single location
-to eliminate inconsistent path handling across the codebase.
+This class provides a single, context-aware interface for locating templates
+and other assets, whether running from source (dev mode) or from an installed
+package (wheel/zip). It ensures consistent path handling across:
+- CLI tools
+- MCP integrations
+- Library usage
+
+Assets are *materialised* to a real directory when needed (some libraries
+require a real filesystem path).
+
+Quick starts
+------------
+# 1) Get a real path to packaged templates (library default)
+from deckbuilder.paths import path_manager
+templates = path_manager.get_assets_templates_path()
+print(list(templates.glob("*.pptx")))
+
+# 2) Resolve a template by name (respects context/env/args)
+pm = create_library_path_manager(template_name="default")
+pptx = pm.get_template_file_path()        # -> .../default.pptx
+mapping = pm.get_template_json_path()     # -> .../default.json
+
+# 3) Override via env (CLI/MCP)
+#   DECK_TEMPLATE_FOLDER=/my/templates  DECK_TEMPLATE_NAME=corp pm.get_template_file_path()
+
+# 4) Extract packaged assets to a custom cache dir
+#   DECK_ASSET_CACHE_DIR=/tmp/db-assets  python -c "from deckbuilder.paths import path_manager; print(path_manager.get_assets_templates_path())"
+
+# 5) List available templates (by .pptx files)
+print(path_manager.list_available_templates())  # -> ['default', 'custom1', ...]
+
+# 6) Validate presence
+assert path_manager.validate_assets_exist(), "Packaged default templates missing!"
 """
+
+from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import Optional, Literal
+from typing import Optional, Literal, Tuple
+
+# Standard library (3.9+) importlib.resources; backport only if needed.
+try:
+    from importlib.resources import files, as_file
+except ImportError:  # pragma: no cover
+    from importlib_resources import files, as_file  # type: ignore
 
 
 class PathManager:
-    """Context-aware centralized path management for Deckbuilder
+    """
+    Context-aware path resolution:
+      - CLI:    args > env vars > CWD/templates ; output always CWD
+      - MCP:    env vars only (else error)
+      - Library:args > env vars > packaged assets/templates
 
-    Supports different path resolution strategies based on usage context:
-    - CLI: template args > env vars > current dir, output always current dir
-    - MCP: env vars > failure (no fallbacks)
-    - Library: constructor args > env vars > current dir
+    Example
+    -------
+    pm = PathManager(context="library", template_name="default")
+    print(pm.get_template_file_path())   # .../default.pptx
     """
 
     def __init__(
@@ -27,28 +70,31 @@ class PathManager:
         output_folder: Optional[str] = None,
         template_name: Optional[str] = None,
     ):
-        """
-        Initialize PathManager with context-aware behavior
-
-        Args:
-            context: Usage context (cli, mcp, library)
-            template_folder: Explicit template folder path (overrides env vars)
-            output_folder: Explicit output folder path (overrides env vars)
-            template_name: Explicit template name (overrides env vars)
-        """
         self._context = context
         self._template_folder = template_folder
         self._output_folder = output_folder
         self._template_name = template_name
-        self._cache = {}
+        self._cache: dict[str, Path] = {}
+
+    # -------------------------------------------------------------------------
+    # Internal helpers
+    # -------------------------------------------------------------------------
 
     def get_project_root(self) -> Path:
-        """Get the project root directory"""
+        """
+        Development-only helper.
+
+        Walk upward from this file to find the project root. Useful for tests
+        and local tooling, not relied upon in packaged runtime.
+
+        Example
+        -------
+        root = path_manager.get_project_root()
+        print(root / "pyproject.toml")
+        """
         if "project_root" not in self._cache:
-            # Start from this file and go up to find project root
-            current = Path(__file__).parent
+            current = Path(__file__).resolve().parent
             while current.parent != current:
-                # Look for project indicators
                 if (current / "pyproject.toml").exists() or (current / "setup.py").exists():
                     self._cache["project_root"] = current
                     break
@@ -57,34 +103,114 @@ class PathManager:
                     break
                 current = current.parent
             else:
-                # Fallback: go up from src/deckbuilder
-                self._cache["project_root"] = Path(__file__).parent.parent.parent
-
+                # Fallback: assume src/deckbuilder is 3 levels up
+                self._cache["project_root"] = Path(__file__).resolve().parents[3]
         return self._cache["project_root"]
 
+    def _assets_traversable(self):
+        """
+        Get a Traversable pointing to deckbuilder/assets inside the package.
+
+        Works for wheels/zips without assuming a real filesystem path.
+
+        Example
+        -------
+        t = (files("deckbuilder") / "assets").joinpath("templates")
+        for p in t.iterdir(): print(p)
+        """
+        return files("deckbuilder") / "assets"
+
+    def _materialise_assets_to(self, target: Path) -> Path:
+        """
+        Copy all assets to a real directory so they can be used by libraries
+        that require real paths (e.g., python-pptx, file watchers).
+
+        Idempotent: does nothing if target already exists.
+
+        Example
+        -------
+        cached = path_manager._materialise_assets_to(Path("/tmp/db-assets"))
+        print(cached / "templates" / "default.pptx")
+        """
+        if not target.exists():
+            target.mkdir(parents=True, exist_ok=True)
+            assets = self._assets_traversable()
+            for entry in assets.rglob("*"):
+                rel = Path(*entry.parts[entry.parts.index("assets") + 1 :])
+                out = target / rel
+                if entry.is_dir():
+                    out.mkdir(parents=True, exist_ok=True)
+                else:
+                    out.parent.mkdir(parents=True, exist_ok=True)
+                    with entry.open("rb") as src, open(out, "wb") as dst:
+                        dst.write(src.read())
+        return target
+
+    def _materialised_assets_root(self) -> Path:
+        """
+        Resolve the base directory where assets are materialised.
+
+        Defaults to .deckbuilder_assets in the current working directory,
+        override with DECK_ASSET_CACHE_DIR.
+
+        Example
+        -------
+        # Prefer a tmp cache during CI:
+        #   DECK_ASSET_CACHE_DIR=/tmp/db-assets pytest
+        """
+        base = Path(os.getenv("DECK_ASSET_CACHE_DIR", Path.cwd() / ".deckbuilder_assets"))
+        return self._materialise_assets_to(base)
+
+    # -------------------------------------------------------------------------
+    # Public API: asset locations
+    # -------------------------------------------------------------------------
+
     def get_assets_templates_path(self) -> Path:
-        """Get the path to template assets (default.pptx, default.json)"""
-        return self.get_project_root() / "src" / "deckbuilder" / "assets" / "templates"
+        """
+        Real filesystem path to assets/templates (materialised if needed).
+
+        Example
+        -------
+        tmpl_dir = path_manager.get_assets_templates_path()
+        for p in tmpl_dir.glob("*.pptx"): print(p)
+        """
+        return self._materialised_assets_root() / "templates"
 
     def get_master_presentation_files_path(self) -> Path:
-        """Get the path to master presentation files (source of truth for examples and tests)"""
-        # Try package location first (for installed package)
-        package_assets = Path(__file__).parent / "assets"
-        if package_assets.exists():
-            return package_assets
-        # Fallback to project root (for development)
-        return self.get_project_root() / "src" / "deckbuilder" / "assets"
+        """
+        Real filesystem path to assets/ (where master files live).
 
-    def get_master_presentation_files(self) -> tuple[Path, Path]:
-        """Get paths to master presentation files (source of truth) for consistent access across all code"""
-        assets_path = self.get_master_presentation_files_path()
+        Example
+        -------
+        assets_root = path_manager.get_master_presentation_files_path()
+        print((assets_root / "master_default_presentation.json").is_file())
+        """
+        return self._materialised_assets_root()
+
+    def get_master_presentation_files(self) -> Tuple[Path, Path]:
+        """
+        Return real paths to master_default_presentation.md and .json
+        for use in examples/tests.
+
+        Example
+        -------
+        md, js = path_manager.get_master_presentation_files()
+        print(md.read_text()[:120], js.read_text()[:120])
+        """
+        assets = self.get_master_presentation_files_path()
         return (
-            assets_path / "master_default_presentation.md",
-            assets_path / "master_default_presentation.json",
+            assets / "master_default_presentation.md",
+            assets / "master_default_presentation.json",
         )
 
-    def get_test_files(self) -> tuple[Path, Path]:
-        """Get paths to test files (copies of master files for testing)"""
+    def get_test_files(self) -> Tuple[Path, Path]:
+        """
+        Return paths to the test copies of the master files.
+
+        Example
+        -------
+        md, js = path_manager.get_test_files()
+        """
         project_root = self.get_project_root()
         test_dir = project_root / "tests" / "deckbuilder"
         return (
@@ -92,188 +218,198 @@ class PathManager:
             test_dir / "test_comprehensive_layouts.json",
         )
 
-    def get_template_folder(self) -> Path:
-        """Get template folder based on context-aware precedence rules"""
+    # -------------------------------------------------------------------------
+    # Public API: folder and file resolution
+    # -------------------------------------------------------------------------
 
-        # CLI Context: explicit args > env vars > current directory
+    def get_template_folder(self) -> Path:
+        """
+        Resolve the template folder path according to context precedence rules.
+
+        Examples
+        --------
+        # Library default → packaged assets:
+        print(create_library_path_manager().get_template_folder())
+
+        # CLI → args beat env
+        print(create_cli_path_manager("/path/to/templates").get_template_folder())
+
+        # MCP → env required
+        #   DECK_TEMPLATE_FOLDER=/path/to/templates  python -c ...
+        """
         if self._context == "cli":
             if self._template_folder:
                 return Path(self._template_folder).resolve()
+            env_folder = os.getenv("DECK_TEMPLATE_FOLDER")
+            return Path(env_folder).resolve() if env_folder else (Path.cwd() / "templates")
 
+        if self._context == "mcp":
             env_folder = os.getenv("DECK_TEMPLATE_FOLDER")
             if env_folder:
                 return Path(env_folder).resolve()
+            raise ValueError("MCP context requires DECK_TEMPLATE_FOLDER to be set")
 
-            # CLI defaults to current directory (per design specification)
-            return Path.cwd() / "templates"
-
-        # MCP Context: env vars > failure (no fallbacks)
-        elif self._context == "mcp":
-            env_folder = os.getenv("DECK_TEMPLATE_FOLDER")
-            if env_folder:
-                return Path(env_folder).resolve()
-
-            # MCP requires explicit configuration
-            raise ValueError("MCP context requires DECK_TEMPLATE_FOLDER environment variable to be set")
-
-        # Library Context: constructor args > env vars > assets/templates
-        else:  # library
-            if self._template_folder:
-                return Path(self._template_folder).resolve()
-
-            env_folder = os.getenv("DECK_TEMPLATE_FOLDER")
-            if env_folder:
-                return Path(env_folder).resolve()
-
-            # Library defaults to package assets/templates
-            return self.get_assets_templates_path()
+        # library context
+        if self._template_folder:
+            return Path(self._template_folder).resolve()
+        env_folder = os.getenv("DECK_TEMPLATE_FOLDER")
+        if env_folder:
+            return Path(env_folder).resolve()
+        return self.get_assets_templates_path()
 
     def get_output_folder(self) -> Path:
-        """Get output folder based on context-aware precedence rules"""
+        """
+        Resolve the output folder path according to context precedence rules.
 
-        # CLI Context: always current directory (no args, no env vars)
+        Examples
+        --------
+        # CLI → CWD
+        print(create_cli_path_manager().get_output_folder())
+
+        # Library → args/env/CWD
+        print(create_library_path_manager(output_folder="/tmp/out").get_output_folder())
+        """
         if self._context == "cli":
             return Path.cwd()
 
-        # MCP Context: env vars > failure (no fallbacks)
-        elif self._context == "mcp":
+        if self._context == "mcp":
             env_folder = os.getenv("DECK_OUTPUT_FOLDER")
             if env_folder:
                 return Path(env_folder).resolve()
+            raise ValueError("MCP context requires DECK_OUTPUT_FOLDER to be set")
 
-            # MCP requires explicit configuration
-            raise ValueError("MCP context requires DECK_OUTPUT_FOLDER environment variable to be set")
-
-        # Library Context: constructor args > env vars > current directory
-        else:  # library
-            if self._output_folder:
-                return Path(self._output_folder).resolve()
-
-            env_folder = os.getenv("DECK_OUTPUT_FOLDER")
-            if env_folder:
-                return Path(env_folder).resolve()
-
-            # Library defaults to current directory
-            return Path.cwd()
+        # library context
+        if self._output_folder:
+            return Path(self._output_folder).resolve()
+        env_folder = os.getenv("DECK_OUTPUT_FOLDER")
+        return Path(env_folder).resolve() if env_folder else Path.cwd()
 
     def get_template_name(self) -> str:
-        """Get template name based on context-aware precedence rules"""
+        """
+        Return the active template name.
 
-        # All contexts: explicit args > env vars > "default"
-        if self._template_name:
-            return self._template_name
-
-        env_name = os.getenv("DECK_TEMPLATE_NAME")
-        if env_name:
-            return env_name
-
-        return "default"
+        Example
+        -------
+        # explicit > env > default("default")
+        print(create_library_path_manager(template_name="corp").get_template_name())
+        """
+        return self._template_name or os.getenv("DECK_TEMPLATE_NAME") or "default"
 
     def get_template_file_path(self, template_name: Optional[str] = None) -> Path:
-        """Get the full path to a template .pptx file"""
-        if not template_name:
-            template_name = self.get_template_name()
+        """
+        Full path to a template .pptx file.
 
-        # Remove .pptx extension if present
-        if template_name.endswith(".pptx"):
-            template_name = template_name[:-5]
-
-        template_folder = self.get_template_folder()
-        return template_folder / f"{template_name}.pptx"
+        Example
+        -------
+        pm = create_library_path_manager(template_name="default")
+        print(pm.get_template_file_path())  # .../default.pptx
+        """
+        name = (template_name or self.get_template_name()).removesuffix(".pptx")
+        return self.get_template_folder() / f"{name}.pptx"
 
     def get_template_json_path(self, template_name: Optional[str] = None) -> Path:
-        """Get the full path to a template .json mapping file"""
-        if not template_name:
-            template_name = self.get_template_name()
+        """
+        Full path to a template .json file.
 
-        # Remove .json extension if present
-        if template_name.endswith(".json"):
-            template_name = template_name[:-5]
+        Example
+        -------
+        pm = create_library_path_manager(template_name="default")
+        print(pm.get_template_json_path())  # .../default.json
+        """
+        name = (template_name or self.get_template_name()).removesuffix(".json")
+        return self.get_template_folder() / f"{name}.json"
 
-        template_folder = self.get_template_folder()
-        return template_folder / f"{template_name}.json"
+    # -------------------------------------------------------------------------
+    # Public API: validation / discovery
+    # -------------------------------------------------------------------------
 
     def validate_template_exists(self, template_name: Optional[str] = None) -> bool:
-        """Check if a template .pptx file exists"""
-        template_path = self.get_template_file_path(template_name)
-        return template_path.exists()
+        """
+        Check if a template .pptx file exists.
+
+        Example
+        -------
+        assert path_manager.validate_template_exists("default")
+        """
+        return self.get_template_file_path(template_name).exists()
 
     def validate_template_folder_exists(self) -> bool:
-        """Check if the template folder exists"""
+        """
+        Check if the template folder exists.
+
+        Example
+        -------
+        assert path_manager.validate_template_folder_exists()
+        """
         return self.get_template_folder().exists()
 
     def validate_assets_exist(self) -> bool:
-        """Check if default template assets exist in the package"""
-        assets_path = self.get_assets_templates_path()
-        default_pptx = assets_path / "default.pptx"
-        default_json = assets_path / "default.json"
+        """
+        Check if packaged default template assets exist.
 
-        return assets_path.exists() and (default_pptx.exists() or default_json.exists())
+        Example
+        -------
+        assert path_manager.validate_assets_exist()
+        """
+        root = self.get_master_presentation_files_path()
+        return (root / "templates").is_dir() and (
+            (root / "templates" / "default.pptx").is_file()
+            or (root / "templates" / "default.json").is_file()
+        )
 
     def list_available_templates(self) -> list[str]:
-        """List all available template names in the template folder"""
-        template_folder = self.get_template_folder()
-        if not template_folder.exists():
-            return []
+        """
+        List template names based on .pptx files in the active template folder.
 
-        templates = []
-        for pptx_file in template_folder.glob("*.pptx"):
-            templates.append(pptx_file.stem)
-
-        return sorted(templates)
+        Example
+        -------
+        print(path_manager.list_available_templates())  # ['default', ...]
+        """
+        folder = self.get_template_folder()
+        return sorted(p.stem for p in folder.glob("*.pptx")) if folder.exists() else []
 
     def get_version(self) -> str:
-        """Get the package version from various sources"""
-        # Try to get from package metadata first
+        """
+        Read package version from installed metadata, else from pyproject.toml,
+        else return a hardcoded fallback.
+
+        Example
+        -------
+        print(path_manager.get_version())
+        """
         try:
             from importlib.metadata import version
-
             return version("deckbuilder")
-        except Exception:  # nosec B110
-            # Package not installed or metadata unavailable, try pyproject.toml
+        except Exception:
             pass
-
-        # Try to get from pyproject.toml
         try:
             import tomllib
-
-            pyproject_path = self.get_project_root() / "pyproject.toml"
-            if pyproject_path.exists():
-                with open(pyproject_path, "rb") as f:
+            pyproject = self.get_project_root() / "pyproject.toml"
+            if pyproject.exists():
+                with open(pyproject, "rb") as f:
                     data = tomllib.load(f)
-                    return data.get("project", {}).get("version", "unknown")
-        except Exception:  # nosec B110
-            # pyproject.toml not available or invalid, use fallback
+                return data.get("project", {}).get("version", "unknown")
+        except Exception:
             pass
-
-        # Fallback version
-        return "1.0.2b2"
+        return "1.3.0"
 
 
-# Factory functions for different contexts
+# Factory helpers for convenience
 def create_cli_path_manager(template_folder: Optional[str] = None) -> PathManager:
-    """Create PathManager for CLI usage (template args > env > current dir, output current dir)"""
+    """CLI context: args > env > CWD/templates"""
     return PathManager(context="cli", template_folder=template_folder)
 
-
 def create_mcp_path_manager() -> PathManager:
-    """Create PathManager for MCP usage (env vars > failure)"""
+    """MCP context: env only (else error)"""
     return PathManager(context="mcp")
-
 
 def create_library_path_manager(
     template_folder: Optional[str] = None,
     output_folder: Optional[str] = None,
     template_name: Optional[str] = None,
 ) -> PathManager:
-    """Create PathManager for library usage (args > env > current dir)"""
-    return PathManager(
-        context="library",
-        template_folder=template_folder,
-        output_folder=output_folder,
-        template_name=template_name,
-    )
+    """Library context: args > env > packaged assets/templates"""
+    return PathManager("library", template_folder, output_folder, template_name)
 
-
-# Global instance for backward compatibility (library context)
-path_manager = PathManager(context="library")
+# Default global instance (library context)
+path_manager = PathManager("library")

@@ -462,7 +462,11 @@ class TemplateMetadataLoader:
                 templates[template_name] = {
                     "name": metadata.template_name,
                     "layouts": {
-                        layout_name: {"display_name": layout_meta.display_name, "description": layout_meta.description, "placeholders": layout_meta.placeholders}
+                        layout_name: {
+                            "display_name": layout_meta.display_name,
+                            "description": layout_meta.description,
+                            "placeholders": layout_meta.placeholders,
+                        }
                         for layout_name, layout_meta in metadata.layouts.items()
                     },
                 }

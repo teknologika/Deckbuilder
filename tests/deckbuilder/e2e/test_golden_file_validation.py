@@ -131,7 +131,7 @@ class TestGoldenFileValidation:
         result = subprocess.run(
             [
                 "python",
-                str(self.project_root / "src" / "deckbuilder" / "cli.py"),
+                "-m", "deckbuilder.cli.main",
                 "create",
                 str(input_file),
                 "--output",
@@ -270,7 +270,7 @@ class TestGoldenFileValidation:
     def test_cli_version_command(self):
         """Test that CLI version command works"""
         result = subprocess.run(
-            ["python", str(self.project_root / "src" / "deckbuilder" / "cli.py"), "--version"],
+            ["python", "-m", "deckbuilder.cli.main", "--version"],
             capture_output=True,
             text=True,
             cwd=self.project_root,  # Keep root for version command
@@ -285,7 +285,7 @@ class TestGoldenFileValidation:
         env["DECK_TEMPLATE_FOLDER"] = str(self.templates_dir)
 
         result = subprocess.run(
-            ["python", str(self.project_root / "src" / "deckbuilder" / "cli.py"), "config", "show"],
+            ["python", "-m", "deckbuilder.cli.main", "config", "show"],
             capture_output=True,
             text=True,
             env=env,
@@ -303,7 +303,7 @@ class TestGoldenFileValidation:
         result = subprocess.run(
             [
                 "python",
-                str(self.project_root / "src" / "deckbuilder" / "cli.py"),
+                "-m", "deckbuilder.cli.main",
                 "template",
                 "list",
             ],
@@ -343,7 +343,7 @@ class TestCLIErrorHandling:
         result = subprocess.run(
             [
                 "python",
-                str(self.project_root / "src" / "deckbuilder" / "cli.py"),
+                "-m", "deckbuilder.cli.main",
                 "create",
                 "nonexistent.md",
             ],
@@ -379,7 +379,7 @@ class TestCLIErrorHandling:
                     result = subprocess.run(
                         [
                             "python",
-                            str(self.project_root / "src" / "deckbuilder" / "cli.py"),
+                            "-m", "deckbuilder.cli.main",
                             "--template-folder",
                             str(templates_dir),
                             "create",
@@ -409,7 +409,7 @@ class TestCLIErrorHandling:
                 result = subprocess.run(
                     [
                         "python",
-                        str(self.project_root / "src" / "deckbuilder" / "cli.py"),
+                        "-m", "deckbuilder.cli.main",
                         "create",
                         temp_file.name,
                     ],

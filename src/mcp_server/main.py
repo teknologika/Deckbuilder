@@ -295,7 +295,12 @@ async def list_available_templates(ctx: Context) -> str:
         template_names = loader.get_template_names()
 
         if not template_names:
-            return json.dumps({"available_templates": {}, "recommendation": "No templates found. Check template folder configuration."})
+            return json.dumps(
+                {
+                    "available_templates": {},
+                    "recommendation": "No templates found. Check template folder configuration.",
+                }
+            )
 
         # Transform to expected format defined by TDD test
         available_templates = {}
@@ -316,7 +321,12 @@ async def list_available_templates(ctx: Context) -> str:
                 }
             except Exception:
                 # If we can't load metadata for a template, include it with basic info
-                available_templates[template_name] = {"description": f"Template: {template_name}", "use_cases": ["General presentations"], "total_layouts": 0, "key_layouts": []}
+                available_templates[template_name] = {
+                    "description": f"Template: {template_name}",
+                    "use_cases": ["General presentations"],
+                    "total_layouts": 0,
+                    "key_layouts": [],
+                }
 
         # Generate recommendation based on available templates
         if "default" in available_templates and "business_pro" in available_templates:
@@ -332,7 +342,11 @@ async def list_available_templates(ctx: Context) -> str:
         return json.dumps(result, indent=2)
 
     except Exception as e:
-        error_result = {"error": f"Failed to load template metadata: {str(e)}", "available_templates": {}, "recommendation": "Check template folder configuration and try again"}
+        error_result = {
+            "error": f"Failed to load template metadata: {str(e)}",
+            "available_templates": {},
+            "recommendation": "Check template folder configuration and try again",
+        }
         return json.dumps(error_result, indent=2)
 
 
@@ -383,14 +397,18 @@ async def get_template_layouts(ctx: Context, template_name: str) -> str:
             # Get available templates for helpful error message
             available_templates = loader.get_template_names()
 
-            error_result = {"error": f"Template '{template_name}' not found", "available_templates": available_templates, "suggestion": "Use list_available_templates() to see all available options"}
+            error_result = {
+                "error": f"Template '{template_name}' not found",
+                "available_templates": available_templates,
+                "suggestion": "Use list_available_templates() to see all available options",
+            }
             return json.dumps(error_result, indent=2)
 
         # Load template metadata
         metadata = loader.load_template_metadata(template_name)
 
         # Initialize pattern loader for structured frontmatter patterns
-        from deckbuilder.pattern_loader import PatternLoader
+        from deckbuilder.templates.pattern_loader import PatternLoader
 
         pattern_loader = PatternLoader()
         patterns = pattern_loader.load_patterns()
@@ -430,12 +448,20 @@ async def get_template_layouts(ctx: Context, template_name: str) -> str:
                 "example": example,
             }
 
-        result = {"template_name": template_name, "layouts": layouts_info, "usage_tips": "Use placeholders exactly as specified. Title is required for all layouts."}
+        result = {
+            "template_name": template_name,
+            "layouts": layouts_info,
+            "usage_tips": "Use placeholders exactly as specified. Title is required for all layouts.",
+        }
 
         return json.dumps(result, indent=2)
 
     except Exception as e:
-        error_result = {"error": f"Failed to load template layouts: {str(e)}", "template_name": template_name, "suggestion": "Check template name and try again"}
+        error_result = {
+            "error": f"Failed to load template layouts: {str(e)}",
+            "template_name": template_name,
+            "suggestion": "Check template name and try again",
+        }
         return json.dumps(error_result, indent=2)
 
 
@@ -569,9 +595,25 @@ async def recommend_template_for_content(ctx: Context, content_description: str)
             content_style = "instructional"
 
         # Detect if data-heavy
-        data_heavy = any(word in content_lower for word in ["data", "metrics", "analysis", "financial", "numbers", "statistics", "charts"])
+        data_heavy = any(
+            word in content_lower
+            for word in [
+                "data",
+                "metrics",
+                "analysis",
+                "financial",
+                "numbers",
+                "statistics",
+                "charts",
+            ]
+        )
 
-        content_analysis = {"detected_type": content_type, "audience": audience, "content_style": content_style, "data_heavy": data_heavy}
+        content_analysis = {
+            "detected_type": content_type,
+            "audience": audience,
+            "content_style": content_style,
+            "data_heavy": data_heavy,
+        }
 
         # Generate recommendations based on analysis
         recommendations = []
@@ -593,7 +635,11 @@ async def recommend_template_for_content(ctx: Context, content_description: str)
                     reasoning = "Versatile template suitable for most presentation needs"
 
                     # Adjust confidence based on content analysis
-                    if content_type in ["general_presentation", "training_presentation", "comparison"]:
+                    if content_type in [
+                        "general_presentation",
+                        "training_presentation",
+                        "comparison",
+                    ]:
                         confidence = 0.85
                         reasoning = f"Good match for {content_type.replace('_', ' ')} with standard business layouts"
                     elif audience == "general":
@@ -644,12 +690,24 @@ async def recommend_template_for_content(ctx: Context, content_description: str)
                 if not suggested_layouts:
                     suggested_layouts = available_layouts[:3]
 
-                recommendations.append({"template": template_name, "confidence": confidence, "reasoning": reasoning, "suggested_layouts": suggested_layouts[:3]})  # Limit to top 3
+                recommendations.append(
+                    {
+                        "template": template_name,
+                        "confidence": confidence,
+                        "reasoning": reasoning,
+                        "suggested_layouts": suggested_layouts[:3],
+                    }
+                )  # Limit to top 3
 
             except Exception:
                 # If we can't load template metadata, include basic recommendation
                 recommendations.append(
-                    {"template": template_name, "confidence": 0.5, "reasoning": "Template available but metadata could not be loaded", "suggested_layouts": ["Title Slide", "Title and Content"]}
+                    {
+                        "template": template_name,
+                        "confidence": 0.5,
+                        "reasoning": "Template available but metadata could not be loaded",
+                        "suggested_layouts": ["Title Slide", "Title and Content"],
+                    }
                 )
 
         # Sort recommendations by confidence
@@ -704,7 +762,11 @@ async def recommend_template_for_content(ctx: Context, content_description: str)
         else:
             layout_suggestions["closing"] = "Use content-focused layout for conclusions"
 
-        result = {"content_analysis": content_analysis, "recommendations": recommendations, "layout_suggestions": layout_suggestions}
+        result = {
+            "content_analysis": content_analysis,
+            "recommendations": recommendations,
+            "layout_suggestions": layout_suggestions,
+        }
 
         return json.dumps(result, indent=2)
 
@@ -727,12 +789,24 @@ async def recommend_template_for_content(ctx: Context, content_description: str)
 
         error_result = {
             "error": f"Failed to analyze content: {str(e)}",
-            "recommendations": [{"template": fallback_template, "confidence": 0.5, "reasoning": "Safe fallback option due to analysis error", "suggested_layouts": fallback_layouts}],
-            "content_analysis": {"detected_type": "unknown", "audience": "general", "content_style": "medium", "data_heavy": False},
+            "recommendations": [
+                {
+                    "template": fallback_template,
+                    "confidence": 0.5,
+                    "reasoning": "Safe fallback option due to analysis error",
+                    "suggested_layouts": fallback_layouts,
+                }
+            ],
+            "content_analysis": {
+                "detected_type": "unknown",
+                "audience": "general",
+                "content_style": "medium",
+                "data_heavy": False,
+            },
             "layout_suggestions": {
-                "opening": f"{fallback_layouts[0]} for standard opening" if fallback_layouts else "Use opening layout",
-                "content": f"{fallback_layouts[-1]} for general information" if fallback_layouts else "Use content layout",
-                "closing": f"{fallback_layouts[-1]} for conclusions" if fallback_layouts else "Use closing layout",
+                "opening": (f"{fallback_layouts[0]} for standard opening" if fallback_layouts else "Use opening layout"),
+                "content": (f"{fallback_layouts[-1]} for general information" if fallback_layouts else "Use content layout"),
+                "closing": (f"{fallback_layouts[-1]} for conclusions" if fallback_layouts else "Use closing layout"),
             },
         }
         return json.dumps(error_result, indent=2)
@@ -789,13 +863,23 @@ async def validate_presentation_file(ctx: Context, file_path: str, template_name
         from pathlib import Path
         import yaml
 
-        result = {"file_validation": {}, "content_validation": {}, "template_compatibility": {}, "recommendation": ""}
+        result = {
+            "file_validation": {},
+            "content_validation": {},
+            "template_compatibility": {},
+            "recommendation": "",
+        }
 
         # File existence and type validation
         file_path_obj = Path(file_path)
         file_exists = file_path_obj.exists()
 
-        result["file_validation"] = {"file_exists": file_exists, "file_type": "markdown" if file_path.endswith((".md", ".markdown")) else "unknown", "syntax_valid": False, "slides_detected": 0}
+        result["file_validation"] = {
+            "file_exists": file_exists,
+            "file_type": "markdown" if file_path.endswith((".md", ".markdown")) else "unknown",
+            "syntax_valid": False,
+            "slides_detected": 0,
+        }
 
         if not file_exists:
             result["recommendation"] = f"File not found: {file_path}. Check the file path and try again."
@@ -833,7 +917,11 @@ async def validate_presentation_file(ctx: Context, file_path: str, template_name
             template_metadata = loader.load_template_metadata(template_name)
             available_layouts = set(template_metadata.layouts.keys())
         except Exception as e:
-            result["template_compatibility"] = {"template": template_name, "error": f"Cannot load template: {str(e)}", "all_layouts_supported": False}
+            result["template_compatibility"] = {
+                "template": template_name,
+                "error": f"Cannot load template: {str(e)}",
+                "all_layouts_supported": False,
+            }
             result["recommendation"] = f"Template '{template_name}' not found or invalid. Use list_available_templates() to see options."
             return json.dumps(result, indent=2)
 
@@ -843,7 +931,13 @@ async def validate_presentation_file(ctx: Context, file_path: str, template_name
 
         for i, slide_content in enumerate(slides, 1):
             slide_key = f"slide_{i}"
-            slide_validation = {"layout": "unknown", "status": "valid", "required_fields": [], "missing_fields": [], "warnings": []}
+            slide_validation = {
+                "layout": "unknown",
+                "status": "valid",
+                "required_fields": [],
+                "missing_fields": [],
+                "warnings": [],
+            }
 
             try:
                 # Parse YAML frontmatter
@@ -911,7 +1005,11 @@ async def validate_presentation_file(ctx: Context, file_path: str, template_name
             result["content_validation"][slide_key] = slide_validation
 
         # Template compatibility summary
-        result["template_compatibility"] = {"template": template_name, "all_layouts_supported": len(unsupported_layouts) == 0, "unsupported_layouts": sorted(unsupported_layouts)}
+        result["template_compatibility"] = {
+            "template": template_name,
+            "all_layouts_supported": len(unsupported_layouts) == 0,
+            "unsupported_layouts": sorted(unsupported_layouts),
+        }
 
         if len(unsupported_layouts) > 0:
             result["template_compatibility"]["errors"] = len(unsupported_layouts)

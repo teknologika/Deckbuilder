@@ -100,9 +100,21 @@ class SmartTemplateRecommendationSystem:
         # Detect if decision-focused
         decision_focused = self._detect_decision_focused(description_lower)
 
-        return ContentAnalysis(content_type=content_type, audience=audience, formality=formality, data_heavy=data_heavy, time_constraint=time_constraint, decision_focused=decision_focused)
+        return ContentAnalysis(
+            content_type=content_type,
+            audience=audience,
+            formality=formality,
+            data_heavy=data_heavy,
+            time_constraint=time_constraint,
+            decision_focused=decision_focused,
+        )
 
-    def score_template_fit(self, template_name: str, content_analysis: ContentAnalysis, template_capabilities: Optional[Dict[str, Any]] = None) -> TemplateRecommendation:
+    def score_template_fit(
+        self,
+        template_name: str,
+        content_analysis: ContentAnalysis,
+        template_capabilities: Optional[Dict[str, Any]] = None,
+    ) -> TemplateRecommendation:
         """
         Score how well a template fits the content requirements.
 
@@ -127,7 +139,15 @@ class SmartTemplateRecommendationSystem:
         total_score = audience_match * 0.3 + formality_match * 0.25 + feature_match * 0.25 + content_type_match * 0.2
 
         # Generate reasoning
-        reasoning = self._generate_fit_reasoning(template_name, content_analysis, template_capabilities, audience_match, formality_match, feature_match, content_type_match)
+        reasoning = self._generate_fit_reasoning(
+            template_name,
+            content_analysis,
+            template_capabilities,
+            audience_match,
+            formality_match,
+            feature_match,
+            content_type_match,
+        )
 
         return TemplateRecommendation(
             template=template_name,
@@ -216,7 +236,14 @@ class SmartTemplateRecommendationSystem:
                 # Generate reasoning
                 reasoning = self._generate_layout_reasoning(layout_name, content_analysis, layout_capabilities)
 
-                layout_recommendations.append({"layout": layout_name, "confidence": confidence, "reasoning": reasoning, "capabilities": layout_capabilities})
+                layout_recommendations.append(
+                    {
+                        "layout": layout_name,
+                        "confidence": confidence,
+                        "reasoning": reasoning,
+                        "capabilities": layout_capabilities,
+                    }
+                )
 
             # Sort and limit results
             layout_recommendations.sort(key=lambda x: x["confidence"], reverse=True)
@@ -237,7 +264,12 @@ class SmartTemplateRecommendationSystem:
             Dictionary with quality metrics and validation results
         """
         if not recommendations:
-            return {"quality_score": 0.0, "issues": ["No recommendations generated"], "confidence_range": (0.0, 0.0), "reasoning_quality": "poor"}
+            return {
+                "quality_score": 0.0,
+                "issues": ["No recommendations generated"],
+                "confidence_range": (0.0, 0.0),
+                "reasoning_quality": "poor",
+            }
 
         # Calculate quality metrics
         confidences = [rec.confidence for rec in recommendations]
@@ -326,7 +358,22 @@ class SmartTemplateRecommendationSystem:
 
     def _detect_data_heavy(self, description_lower: str) -> bool:
         """Detect if presentation is data-heavy."""
-        data_indicators = ["metrics", "data", "analytics", "numbers", "statistics", "performance", "kpi", "dashboard", "financial", "revenue", "quarterly", "analysis", "report", "findings"]
+        data_indicators = [
+            "metrics",
+            "data",
+            "analytics",
+            "numbers",
+            "statistics",
+            "performance",
+            "kpi",
+            "dashboard",
+            "financial",
+            "revenue",
+            "quarterly",
+            "analysis",
+            "report",
+            "findings",
+        ]
         return any(word in description_lower for word in data_indicators)
 
     def _detect_time_constraint(self, description_lower: str) -> str:
@@ -340,7 +387,23 @@ class SmartTemplateRecommendationSystem:
 
     def _detect_decision_focused(self, description_lower: str) -> bool:
         """Detect if presentation is decision-focused."""
-        decision_indicators = ["decision", "choose", "recommend", "approval", "vote", "select", "approve", "strategy", "direction", "plan", "strategic", "initiative", "board", "review", "proposal"]
+        decision_indicators = [
+            "decision",
+            "choose",
+            "recommend",
+            "approval",
+            "vote",
+            "select",
+            "approve",
+            "strategy",
+            "direction",
+            "plan",
+            "strategic",
+            "initiative",
+            "board",
+            "review",
+            "proposal",
+        ]
         return any(word in description_lower for word in decision_indicators)
 
     def _get_template_capabilities(self, template_name: str) -> Dict[str, Any]:
@@ -356,7 +419,13 @@ class SmartTemplateRecommendationSystem:
     def _build_template_capabilities(self, template_name: str) -> Dict[str, Any]:
         """Build template capabilities definition."""
         # Default capabilities
-        capabilities = {"target_audience": ["general"], "formality_level": "medium", "data_visualization": False, "professional_styling": True, "content_types": ["general_presentation"]}
+        capabilities = {
+            "target_audience": ["general"],
+            "formality_level": "medium",
+            "data_visualization": False,
+            "professional_styling": True,
+            "content_types": ["general_presentation"],
+        }
 
         # Template-specific capabilities
         if template_name == "executive_pro":
@@ -534,7 +603,12 @@ class SmartTemplateRecommendationSystem:
 
         return min(1.0, score)
 
-    def _generate_layout_reasoning(self, layout_name: str, content_analysis: ContentAnalysis, layout_capabilities: Dict[str, Any]) -> str:
+    def _generate_layout_reasoning(
+        self,
+        layout_name: str,
+        content_analysis: ContentAnalysis,
+        layout_capabilities: Dict[str, Any],
+    ) -> str:
         """Generate reasoning for layout recommendation."""
         reasons = []
 
@@ -565,7 +639,12 @@ class SmartTemplateRecommendationSystem:
             # Fallback to common templates
             return ["default", "business_pro", "executive_pro"]
 
-    def _add_fallback_recommendations(self, content_analysis: ContentAnalysis, existing_recommendations: List[TemplateRecommendation], max_recommendations: int) -> List[TemplateRecommendation]:
+    def _add_fallback_recommendations(
+        self,
+        content_analysis: ContentAnalysis,
+        existing_recommendations: List[TemplateRecommendation],
+        max_recommendations: int,
+    ) -> List[TemplateRecommendation]:
         """Add fallback recommendations if primary recommendations are insufficient."""
         fallback_recommendations = existing_recommendations.copy()
 

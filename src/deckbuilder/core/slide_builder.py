@@ -91,7 +91,7 @@ class SlideBuilder:
             speaker_notes = slide_data["speaker_notes"]
         elif "placeholders" in slide_data and "speaker_notes" in slide_data["placeholders"]:
             speaker_notes = slide_data["placeholders"]["speaker_notes"]
-        
+
         if speaker_notes:
             self.add_speaker_notes(slide, speaker_notes, content_formatter)
 
@@ -499,19 +499,52 @@ class SlideBuilder:
                 # Apply content based on semantic type detection
                 if is_title_placeholder(placeholder_type):
                     if "title" in slide_data:
-                        self._apply_content_to_single_placeholder(slide, placeholder, "title", slide_data["title"], slide_data, content_formatter, image_placeholder_handler)
+                        self._apply_content_to_single_placeholder(
+                            slide,
+                            placeholder,
+                            "title",
+                            slide_data["title"],
+                            slide_data,
+                            content_formatter,
+                            image_placeholder_handler,
+                        )
                 elif is_subtitle_placeholder(placeholder_type):
                     if "subtitle" in slide_data:
-                        self._apply_content_to_single_placeholder(slide, placeholder, "subtitle", slide_data["subtitle"], slide_data, content_formatter, image_placeholder_handler)
+                        self._apply_content_to_single_placeholder(
+                            slide,
+                            placeholder,
+                            "subtitle",
+                            slide_data["subtitle"],
+                            slide_data,
+                            content_formatter,
+                            image_placeholder_handler,
+                        )
                 elif is_content_placeholder(placeholder_type):
                     if "content" in slide_data:
-                        self._apply_content_to_single_placeholder(slide, placeholder, "content", slide_data["content"], slide_data, content_formatter, image_placeholder_handler)
+                        self._apply_content_to_single_placeholder(
+                            slide,
+                            placeholder,
+                            "content",
+                            slide_data["content"],
+                            slide_data,
+                            content_formatter,
+                            image_placeholder_handler,
+                        )
         else:
             # Standard mode: Use template mapping (handled by caller)
             # This method is called when template mapping is available
             pass
 
-    def _apply_content_to_single_placeholder(self, slide, placeholder, field_name, field_value, slide_data, content_formatter, image_placeholder_handler):
+    def _apply_content_to_single_placeholder(
+        self,
+        slide,
+        placeholder,
+        field_name,
+        field_value,
+        slide_data,
+        content_formatter,
+        image_placeholder_handler,
+    ):
         """
         Apply content to a single placeholder based on its semantic type and content type.
         This consolidates the logic from both _apply_content_by_semantic_type and fallback methods.

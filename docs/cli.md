@@ -1,4 +1,4 @@
-# Command-Line Interface (CLI) v1.2.0
+# Command-Line Interface (CLI) v1.3.0
 
 The Deckbuilder CLI provides a professional command-line interface for generating presentations, managing templates, and processing images. Enhanced in v1.2.0 with improved template management and better image processing.
 

@@ -47,7 +47,10 @@ class DeckbuilderCLI:
         if not self.path_manager.validate_template_folder_exists():
             template_folder = self.path_manager.get_template_folder()
             click.echo(f"❌ Template folder not found: {template_folder}", err=True)
-            click.echo("💡 Run 'deckbuilder init' to create template folder and copy default files", err=True)
+            click.echo(
+                "💡 Run 'deckbuilder init' to create template folder and copy default files",
+                err=True,
+            )
             return False
         return True
 
@@ -318,14 +321,18 @@ class DeckbuilderCLI:
             try:
                 # Try relative import first (for package usage)
                 try:
+                    # Generate documentation and examples
                     from deckbuilder.cli.commands import DocumentationGenerator
                 except ImportError:
+
                     # Fallback to absolute import (for direct script execution)
                     import sys
 
                     current_dir = Path(__file__).parent
                     sys.path.insert(0, str(current_dir))
-                    from cli_tools import DocumentationGenerator
+                    from deckbuilder.cli.commands import DocumentationGenerator
+                    # from cli_tools import DocumentationGenerator
+                click.echo(f"💡 Taret location: {target_path}", err=True)
                 doc_gen = DocumentationGenerator(template_folder=str(target_path))
 
                 # Generate Getting_Started.md
@@ -340,8 +347,8 @@ class DeckbuilderCLI:
                     "example_presentation.json",
                 ]
 
-                click.echo("Template folder created at", target_path)
-                click.echo("Copied:", ", ".join(files_copied))
+                click.echo(f"Template folder created at {target_path}")
+                click.echo(f"Copied: {', '.join(files_copied)}")
                 click.echo("Generated documentation:")
                 for file in generated_files:
                     click.echo(f"   - {file}")
@@ -356,8 +363,8 @@ class DeckbuilderCLI:
 
             except ImportError as e:
                 click.echo(f"Could not generate documentation: {e}", err=True)
-                click.echo("Template folder created at", target_path)
-                click.echo("Copied:", ", ".join(files_copied))
+                click.echo(f"Template folder created at", target_path)
+                click.echo(f"Copied:", ", ".join(files_copied))
                 click.echo()
 
             # Environment variable guidance
@@ -390,12 +397,12 @@ class DeckbuilderCLI:
         """Copy master presentation files as examples with example_ prefix"""
         import json
         from deckbuilder.utils.path import path_manager
-
         # Use centralized path management for master files (source of truth)
         master_md, master_json = path_manager.get_master_presentation_files()
-
+         
         # Update title in markdown content to showcase Deckbuilder
         if master_md.exists():
+            
             content = master_md.read_text()
             # Replace test title with showcase title
             updated_content = content.replace(
@@ -756,7 +763,13 @@ class DeckbuilderCLI:
             else:
                 click.echo("\nNo example available")
 
-    def copy_patterns(self, copy_all: bool = False, pattern_name: str = None, overwrite: bool = False, backup: bool = False):
+    def copy_patterns(
+        self,
+        copy_all: bool = False,
+        pattern_name: str = None,
+        overwrite: bool = False,
+        backup: bool = False,
+    ):
         """Copy built-in patterns to user override directory"""
         try:
             from deckbuilder.templates.pattern_loader import PatternLoader
@@ -811,7 +824,10 @@ class DeckbuilderCLI:
 
                 layout_name = pattern_data.get("yaml_pattern", {}).get("layout")
                 if not layout_name:
-                    click.echo(f"⚠️ Skipping pattern file without layout name: {pattern_file.name}", err=True)
+                    click.echo(
+                        f"⚠️ Skipping pattern file without layout name: {pattern_file.name}",
+                        err=True,
+                    )
                     continue
 
                 # Create target filename
@@ -820,7 +836,10 @@ class DeckbuilderCLI:
 
                 # Check if file exists
                 if target_path.exists() and not overwrite:
-                    click.echo(f"⚠️ User pattern '{layout_name}' already exists (use --overwrite to replace)", err=True)
+                    click.echo(
+                        f"⚠️ User pattern '{layout_name}' already exists (use --overwrite to replace)",
+                        err=True,
+                    )
                     continue
 
                 # Create backup if requested
@@ -954,7 +973,12 @@ def pattern():
 
 
 @pattern.command(name="list")
-@click.option("--source", type=click.Choice(["all", "builtin", "user"]), default="all", help="Pattern source filter.")
+@click.option(
+    "--source",
+    type=click.Choice(["all", "builtin", "user"]),
+    default="all",
+    help="Pattern source filter.",
+)
 @click.option("--verbose", "-v", is_flag=True, help="Show detailed pattern information.")
 @click.pass_obj
 def list_patterns(cli, source, verbose):

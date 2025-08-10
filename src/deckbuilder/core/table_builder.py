@@ -295,7 +295,12 @@ class TableBuilder:
         Returns:
             Dictionary with parsed dimensions or None values
         """
-        dimensions = {"table_width": None, "table_height": None, "column_widths": None, "row_height": None}
+        dimensions = {
+            "table_width": None,
+            "table_height": None,
+            "column_widths": None,
+            "row_height": None,
+        }
 
         # Parse table width
         if "table_width" in table_data:

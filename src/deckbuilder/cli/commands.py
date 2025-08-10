@@ -23,7 +23,10 @@ try:
     from .naming_conventions import NamingConvention, PlaceholderContext  # noqa: E402
 except ImportError:
     # Handle direct script execution
-    from deckbuilder.cli.naming_conventions import NamingConvention, PlaceholderContext  # noqa: E402
+    from deckbuilder.cli.naming_conventions import (
+        NamingConvention,
+        PlaceholderContext,
+    )  # noqa: E402
 
 
 class TemplateManager:

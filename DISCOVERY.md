@@ -280,34 +280,6 @@ This directory contains the automated tests for the project, mirroring the struc
 
 ---
 
-## File: `src/deckbuilder/content/frontmatter.py`
-
-#### Classes:
-- `StructuredFrontmatterRegistry`
-- `StructuredFrontmatterConverter`
-- `StructuredFrontmatterValidator`
-#### Methods:
-- `get_structure_patterns`
-- `get_structure_definition`
-- `_build_mapping_rules`
-- `supports_structured_frontmatter`
-- `get_supported_layouts`
-- `get_example`
-- `convert_structured_to_placeholders`
-- `_extract_value_by_path`
-- `_extract_array_value`
-- `_set_value_by_path`
-- `_set_array_value`
-- `_parse_path_with_arrays`
-- `validate_structured_frontmatter`
-- `_validate_four_columns`
-- `_validate_comparison`
-- `_validate_two_content`
-#### Functions:
-- `get_structured_frontmatter_help`
-
----
-
 ## File: `src/deckbuilder/content/matcher.py`
 
 #### Classes:
@@ -536,3 +508,72 @@ This directory contains the automated tests for the project, mirroring the struc
 - `_get_optimization_hints`
 #### Functions:
 - `test_layout_intelligence`
+
+---
+
+## File: `src/deckbuilder/templates/manager.py`
+
+#### Classes:
+- `TemplateManager`
+#### Methods:
+- `check_template_exists`
+- `load_layout_mapping`
+- `ensure_layout_mapping`
+- `get_layout_mapping`
+- `get_template_path`
+- `prepare_template`
+
+---
+
+## File: `src/deckbuilder/templates/metadata.py`
+
+#### Classes:
+- `LayoutMetadata`
+- `TemplateMetadata`
+- `TemplateMetadataLoader`
+#### Methods:
+- `_get_default_template_folder`
+- `load_template_metadata`
+- `_parse_template_data`
+- `_parse_enhanced_format`
+- `_parse_legacy_format`
+- `_extract_placeholder_names`
+- `_technical_to_semantic`
+- `_generate_layout_metadata`
+- `_determine_layout_complexity`
+- `_determine_content_type`
+- `_generate_layout_description`
+- `_generate_best_for`
+- `_determine_required_placeholders`
+- `_generate_template_description`
+- `_generate_use_cases`
+- `_determine_target_audience`
+- `get_all_available_templates`
+- `validate_template_exists`
+- `get_template_names`
+- `clear_cache`
+- `get_enhanced_layout_metadata`
+- `get_all_pattern_based_layouts`
+- `create_template_metadata_from_patterns`
+- `get_pattern_example`
+- `get_layout_validation_info`
+
+---
+
+## File: `src/deckbuilder/templates/pattern_loader.py`
+
+#### Classes:
+- `PatternLoader`
+#### Methods:
+- `__init__`
+- `load_patterns`
+- `_load_builtin_patterns`
+- `_load_user_patterns`
+- `find_pattern_file_for_layout`
+- `_load_pattern_file`
+- `get_pattern_for_layout`
+- `get_layout_names`
+- `get_patterns_by_file_source`
+- `clear_cache`
+- `validate_all_patterns`
+- `validate_pattern_file`

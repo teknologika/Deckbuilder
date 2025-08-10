@@ -1,11 +1,8 @@
 from typing import Dict, Any, Optional
 
-# Import structured frontmatter classes from content package
-from .frontmatter import StructuredFrontmatterConverter
-
 
 # Legacy alias for backward compatibility
-class FrontmatterConverter(StructuredFrontmatterConverter):
+class FrontmatterConverter:
     """Converter to be used in the new converter module"""
 
     def _process_content_field(self, content: str) -> str:
@@ -90,7 +87,12 @@ class FrontmatterConverter(StructuredFrontmatterConverter):
             [{"text": "segment", "format": {"bold": bool, "italic": bool, "underline": bool}}]
         """
         if not isinstance(cell_content, str) or not cell_content.strip():
-            return [{"text": cell_content, "format": {"bold": False, "italic": False, "underline": False}}]
+            return [
+                {
+                    "text": cell_content,
+                    "format": {"bold": False, "italic": False, "underline": False},
+                }
+            ]
 
         import re
 
@@ -109,17 +111,32 @@ class FrontmatterConverter(StructuredFrontmatterConverter):
                 if match.start() > last_end:
                     plain_text = remaining_text[last_end : match.start()]
                     if plain_text:
-                        segments.append({"text": plain_text, "format": {"bold": False, "italic": False, "underline": False}})
+                        segments.append(
+                            {
+                                "text": plain_text,
+                                "format": {"bold": False, "italic": False, "underline": False},
+                            }
+                        )
 
                 # Add the bold italic text
-                segments.append({"text": match.group(1), "format": {"bold": True, "italic": True, "underline": False}})
+                segments.append(
+                    {
+                        "text": match.group(1),
+                        "format": {"bold": True, "italic": True, "underline": False},
+                    }
+                )
                 last_end = match.end()
 
             # Add remaining text
             if last_end < len(remaining_text):
                 plain_text = remaining_text[last_end:]
                 if plain_text:
-                    segments.append({"text": plain_text, "format": {"bold": False, "italic": False, "underline": False}})
+                    segments.append(
+                        {
+                            "text": plain_text,
+                            "format": {"bold": False, "italic": False, "underline": False},
+                        }
+                    )
             return segments
 
         # Pattern for ___underline___ (3 underscores on each side)
@@ -133,17 +150,32 @@ class FrontmatterConverter(StructuredFrontmatterConverter):
                 if match.start() > last_end:
                     plain_text = remaining_text[last_end : match.start()]
                     if plain_text:
-                        segments.append({"text": plain_text, "format": {"bold": False, "italic": False, "underline": False}})
+                        segments.append(
+                            {
+                                "text": plain_text,
+                                "format": {"bold": False, "italic": False, "underline": False},
+                            }
+                        )
 
                 # Add the underlined text
-                segments.append({"text": match.group(1), "format": {"bold": False, "italic": False, "underline": True}})
+                segments.append(
+                    {
+                        "text": match.group(1),
+                        "format": {"bold": False, "italic": False, "underline": True},
+                    }
+                )
                 last_end = match.end()
 
             # Add remaining text
             if last_end < len(remaining_text):
                 plain_text = remaining_text[last_end:]
                 if plain_text:
-                    segments.append({"text": plain_text, "format": {"bold": False, "italic": False, "underline": False}})
+                    segments.append(
+                        {
+                            "text": plain_text,
+                            "format": {"bold": False, "italic": False, "underline": False},
+                        }
+                    )
             return segments
 
         # Pattern for **bold** (2 asterisks on each side)
@@ -157,17 +189,32 @@ class FrontmatterConverter(StructuredFrontmatterConverter):
                 if match.start() > last_end:
                     plain_text = remaining_text[last_end : match.start()]
                     if plain_text:
-                        segments.append({"text": plain_text, "format": {"bold": False, "italic": False, "underline": False}})
+                        segments.append(
+                            {
+                                "text": plain_text,
+                                "format": {"bold": False, "italic": False, "underline": False},
+                            }
+                        )
 
                 # Add the bold text
-                segments.append({"text": match.group(1), "format": {"bold": True, "italic": False, "underline": False}})
+                segments.append(
+                    {
+                        "text": match.group(1),
+                        "format": {"bold": True, "italic": False, "underline": False},
+                    }
+                )
                 last_end = match.end()
 
             # Add remaining text
             if last_end < len(remaining_text):
                 plain_text = remaining_text[last_end:]
                 if plain_text:
-                    segments.append({"text": plain_text, "format": {"bold": False, "italic": False, "underline": False}})
+                    segments.append(
+                        {
+                            "text": plain_text,
+                            "format": {"bold": False, "italic": False, "underline": False},
+                        }
+                    )
             return segments
 
         # Pattern for *italic* (1 asterisk on each side)
@@ -181,17 +228,32 @@ class FrontmatterConverter(StructuredFrontmatterConverter):
                 if match.start() > last_end:
                     plain_text = remaining_text[last_end : match.start()]
                     if plain_text:
-                        segments.append({"text": plain_text, "format": {"bold": False, "italic": False, "underline": False}})
+                        segments.append(
+                            {
+                                "text": plain_text,
+                                "format": {"bold": False, "italic": False, "underline": False},
+                            }
+                        )
 
                 # Add the italic text
-                segments.append({"text": match.group(1), "format": {"bold": False, "italic": True, "underline": False}})
+                segments.append(
+                    {
+                        "text": match.group(1),
+                        "format": {"bold": False, "italic": True, "underline": False},
+                    }
+                )
                 last_end = match.end()
 
             # Add remaining text
             if last_end < len(remaining_text):
                 plain_text = remaining_text[last_end:]
                 if plain_text:
-                    segments.append({"text": plain_text, "format": {"bold": False, "italic": False, "underline": False}})
+                    segments.append(
+                        {
+                            "text": plain_text,
+                            "format": {"bold": False, "italic": False, "underline": False},
+                        }
+                    )
             return segments
 
         # No formatting found - return as plain text
@@ -247,7 +309,13 @@ def _extract_table_from_content(content: str, slide_data: dict) -> Optional[dict
         return None
 
     # Create table object with styling from frontmatter
-    table_obj = {"data": table_data, "header_style": "dark_blue_white_text", "row_style": "alternating_light_gray", "border_style": "thin_gray", "custom_colors": {}}  # default  # default  # default
+    table_obj = {
+        "data": table_data,
+        "header_style": "dark_blue_white_text",
+        "row_style": "alternating_light_gray",
+        "border_style": "thin_gray",
+        "custom_colors": {},
+    }  # default  # default  # default
 
     # Apply frontmatter styling properties
     if "style" in slide_data:
@@ -309,7 +377,13 @@ def markdown_to_canonical_json(markdown_content: str) -> Dict[str, Any]:
             content_blocks = []
             for block in slide_data["rich_content"]:
                 if "heading" in block:
-                    content_blocks.append({"type": "heading", "text": block["heading"], "level": block.get("level", 2)})
+                    content_blocks.append(
+                        {
+                            "type": "heading",
+                            "text": block["heading"],
+                            "level": block.get("level", 2),
+                        }
+                    )
                 elif "paragraph" in block:
                     content_blocks.append({"type": "paragraph", "text": block["paragraph"]})
                 elif "bullets" in block:
@@ -325,7 +399,14 @@ def markdown_to_canonical_json(markdown_content: str) -> Dict[str, Any]:
                 slide_obj["placeholders"]["content"] = content_blocks
 
         # Check for table-related frontmatter properties to determine table handling
-        table_properties = ["column_widths", "row_height", "table_width", "row_style", "border_style", "style"]
+        table_properties = [
+            "column_widths",
+            "row_height",
+            "table_width",
+            "row_style",
+            "border_style",
+            "style",
+        ]
         has_table_properties = any(key in slide_data for key in table_properties) or "table_data" in slide_data
 
         # Check if we need to create a table object from content or table_data field
@@ -366,8 +447,20 @@ def markdown_to_canonical_json(markdown_content: str) -> Dict[str, Any]:
         if table_data:
             slide_obj["table"] = table_data
 
+        # Add speaker_notes to slide level if present
+        if "speaker_notes" in slide_data:
+            slide_obj["speaker_notes"] = slide_data["speaker_notes"]
+
         # Add other placeholder fields from frontmatter (exclude internal fields and table properties)
-        excluded_fields = ["type", "rich_content", "style", "layout", "title_formatted", "subtitle_formatted"]
+        excluded_fields = [
+            "type",
+            "rich_content",
+            "style",
+            "layout",
+            "title_formatted",
+            "subtitle_formatted",
+            "speaker_notes",  # Handle at slide level, not as placeholder
+        ]
 
         # Also exclude table properties from placeholders since they go in the table object
         if has_table_properties:

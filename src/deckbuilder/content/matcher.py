@@ -50,7 +50,18 @@ class ContentTemplateMatcher:
             audience = "executive"
         elif any(word in content_lower for word in ["team", "internal", "staff", "responsibilities"]):
             audience = "team"
-        elif any(word in content_lower for word in ["client", "customer", "business", "target", "sales", "regional", "performance"]):
+        elif any(
+            word in content_lower
+            for word in [
+                "client",
+                "customer",
+                "business",
+                "target",
+                "sales",
+                "regional",
+                "performance",
+            ]
+        ):
             audience = "business"
 
         # Enhanced formality detection
@@ -61,7 +72,20 @@ class ContentTemplateMatcher:
             formality = "low"
 
         # Enhanced data detection
-        data_heavy = any(word in content_lower for word in ["data", "metrics", "analysis", "financial", "numbers", "statistics", "performance", "pricing", "features"])
+        data_heavy = any(
+            word in content_lower
+            for word in [
+                "data",
+                "metrics",
+                "analysis",
+                "financial",
+                "numbers",
+                "statistics",
+                "performance",
+                "pricing",
+                "features",
+            ]
+        )
 
         # Enhanced structure detection
         structure = "general"
@@ -74,7 +98,13 @@ class ContentTemplateMatcher:
         elif any(word in content_lower for word in ["timeline", "chronological", "milestone"]):
             structure = "chronological"
 
-        return {"content_type": content_type, "audience": audience, "formality": formality, "data_heavy": data_heavy, "structure": structure}
+        return {
+            "content_type": content_type,
+            "audience": audience,
+            "formality": formality,
+            "data_heavy": data_heavy,
+            "structure": structure,
+        }
 
     def match_content_to_templates(self, content_analysis: Dict[str, Any], available_templates: List[str]) -> List[Dict[str, Any]]:
         """Match analyzed content to optimal templates.
@@ -126,12 +156,19 @@ class ContentTemplateMatcher:
 
             # Calculate fit score breakdown
             fit_score = {
-                "audience_match": 1.0 if audience == "executive" and "business" in template else 0.8,
+                "audience_match": (1.0 if audience == "executive" and "business" in template else 0.8),
                 "formality_match": 1.0 if formality == "high" and "pro" in template else 0.7,
                 "feature_match": 0.9 if data_heavy and "pro" in template else 0.6,
             }
 
-            matches.append({"template": template, "confidence": confidence, "reasoning": reasoning, "fit_score": fit_score})
+            matches.append(
+                {
+                    "template": template,
+                    "confidence": confidence,
+                    "reasoning": reasoning,
+                    "fit_score": fit_score,
+                }
+            )
 
         # Sort by confidence
         matches.sort(key=lambda x: x["confidence"], reverse=True)

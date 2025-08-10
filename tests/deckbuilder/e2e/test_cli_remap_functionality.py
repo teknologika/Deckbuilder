@@ -33,7 +33,7 @@ class TestCLIRemapFunctionality:
             result = subprocess.run(
                 [
                     "python",
-                    str(Path(__file__).parent.parent.parent.parent / "src" / "deckbuilder" / "cli.py"),
+                    "-m", "deckbuilder.cli.main",
                     "create",
                     str(golden_file),
                     "--output",
@@ -115,7 +115,7 @@ class TestCLIRemapFunctionality:
             result = subprocess.run(
                 [
                     "python",
-                    str(Path(__file__).parent.parent.parent.parent / "src" / "deckbuilder" / "cli.py"),
+                    "-m", "deckbuilder.cli.main",
                     "remap",
                     temp_file_path,
                     "--language",
@@ -143,7 +143,7 @@ class TestCLIRemapFunctionality:
             result = subprocess.run(
                 [
                     "python",
-                    str(Path(__file__).parent.parent.parent.parent / "src" / "deckbuilder" / "cli.py"),
+                    "-m", "deckbuilder.cli.main",
                     "remap",
                     temp_file_path,
                 ],
@@ -307,7 +307,7 @@ class TestCLIRemapFunctionality:
             result = subprocess.run(
                 [
                     "python",
-                    str(Path(__file__).parent.parent.parent.parent / "src" / "deckbuilder" / "cli.py"),
+                    "-m", "deckbuilder.cli.main",
                     "remap",
                     str(test_file),
                     "--language",
@@ -334,7 +334,7 @@ class TestCLIRemapFunctionality:
             result = subprocess.run(
                 [
                     "python",
-                    str(Path(__file__).parent.parent.parent.parent / "src" / "deckbuilder" / "cli.py"),
+                    "-m", "deckbuilder.cli.main",
                     "remap",
                     str(test_file),
                     "--font",

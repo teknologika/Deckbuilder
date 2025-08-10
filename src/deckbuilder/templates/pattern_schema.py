@@ -25,26 +25,62 @@ class PatternSchemaValidator:
             "title": "Pattern File Schema",
             "description": "Schema for structured frontmatter pattern files",
             "properties": {
-                "description": {"type": "string", "description": "Human-readable description of the layout", "minLength": 10, "maxLength": 500},
+                "description": {
+                    "type": "string",
+                    "description": "Human-readable description of the layout",
+                    "minLength": 10,
+                    "maxLength": 500,
+                },
                 "yaml_pattern": {
                     "type": "object",
                     "description": "YAML pattern defining the layout structure",
-                    "properties": {"layout": {"type": "string", "description": "Layout name matching PowerPoint template", "minLength": 1, "maxLength": 100}},
+                    "properties": {
+                        "layout": {
+                            "type": "string",
+                            "description": "Layout name matching PowerPoint template",
+                            "minLength": 1,
+                            "maxLength": 100,
+                        }
+                    },
                     "required": ["layout"],
-                    "additionalProperties": {"type": "string", "enum": ["str", "int", "bool", "list"]},
+                    "additionalProperties": {
+                        "type": "string",
+                        "enum": ["str", "int", "bool", "list"],
+                    },
                 },
                 "validation": {
                     "type": "object",
                     "description": "Validation rules for pattern fields",
                     "properties": {
-                        "required_fields": {"type": "array", "description": "List of required field names", "items": {"type": "string", "minLength": 1}, "uniqueItems": True},
-                        "optional_fields": {"type": "array", "description": "List of optional field names", "items": {"type": "string", "minLength": 1}, "uniqueItems": True},
-                        "field_types": {"type": "object", "description": "Field type definitions", "additionalProperties": {"type": "string", "enum": ["string", "integer", "boolean", "array"]}},
+                        "required_fields": {
+                            "type": "array",
+                            "description": "List of required field names",
+                            "items": {"type": "string", "minLength": 1},
+                            "uniqueItems": True,
+                        },
+                        "optional_fields": {
+                            "type": "array",
+                            "description": "List of optional field names",
+                            "items": {"type": "string", "minLength": 1},
+                            "uniqueItems": True,
+                        },
+                        "field_types": {
+                            "type": "object",
+                            "description": "Field type definitions",
+                            "additionalProperties": {
+                                "type": "string",
+                                "enum": ["string", "integer", "boolean", "array"],
+                            },
+                        },
                     },
                     "required": ["required_fields"],
                     "additionalProperties": False,
                 },
-                "example": {"type": "string", "description": "Example markdown with frontmatter", "minLength": 10},
+                "example": {
+                    "type": "string",
+                    "description": "Example markdown with frontmatter",
+                    "minLength": 10,
+                },
             },
             "required": ["description", "yaml_pattern", "validation", "example"],
             "additionalProperties": False,

@@ -91,17 +91,65 @@ class LayoutCapabilityAnalyzer:
 
         # Enhanced rule-based recommendations
         if content_type == "comparison" or structure == "categorical":
-            recommendations.append({"layout": "Four Columns", "confidence": 0.9, "reasoning": "Content structure matches categorical comparison needs"})
-            recommendations.append({"layout": "Comparison", "confidence": 0.8, "reasoning": "Alternative for direct side-by-side comparison"})
+            recommendations.append(
+                {
+                    "layout": "Four Columns",
+                    "confidence": 0.9,
+                    "reasoning": "Content structure matches categorical comparison needs",
+                }
+            )
+            recommendations.append(
+                {
+                    "layout": "Comparison",
+                    "confidence": 0.8,
+                    "reasoning": "Alternative for direct side-by-side comparison",
+                }
+            )
         elif content_type == "training" or audience == "learners":
-            recommendations.append({"layout": "Title and Content", "confidence": 0.85, "reasoning": "Ideal for instructional content with clear structure"})
-            recommendations.append({"layout": "Four Columns", "confidence": 0.7, "reasoning": "Good for step-by-step processes"})
+            recommendations.append(
+                {
+                    "layout": "Title and Content",
+                    "confidence": 0.85,
+                    "reasoning": "Ideal for instructional content with clear structure",
+                }
+            )
+            recommendations.append(
+                {
+                    "layout": "Four Columns",
+                    "confidence": 0.7,
+                    "reasoning": "Good for step-by-step processes",
+                }
+            )
         elif data_heavy or audience == "executive":
-            recommendations.append({"layout": "Four Columns", "confidence": 0.85, "reasoning": "Excellent for data presentation and analysis"})
-            recommendations.append({"layout": "Comparison", "confidence": 0.75, "reasoning": "Good for data comparisons"})
+            recommendations.append(
+                {
+                    "layout": "Four Columns",
+                    "confidence": 0.85,
+                    "reasoning": "Excellent for data presentation and analysis",
+                }
+            )
+            recommendations.append(
+                {
+                    "layout": "Comparison",
+                    "confidence": 0.75,
+                    "reasoning": "Good for data comparisons",
+                }
+            )
         else:
             # Default recommendations for general content
-            recommendations.append({"layout": "Title and Content", "confidence": 0.7, "reasoning": "Versatile layout for general content"})
-            recommendations.append({"layout": "Four Columns", "confidence": 0.6, "reasoning": "Alternative for structured information"})
+            recommendations.append(
+                {
+                    "layout": "Title and Content",
+                    "confidence": 0.7,
+                    "reasoning": "Versatile layout for general content",
+                }
+            )
+            recommendations.append(
+                {
+                    "layout": "Four Columns",
+                    "confidence": 0.6,
+                    "reasoning": "Alternative for structured information",
+                }
+            )
 
         return recommendations

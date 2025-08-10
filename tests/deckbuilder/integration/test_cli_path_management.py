@@ -7,10 +7,11 @@ from unittest.mock import patch, MagicMock
 import pytest
 from click.testing import CliRunner  # Added import
 
+
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))  # noqa: E402
 
-from deckbuilder.cli import DeckbuilderCLI  # noqa: E402
-from deckbuilder.utils.path import path_manager  # Added import
+from deckbuilder.cli.main import DeckbuilderCLI    # noqa: E402
+from deckbuilder.utils.path import path_manager  # Added import # noqa: E402
 
 
 class TestCLIPathManagement:
