@@ -128,7 +128,9 @@ class SlideBuilder:
 
                         # Also set default character formatting for the text frame
                         if hasattr(content_placeholder.text_frame, "auto_size"):
-                            content_placeholder.text_frame.auto_size = True
+                            from pptx.enum.text import MSO_AUTO_SIZE
+
+                            content_placeholder.text_frame.auto_size = MSO_AUTO_SIZE.TEXT_TO_FIT_SHAPE
 
                         debug_print(f"    Applied title font size ({title_font_size.pt if hasattr(title_font_size, 'pt') else title_font_size}) to content placeholder")
 
@@ -863,7 +865,7 @@ class SlideBuilder:
                         existing_tables.append(shape)
                         debug_print(f"    {shape_info}-> FOUND TABLE (table attr, {rows}x{cols})")
                         continue
-                    except Exception:
+                    except Exception:  # nosec B110
                         pass
 
                 # Method 3: Check element tag name (backup method)
@@ -1198,7 +1200,7 @@ class SlideBuilder:
             try:
                 if is_content_placeholder(shape.placeholder_format.type):
                     return shape
-            except Exception:
+            except Exception:  # nosec B112
                 continue
         return None
 
@@ -1216,7 +1218,7 @@ class SlideBuilder:
             try:
                 if is_title_placeholder(shape.placeholder_format.type):
                     return shape
-            except Exception:
+            except Exception:  # nosec B112
                 continue
         return None
 
@@ -1253,7 +1255,7 @@ class SlideBuilder:
                     # This might give us template defaults, but it's complex
                     _ = placeholder._element.part.slide_master
                     debug_print("    No explicit font size found, using intelligent default")
-                except Exception:
+                except Exception:  # nosec B110
                     pass
 
         except Exception as e:
