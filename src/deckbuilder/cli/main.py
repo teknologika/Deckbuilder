@@ -21,13 +21,12 @@ def clear_hidden_flag(path):
         subprocess.run(["chflags", "nohidden", str(path)], check=False)
 
 
-import click
-
 # Conditional imports for development vs installed package
-from ..core.engine import Deckbuilder
-from .commands import TemplateManager
-from ..content.formatting_support import FormattingSupport, print_supported_languages
-from ..utils.path import create_cli_path_manager
+import click
+from ..core.engine import Deckbuilder  # noqa: E402
+from .commands import TemplateManager  # noqa: E402
+from ..content.formatting_support import FormattingSupport, print_supported_languages  # noqa: E402
+from ..utils.path import create_cli_path_manager  # noqa: E402
 
 # PlaceKitten import with fallback
 try:
@@ -129,13 +128,13 @@ class DeckbuilderCLI:
             markdown_content = None
 
             if input_path.suffix.lower() == ".md":
-                from deckbuilder.content import converter
+                from deckbuilder.content.frontmatter_to_json_converter import markdown_to_canonical_json
                 from deckbuilder.core.validation import PresentationValidator
 
                 # Process markdown file
                 markdown_content = input_path.read_text(encoding="utf-8")
                 click.echo(f"Processing markdown file: {input_path.name}")
-                presentation_data = converter.markdown_to_canonical_json(markdown_content)
+                presentation_data = markdown_to_canonical_json(markdown_content)
 
                 # STEP 0: Validate Markdown → JSON conversion
                 template_folder = str(self.path_manager.get_template_folder())
@@ -374,8 +373,8 @@ class DeckbuilderCLI:
 
             except ImportError as e:
                 click.echo(f"Could not generate documentation: {e}", err=True)
-                click.echo(f"Template folder created at", target_path)
-                click.echo(f"Copied:", ", ".join(files_copied))
+                click.echo("Template folder created at", target_path)
+                click.echo("Copied:", ", ".join(files_copied))
                 click.echo()
 
             # Environment variable guidance
@@ -907,7 +906,7 @@ class DeckbuilderCLI:
         click.echo(f"        {completion_url}")
 
 
-@click.group(context_settings=dict(help_option_names=["-h", "--help"]))
+@click.group(context_settings={"help_option_names": ["-h", "--help"]})
 @click.option("-t", "--template-folder", metavar="PATH", help="Template folder path.")
 @click.option("-l", "--language", metavar="LANG", help="Proofing language (e.g., en-US).")
 @click.option("-f", "--font", metavar="FONT", help='Default font family (e.g., "Calibri").')

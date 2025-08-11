@@ -1,4 +1,5 @@
 from pptx.enum.shapes import PP_PLACEHOLDER_TYPE
+from pptx.util import Cm
 
 from ..content.placeholder_types import (
     is_content_placeholder,
@@ -83,6 +84,7 @@ class SlideBuilder:
         self._copy_placeholder_names_from_mapping(slide, layout_name)
 
         # Add content to placeholders using template mapping + semantic detection
+        # For dynamic shapes, content placeholder already contains first text segment only
         self._apply_content_to_mapped_placeholders(slide, slide_data, layout_name, content_formatter, image_placeholder_handler)
 
         # Add speaker notes if they exist in slide_data or placeholders
@@ -97,6 +99,45 @@ class SlideBuilder:
 
         # ENHANCED: Handle dynamic multi-shape creation for mixed content
         if slide_data.get("_requires_dynamic_shapes") and slide_data.get("_content_segments"):
+            # CRITICAL: Clean up content placeholder before dynamic shape creation
+            content_placeholder = self._find_content_placeholder(slide)
+            if content_placeholder and hasattr(content_placeholder, "text_frame"):
+                # Get first text segment for content placeholder
+                first_text_segment = next((seg for seg in slide_data["_content_segments"] if seg["type"] == "text"), None)
+                if first_text_segment:
+                    # Clear any existing mixed content and set only first text segment
+                    content_placeholder.text_frame.clear()
+                    content_placeholder.text_frame.text = first_text_segment["content"].strip()
+
+                    # CRITICAL: Apply consistent font sizing to match title placeholder
+                    title_placeholder = self._find_title_placeholder(slide)
+                    if title_placeholder and hasattr(title_placeholder, "text_frame"):
+                        # Get font size from title to ensure consistency
+                        title_font_size = self._get_placeholder_font_size(title_placeholder)
+
+                        # Apply same font size to content placeholder paragraphs and runs
+                        for paragraph in content_placeholder.text_frame.paragraphs:
+                            # Set paragraph level font
+                            if paragraph.font:
+                                paragraph.font.size = title_font_size
+
+                            # Set run level fonts
+                            for run in paragraph.runs:
+                                if run.font:
+                                    run.font.size = title_font_size
+
+                        # Also set default character formatting for the text frame
+                        if hasattr(content_placeholder.text_frame, "auto_size"):
+                            content_placeholder.text_frame.auto_size = True
+
+                        debug_print(f"    Applied title font size ({title_font_size.pt if hasattr(title_font_size, 'pt') else title_font_size}) to content placeholder")
+
+                    debug_print(f"    Cleaned content placeholder: set to first text segment only ({len(first_text_segment['content'])} chars)")
+                else:
+                    # No text segments, clear the placeholder
+                    content_placeholder.text_frame.clear()
+                    debug_print("    Cleaned content placeholder: cleared (no text segments)")
+
             self._create_dynamic_content_shapes(slide, slide_data, content_formatter)
 
         # All content should be processed through placeholders only - no legacy content blocks
@@ -387,8 +428,11 @@ class SlideBuilder:
         # Process nested structures like media.image_path
         self._process_nested_image_fields(slide, slide_data, image_placeholder_handler)
 
-        # Process table data if present
-        self._process_table_data(slide, slide_data, content_formatter)
+        # Process table data if present - ONLY if not using dynamic shapes
+        if not slide_data.get("_requires_dynamic_shapes"):
+            self._process_table_data(slide, slide_data, content_formatter)
+        else:
+            debug_print("  Skipping static table processing - using dynamic multi-shape creation")
 
     def _resolve_field_name_variations(self, field_name: str, field_to_index: dict) -> str:
         """
@@ -524,7 +568,8 @@ class SlideBuilder:
                             image_placeholder_handler,
                         )
                 elif is_content_placeholder(placeholder_type):
-                    if "content" in slide_data:
+                    if "content" in slide_data and not slide_data.get("_requires_dynamic_shapes"):
+                        # Only process content normally if NOT using dynamic shape creation
                         self._apply_content_to_single_placeholder(
                             slide,
                             placeholder,
@@ -938,7 +983,6 @@ class SlideBuilder:
             slide_data: Dictionary containing _content_segments
             content_formatter: ContentFormatter instance for text formatting
         """
-        from pptx.util import Cm
         from .table_builder import TableBuilder
 
         content_segments = slide_data.get("_content_segments", [])
@@ -966,15 +1010,23 @@ class SlideBuilder:
             error_print("    Warning: No content placeholder found for dynamic shape positioning")
             return
 
-        # Calculate positioning parameters
+        # Calculate positioning parameters using placeholder properties
         start_left = content_placeholder.left
         start_top = content_placeholder.top
         available_width = content_placeholder.width
-        current_top = start_top
 
-        # Standard spacing
-        text_shape_height = Cm(2.5)  # Reasonable height for text shapes
-        spacing_between_shapes = Cm(0.5)  # Space between text and tables
+        # Get font-based sizing from placeholder
+        base_font_size = self._get_placeholder_font_size(content_placeholder)
+        line_height = base_font_size * 1.2  # Standard 1.2 line spacing
+
+        # Dynamic spacing based on font size
+        text_shape_height = line_height * 2  # Height for 2 lines of text
+        spacing_between_shapes = Cm(0.5)  # 0.5cm gap as requested
+
+        # Calculate initial positioning - start after the content placeholder
+        # The content placeholder now contains the first text segment, so position after it
+        placeholder_bottom = start_top + content_placeholder.height
+        current_top = placeholder_bottom + spacing_between_shapes
 
         # Process each content segment
         table_builder = TableBuilder(content_formatter)
@@ -984,17 +1036,18 @@ class SlideBuilder:
             if segment["type"] == "text":
                 segment_index += 1
 
-                # Skip first text segment if it's already in the main content placeholder
+                # First text segment is handled by the main content placeholder
+                # but we need to account for its space when positioning subsequent elements
                 if segment_index == 1:
-                    # First text segment should already be in content placeholder
-                    # Calculate height of content placeholder content for positioning
-                    placeholder_height = self._estimate_placeholder_content_height(content_placeholder)
-                    current_top += placeholder_height + spacing_between_shapes
-                    debug_print(f"    Skipping first text segment (in main placeholder), next position: {current_top}")
+                    # Calculate height needed for this first text segment
+                    text_lines = segment["content"].count("\n") + 1
+                    first_segment_height = line_height * text_lines
+                    current_top += first_segment_height + spacing_between_shapes
+                    debug_print(f"    First text segment in main placeholder, height: {first_segment_height}, next position: {current_top}")
                     continue
 
-                # Create additional text shape for subsequent text segments
-                text_shape = slide.shapes.add_textbox(start_left, current_top, available_width, text_shape_height)
+                # Create additional text shape for subsequent text segments (ensure integer EMU values)
+                text_shape = slide.shapes.add_textbox(int(start_left), int(current_top), int(available_width), int(text_shape_height))
 
                 # Apply content formatting
                 content_formatter.apply_inline_formatting(segment["content"], text_shape.text_frame.paragraphs[0])
@@ -1008,29 +1061,57 @@ class SlideBuilder:
 
                 # Create positioned table creation function
 
-                def positioned_table_creation(slide, table_data):
+                def positioned_table_creation(slide, table_data, table_top):
                     """Override table positioning for dynamic layout"""
                     # Get table data
                     data = table_data.get("data", table_data.get("rows", []))
                     if not data:
                         return
 
-                    # Calculate table dimensions
+                    # Calculate table dimensions based on content and row height
                     rows = len(data)
                     cols = len(data[0]) if data else 1
-                    table_height = Cm(0.8 * rows + 1.5)  # Estimate based on row count
 
-                    # Create table at calculated position
-                    table = slide.shapes.add_table(rows, cols, start_left, current_top, available_width, table_height).table
+                    # Get row height from table data or use font-based default
+                    configured_row_height = table_data.get("row_height")
 
-                    # Apply table data and styling using original logic
+                    if configured_row_height:
+                        try:
+                            row_height_cm = float(configured_row_height)
+                            table_height = Cm(row_height_cm * rows + 0.5)  # Add padding
+                        except (ValueError, TypeError):
+                            table_height = line_height * rows * 1.5  # Font-based fallback
+                    else:
+                        table_height = line_height * rows * 1.5  # Font-based default
+
+                    # Create table at calculated position (ensure integer EMU values)
+                    table = slide.shapes.add_table(rows, cols, int(start_left), int(table_top), int(available_width), int(table_height)).table
+
+                    # Apply table data and styling with font-aware sizing
+                    # Use placeholder font size as base for table fonts
+                    font_size_pt = int(base_font_size.pt) if hasattr(base_font_size, "pt") else 12
+
+                    # Add font sizing to table data if not specified
+                    if not table_data.get("header_font_size"):
+                        table_data["header_font_size"] = font_size_pt
+                    if not table_data.get("data_font_size"):
+                        table_data["data_font_size"] = max(8, font_size_pt - 2)  # Slightly smaller for data
+
+                    # Apply row height if configured
+                    if configured_row_height:
+                        try:
+                            row_height_emu = Cm(float(configured_row_height))
+                            table_builder._apply_row_heights(table, row_height_emu)
+                        except (ValueError, TypeError) as e:
+                            debug_print(f"    Warning: Could not apply row height: {e}")
+
                     table_builder._apply_table_data_and_styling(table, table_data)
 
                     return table_height
 
                 # Create the table
                 try:
-                    table_height = positioned_table_creation(slide, table_data)
+                    table_height = positioned_table_creation(slide, table_data, current_top)
                     debug_print(f"    Created table at position {current_top}, height: {table_height}")
                     current_top += table_height + spacing_between_shapes
                 except Exception as e:
@@ -1039,6 +1120,148 @@ class SlideBuilder:
                     table_builder.add_table_to_slide(slide, table_data)
 
         debug_print(f"    Dynamic shape creation completed, final position: {current_top}")
+
+    def _apply_content_to_mapped_placeholders_selective(self, slide, slide_data, layout_name, content_formatter, image_placeholder_handler, skip_content=False):
+        """
+        Selective version of _apply_content_to_mapped_placeholders that can skip content placeholders.
+        Used when dynamic shape processing handles content but we still need to process title, subtitle, etc.
+        """
+        if not self.layout_mapping:
+            return
+
+        # Get layout info from template mapping
+        layouts = self.layout_mapping.get("layouts", {})
+        layout_info = layouts.get(layout_name, {})
+        placeholder_mappings = layout_info.get("placeholders", {})
+
+        # Create reverse mapping: field_name -> placeholder_index
+        field_to_placeholder = {}
+        for field_name, placeholder_index in placeholder_mappings.items():
+            field_to_placeholder[field_name] = placeholder_index
+
+        # Get available placeholders on the slide
+        placeholders_by_index = {}
+        for shape in slide.placeholders:
+            placeholders_by_index[shape.placeholder_format.idx] = shape
+
+        # Process each field in slide_data, mapping to placeholders
+        processed_fields = set()
+
+        # First priority: Process placeholders section
+        if "placeholders" in slide_data:
+            placeholders = slide_data["placeholders"]
+            for field_name, content in placeholders.items():
+                # For dynamic shapes, completely skip content placeholders during template mapping
+                # The cleanup process will handle content properly
+                if skip_content and field_name == "content":
+                    debug_print(f"    Skipping content field '{field_name}' - will be handled by dynamic shape cleanup")
+                    continue
+
+                placeholder_index = field_to_placeholder.get(field_name)
+                if placeholder_index is not None and placeholder_index in placeholders_by_index:
+                    placeholder = placeholders_by_index[placeholder_index]
+                    try:
+                        self._apply_content_to_single_placeholder(slide, placeholder, field_name, content, slide_data, content_formatter, image_placeholder_handler)
+                        processed_fields.add(field_name)
+                    except Exception as e:
+                        error_print(f"    Error applying content to placeholder {field_name}: {e}")
+
+        # Second priority: Process direct fields in slide_data
+        for field_name, content in slide_data.items():
+            if field_name in ["placeholders", "layout", "style", "_content_segments", "_requires_dynamic_shapes", "_table_count"] or field_name.startswith("_"):
+                continue
+            if field_name in processed_fields:
+                continue
+            if skip_content and field_name == "content":
+                debug_print(f"    Skipping content field '{field_name}' - will be handled by dynamic shape cleanup")
+                continue
+
+            placeholder_index = field_to_placeholder.get(field_name)
+            if placeholder_index is not None and placeholder_index in placeholders_by_index:
+                placeholder = placeholders_by_index[placeholder_index]
+                try:
+                    self._apply_content_to_single_placeholder(slide, placeholder, field_name, content, slide_data, content_formatter, image_placeholder_handler)
+                except Exception as e:
+                    error_print(f"    Error applying content to placeholder {field_name}: {e}")
+
+    def _find_content_placeholder(self, slide):
+        """
+        Find the content placeholder in the slide.
+
+        Args:
+            slide: PowerPoint slide object
+
+        Returns:
+            Content placeholder shape or None if not found
+        """
+        for shape in slide.placeholders:
+            try:
+                if is_content_placeholder(shape.placeholder_format.type):
+                    return shape
+            except Exception:
+                continue
+        return None
+
+    def _find_title_placeholder(self, slide):
+        """
+        Find the title placeholder in the slide.
+
+        Args:
+            slide: PowerPoint slide object
+
+        Returns:
+            Title placeholder shape or None if not found
+        """
+        for shape in slide.placeholders:
+            try:
+                if is_title_placeholder(shape.placeholder_format.type):
+                    return shape
+            except Exception:
+                continue
+        return None
+
+    def _get_placeholder_font_size(self, placeholder):
+        """
+        Extract font size from placeholder for consistent sizing.
+
+        Args:
+            placeholder: PowerPoint placeholder shape
+
+        Returns:
+            Font size in EMU units
+        """
+        from pptx.util import Pt
+
+        try:
+            if hasattr(placeholder, "text_frame") and placeholder.text_frame:
+                # Try to get font size from runs first
+                for paragraph in placeholder.text_frame.paragraphs:
+                    if paragraph.runs:
+                        for run in paragraph.runs:
+                            if run.font.size:
+                                debug_print(f"    Found font size from run: {run.font.size.pt}pt")
+                                return run.font.size
+
+                # Try to get from paragraph font
+                for paragraph in placeholder.text_frame.paragraphs:
+                    if paragraph.font and paragraph.font.size:
+                        debug_print(f"    Found font size from paragraph: {paragraph.font.size.pt}pt")
+                        return paragraph.font.size
+
+                # Try template default - check slide master
+                try:
+                    # This might give us template defaults, but it's complex
+                    _ = placeholder._element.part.slide_master
+                    debug_print("    No explicit font size found, using intelligent default")
+                except Exception:
+                    pass
+
+        except Exception as e:
+            debug_print(f"    Error getting placeholder font size: {e}")
+
+        # Intelligent fallback - use a reasonable size for presentations
+        debug_print("    Using fallback font size: 18pt")
+        return Pt(18)  # Slightly larger default for presentations
 
     def _estimate_placeholder_content_height(self, placeholder):
         """
@@ -1050,8 +1273,6 @@ class SlideBuilder:
         Returns:
             Estimated height in EMU units
         """
-        from pptx.util import Cm
-
         if not hasattr(placeholder, "text_frame") or not placeholder.text_frame.text:
             return Cm(1)  # Minimal height for empty placeholder
 

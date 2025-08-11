@@ -7,7 +7,7 @@ Handles detection of text + table + text patterns and creates typed content segm
 This module is focused on content boundary detection and segmentation logic.
 """
 
-from typing import Dict, Any, List
+# from typing import Dict, Any  # Unused imports removed
 from .table_parser import parse_markdown_table
 
 
@@ -20,148 +20,111 @@ def split_mixed_content_intelligently(content: str, base_table_styling: dict) ->
         base_table_styling: Base styling configuration for tables
 
     Returns:
-        Dictionary with:
-        - segments: List of typed content segments (text or table)
-        - has_mixed_content: Boolean indicating if content was actually mixed
+        Dictionary containing:
+        - segments: List of typed content segments (text/table)
+        - has_mixed_content: Boolean indicating if mixed content was found
     """
     if not isinstance(content, str):
         return {"segments": [], "has_mixed_content": False}
 
+    # Detect table boundaries and split content
     lines = content.split("\n")
     segments = []
-    current_text_block = []
-    current_table = []
-    table_start = -1
-    i = 0
+    current_text = []
+    current_table_lines = []
+    in_table = False
 
-    while i < len(lines):
-        line = lines[i].strip()
+    for line in lines:
+        stripped = line.strip()
 
-        # Check if this line starts or continues a table
-        if "|" in line and not all(c in "|-:= \t" for c in line.strip()):
-            # This is a table data row
-            if table_start == -1:
-                # Starting a new table - save any accumulated text first
-                if current_text_block:
-                    text_content = "\n".join(current_text_block).strip()
+        # Check if this line looks like a table line
+        if stripped and "|" in stripped and not all(c in "|-:=\t " for c in stripped):
+            # This is a table content line
+            if not in_table:
+                # Starting a new table - save any preceding text
+                if current_text:
+                    text_content = "\n".join(current_text).strip()
                     if text_content:
                         segments.append({"type": "text", "content": text_content})
-                    current_text_block = []
-                table_start = i
-            current_table.append(lines[i])
-        elif table_start != -1 and "|" in line and all(c in "|-:= \t" for c in line.replace("|", "").strip()):
-            # This is a separator line within table
-            current_table.append(lines[i])
-        elif table_start != -1 and (line == "" or "|" not in line):
-            # End of table found - process the table
-            if current_table:
-                table_markdown = "\n".join(current_table)
-                parsed_table = parse_markdown_table(table_markdown)
+                    current_text = []
+                in_table = True
 
-                if parsed_table and parsed_table.get("data"):
-                    # Apply base styling to parsed table
-                    complete_table_data = {**base_table_styling, **parsed_table}
-                    segments.append({"type": "table", "table_data": complete_table_data, "markdown": table_markdown})
+            current_table_lines.append(line)
 
-            # Reset for next content
-            current_table = []
-            table_start = -1
+        elif stripped and all(c in "|-:=\t " for c in stripped) and in_table:
+            # Table separator line - include in table
+            current_table_lines.append(line)
 
-            # Start accumulating text again (if this line has content)
-            if line:
-                current_text_block.append(lines[i])
-        elif table_start == -1:
-            # Regular content line, not in a table
-            current_text_block.append(lines[i])
+        else:
+            # Non-table line
+            if in_table:
+                # End of table - process the table we've collected
+                if current_table_lines:
+                    table_content = "\n".join(current_table_lines)
+                    table_data = parse_markdown_table(table_content)
 
-        i += 1
+                    # Add table styling from base configuration
+                    table_data.update(base_table_styling)
 
-    # Handle case where table is at the end of content
-    if current_table and table_start != -1:
-        table_markdown = "\n".join(current_table)
-        parsed_table = parse_markdown_table(table_markdown)
+                    segments.append({"type": "table", "table_data": table_data, "raw_content": table_content})
+                    current_table_lines = []
+                in_table = False
 
-        if parsed_table and parsed_table.get("data"):
-            complete_table_data = {**base_table_styling, **parsed_table}
-            segments.append({"type": "table", "table_data": complete_table_data, "markdown": table_markdown})
+            # Add this line to current text
+            current_text.append(line)
 
-    # Handle any remaining text
-    if current_text_block:
-        text_content = "\n".join(current_text_block).strip()
+    # Handle any remaining content
+    if in_table and current_table_lines:
+        # Content ended with a table
+        table_content = "\n".join(current_table_lines)
+        table_data = parse_markdown_table(table_content)
+        table_data.update(base_table_styling)
+
+        segments.append({"type": "table", "table_data": table_data, "raw_content": table_content})
+    elif current_text:
+        # Content ended with text
+        text_content = "\n".join(current_text).strip()
         if text_content:
             segments.append({"type": "text", "content": text_content})
 
-    # Determine if we actually have mixed content (text + table combination)
-    has_mixed_content = len([s for s in segments if s["type"] == "text"]) > 0 and len([s for s in segments if s["type"] == "table"]) > 0
+    # Determine if this is truly mixed content
+    text_segments = len([s for s in segments if s["type"] == "text"])
+    table_segments = len([s for s in segments if s["type"] == "table"])
+    has_mixed_content = (text_segments > 0 and table_segments > 0) or table_segments > 1
 
     return {"segments": segments, "has_mixed_content": has_mixed_content}
 
 
-def extract_all_tables_from_content(content: str) -> Dict[str, Any]:
+def extract_all_tables_from_content(content: str) -> dict:
     """
-    Extract ALL tables from content, replace with numbered placeholders, preserve surrounding text.
+    Extract all tables from content and replace with placeholders.
 
     Args:
-        content: Full content string that may contain multiple tables + other text
+        content: Content string that may contain multiple tables
 
     Returns:
-        Dictionary with:
-        - content_with_placeholders: Content with [TABLE_PLACEHOLDER_1], [TABLE_PLACEHOLDER_2], etc.
-        - tables: List of table info dicts with markdown and parsed data
+        Dictionary with modified content and extracted tables
     """
     if not isinstance(content, str):
-        return {"content_with_placeholders": content, "tables": []}
+        return {"content": content, "tables": []}
 
-    lines = content.split("\n")
+    # Split content into segments to identify all tables
+    segments = split_mixed_content_intelligently(content, {})["segments"]
+
     tables = []
-    content_with_placeholders = content
+    modified_content = ""
+    table_count = 0
 
-    current_table = []
-    table_start = -1
-    i = 0
+    for segment in segments:
+        if segment["type"] == "text":
+            modified_content += segment["content"]
+        elif segment["type"] == "table":
+            # Replace table with placeholder
+            table_count += 1
+            table_placeholder = f"{{{{TABLE_{table_count}}}}}"
+            modified_content += table_placeholder
 
-    while i < len(lines):
-        line = lines[i].strip()
+            # Store table data
+            tables.append({"placeholder": table_placeholder, "table_data": segment["table_data"], "raw_content": segment.get("raw_content", "")})
 
-        # Check if this line starts or continues a table
-        if "|" in line and not all(c in "|-:= \t" for c in line.strip()):
-            # This is a table data row
-            if table_start == -1:
-                table_start = i
-            current_table.append(lines[i])
-        elif table_start != -1 and "|" in line and all(c in "|-:= \t" for c in line.replace("|", "").strip()):
-            # This is a separator line within table
-            current_table.append(lines[i])
-        elif table_start != -1 and (line == "" or "|" not in line):
-            # End of table found
-            if current_table:
-                table_markdown = "\n".join(current_table)
-                parsed_table = parse_markdown_table(table_markdown)
-
-                if parsed_table and parsed_table.get("data"):
-                    placeholder = f"[TABLE_PLACEHOLDER_{len(tables) + 1}]"
-                    tables.append({"markdown": table_markdown, "parsed_data": parsed_table["data"], "placeholder": placeholder})
-
-                    # Replace table markdown with placeholder in content
-                    content_with_placeholders = content_with_placeholders.replace(table_markdown, placeholder)
-
-            # Reset for next table
-            current_table = []
-            table_start = -1
-        elif table_start == -1:
-            # Regular content line, not in a table
-            pass
-
-        i += 1
-
-    # Handle case where table is at the end of content
-    if current_table and table_start != -1:
-        table_markdown = "\n".join(current_table)
-        parsed_table = parse_markdown_table(table_markdown)
-
-        if parsed_table and parsed_table.get("data"):
-            placeholder = f"[TABLE_PLACEHOLDER_{len(tables) + 1}]"
-            tables.append({"markdown": table_markdown, "parsed_data": parsed_table["data"], "placeholder": placeholder})
-            content_with_placeholders = content_with_placeholders.replace(table_markdown, placeholder)
-
-    return {"content_with_placeholders": content_with_placeholders, "tables": tables}
+    return {"content": modified_content.strip(), "tables": tables, "table_count": len(tables)}

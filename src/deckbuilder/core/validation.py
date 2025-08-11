@@ -176,7 +176,7 @@ class PresentationValidator:
         if field_name in ["title", "subtitle"]:
             return True  # Always handled by semantic detection
 
-        ### TODO: REMOVE THIS FALLBACK
+        # TODO: REMOVE THIS FALLBACK
         # Enhanced field name resolution for common variations
         resolved_field = self._resolve_field_name_variations(field_name, field_to_index)
         if resolved_field != field_name and resolved_field in field_to_index:
@@ -264,7 +264,7 @@ class PresentationValidator:
 
         if not Path(pptx_file_path).exists():
             error_print(f"[Post Validation] WARNING: Generated PPTX file not found: {pptx_file_path}")
-            error_print(f"[Post Validation] This indicates the presentation was not saved properly.")
+            error_print("[Post Validation] This indicates the presentation was not saved properly.")
             return  # Don't crash - just skip validation
 
         # Load generated presentation
@@ -298,7 +298,7 @@ class PresentationValidator:
             error_print(f"[Post Validation] WARNING - {len(validation_errors)} validation issues found:")
             for i, error in enumerate(validation_errors, 1):
                 error_print(f"[Post Validation]   {i}. {error}")
-            error_print(f"[Post Validation] Presentation generated with warnings. Run with DECKBUILDER_DEBUG=1 for detailed analysis.")
+            error_print("[Post Validation] Presentation generated with warnings. Run with DECKBUILDER_DEBUG=true for detailed analysis.")
             # Don't raise - let presentation be saved with warnings
             return
 

@@ -13,7 +13,7 @@ from unittest.mock import Mock
 
 # Test imports with graceful handling
 try:
-    from deckbuilder.content.table_integration import FrontmatterConverter
+    from deckbuilder.content.frontmatter_to_json_converter import FrontmatterConverter
     from deckbuilder.content.frontmatter_to_json_converter import markdown_to_canonical_json
     from deckbuilder.core.table_builder import TableBuilder
 

@@ -7,7 +7,7 @@ Handles extracting tables from content and applying frontmatter styling configur
 This module bridges table parsing with slide presentation requirements.
 """
 
-from typing import Dict, Any, Optional
+from typing import Optional
 from .table_parser import parse_markdown_table, is_table_content
 
 
@@ -22,120 +22,189 @@ def extract_table_from_content(content: str, slide_data: dict) -> Optional[dict]
     Returns:
         Dictionary with table data and styling, or None if no table found
     """
-    if not content or not isinstance(content, str):
+    if not is_table_content(content):
         return None
 
-    # Check if content contains table markdown
-    lines = [line.strip() for line in content.split("\n") if line.strip()]
+    # Parse the table markdown
+    table_data = parse_markdown_table(content)
 
-    # Find table lines
-    table_lines = []
-    for line in lines:
-        # Skip separator lines and non-table lines
-        if line.startswith("|") and line.endswith("|"):
-            table_lines.append(line)
-        elif "|" in line and not line.startswith("---") and not line.startswith("==="):
-            table_lines.append(line)
-
-    if len(table_lines) < 2:  # Need at least header + 1 data row
+    if not table_data.get("rows"):
         return None
 
-    # Parse table data
-    table_data = []
-    for line in table_lines:
-        # Clean up separators
-        clean_line = line.replace("|", "").replace("-", "").replace(":", "").replace("=", "").strip()
-        if clean_line == "" or all(c in "|-:= " for c in line):
-            continue  # Skip separator lines
-
-        # Parse cells
-        if line.startswith("|") and line.endswith("|"):
-            cells = [cell.strip() for cell in line[1:-1].split("|")]
-        else:
-            cells = [cell.strip() for cell in line.split("|")]
-
-        table_data.append(cells)
-
-    if not table_data:
-        return None
-
-    # Create table object with styling from frontmatter
-    table_obj = {
-        "data": table_data,
-        "header_style": "dark_blue_white_text",  # default
-        "row_style": "alternating_light_gray",  # default
-        "border_style": "thin_gray",  # default
-        "custom_colors": {},
+    # Extract styling properties from slide data
+    table_config = {
+        # Core table data
+        "data": table_data["rows"],
+        "headers": table_data.get("headers", []),
+        "row_count": table_data.get("row_count", 0),
+        "column_count": table_data.get("column_count", 0),
+        # Styling from frontmatter
+        "style": slide_data.get("style", "default_style"),
+        "header_style": slide_data.get("style", "dark_blue_white_text"),
+        "row_style": slide_data.get("row_style", "alternating_light_gray"),
+        "border_style": slide_data.get("border_style", "thin_gray"),
+        # Dimensions and sizing
+        "row_height": slide_data.get("row_height", 0.6),
+        "table_width": slide_data.get("table_width"),
+        "column_widths": slide_data.get("column_widths", []),
+        # Font sizing
+        "header_font_size": slide_data.get("header_font_size"),
+        "data_font_size": slide_data.get("data_font_size"),
+        # Custom colors
+        "custom_colors": slide_data.get("custom_colors", {}),
     }
 
-    # Apply frontmatter styling properties
-    if "style" in slide_data:
-        table_obj["header_style"] = slide_data["style"]
-    if "row_style" in slide_data:
-        table_obj["row_style"] = slide_data["row_style"]
-    if "border_style" in slide_data:
-        table_obj["border_style"] = slide_data["border_style"]
-
-    # Apply dimension properties
-    if "column_widths" in slide_data:
-        table_obj["column_widths"] = slide_data["column_widths"]
-    if "row_height" in slide_data:
-        table_obj["row_height"] = slide_data["row_height"]
-    if "table_width" in slide_data:
-        table_obj["table_width"] = slide_data["table_width"]
-
-    return table_obj
+    return table_config
 
 
-def apply_frontmatter_styling_to_table(table_data: dict, slide_data: dict) -> dict:
+def apply_table_styling_to_slide(slide_data: dict, table_data: dict) -> dict:
     """
-    Apply frontmatter styling properties to an existing table data structure.
+    Apply table styling properties to slide data.
 
     Args:
-        table_data: Existing table data dictionary
-        slide_data: Slide data containing frontmatter styling properties
+        slide_data: Original slide data
+        table_data: Table data with styling information
 
     Returns:
-        Updated table data with styling applied
+        Updated slide data with table styling applied
     """
-    if not table_data or not isinstance(table_data, dict):
-        return table_data
-
     # Create a copy to avoid modifying the original
+    updated_slide_data = slide_data.copy()
+
+    # Apply table styling properties to slide level
+    style_fields = ["style", "header_style", "row_style", "border_style", "row_height", "table_width", "column_widths", "header_font_size", "data_font_size", "custom_colors"]
+
+    for field in style_fields:
+        if field in table_data:
+            updated_slide_data[field] = table_data[field]
+
+    return updated_slide_data
+
+
+def validate_table_styling(table_data: dict) -> dict:
+    """
+    Validate and normalize table styling configuration.
+
+    Args:
+        table_data: Table data with styling
+
+    Returns:
+        Validated and normalized table data
+    """
+    validated_data = table_data.copy()
+
+    # Validate row height
+    if "row_height" in validated_data:
+        try:
+            row_height = float(validated_data["row_height"])
+            if row_height <= 0:
+                validated_data["row_height"] = 0.6  # Default
+        except (ValueError, TypeError):
+            validated_data["row_height"] = 0.6  # Default
+
+    # Validate column widths
+    if "column_widths" in validated_data:
+        widths = validated_data["column_widths"]
+        if not isinstance(widths, list):
+            validated_data["column_widths"] = []
+        else:
+            # Ensure all widths are numeric
+            validated_widths = []
+            for width in widths:
+                try:
+                    validated_widths.append(float(width))
+                except (ValueError, TypeError):
+                    validated_widths.append(5.0)  # Default width
+            validated_data["column_widths"] = validated_widths
+
+    # Validate table width
+    if "table_width" in validated_data and validated_data["table_width"] is not None:
+        try:
+            table_width = float(validated_data["table_width"])
+            if table_width <= 0:
+                validated_data["table_width"] = None  # Use default
+        except (ValueError, TypeError):
+            validated_data["table_width"] = None  # Use default
+
+    # Validate font sizes
+    for font_field in ["header_font_size", "data_font_size"]:
+        if font_field in validated_data and validated_data[font_field] is not None:
+            try:
+                font_size = int(validated_data[font_field])
+                if font_size < 8 or font_size > 72:
+                    validated_data[font_field] = None  # Use default
+            except (ValueError, TypeError):
+                validated_data[font_field] = None  # Use default
+
+    return validated_data
+
+
+def apply_frontmatter_styling_to_table(table_data: dict, frontmatter_properties: dict) -> dict:
+    """
+    Apply frontmatter styling properties to table data.
+
+    Args:
+        table_data: Table data dictionary
+        frontmatter_properties: Frontmatter properties from slide data
+
+    Returns:
+        Table data with styling applied
+    """
+    # This function applies styling from frontmatter to table data
+    # It's essentially the same as what extract_table_from_content does for styling
     styled_table = table_data.copy()
 
-    # Apply styling properties from frontmatter
-    if "style" in slide_data:
-        styled_table["header_style"] = slide_data["style"]
-    if "row_style" in slide_data:
-        styled_table["row_style"] = slide_data["row_style"]
-    if "border_style" in slide_data:
-        styled_table["border_style"] = slide_data["border_style"]
+    # Apply styling properties
+    if "style" in frontmatter_properties:
+        styled_table["header_style"] = frontmatter_properties["style"]
+    if "row_style" in frontmatter_properties:
+        styled_table["row_style"] = frontmatter_properties["row_style"]
+    if "border_style" in frontmatter_properties:
+        styled_table["border_style"] = frontmatter_properties["border_style"]
 
     # Apply dimension properties
-    if "column_widths" in slide_data:
-        styled_table["column_widths"] = slide_data["column_widths"]
-    if "row_height" in slide_data:
-        styled_table["row_height"] = slide_data["row_height"]
-    if "table_width" in slide_data:
-        styled_table["table_width"] = slide_data["table_width"]
+    if "row_height" in frontmatter_properties:
+        styled_table["row_height"] = frontmatter_properties["row_height"]
+    if "table_width" in frontmatter_properties:
+        styled_table["table_width"] = frontmatter_properties["table_width"]
+    if "column_widths" in frontmatter_properties:
+        styled_table["column_widths"] = frontmatter_properties["column_widths"]
 
-    # Apply custom colors if present
-    if "custom_colors" in slide_data:
-        styled_table["custom_colors"] = slide_data["custom_colors"]
+    # Apply font sizing
+    if "header_font_size" in frontmatter_properties:
+        styled_table["header_font_size"] = frontmatter_properties["header_font_size"]
+    if "data_font_size" in frontmatter_properties:
+        styled_table["data_font_size"] = frontmatter_properties["data_font_size"]
+
+    # Apply custom colors
+    if "custom_colors" in frontmatter_properties:
+        styled_table["custom_colors"] = frontmatter_properties["custom_colors"]
 
     return styled_table
 
 
-def process_markdown_content(content: str) -> Any:
+def process_markdown_content(content: str):
     """Process markdown content to convert dash bullets to bullet symbols and detect tables"""
     if not isinstance(content, str):
         return content
 
     # First check if this content contains a table
     if is_table_content(content):
-        # Convert to table object
-        return parse_markdown_table(content)
+        # Convert to table object using table_parser, but return in legacy format
+        from .table_parser import parse_markdown_table
+
+        parsed_table = parse_markdown_table(content)
+
+        # Convert to legacy format expected by converter
+        table_data = {
+            "type": "table",
+            "data": parsed_table.get("rows", []),
+            "header_style": "dark_blue_white_text",
+            "row_style": "alternating_light_gray",
+            "border_style": "thin_gray",
+            "custom_colors": {},
+        }
+        return table_data
 
     # Convert dash bullets to bullet symbols
     # Match lines that start with "- " (dash followed by space)
@@ -143,21 +212,3 @@ def process_markdown_content(content: str) -> Any:
 
     processed = re.sub(r"^- ", "• ", content, flags=re.MULTILINE)
     return processed
-
-
-class FrontmatterConverter:
-    """Legacy alias for backward compatibility during refactoring"""
-
-    def _process_content_field(self, content: str) -> str:
-        """Process content field for basic formatting and return as-is for now."""
-        if not isinstance(content, str):
-            return str(content) if content is not None else ""
-        return content.strip()
-
-    def _is_table_content(self, content: str) -> bool:
-        """Check if content contains table markdown syntax"""
-        return is_table_content(content)
-
-    def _parse_markdown_table(self, content: str) -> dict:
-        """Extract table from markdown and apply default styling config"""
-        return parse_markdown_table(content)

@@ -16,12 +16,18 @@
 ## 4. ALWAYS TRY AND ENHANCE EXISTING CODE, AND MINIMISE CYCLOMATIC COMPLEXITY, DONT CREATE ALTERNATE CODE PATHS
 ## 5. DOCUMENT CODE IN A WAY THAT MAKES IT EASY FOR AI TO NAVIGATE THE CODE BASE
 ## 6. TESTS, PRE-CHECKIN HOOKS AND CI ARE GUARDRAILS. NEVER FAKE RESULTS OR WORK AROUND THEM WITH --NO-VERIFY
-## 7. ALWAYS USE AUSTRALIAN ENGLISH
+## 7. ALWAYS USE AUSTRALIAN ENGLISH, AND THE METRIC SYSTEM
 
 ## About this project
 
 Deckbuilder is a Python library and accompanying MCP (Model Context Protocol) Server for intelligent PowerPoint presentation generation.
 The project has evolved beyond initial setup into a comprehensive content-first presentation intelligence system.
+
+## Testing the application
+
+The easiset way is to use the CLI drectly then use python-pptx to verify your output e.g.
+
+`Bash(source .venv/bin/activate && deckbuilder create tests/output/imput_file.md --output tests/output/ouput_file)`
 
 ### 🔄 Project Awareness & Context
 - **Always read `PLANNING.md`** at the start of a new conversation to understand the project's architecture, goals, style, and constraints.
@@ -69,8 +75,6 @@ pytest tests/
 ```
 
 **⚠️ ZERO TOLERANCE POLICY: No commits allowed with flake8 F-level errors (F401, F841, F811, F541, etc.)**
-
-
 
 
 ### Code Quality Rules

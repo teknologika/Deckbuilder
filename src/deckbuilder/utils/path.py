@@ -45,9 +45,9 @@ from typing import Optional, Literal, Tuple
 
 # Standard library (3.9+) importlib.resources; backport only if needed.
 try:
-    from importlib.resources import files, as_file
+    from importlib.resources import files
 except ImportError:  # pragma: no cover
-    from importlib_resources import files, as_file  # type: ignore
+    from importlib_resources import files  # type: ignore
 
 
 class PathManager:
