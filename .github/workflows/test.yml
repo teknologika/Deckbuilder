@@ -38,7 +38,7 @@ jobs:
 
     - name: Validate test environment
       run: |
-        python -c "import src.deckbuilder.engine; print('Engine import successful')"
+        python -c "import src.deckbuilder.core.engine; print('Engine import successful')"
 
     - name: Run deckbuilder unit tests
       run: |
@@ -289,7 +289,7 @@ jobs:
         deckbuilder template || echo "Template command tested (expected to show no templates in clean env)"
         
         # Test Python import (using installed package structure)
-        python -c "from deckbuilder.engine import Deckbuilder; print('✅ Engine import successful')"
+        python -c "from deckbuilder.core.engine import Deckbuilder; print('✅ Engine import successful')"
         python -c "from placekitten import PlaceKitten; print('✅ PlaceKitten import successful')"
         # Test MCP server import (requires environment variables)
         DECK_TEMPLATE_FOLDER=/tmp DECK_OUTPUT_FOLDER=/tmp python -c "from mcp_server.main import main; print('✅ MCP server import successful')"
