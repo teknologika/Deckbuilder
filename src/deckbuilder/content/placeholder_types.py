@@ -78,34 +78,41 @@ def get_placeholder_category(placeholder_type):
     if not isinstance(placeholder_type, PP_PLACEHOLDER_TYPE):
         return None
     for category, types in ALL_PLACEHOLDER_GROUPS.items():
-        if placeholder_type in types:
+        if _safe_enum_check(placeholder_type, types):
             return category
     return None
 
 
+def _safe_enum_check(value, enum_set):
+    """
+    Safely check if a value is in an enum set, preventing TypeError on invalid types.
+
+    This handles the Python 3.11 vs 3.12 difference where boolean values
+    used with 'in' operator against Enum types can cause TypeError in 3.11.
+    """
+    if not isinstance(value, PP_PLACEHOLDER_TYPE):
+        return False
+    try:
+        return value in enum_set
+    except (TypeError, AttributeError):
+        return False
+
+
 def is_title_placeholder(placeholder_type):
     """Check if placeholder type is for titles."""
-    if not isinstance(placeholder_type, PP_PLACEHOLDER_TYPE):
-        return False
-    return placeholder_type in TITLE_PLACEHOLDERS
+    return _safe_enum_check(placeholder_type, TITLE_PLACEHOLDERS)
 
 
 def is_subtitle_placeholder(placeholder_type):
     """Check if placeholder type is for subtitles."""
-    if not isinstance(placeholder_type, PP_PLACEHOLDER_TYPE):
-        return False
-    return placeholder_type in SUBTITLE_PLACEHOLDERS
+    return _safe_enum_check(placeholder_type, SUBTITLE_PLACEHOLDERS)
 
 
 def is_content_placeholder(placeholder_type):
     """Check if placeholder type is for main content."""
-    if not isinstance(placeholder_type, PP_PLACEHOLDER_TYPE):
-        return False
-    return placeholder_type in CONTENT_PLACEHOLDERS
+    return _safe_enum_check(placeholder_type, CONTENT_PLACEHOLDERS)
 
 
 def is_media_placeholder(placeholder_type):
     """Check if placeholder type is for media/objects."""
-    if not isinstance(placeholder_type, PP_PLACEHOLDER_TYPE):
-        return False
-    return placeholder_type in MEDIA_PLACEHOLDERS
+    return _safe_enum_check(placeholder_type, MEDIA_PLACEHOLDERS)
