@@ -105,7 +105,7 @@ class ContentProcessor:
             return parsed
 
         # Regular frontmatter processing - still process content fields
-        from .converter import FrontmatterConverter
+        from .table_integration import FrontmatterConverter
 
         converter_instance = FrontmatterConverter()
 

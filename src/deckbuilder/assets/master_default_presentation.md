@@ -192,34 +192,66 @@ speaker_notes: "**Status update** on development roadmap. Note that API Integrat
 
 ---
 layout: Title and Content
-title: "**Table Dimensions:** Custom Column Widths"
+title: "**Table with Mixed Content:** Proper Integration"
 style: dark_blue_white_text
 row_style: alternating_light_gray
 border_style: thin_gray
-column_widths: [8, 6, 4, 5]
-row_height: 0.9
+row_height: 0.6
 content: |
-  | **Product Category** | **Q1 Sales** | **Q2** | **Growth %** |
-  | Enterprise Software | $125,000 | $142,000 | +13.6% |
-  | SaaS Solutions | $89,500 | $98,200 | +9.7% |
-  | Cloud Services | $156,000 | $178,000 | +14.1% |
-  | Mobile Apps | $67,300 | $73,800 | +9.7% |
+  Project status overview with detailed metrics:
+  
+  | **Feature** | *Status* | ___Priority___ |
+  | Authentication | **Complete** | *High* |
+  | API Integration | ___Blocked___ | ***Critical*** |
+  
+  **Analysis**: Focus on completing high-priority items. API Integration requires immediate attention due to dependencies.
 ---
 
 ---
 layout: Title and Content
-title: "**Table Dimensions:** Equal Column Distribution"
-style: light_blue_dark_text
+title: "**Multi-Table Example:** Sales & Team Performance"
+style: dark_blue_white_text
 row_style: alternating_light_gray
 border_style: thin_gray
-table_width: 22
-row_height: 0.9
+column_widths: [8, 6, 4]
+row_height: 0.7
+table_width: 18
 content: |
-  | **Team Member** | **Projects** | **Completed** | **Success Rate** |
-  | Alice Johnson | 25 | 24 | 96% |
-  | Bob Smith | 18 | 17 | 94% |
-  | Carol Davis | 32 | 31 | 97% |
-  | David Wilson | 21 | 20 | 95% |
+  ## Q2 Performance Review
+  
+  **Sales Results:**
+  
+  | **Product** | **Q2 Sales** | **Growth** |
+  | Enterprise | $142,000 | +13.6% |
+  
+  **Team Metrics:**
+  
+  | **Team Member** | **Score** |
+  | Alice Johnson | ***96%*** |
+  
+  **Summary**: Both sales and team performance exceeded targets this quarter.
+---
+
+---
+layout: Title and Content
+title: "**Correct Table Integration:** Option 2 Example"
+style: dark_blue_white_text
+row_style: alternating_light_gray
+border_style: thin_gray
+row_height: 0.6
+content: |
+  This slide demonstrates proper table placeholder replacement:
+  
+  **Before table:**
+  Content above the table is preserved.
+  
+  | **Test** | *Result* |
+  | Placeholder Replacement | ***Success*** |
+  
+  **After table:**
+  Content below the table is also preserved.
+  
+  *Expected behavior*: Table appears inline, replacing table markdown with proper row height of 0.6cm.
 ---
 
 ---

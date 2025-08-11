@@ -404,21 +404,8 @@
             "layout": "Title and Content",
             "style": "default_style",
             "placeholders": {
-                "title": "**Table Dimensions:** Custom Column Widths"
-            },
-            "table": {
-                "style": "dark_blue_white_text",
-                "row_style": "alternating_light_gray",
-                "border_style": "thin_gray",
-                "column_widths": [8, 6, 4, 5],
-                "row_height": 0.9,
-                "data": [
-                    ["**Product Category**", "**Q1 Sales**", "**Q2**", "**Growth %**"],
-                    ["Enterprise Software", "$125,000", "$142,000", "+13.6%"],
-                    ["SaaS Solutions", "$89,500", "$98,200", "+9.7%"],
-                    ["Cloud Services", "$156,000", "$178,000", "+14.1%"],
-                    ["Mobile Apps", "$67,300", "$73,800", "+9.7%"]
-                ]
+                "title": "**Table with Mixed Content:** Proper Integration",
+                "content": "Project status overview with detailed metrics:\n\n| **Feature** | *Status* | ___Priority___ |\n| Authentication | **Complete** | *High* |\n| API Integration | ___Blocked___ | ***Critical*** |\n\n**Analysis**: Focus on completing high-priority items. API Integration requires immediate attention due to dependencies."
             },
             "content": []
         },
@@ -426,21 +413,8 @@
             "layout": "Title and Content",
             "style": "default_style",
             "placeholders": {
-                "title": "**Table Dimensions:** Equal Column Distribution"
-            },
-            "table": {
-                "style": "light_blue_dark_text",
-                "row_style": "alternating_light_gray",
-                "border_style": "thin_gray",
-                "table_width": 22,
-                "row_height": 0.9,
-                "data": [
-                    ["**Team Member**", "**Projects**", "**Completed**", "**Success Rate**"],
-                    ["Alice Johnson", "25", "24", "96%"],
-                    ["Bob Smith", "18", "17", "94%"],
-                    ["Carol Davis", "32", "31", "97%"],
-                    ["David Wilson", "21", "20", "95%"]
-                ]
+                "title": "**Multi-Table Example:** Sales & Team Performance",
+                "content": "## Q2 Performance Review\n\n**Sales Results:**\n\n| **Product** | **Q2 Sales** | **Growth** |\n| Enterprise | $142,000 | +13.6% |\n\n**Team Metrics:**\n\n| **Team Member** | **Score** |\n| Alice Johnson | ***96%*** |\n\n**Summary**: Both sales and team performance exceeded targets this quarter."
             },
             "content": []
         },
@@ -452,6 +426,15 @@
                 "content": "# H1 Heading - **Large** Main Title\n## H2 Heading - *Subtitle* Level\n### H3 Heading - ***Section*** Header\n#### H4 Heading - ___Subsection___ Title\n##### H5 Heading - **Minor** *Section*\n###### H6 Heading - ***Smallest*** ___Detail___\n\n**Dynamic font scaling** with template-adaptive sizing:\n- H1: 133% of base font (light weight)\n- H2: 111% of base font (light weight) \n- H3-H6: Decreasing scale with bold weights\n\n*Typography hierarchy* ensures ***professional*** ___visual___ structure."
             },
             "speaker_notes": "**Heading hierarchy demonstration** - this slide showcases our ***dynamic font scaling system*** with H1-H6 support. Walk through the hierarchy: *H1/H2 use light weights*, H3-H6 use bold formatting. **Key feature**: Template-adaptive sizing means headings scale properly across different PowerPoint themes. *Ask*: Notice how the visual hierarchy guides your eye through the content structure?",
+            "content": []
+        },
+        {
+            "layout": "Title and Content",
+            "style": "default_style",
+            "placeholders": {
+                "title": "**Dynamic Multi-Shape Creation:** Live Example",
+                "content": "This slide demonstrates automatic mixed content handling:\n\n**Before table:**\nContent above the table is preserved.\n\n| **Test** | *Result* |\n| Dynamic Shape Creation | ***Success*** |\n\n**After table:**\nContent below the table is also preserved.\n\n*Expected behavior*: System automatically creates separate text shapes and table shapes with intelligent positioning."
+            },
             "content": []
         }
     ]

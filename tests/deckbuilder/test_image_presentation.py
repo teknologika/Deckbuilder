@@ -11,7 +11,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))  # noqa: E402
 
 from deckbuilder.core.engine import Deckbuilder  # noqa: E402
-from deckbuilder.content.converter import markdown_to_canonical_json  # noqa: E402
+from deckbuilder.content.frontmatter_to_json_converter import markdown_to_canonical_json  # noqa: E402
 
 
 def run_image_presentation_test():

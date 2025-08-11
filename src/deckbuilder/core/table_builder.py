@@ -40,11 +40,15 @@ class TableBuilder:
         if not data:
             return
 
-        # Get styling options
+        # Get styling options with enhanced configuration support
         header_style = table_data.get("header_style", "dark_blue_white_text")
         row_style = table_data.get("row_style", "alternating_light_gray")
         border_style = table_data.get("border_style", "thin_gray")
         custom_colors = table_data.get("custom_colors", {})
+
+        # Font sizing configuration
+        header_font_size = table_data.get("header_font_size", 12)  # 12pt default for headers
+        data_font_size = table_data.get("data_font_size", 10)  # 10pt default for data
 
         # Parse dimension options
         dimensions = self._parse_dimensions(table_data, len(data[0]) if data else 0)
@@ -110,11 +114,11 @@ class TableBuilder:
             self._apply_row_heights(table, dimensions["row_height"])
 
         # Apply styling with font size control
-        self._apply_table_styling(table, header_style, row_style, border_style, custom_colors, table_data)
+        self._apply_table_styling(table, header_style, row_style, border_style, custom_colors, table_data, header_font_size, data_font_size)
 
-    def _apply_table_styling(self, table, header_style, row_style, border_style, custom_colors, table_data=None):
+    def _apply_table_styling(self, table, header_style, row_style, border_style, custom_colors, table_data=None, header_font_size=12, data_font_size=10):
         """
-        Apply styling to a table.
+        Apply styling to a table with font size control.
 
         Args:
             table: The table object to style
@@ -139,12 +143,12 @@ class TableBuilder:
                 cell.fill.fore_color.rgb = bg_color
 
                 # Set text color, formatting, and font size
-                header_font_size = self._get_font_size(table_data, "header_font_size", 12)
+                font_size = self._get_font_size(0, header_font_size, data_font_size)  # Row 0 is header
                 for paragraph in cell.text_frame.paragraphs:
                     for run in paragraph.runs:
                         run.font.color.rgb = text_color
                         run.font.bold = True
-                        run.font.size = Pt(header_font_size)
+                        run.font.size = Pt(font_size)
 
         # Apply row styling
         if row_style in TABLE_ROW_STYLES and len(table.rows) > 1:
@@ -160,7 +164,7 @@ class TableBuilder:
                 bg_color = alt_color if is_alt_row else primary_color
 
                 if bg_color is not None:
-                    data_font_size = self._get_font_size(table_data, "data_font_size", 10)
+                    font_size = self._get_font_size(row_idx, header_font_size, data_font_size)  # Data row
                     for col_idx in range(len(table.columns)):
                         cell = table.cell(row_idx, col_idx)
                         cell.fill.solid()
@@ -169,7 +173,7 @@ class TableBuilder:
                         # Apply font size to data cells
                         for paragraph in cell.text_frame.paragraphs:
                             for run in paragraph.runs:
-                                run.font.size = Pt(data_font_size)
+                                run.font.size = Pt(font_size)
 
         # Apply border styling
         if border_style in TABLE_BORDER_STYLES:
@@ -426,31 +430,41 @@ class TableBuilder:
             # Fallback to safe default if analysis fails
             return Cm(1.2)
 
-    def _get_font_size(self, table_data, font_key, default_size):
+    def _get_font_size(self, row_idx, header_font_size, data_font_size):
         """
-        Get font size from table design settings.
+        Get appropriate font size for table cell based on row type.
 
         Args:
-            table_data: Dictionary containing table configuration
-            font_key: Key to look for (header_font_size, data_font_size)
-            default_size: Default font size if not specified
+            row_idx: Row index (0 is header)
+            header_font_size: Font size for header rows
+            data_font_size: Font size for data rows
 
         Returns:
             Font size in points
         """
-        if not table_data:
-            return default_size
+        # Validate font sizes
+        header_size = max(8, min(24, int(header_font_size))) if header_font_size else 12
+        data_size = max(8, min(20, int(data_font_size))) if data_font_size else 10
 
+        return header_size if row_idx == 0 else data_size
+
+    def _apply_font_size_to_cell(self, cell, font_size_pt):
+        """
+        Apply font size to all text in a table cell.
+
+        Args:
+            cell: Table cell object
+            font_size_pt: Font size in points
+        """
         try:
-            if font_key in table_data:
-                size = float(table_data[font_key])
-                # Validate reasonable font size range
-                if 6 <= size <= 72:
-                    return size
-        except (ValueError, TypeError):
-            pass
+            from pptx.util import Pt
 
-        return default_size
+            for paragraph in cell.text_frame.paragraphs:
+                for run in paragraph.runs:
+                    run.font.size = Pt(font_size_pt)
+        except Exception:
+            # Ignore font sizing errors to prevent breaking table creation
+            pass
 
     def _apply_column_widths(self, table, column_widths):
         """
@@ -480,3 +494,50 @@ class TableBuilder:
                 table.rows[i].height = row_height
         except Exception as e:
             print(f"Warning: Failed to apply row height: {e}")
+
+    def _apply_table_data_and_styling(self, table, table_data):
+        """
+        Apply data and styling to an existing table shape.
+
+        This method is used by dynamic shape creation to apply data and styling
+        to a table that has already been created with specific positioning.
+
+        Args:
+            table: PowerPoint table object
+            table_data: Dictionary containing table data and styling options
+        """
+        # Get table data
+        data = table_data.get("data", table_data.get("rows", []))
+        if not data:
+            return
+
+        # Get styling options
+        header_style = table_data.get("header_style", "dark_blue_white_text")
+        row_style = table_data.get("row_style", "alternating_light_gray")
+        border_style = table_data.get("border_style", "thin_gray")
+        custom_colors = table_data.get("custom_colors", {})
+        header_font_size = table_data.get("header_font_size", 12)
+        data_font_size = table_data.get("data_font_size", 10)
+
+        # Apply data to table cells
+        for row_idx, row_data in enumerate(data):
+            if row_idx >= len(table.rows):
+                break  # Safety check
+            for col_idx, cell_data in enumerate(row_data):
+                if col_idx >= len(table.columns):
+                    break  # Safety check
+                cell = table.cell(row_idx, col_idx)
+
+                # Handle both old (string) and new (formatted) cell data
+                if isinstance(cell_data, dict) and "formatted" in cell_data:
+                    # New formatted cell data
+                    if self.content_formatter:
+                        self.content_formatter.apply_formatted_segments_to_cell(cell, cell_data["formatted"])
+                    else:
+                        cell.text = cell_data.get("text", str(cell_data))
+                else:
+                    # Old string cell data
+                    cell.text = str(cell_data)
+
+        # Apply styling using existing method
+        self._apply_table_styling(table, header_style, row_style, border_style, custom_colors, table_data, header_font_size, data_font_size)

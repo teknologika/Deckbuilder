@@ -143,7 +143,7 @@ async def create_presentation_from_file(
                 markdown_content = f.read()
 
             # Convert markdown to canonical JSON format
-            from deckbuilder.content.converter import markdown_to_canonical_json
+            from deckbuilder.content.frontmatter_to_json_converter import markdown_to_canonical_json
 
             canonical_data = markdown_to_canonical_json(markdown_content)
 
@@ -245,7 +245,7 @@ async def create_presentation_from_markdown(
     """
     try:
         # Convert markdown to canonical JSON format
-        from deckbuilder.content.converter import markdown_to_canonical_json
+        from deckbuilder.content.frontmatter_to_json_converter import markdown_to_canonical_json
 
         canonical_data = markdown_to_canonical_json(markdown_content)
 

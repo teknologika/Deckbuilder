@@ -334,6 +334,66 @@ Generated presentations should demonstrate:
 - Accurate placeholder mapping using semantic detection + JSON fallback
 - Professional appearance matching structured frontmatter specifications
 
+### Dynamic Multi-Shape Creation Verification
+
+**CRITICAL**: Use this 4-step methodology to verify dynamic multi-shape system functionality:
+
+```bash
+# Step 1: Activate virtual environment
+source .venv/bin/activate
+
+# Step 2: Install package in editable mode
+uv pip install -e .
+
+# Step 3: Create presentation using CLI command
+deckbuilder create tests/output/dynamic_shapes_test_markdown.md --output tests/output/cli_test_verification
+
+# Step 4: Verify using python-pptx analysis
+python verify_presentation.py "tests/output/cli_test_verification.YYYY-MM-DD_HHMM.g.pptx"
+```
+
+**Current Status - SYSTEM REQUIRES FIXES:**
+- ❌ **Table Multiplication Bug**: Creating multiple tables (3) instead of 1 from single table markdown
+- ❌ **Incorrect Sizing**: Tables not respecting row_height and dimension configurations
+- ❌ **Poor Positioning**: Tables not positioned correctly relative to text content
+- ⚠️ **Partial Success**: TEXT_BOX creation working, but overall system needs debugging
+
+**Current Actual Results (BROKEN):**
+```
+📊 PRESENTATION SUMMARY:
+   Total tables: 3  # ← PROBLEM: Should be 1
+   Total dynamic text boxes: 1
+   ⚠️ Tables found but positioning/sizing incorrect
+```
+
+**Required Fixes Before System is Production Ready:**
+1. **Fix content splitting algorithm** - Prevent table duplication in `_split_mixed_content_intelligently()`
+2. **Implement proper table sizing** - Respect frontmatter dimensions (row_height, table_width, column_widths)
+3. **Fix positioning logic** - Ensure intelligent vertical spacing between text and table shapes
+4. **Validate shape creation** - One table markdown = one table shape
+
+**Test File Requirements:**
+Use markdown frontmatter format with mixed content:
+```markdown
+---
+layout: Title and Content
+title: "Dynamic Multi-Shape Test"
+style: dark_blue_white_text
+content: |
+  Content before table
+  
+  | **Column** | *Data* |
+  | Test | Value |
+  
+  Content after table
+---
+```
+
+**Verification Script Location:**
+- `/verify_presentation.py` - Python script for analysing generated presentations
+- Provides detailed shape analysis and dynamic system validation
+- Reports on placeholders, tables, text boxes, and positioning
+
 ## 🔄 Content Processing Consolidation Plan
 
 **STATUS**: Planned for implementation to eliminate multiple overlapping content paths

@@ -352,10 +352,7 @@ class PathManager:
         assert path_manager.validate_assets_exist()
         """
         root = self.get_master_presentation_files_path()
-        return (root / "templates").is_dir() and (
-            (root / "templates" / "default.pptx").is_file()
-            or (root / "templates" / "default.json").is_file()
-        )
+        return (root / "templates").is_dir() and ((root / "templates" / "default.pptx").is_file() or (root / "templates" / "default.json").is_file())
 
     def list_available_templates(self) -> list[str]:
         """
@@ -379,11 +376,13 @@ class PathManager:
         """
         try:
             from importlib.metadata import version
+
             return version("deckbuilder")
         except Exception:
             pass
         try:
             import tomllib
+
             pyproject = self.get_project_root() / "pyproject.toml"
             if pyproject.exists():
                 with open(pyproject, "rb") as f:
@@ -399,9 +398,11 @@ def create_cli_path_manager(template_folder: Optional[str] = None) -> PathManage
     """CLI context: args > env > CWD/templates"""
     return PathManager(context="cli", template_folder=template_folder)
 
+
 def create_mcp_path_manager() -> PathManager:
     """MCP context: env only (else error)"""
     return PathManager(context="mcp")
+
 
 def create_library_path_manager(
     template_folder: Optional[str] = None,
@@ -410,6 +411,7 @@ def create_library_path_manager(
 ) -> PathManager:
     """Library context: args > env > packaged assets/templates"""
     return PathManager("library", template_folder, output_folder, template_name)
+
 
 # Default global instance (library context)
 path_manager = PathManager("library")

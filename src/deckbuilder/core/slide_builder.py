@@ -95,6 +95,10 @@ class SlideBuilder:
         if speaker_notes:
             self.add_speaker_notes(slide, speaker_notes, content_formatter)
 
+        # ENHANCED: Handle dynamic multi-shape creation for mixed content
+        if slide_data.get("_requires_dynamic_shapes") and slide_data.get("_content_segments"):
+            self._create_dynamic_content_shapes(slide, slide_data, content_formatter)
+
         # All content should be processed through placeholders only - no legacy content blocks
         debug_print("  Slide completed using structured frontmatter placeholders only")
 
@@ -572,8 +576,29 @@ class SlideBuilder:
                 placeholder.text = str(field_value)
 
         elif is_content_placeholder(placeholder_type):
-            # Content placeholders - handle text, lists, etc. with inline formatting
-            content_formatter.add_content_to_placeholder(placeholder, field_value)
+            # Check if this is table data that should be handled specially
+            if isinstance(field_value, dict) and field_value.get("type") == "table":
+                # This is table data - route to table creation instead of text placeholder
+                slide_builder_print(f"    SPECIAL HANDLING: Table data detected in content field '{field_name}'")
+
+                # Import TableBuilder for table creation
+                from .table_builder import TableBuilder
+
+                table_builder = TableBuilder(content_formatter)
+
+                # Create table on slide
+                table_builder.add_table_to_slide(slide, field_value)
+
+                # Clear the placeholder to avoid showing placeholder text
+                if hasattr(placeholder, "text_frame") and placeholder.text_frame:
+                    placeholder.text_frame.clear()
+                    # Optionally add a note that table was created
+                    p = placeholder.text_frame.paragraphs[0] if placeholder.text_frame.paragraphs else placeholder.text_frame.add_paragraph()
+                    p.text = ""  # Leave empty since table replaces this content
+            else:
+                # Content placeholders - handle text, lists, etc. with inline formatting
+                # ENHANCED: Only process if not table content
+                content_formatter.add_content_to_placeholder(placeholder, field_value)
 
         elif is_media_placeholder(placeholder_type):
             # Media placeholders - handle images, charts, etc.
@@ -622,56 +647,70 @@ class SlideBuilder:
 
     def _process_table_data(self, slide, slide_data, content_formatter):
         """
-        Process table data from slide_data and add table to slide.
+        ENHANCED: Complete table processing - handles formatting AND configuration.
 
-        This handles table data that was skipped during placeholder processing.
-        The table data should contain styling and dimension information.
+        This is now the SINGLE method responsible for ALL table creation.
+        It finds table content anywhere in slide_data, preserves formatting from markdown,
+        applies configuration from frontmatter, and creates one complete table.
 
         Args:
             slide: PowerPoint slide object
             slide_data: Dictionary containing slide content (may include table data)
             content_formatter: ContentFormatter instance for table creation
         """
-        # Check if slide has table data
-        table_data = slide_data.get("table")
-        if not table_data:
+        # ENHANCED: Look for table content in multiple places (content, table, table_data fields)
+        table_content = self._find_table_content_in_slide_data(slide_data)
+        if not table_content:
             return
 
-        # Check if table was already created through content placeholder processing
-        # This happens when content field contains a table structure (from markdown conversion)
-        existing_tables = []
-        for shape in slide.shapes:
-            try:
-                # Check for table using multiple approaches
-                if hasattr(shape, "shape_type"):
-                    shape_type_str = str(shape.shape_type)
-                    if "TABLE" in shape_type_str and "19" in shape_type_str:
-                        existing_tables.append(shape)
-                # Also check for table using pptx table detection
-                elif hasattr(shape, "table"):
-                    existing_tables.append(shape)
-            except Exception:  # nosec B110
-                pass  # Skip shapes that can't be inspected
+        debug_print(f"  Found table content in: {table_content['source_field']}")
 
+        # Enhanced table detection to prevent duplicate table creation
+        existing_tables = self._detect_existing_tables(slide)
         if existing_tables:
-            # Table already created through content processing, skip duplicate creation
             debug_print(f"  Table already exists ({len(existing_tables)} found), skipping duplicate table creation")
             return
 
-        # CRITICAL FIX: Clear content placeholders that contain table text
-        # This prevents duplication when both content and table objects exist
-        self._clear_table_content_from_placeholders(slide, slide_data)
+        # ENHANCED: Parse table markdown with formatting preservation
+        if table_content["markdown"]:
+            debug_print("  Parsing table markdown with formatting preservation")
+            formatted_table_data = content_formatter.parse_table_markdown_with_formatting(table_content["markdown"])
+        else:
+            # Fallback for non-markdown table data
+            formatted_table_data = table_content.get("table_data", {"data": [], "type": "table"})
+
+        # ENHANCED: Read configuration from frontmatter (dimensions, styling)
+        table_config = {
+            "header_style": slide_data.get("style", "dark_blue_white_text"),
+            "row_style": slide_data.get("row_style", "alternating_light_gray"),
+            "border_style": slide_data.get("border_style", "thin_gray"),
+            "column_widths": slide_data.get("column_widths", []),
+            "row_height": slide_data.get("row_height", None),
+            "table_width": slide_data.get("table_width", None),
+            "header_font_size": slide_data.get("header_font_size", 12),
+            "data_font_size": slide_data.get("data_font_size", 10),
+            "custom_colors": slide_data.get("custom_colors", {}),
+        }
+
+        # ENHANCED: Merge formatted data with configuration for complete table
+        complete_table_data = {**formatted_table_data, **table_config}
+        debug_print(f"  Creating complete table with {len(complete_table_data.get('data', []))} rows")
+
+        # ENHANCED: Clear ALL table-related placeholders before creating table
+        self._clear_all_table_placeholders(slide, slide_data, table_content)
 
         # Set slide context for content formatter
         content_formatter._current_slide = slide
 
-        # Import TableBuilder for table creation
+        # Create the complete table with formatting AND configuration
         from .table_builder import TableBuilder
 
         table_builder = TableBuilder(content_formatter)
+        table_builder.add_table_to_slide(slide, complete_table_data)
 
-        # Add table to slide
-        table_builder.add_table_to_slide(slide, table_data)
+        # ENHANCED: Mark content as processed to prevent content processing from also creating tables
+        self._mark_table_content_as_processed(slide_data, table_content["source_field"])
+        debug_print("  Complete table creation finished")
 
     def _clear_table_content_from_placeholders(self, slide, slide_data):
         """
@@ -686,26 +725,33 @@ class SlideBuilder:
         """
         from ..utils.logging import debug_print
 
-        # Check which placeholders might contain table content
+        # Check both placeholders data and direct slide_data fields
         placeholders_data = slide_data.get("placeholders", {})
 
-        for field_name, field_value in placeholders_data.items():
-            if isinstance(field_value, str) and self._contains_table_content(field_value):
-                # Find the corresponding placeholder shape and clear its text
-                for shape in slide.shapes:
-                    if hasattr(shape, "text_frame") and shape.text_frame and hasattr(shape, "placeholder_format"):
-                        # Clear text from placeholder shapes that contain table content
-                        if shape.text_frame.text and self._contains_table_content(shape.text_frame.text):
-                            debug_print(f"  Clearing table content from placeholder: {field_name}")
+        # Also check direct fields that might contain table content (like 'content' field)
+        all_fields = {**placeholders_data}
+        for key in ["content", "body", "text"]:
+            if key in slide_data:
+                all_fields[key] = slide_data[key]
+
+        debug_print(f"  Checking {len(all_fields)} fields for table content: {list(all_fields.keys())}")
+
+        for field_name, field_value in all_fields.items():
+            if isinstance(field_value, str) and self._is_table_markdown(field_value):
+                debug_print(f"  Found table markdown in field '{field_name}'")
+                # Find and clear ALL placeholders that contain this table content
+                for shape in slide.placeholders:
+                    if hasattr(shape, "text_frame") and shape.text_frame:
+                        shape_text = shape.text_frame.text if shape.text_frame.text else ""
+                        if shape_text and self._is_table_markdown(shape_text):
+                            debug_print(f"  Clearing table content from placeholder idx {shape.placeholder_format.idx}")
                             shape.text_frame.clear()
-                            # Add a simple text indicating table will be created
-                            p = shape.text_frame.paragraphs[0] if shape.text_frame.paragraphs else shape.text_frame.add_paragraph()
-                            p.text = ""  # Leave empty since table will replace this content
+                            # Leave completely empty since table object will replace this content
                             break
 
-    def _contains_table_content(self, text_content):
+    def _is_table_markdown(self, text_content):
         """
-        Check if text content contains markdown table syntax.
+        Enhanced detection for markdown table syntax.
 
         Args:
             text_content: String content to check
@@ -713,16 +759,307 @@ class SlideBuilder:
         Returns:
             bool: True if content appears to contain table markdown
         """
-        if not isinstance(text_content, str):
+        if not isinstance(text_content, str) or not text_content.strip():
             return False
 
-        lines = text_content.split("\n")
-        table_line_count = 0
+        lines = [line.strip() for line in text_content.split("\n") if line.strip()]
+        if len(lines) < 2:
+            return False
+
+        table_rows = 0
 
         for line in lines:
-            # Check for table rows (contain | characters and aren't separator lines)
-            if "|" in line and not all(c in "|-:= \t" for c in line.strip()):
-                table_line_count += 1
+            # Table separator line (like |---|---|---| or | --- | --- | --- |)
+            if "|" in line and all(c in "|-:= \t" for c in line.replace("|", "").strip()):
+                continue  # Skip separator lines
+            # Table data row (contains | but has actual content)
+            elif "|" in line and not all(c in "|-:= \t" for c in line.strip()):
+                table_rows += 1
 
-        # Consider it a table if we have at least 2 lines with pipes (header + data)
-        return table_line_count >= 2
+        # Valid table: at least 2 data rows (header + content) and optionally a separator
+        return table_rows >= 2
+
+    def _detect_existing_tables(self, slide):
+        """
+        Enhanced method to detect existing tables on a slide using multiple approaches.
+
+        Args:
+            slide: PowerPoint slide object
+
+        Returns:
+            List of existing table shapes
+        """
+        from ..utils.logging import debug_print
+
+        existing_tables = []
+        debug_print(f"  Checking {len(slide.shapes)} shapes for existing tables")
+
+        for i, shape in enumerate(slide.shapes):
+            try:
+                shape_info = f"Shape {i}: "
+
+                # Method 1: Check shape_type for TABLE (MSO_SHAPE_TYPE.TABLE = 19)
+                if hasattr(shape, "shape_type"):
+                    shape_type_str = str(shape.shape_type)
+                    shape_info += f"type={shape_type_str} "
+
+                    # PowerPoint table shape type is 19
+                    if "19" in shape_type_str or "TABLE" in shape_type_str.upper():
+                        existing_tables.append(shape)
+                        debug_print(f"    {shape_info}-> FOUND TABLE (shape_type)")
+                        continue
+
+                # Method 2: Check for table attribute directly
+                if hasattr(shape, "table"):
+                    try:
+                        # Try to access table properties to confirm it's a real table
+                        rows = len(shape.table.rows)
+                        cols = len(shape.table.columns)
+                        existing_tables.append(shape)
+                        debug_print(f"    {shape_info}-> FOUND TABLE (table attr, {rows}x{cols})")
+                        continue
+                    except Exception:
+                        pass
+
+                # Method 3: Check element tag name (backup method)
+                if hasattr(shape, "element") and hasattr(shape.element, "tag"):
+                    tag_name = shape.element.tag if hasattr(shape.element, "tag") else ""
+                    if "tbl" in tag_name.lower():
+                        existing_tables.append(shape)
+                        debug_print(f"    {shape_info}-> FOUND TABLE (element tag)")
+                        continue
+
+                debug_print(f"    {shape_info}-> not a table")
+
+            except Exception as e:
+                debug_print(f"    Shape {i}: Error checking - {str(e)}")
+                pass  # Skip shapes that can't be inspected
+
+        debug_print(f"  Total tables found: {len(existing_tables)}")
+        return existing_tables
+
+    def _find_table_content_in_slide_data(self, slide_data):
+        """
+        ENHANCED: Find table content anywhere in slide_data (content, table, table_data fields).
+
+        Args:
+            slide_data: Dictionary containing slide content
+
+        Returns:
+            Dictionary with table content info or None if no table found
+        """
+        from ..utils.logging import debug_print
+
+        # Check multiple possible locations for table content
+        content_fields_to_check = [
+            ("content", slide_data.get("content", "")),
+            ("table_data", slide_data.get("table_data", "")),
+            ("table", slide_data.get("table", "")),
+            ("body", slide_data.get("body", "")),
+            ("text", slide_data.get("text", "")),
+        ]
+
+        # Also check placeholders object
+        placeholders = slide_data.get("placeholders", {})
+        for field_name, field_value in placeholders.items():
+            if isinstance(field_value, str):
+                content_fields_to_check.append((f"placeholders.{field_name}", field_value))
+
+        debug_print(f"  Checking {len(content_fields_to_check)} fields for table content")
+
+        for field_name, field_value in content_fields_to_check:
+            if isinstance(field_value, str) and self._is_table_markdown(field_value):
+                debug_print(f"  Table markdown found in field: {field_name}")
+                return {"source_field": field_name, "markdown": field_value, "table_data": None}
+            elif isinstance(field_value, dict) and field_value.get("type") == "table":
+                debug_print(f"  Table data object found in field: {field_name}")
+                return {"source_field": field_name, "markdown": None, "table_data": field_value}
+
+        debug_print("  No table content found in slide_data")
+        return None
+
+    def _clear_all_table_placeholders(self, slide, slide_data, table_content):
+        """
+        ENHANCED: Clear ALL placeholders that might contain table content.
+
+        Args:
+            slide: PowerPoint slide object
+            slide_data: Dictionary containing slide content
+            table_content: Information about where table content was found
+        """
+        from ..utils.logging import debug_print
+
+        debug_print(f"  Clearing table placeholders (source: {table_content['source_field']})")
+
+        # Clear all content placeholders that might have table content
+        for shape in slide.placeholders:
+            if hasattr(shape, "text_frame") and shape.text_frame:
+                try:
+                    # Check if this placeholder contains table content
+                    shape_text = shape.text_frame.text if shape.text_frame.text else ""
+                    if shape_text and self._is_table_markdown(shape_text):
+                        debug_print(f"    Clearing table content from placeholder idx {shape.placeholder_format.idx}")
+                        shape.text_frame.clear()
+                        # Ensure completely empty
+                        if hasattr(shape, "text"):
+                            shape.text = ""
+                except Exception as e:
+                    debug_print(f"    Warning: Could not clear placeholder {getattr(shape.placeholder_format, 'idx', 'unknown')}: {e}")
+                    continue
+
+    def _mark_table_content_as_processed(self, slide_data, source_field):
+        """
+        ENHANCED: Mark field as processed to prevent content processing from also creating tables.
+
+        Args:
+            slide_data: Dictionary containing slide content
+            source_field: Field name that contained the table content
+        """
+        # Add a marker to prevent content processing from processing this field
+        if "_processed_table_fields" not in slide_data:
+            slide_data["_processed_table_fields"] = set()
+        slide_data["_processed_table_fields"].add(source_field)
+
+    def _contains_table_content(self, text_content):
+        """
+        Legacy method name - redirects to _is_table_markdown for backwards compatibility.
+        """
+        return self._is_table_markdown(text_content)
+
+    def _create_dynamic_content_shapes(self, slide, slide_data, content_formatter):
+        """
+        Create dynamic text shapes and tables for mixed content segments.
+
+        This method processes content segments created by converter's intelligent splitting,
+        creating additional text shapes and properly positioned tables as needed.
+
+        Args:
+            slide: PowerPoint slide object
+            slide_data: Dictionary containing _content_segments
+            content_formatter: ContentFormatter instance for text formatting
+        """
+        from pptx.util import Cm
+        from .table_builder import TableBuilder
+
+        content_segments = slide_data.get("_content_segments", [])
+        if not content_segments:
+            debug_print("    No content segments found for dynamic shape creation")
+            return
+
+        debug_print(f"    Creating dynamic shapes for {len(content_segments)} content segments")
+
+        # Find the content placeholder to use as reference for positioning
+        content_placeholder = None
+        for shape in slide.placeholders:
+            if hasattr(shape, "placeholder_format") and shape.placeholder_format.type == PP_PLACEHOLDER_TYPE.BODY:
+                content_placeholder = shape
+                break
+
+        if not content_placeholder:
+            # Fallback: look for any content-type placeholder
+            for shape in slide.placeholders:
+                if hasattr(shape, "text_frame"):
+                    content_placeholder = shape
+                    break
+
+        if not content_placeholder:
+            error_print("    Warning: No content placeholder found for dynamic shape positioning")
+            return
+
+        # Calculate positioning parameters
+        start_left = content_placeholder.left
+        start_top = content_placeholder.top
+        available_width = content_placeholder.width
+        current_top = start_top
+
+        # Standard spacing
+        text_shape_height = Cm(2.5)  # Reasonable height for text shapes
+        spacing_between_shapes = Cm(0.5)  # Space between text and tables
+
+        # Process each content segment
+        table_builder = TableBuilder(content_formatter)
+        segment_index = 0
+
+        for segment in content_segments:
+            if segment["type"] == "text":
+                segment_index += 1
+
+                # Skip first text segment if it's already in the main content placeholder
+                if segment_index == 1:
+                    # First text segment should already be in content placeholder
+                    # Calculate height of content placeholder content for positioning
+                    placeholder_height = self._estimate_placeholder_content_height(content_placeholder)
+                    current_top += placeholder_height + spacing_between_shapes
+                    debug_print(f"    Skipping first text segment (in main placeholder), next position: {current_top}")
+                    continue
+
+                # Create additional text shape for subsequent text segments
+                text_shape = slide.shapes.add_textbox(start_left, current_top, available_width, text_shape_height)
+
+                # Apply content formatting
+                content_formatter.apply_inline_formatting(segment["content"], text_shape.text_frame.paragraphs[0])
+
+                debug_print(f"    Created text shape {segment_index} at position {current_top}")
+                current_top += text_shape_height + spacing_between_shapes
+
+            elif segment["type"] == "table":
+                # Create table shape positioned at current location
+                table_data = segment["table_data"]
+
+                # Create positioned table creation function
+
+                def positioned_table_creation(slide, table_data):
+                    """Override table positioning for dynamic layout"""
+                    # Get table data
+                    data = table_data.get("data", table_data.get("rows", []))
+                    if not data:
+                        return
+
+                    # Calculate table dimensions
+                    rows = len(data)
+                    cols = len(data[0]) if data else 1
+                    table_height = Cm(0.8 * rows + 1.5)  # Estimate based on row count
+
+                    # Create table at calculated position
+                    table = slide.shapes.add_table(rows, cols, start_left, current_top, available_width, table_height).table
+
+                    # Apply table data and styling using original logic
+                    table_builder._apply_table_data_and_styling(table, table_data)
+
+                    return table_height
+
+                # Create the table
+                try:
+                    table_height = positioned_table_creation(slide, table_data)
+                    debug_print(f"    Created table at position {current_top}, height: {table_height}")
+                    current_top += table_height + spacing_between_shapes
+                except Exception as e:
+                    error_print(f"    Error creating dynamic table: {e}")
+                    # Fallback to standard table creation
+                    table_builder.add_table_to_slide(slide, table_data)
+
+        debug_print(f"    Dynamic shape creation completed, final position: {current_top}")
+
+    def _estimate_placeholder_content_height(self, placeholder):
+        """
+        Estimate the height occupied by content in a placeholder.
+
+        Args:
+            placeholder: PowerPoint placeholder shape
+
+        Returns:
+            Estimated height in EMU units
+        """
+        from pptx.util import Cm
+
+        if not hasattr(placeholder, "text_frame") or not placeholder.text_frame.text:
+            return Cm(1)  # Minimal height for empty placeholder
+
+        # Rough estimation based on text length and line breaks
+        text_content = placeholder.text_frame.text
+        line_count = len(text_content.split("\n"))
+
+        # Estimate: ~0.5cm per line of text
+        estimated_height = Cm(0.5 * max(line_count, 1) + 0.5)  # +0.5cm padding
+
+        return estimated_height

@@ -32,6 +32,199 @@ class FrontmatterConverter:
         # Need at least 2 rows to be considered a table
         return table_lines >= 2
 
+    def _extract_table_markdown_from_content(self, content: str) -> str:
+        """
+        Extract just the table markdown from content, preserving surrounding text.
+
+        Args:
+            content: Full content string that may contain table + other text
+
+        Returns:
+            The table markdown portion only, or empty string if not found
+        """
+        if not isinstance(content, str):
+            return ""
+
+        lines = content.split("\n")
+        table_lines = []
+        table_start = -1
+
+        # Find table boundaries
+        for i, line in enumerate(lines):
+            line = line.strip()
+            if "|" in line and not all(c in "|-:= \t" for c in line.strip()):
+                # This is a table row
+                if table_start == -1:
+                    table_start = i
+                table_lines.append(lines[i])
+            elif table_start != -1 and "|" in line and all(c in "|-:= \t" for c in line.replace("|", "").strip()):
+                # This is a separator line within table
+                table_lines.append(lines[i])
+            elif table_start != -1 and line == "":
+                # Empty line might be within table
+                continue
+            elif table_start != -1:
+                # Non-table line after table started - table might be ended
+                break
+
+        if table_lines:
+            return "\n".join(table_lines)
+        return ""
+
+    def _split_mixed_content_intelligently(self, content: str, base_table_styling: dict) -> dict:
+        """
+        Split mixed content (text + tables) into typed segments for dynamic shape creation.
+
+        Args:
+            content: Full content string that may contain mixed text and tables
+            base_table_styling: Base styling configuration for tables
+
+        Returns:
+            Dictionary with:
+            - segments: List of typed content segments (text or table)
+            - has_mixed_content: Boolean indicating if content was actually mixed
+        """
+        if not isinstance(content, str):
+            return {"segments": [], "has_mixed_content": False}
+
+        lines = content.split("\n")
+        segments = []
+        current_text_block = []
+        current_table = []
+        table_start = -1
+        i = 0
+
+        while i < len(lines):
+            line = lines[i].strip()
+
+            # Check if this line starts or continues a table
+            if "|" in line and not all(c in "|-:= \t" for c in line.strip()):
+                # This is a table data row
+                if table_start == -1:
+                    # Starting a new table - save any accumulated text first
+                    if current_text_block:
+                        text_content = "\n".join(current_text_block).strip()
+                        if text_content:
+                            segments.append({"type": "text", "content": text_content})
+                        current_text_block = []
+                    table_start = i
+                current_table.append(lines[i])
+            elif table_start != -1 and "|" in line and all(c in "|-:= \t" for c in line.replace("|", "").strip()):
+                # This is a separator line within table
+                current_table.append(lines[i])
+            elif table_start != -1 and (line == "" or "|" not in line):
+                # End of table found - process the table
+                if current_table:
+                    table_markdown = "\n".join(current_table)
+                    parsed_table = self._parse_markdown_table(table_markdown)
+
+                    if parsed_table and parsed_table.get("data"):
+                        # Apply base styling to parsed table
+                        complete_table_data = {**base_table_styling, **parsed_table}
+                        segments.append({"type": "table", "table_data": complete_table_data, "markdown": table_markdown})
+
+                # Reset for next content
+                current_table = []
+                table_start = -1
+
+                # Start accumulating text again (if this line has content)
+                if line:
+                    current_text_block.append(lines[i])
+            elif table_start == -1:
+                # Regular content line, not in a table
+                current_text_block.append(lines[i])
+
+            i += 1
+
+        # Handle case where table is at the end of content
+        if current_table and table_start != -1:
+            table_markdown = "\n".join(current_table)
+            parsed_table = self._parse_markdown_table(table_markdown)
+
+            if parsed_table and parsed_table.get("data"):
+                complete_table_data = {**base_table_styling, **parsed_table}
+                segments.append({"type": "table", "table_data": complete_table_data, "markdown": table_markdown})
+
+        # Handle any remaining text
+        if current_text_block:
+            text_content = "\n".join(current_text_block).strip()
+            if text_content:
+                segments.append({"type": "text", "content": text_content})
+
+        # Determine if we actually have mixed content (text + table combination)
+        has_mixed_content = len([s for s in segments if s["type"] == "text"]) > 0 and len([s for s in segments if s["type"] == "table"]) > 0
+
+        return {"segments": segments, "has_mixed_content": has_mixed_content}
+
+    def _extract_all_tables_from_content(self, content: str) -> dict:
+        """
+        Extract ALL tables from content, replace with numbered placeholders, preserve surrounding text.
+
+        Args:
+            content: Full content string that may contain multiple tables + other text
+
+        Returns:
+            Dictionary with:
+            - content_with_placeholders: Content with [TABLE_PLACEHOLDER_1], [TABLE_PLACEHOLDER_2], etc.
+            - tables: List of table info dicts with markdown and parsed data
+        """
+        if not isinstance(content, str):
+            return {"content_with_placeholders": content, "tables": []}
+
+        lines = content.split("\n")
+        tables = []
+        content_with_placeholders = content
+
+        current_table = []
+        table_start = -1
+        i = 0
+
+        while i < len(lines):
+            line = lines[i].strip()
+
+            # Check if this line starts or continues a table
+            if "|" in line and not all(c in "|-:= \t" for c in line.strip()):
+                # This is a table data row
+                if table_start == -1:
+                    table_start = i
+                current_table.append(lines[i])
+            elif table_start != -1 and "|" in line and all(c in "|-:= \t" for c in line.replace("|", "").strip()):
+                # This is a separator line within table
+                current_table.append(lines[i])
+            elif table_start != -1 and (line == "" or "|" not in line):
+                # End of table found
+                if current_table:
+                    table_markdown = "\n".join(current_table)
+                    parsed_table = self._parse_markdown_table(table_markdown)
+
+                    if parsed_table and parsed_table.get("data"):
+                        placeholder = f"[TABLE_PLACEHOLDER_{len(tables) + 1}]"
+                        tables.append({"markdown": table_markdown, "parsed_data": parsed_table["data"], "placeholder": placeholder})
+
+                        # Replace table markdown with placeholder in content
+                        content_with_placeholders = content_with_placeholders.replace(table_markdown, placeholder)
+
+                # Reset for next table
+                current_table = []
+                table_start = -1
+            elif table_start == -1:
+                # Regular content line, not in a table
+                pass
+
+            i += 1
+
+        # Handle case where table is at the end of content
+        if current_table and table_start != -1:
+            table_markdown = "\n".join(current_table)
+            parsed_table = self._parse_markdown_table(table_markdown)
+
+            if parsed_table and parsed_table.get("data"):
+                placeholder = f"[TABLE_PLACEHOLDER_{len(tables) + 1}]"
+                tables.append({"markdown": table_markdown, "parsed_data": parsed_table["data"], "placeholder": placeholder})
+                content_with_placeholders = content_with_placeholders.replace(table_markdown, placeholder)
+
+        return {"content_with_placeholders": content_with_placeholders, "tables": tables}
+
     def _parse_markdown_table(self, content: str) -> dict:
         """Extract table from markdown and apply default styling config"""
         table_data = {
@@ -443,9 +636,65 @@ def markdown_to_canonical_json(markdown_content: str) -> Dict[str, Any]:
                 if "table_width" in slide_data:
                     table_data["table_width"] = slide_data["table_width"]
 
-        # Add table object to slide if table data was found
+        # ENHANCED: Always use Pattern A - put table in placeholders.content, never separate table object
         if table_data:
-            slide_obj["table"] = table_data
+            # Ensure table data has proper formatting (not just raw markdown strings)
+            if "data" in table_data:
+                formatted_data = []
+                for row in table_data["data"]:
+                    formatted_row = []
+                    for cell in row:
+                        if isinstance(cell, str):
+                            # Parse markdown formatting in cell
+                            from .formatter import content_formatter
+
+                            formatted_segments = content_formatter.parse_inline_formatting(cell)
+                            formatted_row.append({"text": cell, "formatted": formatted_segments})
+                        else:
+                            # Cell already formatted
+                            formatted_row.append(cell)
+                    formatted_data.append(formatted_row)
+                table_data["data"] = formatted_data
+
+            # ENHANCED: Dynamic Multi-Shape Content Splitting
+            if "content" in slide_data and isinstance(slide_data["content"], str):
+                content_text = slide_data["content"]
+                converter = FrontmatterConverter()
+
+                if converter._is_table_content(content_text):
+                    # Split mixed content into typed segments for dynamic shape creation
+                    content_segments = converter._split_mixed_content_intelligently(content_text, table_data)
+
+                    if content_segments["segments"]:
+                        # Store content segments for dynamic shape creation by slide_builder
+                        slide_obj["_content_segments"] = content_segments["segments"]
+                        slide_obj["_requires_dynamic_shapes"] = True
+
+                        # Set first text segment as main content placeholder (if exists)
+                        first_text_segment = next((seg for seg in content_segments["segments"] if seg["type"] == "text"), None)
+                        if first_text_segment:
+                            slide_obj["placeholders"]["content"] = first_text_segment["content"].strip()
+
+                        # Add table objects for each table segment
+                        table_count = 0
+                        for segment in content_segments["segments"]:
+                            if segment["type"] == "table":
+                                table_key = "table" if table_count == 0 else f"table_{table_count + 1}"
+                                # Merge styling with extracted table data
+                                complete_table = {**table_data, **segment["table_data"]}
+                                slide_obj[table_key] = complete_table
+                                table_count += 1
+
+                        slide_obj["_table_count"] = table_count
+                    else:
+                        # Fallback: put table directly in content if splitting failed
+                        slide_obj["placeholders"]["content"] = table_data
+                else:
+                    # Content doesn't have table, use separate table object
+                    slide_obj["table"] = table_data
+            else:
+                # No content field or not string, put table in placeholders.content
+                slide_obj["placeholders"]["content"] = table_data
 
         # Add speaker_notes to slide level if present
         if "speaker_notes" in slide_data:

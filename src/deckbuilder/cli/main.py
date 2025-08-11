@@ -12,6 +12,14 @@ import os
 import sys
 from pathlib import Path
 from typing import Optional
+import platform
+import subprocess
+
+
+def clear_hidden_flag(path):
+    if platform.system() == "Darwin":
+        subprocess.run(["chflags", "nohidden", str(path)], check=False)
+
 
 import click
 
@@ -305,10 +313,12 @@ class DeckbuilderCLI:
             files_copied = []
             if source_pptx.exists():
                 shutil.copy2(source_pptx, target_path / "default.pptx")
+                clear_hidden_flag(target_path / "default.pptx")
                 files_copied.append("default.pptx")
 
             if source_json.exists():
                 shutil.copy2(source_json, target_path / "default.json")
+                clear_hidden_flag(target_path / "default.json")
                 files_copied.append("default.json")
 
             if not files_copied:
@@ -331,6 +341,7 @@ class DeckbuilderCLI:
                     current_dir = Path(__file__).parent
                     sys.path.insert(0, str(current_dir))
                     from deckbuilder.cli.commands import DocumentationGenerator
+
                     # from cli_tools import DocumentationGenerator
                 click.echo(f"💡 Taret location: {target_path}", err=True)
                 doc_gen = DocumentationGenerator(template_folder=str(target_path))
@@ -397,12 +408,13 @@ class DeckbuilderCLI:
         """Copy master presentation files as examples with example_ prefix"""
         import json
         from deckbuilder.utils.path import path_manager
+
         # Use centralized path management for master files (source of truth)
         master_md, master_json = path_manager.get_master_presentation_files()
-         
+
         # Update title in markdown content to showcase Deckbuilder
         if master_md.exists():
-            
+
             content = master_md.read_text()
             # Replace test title with showcase title
             updated_content = content.replace(
