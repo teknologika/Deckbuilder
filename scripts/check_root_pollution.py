@@ -41,6 +41,9 @@ def get_allowed_items():
         ".claude/",
         ".mypy_cache/",
         ".DS_Store",
+        # Test and development artifacts
+        "htmlcov/",  # Coverage reports
+        ".deckbuilder_assets/",  # Asset cache directory
         # Core directories
         "src/",
         "tests/",

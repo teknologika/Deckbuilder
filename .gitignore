@@ -247,3 +247,6 @@ tests/placekitten/debug_scaling.py
 /*.json
 /cli_new.py
 /cli_backup.py
+
+# Asset cache directory (created by path manager during tests/CLI)
+.deckbuilder_assets/

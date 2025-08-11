@@ -33,12 +33,35 @@ def test_placeholder_types():
         is_subtitle_placeholder,
         is_title_placeholder,
     )
+    from pptx.enum.shapes import PP_PLACEHOLDER_TYPE
 
     # Test that functions exist and are callable
     assert callable(is_content_placeholder)
     assert callable(is_media_placeholder)
     assert callable(is_subtitle_placeholder)
     assert callable(is_title_placeholder)
+
+    # Test valid placeholder types
+    assert is_title_placeholder(PP_PLACEHOLDER_TYPE.TITLE)
+    assert is_subtitle_placeholder(PP_PLACEHOLDER_TYPE.SUBTITLE)
+    assert is_content_placeholder(PP_PLACEHOLDER_TYPE.BODY)
+    assert is_media_placeholder(PP_PLACEHOLDER_TYPE.PICTURE)
+
+    # Test TypeError fix - these should NOT raise TypeError and return False
+    assert not is_title_placeholder(True)  # Boolean input
+    assert not is_title_placeholder(False)  # Boolean input
+    assert not is_title_placeholder("string")  # String input
+    assert not is_title_placeholder(123)  # Integer input
+    assert not is_title_placeholder(None)  # None input
+
+    assert not is_subtitle_placeholder(True)
+    assert not is_subtitle_placeholder("invalid")
+
+    assert not is_content_placeholder(False)
+    assert not is_content_placeholder(42)
+
+    assert not is_media_placeholder(True)
+    assert not is_media_placeholder([])
 
 
 def test_table_styles():
