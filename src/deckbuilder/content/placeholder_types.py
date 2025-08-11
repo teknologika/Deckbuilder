@@ -75,6 +75,8 @@ def get_placeholder_category(placeholder_type):
         str: Category name ('title', 'subtitle', 'content', 'media', 'layout', 'special')
         None: If placeholder type is not recognized
     """
+    if not isinstance(placeholder_type, PP_PLACEHOLDER_TYPE):
+        return None
     for category, types in ALL_PLACEHOLDER_GROUPS.items():
         if placeholder_type in types:
             return category
@@ -83,19 +85,27 @@ def get_placeholder_category(placeholder_type):
 
 def is_title_placeholder(placeholder_type):
     """Check if placeholder type is for titles."""
+    if not isinstance(placeholder_type, PP_PLACEHOLDER_TYPE):
+        return False
     return placeholder_type in TITLE_PLACEHOLDERS
 
 
 def is_subtitle_placeholder(placeholder_type):
     """Check if placeholder type is for subtitles."""
+    if not isinstance(placeholder_type, PP_PLACEHOLDER_TYPE):
+        return False
     return placeholder_type in SUBTITLE_PLACEHOLDERS
 
 
 def is_content_placeholder(placeholder_type):
     """Check if placeholder type is for main content."""
+    if not isinstance(placeholder_type, PP_PLACEHOLDER_TYPE):
+        return False
     return placeholder_type in CONTENT_PLACEHOLDERS
 
 
 def is_media_placeholder(placeholder_type):
     """Check if placeholder type is for media/objects."""
+    if not isinstance(placeholder_type, PP_PLACEHOLDER_TYPE):
+        return False
     return placeholder_type in MEDIA_PLACEHOLDERS
