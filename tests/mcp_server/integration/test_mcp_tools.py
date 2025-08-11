@@ -193,7 +193,7 @@ class TestMCPToolsIntegration:
         # Test the workflow with mocked converter
         deck = get_deckbuilder_client()
 
-        with patch("deckbuilder.content.converter.markdown_to_canonical_json") as mock_converter:
+        with patch("deckbuilder.content.frontmatter_to_json_converter.markdown_to_canonical_json") as mock_converter:
             # Mock converter to return canonical JSON format
             mock_converter.return_value = {
                 "slides": [

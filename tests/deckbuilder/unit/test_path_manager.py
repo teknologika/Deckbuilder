@@ -6,16 +6,16 @@ and validation methods in the PathManager class.
 """
 
 import os
+import sys
 import tempfile
 from pathlib import Path
 from unittest.mock import patch, MagicMock
 
-import sys
+import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))  # noqa: E402
 
 from deckbuilder.utils.path import PathManager, path_manager  # noqa: E402
-import pytest
 
 
 @pytest.mark.skip(reason="Path management tests temporarily disabled for code quality fixes")

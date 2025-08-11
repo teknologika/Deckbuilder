@@ -3,14 +3,12 @@ import sys
 from pathlib import Path
 from unittest.mock import patch, Mock
 
+import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
 from deckbuilder.core.engine import Deckbuilder  # noqa: E402
 from deckbuilder.utils.path import path_manager  # noqa: E402
-
-
-import pytest
 
 
 @pytest.mark.skip(reason="Path management tests temporarily disabled for code quality fixes")

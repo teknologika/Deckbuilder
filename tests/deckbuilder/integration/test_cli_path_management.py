@@ -5,7 +5,8 @@ from pathlib import Path
 from unittest.mock import patch, MagicMock
 
 import pytest
-from click.testing import CliRunner  # Added import
+
+from click.testing import CliRunner
 
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))  # noqa: E402
@@ -133,7 +134,7 @@ class TestCLIPathManagement:
                 with (
                     patch.object(cli, "_validate_templates_folder", return_value=True),
                     patch("pathlib.Path.exists", return_value=True),
-                    patch("deckbuilder.content.converter.markdown_to_canonical_json") as mock_converter,
+                    patch("deckbuilder.content.frontmatter_to_json_converter.markdown_to_canonical_json") as mock_converter,
                     patch("deckbuilder.core.validation.PresentationValidator") as mock_validator,
                 ):
                     # Mock converter to return canonical JSON format
@@ -192,7 +193,7 @@ class TestCLIVersionHandling:
 
     def test_version_flag_uses_path_manager(self):
         """Test --version flag displays version information"""
-        runner = CliRunner()  # Added CliRunner
+        runner = CliRunner()
         from deckbuilder.cli.main import main  # Ensure main is imported from the correct place
 
         result = runner.invoke(main, ["--version"])

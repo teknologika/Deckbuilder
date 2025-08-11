@@ -9,24 +9,24 @@ local development and standalone usage without MCP server dependency.
 
 import json
 import os
+import platform
+import subprocess  # nosec B404
 import sys
 from pathlib import Path
 from typing import Optional
-import platform
-import subprocess
+
+import click
+
+from ..core.engine import Deckbuilder
+from .commands import TemplateManager
+from ..content.formatting_support import FormattingSupport, print_supported_languages
+from ..utils.path import create_cli_path_manager
 
 
 def clear_hidden_flag(path):
     if platform.system() == "Darwin":
-        subprocess.run(["chflags", "nohidden", str(path)], check=False)
+        subprocess.run(["chflags", "nohidden", str(path)], check=False)  # nosec B603 B607
 
-
-# Conditional imports for development vs installed package
-import click
-from ..core.engine import Deckbuilder  # noqa: E402
-from .commands import TemplateManager  # noqa: E402
-from ..content.formatting_support import FormattingSupport, print_supported_languages  # noqa: E402
-from ..utils.path import create_cli_path_manager  # noqa: E402
 
 # PlaceKitten import with fallback
 try:
@@ -582,7 +582,7 @@ class DeckbuilderCLI:
             click.echo("❌ No updates specified. Use --language or --font arguments.", err=True)
             return False
 
-        click.echo(f"🔄 Updating {" and ".join(updates)} in: {input_file}")
+        click.echo(f"🔄 Updating {' and '.join(updates)} in: {input_file}")
 
         try:
             formatter = FormattingSupport()
