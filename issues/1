@@ -1,0 +1,52 @@
+## Bug
+
+When generating presentations, passing a boolean or wrong type to placeholder type checks (such as `is_title_placeholder`, `is_subtitle_placeholder`, etc.) in `src/deckbuilder/content/placeholder_types.py` raises a `TypeError: unsupported operand type(s) for 'in': 'bool' and 'EnumType'`.
+
+This happens because the code tries to check Enum membership using a value that might be a boolean or an invalid type:
+
+```python
+return placeholder_type in TITLE_PLACEHOLDERS
+```
+
+If `placeholder_type` is not the correct Enum type, this will raise a TypeError.
+
+## Patch
+
+Update all relevant functions in `src/deckbuilder/content/placeholder_types.py` as follows:
+
+```python
+from pptx.enum.shapes import PP_PLACEHOLDER_TYPE
+
+def is_title_placeholder(placeholder_type):
+    """Check if placeholder type is for titles."""
+    if not isinstance(placeholder_type, PP_PLACEHOLDER_TYPE):
+        return False
+    return placeholder_type in TITLE_PLACEHOLDERS
+
+def is_subtitle_placeholder(placeholder_type):
+    """Check if placeholder type is for subtitles."""
+    if not isinstance(placeholder_type, PP_PLACEHOLDER_TYPE):
+        return False
+    return placeholder_type in SUBTITLE_PLACEHOLDERS
+
+def is_content_placeholder(placeholder_type):
+    """Check if placeholder type is for main content."""
+    if not isinstance(placeholder_type, PP_PLACEHOLDER_TYPE):
+        return False
+    return placeholder_type in CONTENT_PLACEHOLDERS
+
+def is_media_placeholder(placeholder_type):
+    """Check if placeholder type is for media/objects."""
+    if not isinstance(placeholder_type, PP_PLACEHOLDER_TYPE):
+        return False
+    return placeholder_type in MEDIA_PLACEHOLDERS
+```
+
+This patch ensures only actual Enum values are checked for membership, preventing the error and making the code more robust.
+
+## Steps to reproduce
+- Try to generate a presentation using markdown or JSON input that triggers placeholder type checks.
+- If the wrong type is passed, a TypeError will be raised.
+
+## Expected behavior
+- No TypeError should be raised. Invalid types should return False and not disrupt presentation generation.
