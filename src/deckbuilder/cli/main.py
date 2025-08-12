@@ -911,6 +911,26 @@ def main(ctx, template_folder, language, font):
 
 
 @main.command()
+@click.argument("command_name", required=False)
+@click.pass_context
+def help(ctx, command_name):
+    """Show help for commands."""
+    if command_name:
+        # Show help for specific command or group
+        cmd = main.get_command(ctx, command_name)
+        if cmd:
+            click.echo(cmd.get_help(ctx))
+        else:
+            click.echo(f"No such command '{command_name}'.")
+            click.echo("Available commands:")
+            for cmd_name in main.list_commands(ctx):
+                click.echo(f"  {cmd_name}")
+    else:
+        # Show general help
+        click.echo(main.get_help(ctx))
+
+
+@main.command()
 @click.argument("input_file", type=click.Path(exists=True, dir_okay=False))
 @click.option("--output", "-o", help="Output filename (without extension).")
 @click.option("--template", help="Template name to use (default: 'default').")
