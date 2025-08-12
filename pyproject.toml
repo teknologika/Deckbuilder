@@ -87,7 +87,9 @@ deckbuilder = [
 "assets/master_default_presentation.md",
 "assets/templates/*.json",
 "assets/templates/*.pptx",
-"layout_intelligence.json"
+"layout_intelligence.json",
+"structured_frontmatter_patterns/*.json",
+"language_mappings/*.json"
 ]
 
 "placekitten" = ["images/*", "README.md"]
