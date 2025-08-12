@@ -12,8 +12,8 @@ from ..content.processor import ContentProcessor
 from ..templates.manager import TemplateManager
 from ..image.image_handler import ImageHandler
 
-# Import PlaceKitten from parent directory
-sys.path.insert(0, str(Path(__file__).parent.parent))
+# Import PlaceKitten from the src directory
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 from placekitten import PlaceKitten  # noqa: E402
 
 
