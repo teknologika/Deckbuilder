@@ -912,8 +912,9 @@ def main(ctx, template_folder, language, font):
 
 @main.command()
 @click.argument("command_name", required=False)
+@click.option("--env", is_flag=True, help="Show environment variables.")
 @click.pass_context
-def help(ctx, command_name):
+def help(ctx, command_name, env):
     """Show help for commands."""
     if command_name:
         # Show help for specific command or group
@@ -928,6 +929,70 @@ def help(ctx, command_name):
     else:
         # Show general help
         click.echo(main.get_help(ctx))
+
+        # Always show version info
+        click.echo()
+        _show_version_info()
+
+        # Show environment variables if requested or always for main help
+        click.echo()
+        _show_environment_info()
+
+
+def _show_version_info():
+    """Show version information."""
+    try:
+        from importlib.metadata import version
+
+        deckbuilder_version = version("deckbuilder")
+    except Exception:
+        deckbuilder_version = "unknown"
+
+    click.echo("📋 Version Information:")
+    click.echo(f"   Deckbuilder: {deckbuilder_version}")
+
+
+def _show_environment_info():
+    """Show environment variable information."""
+    import os
+
+    click.echo("🌍 Environment Variables:")
+
+    # Core path variables
+    env_vars = [
+        ("DECK_TEMPLATE_FOLDER", "Template folder location"),
+        ("DECK_OUTPUT_FOLDER", "Output folder location"),
+        ("DECK_TEMPLATE_NAME", "Default template name"),
+        ("DECK_ASSET_CACHE_DIR", "Asset cache directory"),
+    ]
+
+    # Formatting variables
+    formatting_vars = [
+        ("DECK_PROOFING_LANGUAGE", "Default proofing language"),
+        ("DECK_DEFAULT_FONT", "Default font family"),
+    ]
+
+    # Debug variables
+    debug_vars = [
+        ("DECKBUILDER_DEBUG", "Debug mode"),
+        ("DECKBUILDER_QUIET", "Quiet mode"),
+        ("DECKBUILDER_VALIDATION_DEBUG", "Validation debug"),
+        ("DECKBUILDER_SLIDE_DEBUG", "Slide debug"),
+        ("DECKBUILDER_CONTENT_DEBUG", "Content debug"),
+    ]
+
+    def show_var_group(title, var_list):
+        click.echo(f"   {title}:")
+        for var_name, _ in var_list:
+            value = os.getenv(var_name)
+            if value:
+                click.echo(f"     {var_name}={value}")
+            else:
+                click.echo(f"     {var_name}=<not set>")
+
+    show_var_group("Core", env_vars)
+    show_var_group("Formatting", formatting_vars)
+    show_var_group("Debug", debug_vars)
 
 
 @main.command()
