@@ -11,10 +11,8 @@ from ..content.processor import ContentProcessor
 from ..templates.manager import TemplateManager
 from ..image.image_handler import ImageHandler
 
-# Import PlaceKitten using DRY utility
+# PlaceKitten will be imported lazily when needed
 from ..utils.path import get_placekitten
-
-PlaceKitten = get_placekitten()
 
 
 def singleton(cls):
@@ -59,7 +57,7 @@ class Deckbuilder:
         else:
             image_cache_dir = output_folder / "image_cache"
         self.image_handler = ImageHandler(str(image_cache_dir))
-        self.placekitten = PlaceKitten()
+        self.placekitten = get_placekitten()()
 
         # Ensure default template exists in templates folder
         template_name = self._path_manager.get_template_name() or "default"
