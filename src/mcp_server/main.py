@@ -63,7 +63,6 @@ async def deckbuilder_lifespan(server: FastMCP) -> AsyncIterator[DeckbuilderCont
 # Initialize FastMCP server with the Deckbuilder client as context
 mcp = FastMCP(
     "deckbuilder",
-    description="Token-efficient MCP server for PowerPoint presentation generation from files and markdown",
     lifespan=deckbuilder_lifespan,
     host=os.getenv("HOST", "0.0.0.0"),  # nosec B104
     port=os.getenv("PORT", "8050"),
