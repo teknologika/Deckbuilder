@@ -378,7 +378,7 @@ class PathManager:
             from importlib.metadata import version
 
             return version("deckbuilder")
-        except Exception:
+        except Exception:  # nosec B110
             pass
         try:
             import tomllib
@@ -388,7 +388,7 @@ class PathManager:
                 with open(pyproject, "rb") as f:
                     data = tomllib.load(f)
                 return data.get("project", {}).get("version", "unknown")
-        except Exception:
+        except Exception:  # nosec B110
             pass
         return "1.3.0"
 
@@ -415,3 +415,25 @@ def create_library_path_manager(
 
 # Default global instance (library context)
 path_manager = PathManager("library")
+
+
+def get_placekitten():
+    """Import and return PlaceKitten class with proper path setup.
+
+    This utility function ensures DRY principle by centralizing the
+    sys.path manipulation needed to import placekitten from sibling package.
+
+    Returns:
+        PlaceKitten class from the placekitten package
+    """
+    import sys
+    from pathlib import Path
+
+    # Add src directory to path if not already present
+    src_path = str(Path(__file__).parent.parent.parent)
+    if src_path not in sys.path:
+        sys.path.insert(0, src_path)
+
+    from placekitten import PlaceKitten  # noqa: E402
+
+    return PlaceKitten

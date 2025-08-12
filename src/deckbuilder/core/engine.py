@@ -1,5 +1,4 @@
 # import json
-import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any, Optional
@@ -12,9 +11,10 @@ from ..content.processor import ContentProcessor
 from ..templates.manager import TemplateManager
 from ..image.image_handler import ImageHandler
 
-# Import PlaceKitten from the src directory
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
-from placekitten import PlaceKitten  # noqa: E402
+# Import PlaceKitten using DRY utility
+from ..utils.path import get_placekitten
+
+PlaceKitten = get_placekitten()
 
 
 def singleton(cls):

@@ -20,7 +20,7 @@ import click
 from ..core.engine import Deckbuilder
 from .commands import TemplateManager
 from ..content.formatting_support import FormattingSupport, print_supported_languages
-from ..utils.path import create_cli_path_manager
+from ..utils.path import create_cli_path_manager, get_placekitten
 
 
 def clear_hidden_flag(path):
@@ -28,15 +28,8 @@ def clear_hidden_flag(path):
         subprocess.run(["chflags", "nohidden", str(path)], check=False)  # nosec B603 B607
 
 
-# PlaceKitten import with fallback
-try:
-    from placekitten import PlaceKitten
-except ImportError:
-    # Development path
-    current_dir = Path(__file__).parent
-    project_root = current_dir.parent.parent
-    sys.path.insert(0, str(project_root))
-    from placekitten import PlaceKitten
+# Initialize PlaceKitten using DRY utility (needed by CLI class)
+PlaceKitten = get_placekitten()  # noqa: E402
 
 
 class DeckbuilderCLI:

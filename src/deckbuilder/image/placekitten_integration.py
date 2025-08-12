@@ -10,7 +10,10 @@ from typing import Dict, Optional, Tuple
 from .image_handler import ImageHandler
 
 try:
-    from placekitten import PlaceKitten
+    # Import PlaceKitten using DRY utility
+    from ..utils.path import get_placekitten
+
+    PlaceKitten = get_placekitten()
 
     PLACEKITTEN_AVAILABLE = True
 except ImportError:
