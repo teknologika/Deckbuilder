@@ -52,16 +52,27 @@ jobs:
         CURRENT_VERSION=$(grep "version = " pyproject.toml | sed 's/version = "\(.*\)"/\1/')
         echo "📋 Current version: ${CURRENT_VERSION}"
         
-        # Generate next dev version (e.g., 1.2.0 -> 1.2.1.dev.XXXX)
+        # Generate dev version using current version (e.g., 1.3.0 -> 1.3.0.dev123)
         MAJOR=$(echo $CURRENT_VERSION | cut -d. -f1)
         MINOR=$(echo $CURRENT_VERSION | cut -d. -f2)
         PATCH=$(echo $CURRENT_VERSION | cut -d. -f3)
-        NEXT_PATCH=$((PATCH + 1))
         
-        DEV_NUMBER=$(printf "%04d" $GITHUB_RUN_NUMBER)
-        DEV_VERSION="${MAJOR}.${MINOR}.${NEXT_PATCH}.dev.${DEV_NUMBER}"
+        # Ensure PATCH is a valid number, default to 0 if empty
+        if [[ -z "$PATCH" || ! "$PATCH" =~ ^[0-9]+$ ]]; then
+          PATCH=0
+        fi
+        
+        DEV_NUMBER=$GITHUB_RUN_NUMBER
+        DEV_VERSION="${MAJOR}.${MINOR}.${PATCH}.dev${DEV_NUMBER}"
         echo "DEV_VERSION=${DEV_VERSION}" >> $GITHUB_ENV
         echo "📦 Development version: ${DEV_VERSION}"
+        
+        # Validate the generated version format
+        if [[ ! "$DEV_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.dev[0-9]+$ ]]; then
+          echo "❌ ERROR: Generated version '$DEV_VERSION' is not PEP 440 compliant"
+          exit 1
+        fi
+        echo "✅ Version format is PEP 440 compliant"
         
         # Update pyproject.toml version dynamically
         sed -i "s/version = \".*\"/version = \"${DEV_VERSION}\"/" pyproject.toml
