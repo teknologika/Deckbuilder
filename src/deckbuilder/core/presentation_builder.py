@@ -25,6 +25,10 @@ class PresentationBuilder:
         self.content_formatter = ContentFormatter()
         self.table_builder = TableBuilder(self.content_formatter)
 
+        # Formatting options (set later via set_formatting_options)
+        self.language_code = None
+        self.font_name = None
+
         # Initialize image handling components with cache in output directory
         cache_dir = str(self.path_manager.get_output_folder() / "temp" / "image_cache")
         self.image_handler = ImageHandler(cache_dir)
@@ -42,6 +46,17 @@ class PresentationBuilder:
         self._layout_mapping = value
         if hasattr(self, "slide_builder"):
             self.slide_builder.layout_mapping = value
+
+    def set_formatting_options(self, language_code=None, font_name=None):
+        """Set formatting options for language and font."""
+        self.language_code = language_code
+        self.font_name = font_name
+
+        # Update ContentFormatter with formatting parameters
+        if language_code is not None or font_name is not None:
+            self.content_formatter = ContentFormatter(language_code=language_code, font_name=font_name)
+            # Update table builder with new formatter
+            self.table_builder = TableBuilder(self.content_formatter)
 
     def clear_slides(self, prs):
         """Clear all slides from the presentation."""

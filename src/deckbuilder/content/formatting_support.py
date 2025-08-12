@@ -550,6 +550,12 @@ class FormattingSupport:
         Returns:
             Dictionary with operation results and statistics
         """
+        # Fallback to environment variables when parameters are None
+        if language_code is None:
+            language_code = get_default_language()
+        if font_name is None:
+            font_name = get_default_font()
+
         pptx_path = Path(presentation_path)
 
         if not pptx_path.exists():

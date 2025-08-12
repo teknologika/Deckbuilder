@@ -91,6 +91,8 @@ class Deckbuilder:
         presentation_data: Dict[str, Any],
         fileName: str = "Sample_Presentation",
         templateName: str = "default",
+        language_code: Optional[str] = None,
+        font_name: Optional[str] = None,
     ) -> str:
         """
         Creates a presentation from the canonical JSON data model.
@@ -136,13 +138,23 @@ class Deckbuilder:
         validator = PresentationValidator(presentation_data, templateName, template_folder)
         validator.validate_pre_generation()
 
-        # STEP 2: Process slides using canonical format
+        # STEP 1.5: Apply theme font formatting if specified
+        if font_name is not None:
+            from ..content.formatting_support import FormattingSupport
+
+            formatter = FormattingSupport()
+            formatter.update_theme_fonts(self.prs, font_name)
+
+        # STEP 2: Update presentation builder with formatting parameters
+        self.presentation_builder.set_formatting_options(language_code, font_name)
+
+        # STEP 3: Process slides using canonical format with optional formatting
         for slide_data in presentation_data["slides"]:
             # Add mixed content processing for JSON input (similar to markdown processing)
             self._process_mixed_content_for_json(slide_data)
             self.presentation_builder.add_slide(self.prs, slide_data)
 
-        # STEP 3: Save the presentation to disk
+        # STEP 4: Save the presentation to disk
         write_result = self.write_presentation(fileName)
 
         # Extract the file path from write_result for post-generation validation
@@ -151,7 +163,7 @@ class Deckbuilder:
             file_path = write_result.split("Successfully created presentation: ")[1].strip()
             full_path = str(self._path_manager.get_output_folder() / file_path)
 
-            # STEP 4: Post-generation validation (PPTX ↔ JSON verification)
+            # STEP 5: Post-generation validation (PPTX ↔ JSON verification)
             validator.validate_post_generation(full_path)
 
         # Show completion summary

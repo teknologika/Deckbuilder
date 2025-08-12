@@ -21,9 +21,17 @@ from typing import List, Dict, Any, Union
 class ContentFormatter:
     """Universal content formatting processor."""
 
-    def __init__(self):
-        """Initialize the content formatter."""
-        pass
+    def __init__(self, language_code=None, font_name=None):
+        """Initialize the content formatter with optional language and font settings."""
+        self.language_code = language_code
+        self.font_name = font_name
+
+        # Only import FormattingSupport if formatting needed
+        self.formatter = None
+        if language_code is not None or font_name is not None:
+            from .formatting_support import FormattingSupport
+
+            self.formatter = FormattingSupport()
 
     def parse_inline_formatting(self, text: str) -> List[Dict[str, Any]]:
         """
@@ -133,6 +141,8 @@ class ContentFormatter:
                         run.font.italic = True
                     if "underline" in segment["format"]:
                         run.font.underline = True
+                    # Apply language and font formatting if specified
+                    self._apply_language_font_formatting(run)
 
     def apply_formatted_segments_to_paragraph(self, formatted_segments, paragraph):
         """Apply formatted text segments to a paragraph."""
@@ -150,13 +160,27 @@ class ContentFormatter:
                 run = paragraph.add_run()
                 run.text = text
 
-                # Apply formatting
+                # Apply inline formatting
                 if format_info.get("bold"):
                     run.font.bold = True
                 if format_info.get("italic"):
                     run.font.italic = True
                 if format_info.get("underline"):
                     run.font.underline = True
+
+                # Apply language and font formatting if specified
+                self._apply_language_font_formatting(run)
+
+    def _apply_language_font_formatting(self, run):
+        """Apply language and font formatting to a text run if specified."""
+        if self.formatter is None:
+            return  # No formatting specified
+
+        if self.language_code is not None:
+            self.formatter.apply_language_to_run(run, self.language_code)
+
+        if self.font_name is not None:
+            self.formatter.apply_font_to_run(run, self.font_name)
 
     def apply_formatted_segments_to_cell(self, cell, segments):
         """Apply formatted text segments to a table cell."""
@@ -180,6 +204,8 @@ class ContentFormatter:
                 run.font.italic = True
             if format_dict.get("underline"):
                 run.font.underline = True
+            # Apply language and font formatting if specified
+            self._apply_language_font_formatting(run)
 
     def add_content_to_placeholder(self, placeholder, content):
         """
@@ -415,6 +441,8 @@ class ContentFormatter:
                 run.font.italic = True
             if "underline" in segment["format"]:
                 run.font.underline = True
+            # Apply language and font formatting if specified
+            self._apply_language_font_formatting(run)
 
         # Apply heading-specific font scaling and weight
         base_size = 18  # PowerPoint default content size
@@ -525,7 +553,13 @@ class ContentFormatter:
         return {"data": table_rows, "type": "table"}
 
 
-# Global formatter instance
+# Global formatter instance factory
+def get_content_formatter(language_code=None, font_name=None):
+    """Get a ContentFormatter instance with optional formatting parameters."""
+    return ContentFormatter(language_code=language_code, font_name=font_name)
+
+
+# Default formatter instance for backward compatibility
 content_formatter = ContentFormatter()
 
 

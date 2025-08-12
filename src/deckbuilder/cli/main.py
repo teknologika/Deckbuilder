@@ -145,12 +145,15 @@ class DeckbuilderCLI:
                 presentation_data,
                 fileName=output_name,
                 templateName=template_name,
+                language_code=self.language,  # Pass language from CLI/env vars
+                font_name=self.font,  # Pass font from CLI/env vars
             )
 
             # Check if result indicates an error
             if result and ("Error creating presentation from markdown:" in result or "Error creating presentation from JSON:" in result):
                 click.echo(f"✗ {result}", err=True)
                 raise RuntimeError(result)
+
             click.echo(f"✓ Presentation created successfully: {result}")
             return result
 
@@ -901,8 +904,8 @@ class DeckbuilderCLI:
 
 @click.group(context_settings={"help_option_names": ["-h", "--help"]})
 @click.option("-t", "--template-folder", metavar="PATH", help="Template folder path.")
-@click.option("-l", "--language", metavar="LANG", help="Proofing language (e.g., en-US).")
-@click.option("-f", "--font", metavar="FONT", help='Default font family (e.g., "Calibri").')
+@click.option("-l", "--language", metavar="LANG", envvar="DECK_PROOFING_LANGUAGE", help="Proofing language (e.g., en-US).")
+@click.option("-f", "--font", metavar="FONT", envvar="DECK_DEFAULT_FONT", help='Default font family (e.g., "Calibri").')
 @click.version_option(package_name="deckbuilder", prog_name="Deckbuilder")
 @click.pass_context
 def main(ctx, template_folder, language, font):
@@ -1162,8 +1165,8 @@ def completion(cli):
 
 @main.command()
 @click.argument("input_file", type=click.Path(exists=True, dir_okay=False))
-@click.option("--language", "-l", metavar="LANG", help="Language code to apply.")
-@click.option("--font", "-f", metavar="FONT", help="Font family to apply.")
+@click.option("--language", "-l", metavar="LANG", envvar="DECK_PROOFING_LANGUAGE", help="Language code to apply.")
+@click.option("--font", "-f", metavar="FONT", envvar="DECK_DEFAULT_FONT", help="Font family to apply.")
 @click.option("--output", "-o", metavar="FILE", help="Output file path.")
 @click.option("--no-backup", is_flag=True, help="Skip creating backup file.")
 @click.pass_obj
