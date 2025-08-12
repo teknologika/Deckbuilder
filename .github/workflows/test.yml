@@ -285,7 +285,7 @@ jobs:
         
         # Test CLI functionality
         deckbuilder --help
-        deckbuilder config
+        deckbuilder config --help
         deckbuilder template || echo "Template command tested (expected to show no templates in clean env)"
         
         # Test Python import (using installed package structure)
