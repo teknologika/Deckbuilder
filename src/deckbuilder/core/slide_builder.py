@@ -163,6 +163,27 @@ class SlideBuilder:
             p = text_frame.paragraphs[0] if text_frame.paragraphs else text_frame.add_paragraph()
             content_formatter.apply_inline_formatting(notes_content, p)
 
+    def _find_placeholder_by_name(self, slide, field_name):
+        """
+        Find a placeholder by its name (after names have been updated to match field names).
+
+        Args:
+            slide: The slide to search
+            field_name: The field name to look for
+
+        Returns:
+            The placeholder object if found, None otherwise
+        """
+        for placeholder in slide.placeholders:
+            try:
+                placeholder_name = placeholder.element.nvSpPr.cNvPr.name
+                if placeholder_name == field_name:
+                    return placeholder
+            except AttributeError:
+                # Some placeholders don't have accessible names
+                continue
+        return None
+
     def add_slide_with_direct_mapping(self, prs, slide_data: dict, content_formatter, image_placeholder_handler):
         """
         Add slide using direct field mapping (no markdown conversion).
@@ -385,7 +406,15 @@ class SlideBuilder:
                 else:
                     slide_builder_print(f"        Using field name as-is: '{field_name}'")
 
-                if target_field in field_to_index:
+                # Try name-based lookup first (after placeholder names have been updated)
+                slide_builder_print(f"        Trying name-based lookup for field: '{target_field}'")
+                target_placeholder = self._find_placeholder_by_name(slide, target_field)
+                if target_placeholder:
+                    mapping_method = f"Name-based mapping '{target_field}'"
+                    placeholder_type = target_placeholder.placeholder_format.type
+                    slide_builder_print(f"        SUCCESS: Found placeholder by name: '{target_field}', type: {placeholder_type}")
+                elif target_field in field_to_index:
+                    # Fallback to index-based lookup
                     placeholder_idx = field_to_index[target_field]
                     slide_builder_print(f"        Template mapping found: '{target_field}' -> idx {placeholder_idx}")
                     for placeholder in slide.placeholders:
@@ -648,9 +677,12 @@ class SlideBuilder:
                 content_formatter.add_content_to_placeholder(placeholder, field_value)
 
         elif is_media_placeholder(placeholder_type):
-            # Media placeholders - handle images, charts, etc.
+            # Media placeholders - handle images, charts, tables, etc.
             if placeholder_type == PP_PLACEHOLDER_TYPE.PICTURE:
                 image_placeholder_handler.handle_image_placeholder(placeholder, field_name, field_value, slide_data)
+            elif placeholder_type == PP_PLACEHOLDER_TYPE.TABLE:
+                # TABLE placeholders - handle table data
+                self._handle_table_placeholder(placeholder, field_name, field_value, slide_data, slide)
             elif placeholder_type == PP_PLACEHOLDER_TYPE.OBJECT and hasattr(placeholder, "text_frame"):
                 # OBJECT placeholders with text_frame should be treated as content placeholders
                 content_formatter.add_content_to_placeholder(placeholder, field_value)
@@ -691,6 +723,60 @@ class SlideBuilder:
                     if placeholder.placeholder_format.type == PP_PLACEHOLDER_TYPE.PICTURE:
                         image_placeholder_handler.handle_image_placeholder(placeholder, "media.image_path", image_path, slide_data)
                         break
+
+    def _handle_table_placeholder(self, placeholder, field_name, field_value, slide_data, slide):
+        """
+        Handle TABLE placeholder by creating a table directly in the placeholder space.
+
+        Args:
+            placeholder: PowerPoint TABLE placeholder
+            field_name: Name of the field (e.g., 'table_data')
+            field_value: Table data (dict with table structure)
+            slide_data: Full slide data for styling
+            slide: PowerPoint slide object
+        """
+        debug_print(f"  Handling TABLE placeholder for field: {field_name}")
+        debug_print(f"    Field value type: {type(field_value)}")
+        debug_print(f"    Field value: {field_value}")
+
+        if not isinstance(field_value, dict) or field_value.get("type") != "table":
+            debug_print(f"    Skipping - not table data: {type(field_value)}")
+            return
+
+        # Use the table builder to create the table
+        from ..core.table_builder import TableBuilder
+
+        table_builder = TableBuilder()
+
+        # Create table configuration combining field data with slide styling
+        table_config = field_value.copy()
+
+        # Add slide-level styling if not specified in field
+        for style_field in ["header_style", "row_style", "border_style", "row_height", "table_width", "column_widths"]:
+            if style_field not in table_config and style_field in slide_data:
+                table_config[style_field] = slide_data[style_field]
+
+        # Get placeholder bounds for positioning
+        left = placeholder.left
+        top = placeholder.top
+        width = placeholder.width
+        height = placeholder.height
+
+        # Create table shape manually at placeholder position
+        if "data" in table_config and table_config["data"]:
+            rows = len(table_config["data"])
+            cols = len(table_config["data"][0]) if table_config["data"] else 1
+
+            # Create table shape
+            table_shape = slide.shapes.add_table(rows, cols, left, top, width, height)
+            table = table_shape.table
+
+            # Apply data and styling using table builder
+            table_builder._apply_table_data_and_styling(table, table_config)
+
+            debug_print(f"    Created table in TABLE placeholder: {rows}x{cols}")
+        else:
+            debug_print(f"    No table data found in: {table_config}")
 
     def _process_table_data(self, slide, slide_data, content_formatter):
         """

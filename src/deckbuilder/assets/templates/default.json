@@ -232,6 +232,64 @@
         "18": "content_bottom_left",
         "19": "content_bottom_right"
       }
+    },
+    "Table Only": {
+      "index": 19,
+      "placeholders": {
+        "0": "title_top",
+        "1": "table_data",
+        "10": "date_footer",
+        "11": "footer_footer",
+        "12": "slide_number_footer"
+      }
+    },
+    "Table with Content Above": {
+      "index": 20,
+      "placeholders": {
+        "0": "title_top",
+        "1": "content",
+        "2": "table_data",
+        "10": "date_footer",
+        "11": "footer_footer",
+        "12": "slide_number_footer"
+      }
+    },
+    "Table with Content Above and Below": {
+      "index": 21,
+      "placeholders": {
+        "0": "title_top",
+        "1": "content_above",
+        "2": "table_data",
+        "3": "content_below",
+        "10": "date_footer",
+        "11": "footer_footer",
+        "12": "slide_number_footer"
+      }
+    },
+    "Table with Content Left": {
+      "index": 22,
+      "placeholders": {
+        "0": "title_top",
+        "1": "content_left",
+        "2": "table_data",
+        "10": "date_footer",
+        "11": "footer_footer",
+        "12": "slide_number_footer"
+      }
+    },
+    "Content Table Content Table Content": {
+      "index": 23,
+      "placeholders": {
+        "0": "title_top",
+        "1": "content_1",
+        "2": "table_data_1",
+        "3": "content_2",
+        "4": "table_data_2",
+        "5": "content_3",
+        "10": "date_footer",
+        "11": "footer_footer",
+        "12": "slide_number_footer"
+      }
     }
   },
   "aliases": {

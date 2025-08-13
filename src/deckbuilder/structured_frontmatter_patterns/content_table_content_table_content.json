@@ -4,9 +4,9 @@
         "layout": "Content Table Content Table Content",
         "title": "str",
         "content_1": "str",
-        "table_data_1": "table",
+        "table_data_1": "string",
         "content_2": "str", 
-        "table_data_2": "table",
+        "table_data_2": "string",
         "content_3": "str"
     },
     "validation": {
@@ -32,9 +32,9 @@
         "field_types": {
             "title": "string",
             "content_1": "string",
-            "table_data_1": "markdown_table",
+            "table_data_1": "string",
             "content_2": "string",
-            "table_data_2": "markdown_table",
+            "table_data_2": "string",
             "content_3": "string",
             "style": "string",
             "row_style": "string",
