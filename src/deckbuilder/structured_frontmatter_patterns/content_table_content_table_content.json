@@ -1,0 +1,51 @@
+{
+    "description": "Complex analytical layout with alternating content and data tables for sophisticated multi-dataset presentations",
+    "yaml_pattern": {
+        "layout": "Content Table Content Table Content",
+        "title": "str",
+        "content_1": "str",
+        "table_data_1": "table",
+        "content_2": "str", 
+        "table_data_2": "table",
+        "content_3": "str"
+    },
+    "validation": {
+        "required_fields": [
+            "title",
+            "content_1",
+            "table_data_1",
+            "content_2",
+            "table_data_2",
+            "content_3"
+        ],
+        "optional_fields": [
+            "style",
+            "row_style",
+            "border_style",
+            "row_height",
+            "table_width",
+            "column_widths",
+            "header_font_size",
+            "data_font_size",
+            "custom_colors"
+        ],
+        "field_types": {
+            "title": "string",
+            "content_1": "string",
+            "table_data_1": "markdown_table",
+            "content_2": "string",
+            "table_data_2": "markdown_table",
+            "content_3": "string",
+            "style": "string",
+            "row_style": "string",
+            "border_style": "string",
+            "row_height": "number",
+            "table_width": "number",
+            "column_widths": "array",
+            "header_font_size": "number",
+            "data_font_size": "number",
+            "custom_colors": "object"
+        }
+    },
+    "example": "---\nlayout: Content Table Content Table Content\ntitle: Comprehensive Business Analysis\ncontent_1: |\n  ## Revenue Performance\n  Q3 revenue exceeded expectations across all product lines.\ntable_data_1: |\n  | Product | Q2 Revenue | Q3 Revenue | Growth |\n  |---------|------------|------------|--------|\n  | Pro     | $1.2M      | $1.4M      | +17%   |\n  | Enterprise | $800K   | $950K      | +19%   |\ncontent_2: |\n  ## Customer Metrics\n  Customer acquisition and retention both showed strong improvement.\ntable_data_2: |\n  | Metric | Q2 | Q3 | Change |\n  |--------|----|----|--------|\n  | New Customers | 180 | 225 | +25% |\n  | Retention Rate | 92% | 94% | +2% |\ncontent_3: |\n  **Conclusion**: Strong performance across revenue and customer metrics \n  positions us well for Q4 targets.\n---"
+}

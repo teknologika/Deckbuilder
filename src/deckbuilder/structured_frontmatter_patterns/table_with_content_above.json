@@ -1,0 +1,42 @@
+{
+    "description": "Content explanation followed by supporting data table, ideal for providing context before presenting data",
+    "yaml_pattern": {
+        "layout": "Table with Content Above",
+        "title": "str",
+        "content": "str",
+        "table_data": "table"
+    },
+    "validation": {
+        "required_fields": [
+            "title",
+            "content",
+            "table_data"
+        ],
+        "optional_fields": [
+            "style",
+            "row_style",
+            "border_style",
+            "row_height",
+            "table_width",
+            "column_widths",
+            "header_font_size",
+            "data_font_size",
+            "custom_colors"
+        ],
+        "field_types": {
+            "title": "string",
+            "content": "string",
+            "table_data": "markdown_table",
+            "style": "string",
+            "row_style": "string",
+            "border_style": "string",
+            "row_height": "number",
+            "table_width": "number",
+            "column_widths": "array",
+            "header_font_size": "number",
+            "data_font_size": "number",
+            "custom_colors": "object"
+        }
+    },
+    "example": "---\nlayout: Table with Content Above\ntitle: Regional Performance Analysis\ncontent: |\n  Our regional sales analysis shows consistent growth across all territories. \n  The data below highlights performance metrics for each region over the past quarter.\nstyle: dark_blue_white_text\ntable_data: |\n  | Region | Sales Growth | Market Share | Customer Count |\n  |--------|--------------|--------------|----------------|\n  | North  | +15.2%       | 28%          | 1,250          |\n  | South  | +12.8%       | 22%          | 980            |\n  | East   | +18.5%       | 25%          | 1,100          |\n  | West   | +9.4%        | 25%          | 850            |\n---"
+}

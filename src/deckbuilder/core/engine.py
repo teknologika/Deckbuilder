@@ -150,8 +150,7 @@ class Deckbuilder:
 
         # STEP 3: Process slides using canonical format with optional formatting
         for slide_data in presentation_data["slides"]:
-            # Add mixed content processing for JSON input (similar to markdown processing)
-            self._process_mixed_content_for_json(slide_data)
+            # Use template-based layouts for tables instead of dynamic shape creation
             self.presentation_builder.add_slide(self.prs, slide_data)
 
         # STEP 4: Save the presentation to disk
@@ -175,49 +174,7 @@ class Deckbuilder:
 
         return f"Successfully created presentation with {slide_count} slides. {write_result}"
 
-    def _process_mixed_content_for_json(self, slide_data: Dict[str, Any]):
-        """
-        Process mixed content for JSON input - detect tables in placeholders and set up dynamic shapes.
-        This ensures JSON input gets the same mixed content processing as markdown input.
-        """
-        from ..content.frontmatter_to_json_converter import FrontmatterConverter
-
-        converter = FrontmatterConverter()
-        placeholders = slide_data.get("placeholders", {})
-
-        # Check each placeholder for mixed content (text + table)
-        for field_name, content in placeholders.items():
-            if isinstance(content, str) and converter._is_table_content(content):
-                # Create table styling data from slide-level properties
-                table_data = {
-                    "style": slide_data.get("style", "default_style"),
-                    "row_style": slide_data.get("row_style", "alternating_light_gray"),
-                    "border_style": slide_data.get("border_style", "thin_gray"),
-                    "row_height": slide_data.get("row_height", 0.6),
-                    "table_width": slide_data.get("table_width"),
-                    "column_widths": slide_data.get("column_widths", []),
-                    "header_font_size": slide_data.get("header_font_size"),
-                    "data_font_size": slide_data.get("data_font_size"),
-                    "custom_colors": slide_data.get("custom_colors", {}),
-                }
-
-                # Split mixed content into segments
-                content_segments = converter._split_mixed_content_intelligently(content, table_data)
-
-                if content_segments["segments"]:
-                    # Store content segments for dynamic shape creation
-                    slide_data["_content_segments"] = content_segments["segments"]
-                    slide_data["_requires_dynamic_shapes"] = True
-
-                    # Set first text segment as main content placeholder (if exists)
-                    text_segments = [s for s in content_segments["segments"] if s["type"] == "text"]
-                    if text_segments:
-                        placeholders[field_name] = text_segments[0]["content"]
-                    else:
-                        # No text segments, clear the placeholder
-                        placeholders[field_name] = ""
-
-                break  # Only process one mixed content field per slide
+    # Removed _process_mixed_content_for_json - table handling now uses dedicated layouts
 
     def write_presentation(self, fileName: str = "Sample_Presentation") -> str:
         """Writes the generated presentation to disk with ISO timestamp."""

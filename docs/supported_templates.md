@@ -37,9 +37,30 @@ This document tracks the implementation status of PowerPoint templates and layou
 | ✅         | Key Metrics      | Multiple KPIs display        | Title 1, 4 Metric Content Areas               | [key_metrics.json](../src/deckbuilder/structured_frontmatter_patterns/key_metrics.json) |
 | ❌         | KPI Dashboard    | Multiple metrics grid        | Title 1, KPI Grid Placeholders                | *Use key_metrics.json*                                                                  |
 | ❌         | Chart Slide      | Graph with supporting text   | Title 1, Chart Placeholder, Supporting Text   | *Use picture_with_caption.json*                                                         |
-| ❌         | Data Table       | Structured data presentation | Title 1, Table Placeholder                    | *Use title_and_content.json with table*                                                 |
+| ❌         | Data Table       | Structured data presentation | Title 1, Table Placeholder                    | *Use table layout options below*                                                        |
 | ❌         | Progress Tracker | Status indicators            | Title 1, Progress Bar Placeholders            | *Use four_columns.json*                                                                 |
 | ❌         | Scorecard        | Performance metrics          | Title 1, Metric Placeholders                  | *Use key_metrics.json*                                                                  |
+
+## Table Layouts
+
+| Supported | Name                                | Description                                      | Required Placeholders                                                                    | Pattern File                                                                                                                      |
+| --------- | ----------------------------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| ✅         | Table Only                          | Pure data presentation                           | Title 1, Table Data                                                                     | [table_only.json](../src/deckbuilder/structured_frontmatter_patterns/table_only.json)                                           |
+| ✅         | Table with Content Above            | Context explanation + data table                | Title 1, Content, Table Data                                                            | [table_with_content_above.json](../src/deckbuilder/structured_frontmatter_patterns/table_with_content_above.json)               |
+| ✅         | Table with Content Above and Below  | Context + data + conclusions                     | Title 1, Content Above, Table Data, Content Below                                       | [table_with_content_above_and_below.json](../src/deckbuilder/structured_frontmatter_patterns/table_with_content_above_and_below.json) |
+| ✅         | Table with Content Left             | Side-by-side analysis and data                   | Title 1, Content Left, Table Data                                                       | [table_with_content_left.json](../src/deckbuilder/structured_frontmatter_patterns/table_with_content_left.json)                 |
+| ✅         | Content Table Content Table Content | Complex multi-dataset presentations              | Title 1, Content 1, Table Data 1, Content 2, Table Data 2, Content 3                  | [content_table_content_table_content.json](../src/deckbuilder/structured_frontmatter_patterns/content_table_content_table_content.json) |
+
+**Table Styling Options** (available for all table layouts):
+- `style`: Header style (dark_blue_white_text, light_blue_dark_text, etc.)
+- `row_style`: Row style (alternating_light_gray, solid_white, etc.)  
+- `border_style`: Border style (thin_gray, thick_gray, no_borders, etc.)
+- `row_height`: Row height in cm (default: 0.6)
+- `table_width`: Table width in cm (auto-calculated from columns if not set)
+- `column_widths`: Array of column widths in cm
+- `header_font_size`: Header font size in points (default: 12)
+- `data_font_size`: Data font size in points (default: 10)
+- `custom_colors`: Custom color overrides
 
 ## Process & Flow
 
@@ -101,13 +122,16 @@ This document tracks the implementation status of PowerPoint templates and layou
 
 ## Implementation Status Summary
 
-- **Native PowerPoint Layouts**: 19 layouts with dedicated JSON patterns
+- **Native PowerPoint Layouts**: 24 layouts with dedicated JSON patterns
+- **Table Layouts**: 5 dedicated table presentation layouts (NEW)
+- **Content Layouts**: 19 standard presentation layouts
 - **Semantic Aliases**: 7 additional user-friendly discovery patterns
-- **Total Discoverable**: 26 layout options for users
-- **Achievable Variations**: 40+ layouts using existing patterns with guidance
+- **Total Discoverable**: 31 layout options for users
+- **Achievable Variations**: 45+ layouts using existing patterns with guidance
 - **Template Coverage**: 100% of PowerPoint template layouts implemented
+- **Table Handling**: Template-based approach eliminates complex content splitting
 - **Priority**: Content-first MCP tools can recommend appropriate layouts
-- **Extensibility**: New semantic aliases can be added without PowerPoint changes
+- **Extensibility**: New layouts added via JSON patterns + PowerPoint templates
 
 ## Notes
 

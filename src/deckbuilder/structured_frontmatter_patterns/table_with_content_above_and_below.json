@@ -1,0 +1,45 @@
+{
+    "description": "Context, data table, and conclusions layout for comprehensive data presentation with interpretation",
+    "yaml_pattern": {
+        "layout": "Table with Content Above and Below",
+        "title": "str",
+        "content_above": "str",
+        "table_data": "table",
+        "content_below": "str"
+    },
+    "validation": {
+        "required_fields": [
+            "title",
+            "content_above",
+            "table_data",
+            "content_below"
+        ],
+        "optional_fields": [
+            "style",
+            "row_style",
+            "border_style",
+            "row_height",
+            "table_width",
+            "column_widths",
+            "header_font_size",
+            "data_font_size",
+            "custom_colors"
+        ],
+        "field_types": {
+            "title": "string",
+            "content_above": "string",
+            "table_data": "markdown_table",
+            "content_below": "string",
+            "style": "string",
+            "row_style": "string",
+            "border_style": "string",
+            "row_height": "number",
+            "table_width": "number",
+            "column_widths": "array",
+            "header_font_size": "number",
+            "data_font_size": "number",
+            "custom_colors": "object"
+        }
+    },
+    "example": "---\nlayout: Table with Content Above and Below\ntitle: Market Analysis Summary\ncontent_above: |\n  Our comprehensive market research reveals significant opportunities in emerging segments.\ntable_data: |\n  | Market Segment | Size ($M) | Growth Rate | Opportunity Score |\n  |----------------|-----------|-------------|-------------------|\n  | Enterprise     | $450      | 8.2%        | High              |\n  | SMB           | $280      | 12.5%       | Very High         |\n  | Startup       | $120      | 25.8%       | Medium            |\ncontent_below: |\n  **Key Insights**: SMB segment shows highest growth potential with 12.5% annual growth. \n  Recommend prioritizing SMB market entry strategy for Q4 implementation.\n---"
+}

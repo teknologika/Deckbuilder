@@ -1,0 +1,39 @@
+{
+    "description": "Pure table presentation with title, ideal for data-focused slides with no additional context",
+    "yaml_pattern": {
+        "layout": "Table Only",
+        "title": "str",
+        "table_data": "table"
+    },
+    "validation": {
+        "required_fields": [
+            "title",
+            "table_data"
+        ],
+        "optional_fields": [
+            "style",
+            "row_style",
+            "border_style",
+            "row_height",
+            "table_width",
+            "column_widths",
+            "header_font_size",
+            "data_font_size",
+            "custom_colors"
+        ],
+        "field_types": {
+            "title": "string",
+            "table_data": "markdown_table",
+            "style": "string",
+            "row_style": "string",
+            "border_style": "string",
+            "row_height": "number",
+            "table_width": "number",
+            "column_widths": "array",
+            "header_font_size": "number",
+            "data_font_size": "number",
+            "custom_colors": "object"
+        }
+    },
+    "example": "---\nlayout: Table Only\ntitle: Quarterly Sales Data\nstyle: dark_blue_white_text\nrow_style: alternating_light_gray\ntable_data: |\n  | Region | Q1 Sales | Q2 Sales | Q3 Sales |\n  |--------|----------|----------|----------|\n  | North  | $125,000 | $132,000 | $145,000 |\n  | South  | $98,500  | $105,000 | $118,000 |\n  | East   | $110,000 | $108,500 | $125,500 |\n  | West   | $88,200  | $95,000  | $102,000 |\n---"
+}
