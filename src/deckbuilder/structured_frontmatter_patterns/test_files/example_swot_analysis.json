@@ -1,0 +1,12 @@
+{
+  "slides": [{
+    "layout": "SWOT Analysis", 
+    "placeholders": {
+      "title": "**SWOT** Analysis - *Strategic* Overview",
+      "content_top_left": "**Strengths**\n• *Market leadership* position\n• ***Innovative*** technology platform\n• ___Strong___ customer relationships",
+      "content_top_right": "**Weaknesses**\n• *Limited* geographic presence\n• ***High*** operational costs\n• ___Dependency___ on key suppliers",
+      "content_bottom_left": "**Opportunities**\n• *Emerging* markets expansion\n• ***Digital*** transformation trends\n• ___Strategic___ partnerships",
+      "content_bottom_right": "**Threats**\n• *Increased* competition\n• ***Regulatory*** changes\n• ___Economic___ uncertainty"
+    }
+  }]
+}

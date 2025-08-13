@@ -1,0 +1,14 @@
+{
+  "slides": [{
+    "layout": "Three Columns With Titles",
+    "placeholders": {
+      "title": "***Deckbuilder*** **Value** *Proposition*",
+      "title_col1": "**Efficiency**",
+      "content_col1": "• ***85%*** time savings\n• *Automated* content processing\n• ___Instant___ layout optimization",
+      "title_col2": "**Quality**",
+      "content_col2": "• **Professional** formatting\n• ***Consistent*** branding\n• ___Error-free___ output",
+      "title_col3": "**Scalability**",
+      "content_col3": "• *Enterprise-grade* performance\n• **Team** collaboration\n• ***Unlimited*** presentations"
+    }
+  }]
+}

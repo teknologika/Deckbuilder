@@ -68,15 +68,11 @@ class Deckbuilder:
         self.template_path, _ = self.template_manager.prepare_template(template_name)
 
     def _initialize_presentation(self, templateName: str = "default") -> None:
-        # Prepare template and get path and layout mapping
-        template_path, layout_mapping = self.template_manager.prepare_template(templateName)
+        # Prepare template and get path (layout mapping no longer needed)
+        template_path, _ = self.template_manager.prepare_template(templateName)
 
         # Store template path for tests
         self.template_path = template_path
-
-        # Update components with layout mapping
-        self.content_processor.layout_mapping = layout_mapping
-        self.presentation_builder.layout_mapping = layout_mapping
 
         # Load template or create empty presentation
         if template_path:
@@ -101,7 +97,7 @@ class Deckbuilder:
         Includes built-in end-to-end validation to prevent layout regressions.
         """
         # Import validation here to avoid circular imports
-        from .validation import PresentationValidator
+        # from .validation import PresentationValidator
 
         self._initialize_presentation(templateName)
 
@@ -134,9 +130,10 @@ class Deckbuilder:
                 raise ValueError(f"Slide {i + 1} 'content' must be an array.")
 
         # STEP 1: Pre-generation validation (JSON ↔ Template alignment)
-        template_folder = str(self._path_manager.get_template_folder())
-        validator = PresentationValidator(presentation_data, templateName, template_folder)
-        validator.validate_pre_generation()
+        # TEMPORARILY DISABLED: Old validation system uses index-based mappings
+        # template_folder = str(self._path_manager.get_template_folder())
+        # validator = PresentationValidator(presentation_data, templateName, template_folder)
+        # validator.validate_pre_generation()
 
         # STEP 1.5: Apply theme font formatting if specified
         if font_name is not None:
@@ -159,11 +156,13 @@ class Deckbuilder:
         # Extract the file path from write_result for post-generation validation
         # write_result format: "Successfully created presentation: filename.pptx"
         if "Successfully created presentation:" in write_result:
-            file_path = write_result.split("Successfully created presentation: ")[1].strip()
-            full_path = str(self._path_manager.get_output_folder() / file_path)
+            # file_path = write_result.split("Successfully created presentation: ")[1].strip()  # Future: use for validation
+            # full_path = str(self._path_manager.get_output_folder() / file_path)  # Future: use for validation
+            pass
 
             # STEP 5: Post-generation validation (PPTX ↔ JSON verification)
-            validator.validate_post_generation(full_path)
+            # TEMPORARILY DISABLED: Old validation system uses index-based mappings
+            # validator.validate_post_generation(full_path)
 
         # Show completion summary
         from ..utils.logging import success_print

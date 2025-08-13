@@ -1,0 +1,9 @@
+{
+  "slides": [{
+    "layout": "Title and Content",
+    "placeholders": {
+      "title": "***Deckbuilder*** **Development** *Roadmap*",
+      "content": "**Phase 1:** Core engine and *template* foundation\n**Phase 2:** ***MCP integration*** and Claude Desktop compatibility\n**Phase 3:** Advanced layouts and ___content intelligence___\n**Phase 4:** Enterprise features and **scaling** capabilities\n**Phase 5:** *AI-powered* recommendations and ***automation***"
+    }
+  }]
+}

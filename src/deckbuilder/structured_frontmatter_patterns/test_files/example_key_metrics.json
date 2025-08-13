@@ -1,0 +1,12 @@
+{
+  "slides": [{
+    "layout": "Four Columns",
+    "placeholders": {
+      "title": "***Deckbuilder*** **Performance** *Dashboard*",
+      "content_col1": "**Content Processing**\n***99.2%*** accuracy\n*Sub-second* response",
+      "content_col2": "**Template Quality**\n___100%___ formatting\n*Professional* output",
+      "content_col3": "**User Satisfaction**\n**98%** positive rating\n***Enterprise*** grade",
+      "content_col4": "**Productivity Gain**\n*85%* time savings\n___Automated___ workflows"
+    }
+  }]
+}

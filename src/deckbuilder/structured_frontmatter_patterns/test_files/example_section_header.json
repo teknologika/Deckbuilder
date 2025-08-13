@@ -1,0 +1,9 @@
+{
+  "slides": [{
+    "layout": "Section Header",
+    "placeholders": {
+      "title": "***Implementation*** **Strategy**",
+      "text": "*Deckbuilder* ___Deployment___ **Roadmap**"
+    }
+  }]
+}

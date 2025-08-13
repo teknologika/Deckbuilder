@@ -9,19 +9,17 @@ from .table_builder import TableBuilder
 class PresentationBuilder:
     """Orchestrates slide creation, content placement, and formatting for PowerPoint presentations."""
 
-    def __init__(self, path_manager, layout_mapping=None):
+    def __init__(self, path_manager):
         """
         Initialize the presentation builder.
 
         Args:
             path_manager: PathManager instance for handling file paths
-            layout_mapping: Optional layout mapping dictionary
         """
         self.path_manager = path_manager
-        self._layout_mapping = layout_mapping
 
         # Initialize components
-        self.slide_builder = SlideBuilder(layout_mapping)
+        self.slide_builder = SlideBuilder()
         self.content_formatter = ContentFormatter()
         self.table_builder = TableBuilder(self.content_formatter)
 
@@ -34,18 +32,6 @@ class PresentationBuilder:
         self.image_handler = ImageHandler(cache_dir)
         self.placekitten = PlaceKittenIntegration(self.image_handler)
         self.image_placeholder_handler = ImagePlaceholderHandler(self.image_handler, self.placekitten)
-
-    @property
-    def layout_mapping(self):
-        """Get the current layout mapping."""
-        return self._layout_mapping
-
-    @layout_mapping.setter
-    def layout_mapping(self, value):
-        """Set the layout mapping and update all components."""
-        self._layout_mapping = value
-        if hasattr(self, "slide_builder"):
-            self.slide_builder.layout_mapping = value
 
     def set_formatting_options(self, language_code=None, font_name=None):
         """Set formatting options for language and font."""

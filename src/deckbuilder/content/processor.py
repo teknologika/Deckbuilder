@@ -5,14 +5,9 @@ import yaml
 class ContentProcessor:
     """Handles markdown parsing, frontmatter processing, and content formatting."""
 
-    def __init__(self, layout_mapping=None):
-        """
-        Initialize the content processor.
-
-        Args:
-            layout_mapping: Optional layout mapping dictionary
-        """
-        self.layout_mapping = layout_mapping
+    def __init__(self):
+        """Initialize the content processor."""
+        pass
 
     def parse_markdown_with_frontmatter(self, markdown_content: str) -> list:
         """

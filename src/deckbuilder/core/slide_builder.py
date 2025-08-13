@@ -8,20 +8,17 @@ from ..content.placeholder_types import (
     is_title_placeholder,
 )
 from ..utils.logging import slide_builder_print, debug_print, error_print
+from .layout_resolver import LayoutResolver
+from .field_processor import FieldProcessor
 
 
 class SlideBuilder:
     """Handles core slide creation, layout mapping, and placeholder management."""
 
-    def __init__(self, layout_mapping=None):
-        """
-        Initialize the slide builder.
-
-        Args:
-            layout_mapping: Optional layout mapping dictionary
-        """
-        self.layout_mapping = layout_mapping
+    def __init__(self):
+        """Initialize the slide builder."""
         self._current_slide_index = 0
+        self.field_processor = FieldProcessor()
 
     def clear_slides(self, prs):
         """Clear all slides from the presentation."""
@@ -58,34 +55,15 @@ class SlideBuilder:
         # Prefer explicit "layout" field over "type" field
         layout_or_type = slide_data.get("layout", slide_data.get("type", "content"))
 
-        # Use layout mapping if available
-        if self.layout_mapping:
-            aliases = self.layout_mapping.get("aliases", {})
-            layouts = self.layout_mapping.get("layouts", {})
+        # Use direct layout name (name-based resolution eliminates aliases/mapping complexity)
+        layout_name = layout_or_type
 
-            # Get layout name from aliases (or use direct layout name if it exists in layouts)
-            if layout_or_type in layouts:
-                layout_name = layout_or_type
-            else:
-                layout_name = aliases.get(layout_or_type, layout_or_type)
-
-            # Get layout index
-            layout_info = layouts.get(layout_name, {})
-            layout_index = layout_info.get("index", 1)
-        else:
-            # Fallback
-            layout_name = layout_or_type  # Use the original layout name as fallback
-            layout_index = 1
-
-        slide_layout = prs.slide_layouts[layout_index]
+        # Use name-based layout resolution (eliminates index dependencies)
+        slide_layout = LayoutResolver.get_layout_by_name(prs, layout_name)
         slide = prs.slides.add_slide(slide_layout)
 
-        # Copy descriptive placeholder names from template mapping
-        self._copy_placeholder_names_from_mapping(slide, layout_name)
-
-        # Add content to placeholders using template mapping + semantic detection
-        # For dynamic shapes, content placeholder already contains first text segment only
-        self._apply_content_to_mapped_placeholders(slide, slide_data, layout_name, content_formatter, image_placeholder_handler)
+        # Process all fields using single name-based field processing (eliminates dual code paths)
+        _ = self.field_processor.process_slide_fields(slide, slide_data, content_formatter, image_placeholder_handler)
 
         # Add speaker notes if they exist in slide_data or placeholders
         speaker_notes = None

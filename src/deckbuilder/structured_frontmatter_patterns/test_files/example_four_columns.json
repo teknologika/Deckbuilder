@@ -1,0 +1,12 @@
+{
+  "slides": [{
+    "layout": "Four Columns",
+    "placeholders": {
+      "title": "***Deckbuilder*** **Core** *Capabilities*",
+      "content_col1": "**Content Intelligence**\n• *Semantic* analysis\n• ***Smart*** processing\n• ___Automated___ optimization\n• **Rich** formatting",
+      "content_col2": "**Template Engine**\n• ___Professional___ output\n• *Dynamic* shapes\n• **Flexible** templates\n• ***Consistent*** branding",
+      "content_col3": "**MCP Integration**\n• **Claude** compatibility\n• *Seamless* workflow\n• ___Intelligent___ recommendations\n• ***Enterprise*** ready",
+      "content_col4": "**Business Value**\n• ***Increased*** productivity\n• *Reduced* errors\n• ___Consistent___ quality\n• **Scalable** operations"
+    }
+  }]
+}

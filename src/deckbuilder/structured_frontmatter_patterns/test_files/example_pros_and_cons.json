@@ -1,0 +1,12 @@
+{
+  "slides": [{
+    "layout": "Comparison",
+    "placeholders": {
+      "title": "***Deckbuilder*** **Adoption** *Analysis*",
+      "title_left": "**Advantages**",
+      "content_left": "• ***Automated*** presentation creation\n• *Consistent* professional branding\n• ___Significant___ time savings\n• **Reduced** human errors\n• *Scalable* team workflows",
+      "title_right": "**Considerations**",
+      "content_right": "• ***Initial*** learning curve\n• *Template* customization needed\n• ___Integration___ setup required\n• **Change** management process\n• *Training* investment"
+    }
+  }]
+}

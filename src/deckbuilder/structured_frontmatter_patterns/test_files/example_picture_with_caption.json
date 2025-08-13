@@ -1,0 +1,10 @@
+{
+  "slides": [{
+    "layout": "Picture with Caption",
+    "placeholders": {
+      "title": "***Deckbuilder*** **Content** *Transformation*",
+      "image": "deckbuilder_workflow_diagram.png",
+      "text_caption": "**Visual representation** of the ***content-first*** design philosophy showing how *semantic analysis* transforms ___user content___ into **professional presentations** through ___intelligent layout___ selection and ***automated formatting***."
+    }
+  }]
+}

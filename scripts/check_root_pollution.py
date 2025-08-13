@@ -14,7 +14,7 @@ def get_allowed_items():
     """Get the list of allowed files and directories in project root."""
     return {
         # Core project files
-        ".git",
+        ".git/",
         ".gitignore",
         ".pre-commit-config.yaml",
         "LICENSE",

@@ -1,0 +1,12 @@
+{
+  "slides": [{
+    "layout": "Four Columns",
+    "placeholders": {
+      "title": "***Deckbuilder*** **Implementation** *Process*",
+      "content_col1": "**Step 1:** Assessment\n• *Current* workflow analysis\n• ***Requirements*** gathering\n• ___Template___ inventory",
+      "content_col2": "**Step 2:** Configuration\n• ***Environment*** setup\n• *Template* customization\n• ___MCP___ integration",
+      "content_col3": "**Step 3:** Training\n• **Team** onboarding\n• *Best practices* workshop\n• ___Hands-on___ practice",
+      "content_col4": "**Step 4:** Go-Live\n• ***Production*** deployment\n• *Ongoing* support\n• ___Performance___ monitoring"
+    }
+  }]
+}
