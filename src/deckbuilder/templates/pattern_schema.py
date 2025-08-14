@@ -69,7 +69,7 @@ class PatternSchemaValidator:
                             "description": "Field type definitions",
                             "additionalProperties": {
                                 "type": "string",
-                                "enum": ["string", "integer", "boolean", "array"],
+                                "enum": ["string", "integer", "number", "boolean", "array", "object"],
                             },
                         },
                     },
@@ -159,7 +159,7 @@ class PatternSchemaValidator:
 
     def _types_compatible(self, yaml_type: str, field_type: str) -> bool:
         """Check if yaml_pattern type is compatible with field_types type."""
-        type_mapping = {"str": "string", "int": "integer", "bool": "boolean", "list": "array", "dict": "object"}
+        type_mapping = {"str": "string", "int": "integer", "number": "number", "bool": "boolean", "list": "array", "dict": "object"}
         return type_mapping.get(yaml_type) == field_type
 
     def validate_pattern_file(self, file_path: Path) -> List[str]:
