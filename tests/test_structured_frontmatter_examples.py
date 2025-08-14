@@ -45,7 +45,7 @@ class StructuredFrontmatterTester:
             cmd = ["bash", "-c", f"source {self.venv_activate} && deckbuilder create {input_file} --output {self.output_dir}/{output_name}"]
         else:
             # CI environment - use python -m approach
-            cmd = ["python", "-m", "deckbuilder.cli", "create", str(input_file), "--output", f"{self.output_dir}/{output_name}"]
+            cmd = ["python", "-m", "deckbuilder.cli.main", "create", str(input_file), "--output", f"{self.output_dir}/{output_name}"]
 
         try:
             result = subprocess.run(cmd, capture_output=True, text=True, cwd=self.project_root, timeout=60)
