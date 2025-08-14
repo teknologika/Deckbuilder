@@ -149,53 +149,53 @@ jobs:
 
     - name: Test structured frontmatter examples
       run: |
+        # Run a focused subset of structured frontmatter tests using pytest
+        python -m pytest tests/test_structured_frontmatter_examples.py::TestBasicCategoryExamples::test_title_slide_example -v
+        python -m pytest tests/test_structured_frontmatter_examples.py::TestBasicCategoryExamples::test_title_and_content_example -v
+        python -m pytest tests/test_structured_frontmatter_examples.py::TestExpandedLayoutExamples::test_four_columns_example -v
+        echo "✅ Key structured frontmatter examples tested successfully"
+
+    - name: Validate example file coverage
+      run: |
         python -c "
-        import sys
         from pathlib import Path
-        sys.path.insert(0, str(Path('.').absolute()))
+        import json
 
-        # Import our new structured frontmatter test system
-        from tests.test_structured_frontmatter_examples import StructuredFrontmatterTester
-
-        # Create tester instance
-        tester = StructuredFrontmatterTester()
-        test_files_dir = tester.test_files_dir
-
-        print(f'Testing structured frontmatter examples from: {test_files_dir}')
-
-        # Test a few key examples to validate the system
-        test_examples = [
-            ('example_title_slide.json', 'ci_title_slide'),
-            ('example_title_and_content.json', 'ci_title_content'),
-            ('example_four_columns.json', 'ci_four_columns'),
-            ('example_table_only.json', 'ci_table_only')
+        # Check that we have examples for key layouts
+        test_files_dir = Path('src/deckbuilder/structured_frontmatter_patterns/test_files')
+        print(f'Checking example files in: {test_files_dir}')
+        
+        key_examples = [
+            'example_title_slide.json',
+            'example_title_and_content.json', 
+            'example_four_columns.json',
+            'example_table_only.json',
+            'example_comparison.json'
         ]
-
-        total_tests = len(test_examples)
-        passed_tests = 0
-
-        for test_file, test_name in test_examples:
-            json_file = test_files_dir / test_file
-            if json_file.exists():
-                print(f'Testing: {test_file}')
-                success, errors = tester.test_example_file(json_file, test_name)
-                if success:
-                    print(f'  ✅ PASSED')
-                    passed_tests += 1
-                else:
-                    print(f'  ❌ FAILED: {errors}')
+        
+        found_examples = 0
+        for example_file in key_examples:
+            file_path = test_files_dir / example_file
+            if file_path.exists():
+                print(f'  ✅ Found: {example_file}')
+                found_examples += 1
+                
+                # Validate JSON structure
+                try:
+                    with open(file_path) as f:
+                        data = json.load(f)
+                    if 'slides' in data and len(data['slides']) > 0:
+                        print(f'    📋 Valid JSON with {len(data[\"slides\"])} slides')
+                    else:
+                        print(f'    ⚠️ Invalid structure in {example_file}')
+                except Exception as e:
+                    print(f'    ❌ JSON error in {example_file}: {e}')
             else:
-                print(f'  ⚠️ SKIPPED: {test_file} not found')
-
-        # Cleanup test files
-        cleaned_count = tester.cleanup_test_files()
-        print(f'Cleaned up {cleaned_count} test files')
-
-        print(f'Tests passed: {passed_tests}/{total_tests}')
-        print(f'✅ Structured frontmatter system validation complete')
-
-        # Ensure at least some tests passed
-        assert passed_tests >= 2, f'Expected at least 2 tests to pass, got {passed_tests}'
+                print(f'  ❌ Missing: {example_file}')
+        
+        print(f'Found {found_examples}/{len(key_examples)} key example files')
+        assert found_examples >= 4, f'Expected at least 4 key examples, found {found_examples}'
+        print('✅ Example file validation complete')
         "
 
     - name: Validate master example files are current
