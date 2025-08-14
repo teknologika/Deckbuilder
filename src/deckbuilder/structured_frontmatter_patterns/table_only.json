@@ -3,45 +3,17 @@
     "yaml_pattern": {
         "layout": "Table Only",
         "title": "str",
-        "table_data": "str",
-        "style": "str",
-        "row_style": "str",
-        "border_style": "str",
-        "row_height": "int",
-        "table_width": "int",
-        "column_widths": "list",
-        "header_font_size": "int",
-        "data_font_size": "int",
-        "custom_colors": "str"
+        "table_data": "str"
     },
     "validation": {
         "required_fields": [
             "title",
             "table_data"
         ],
-        "optional_fields": [
-            "style",
-            "row_style",
-            "border_style",
-            "row_height",
-            "table_width",
-            "column_widths",
-            "header_font_size",
-            "data_font_size",
-            "custom_colors"
-        ],
+        "optional_fields": [],
         "field_types": {
             "title": "string",
-            "table_data": "string",
-            "style": "string",
-            "row_style": "string",
-            "border_style": "string",
-            "row_height": "integer",
-            "table_width": "integer",
-            "column_widths": "array",
-            "header_font_size": "integer",
-            "data_font_size": "integer",
-            "custom_colors": "object"
+            "table_data": "string"
         }
     },
     "example": "---\nlayout: Table Only\ntitle: Quarterly Sales Data\nstyle: dark_blue_white_text\nrow_style: alternating_light_gray\ntable_data: |\n  | Region | Q1 Sales | Q2 Sales | Q3 Sales |\n  |--------|----------|----------|----------|\n  | North  | $125,000 | $132,000 | $145,000 |\n  | South  | $98,500  | $105,000 | $118,000 |\n  | East   | $110,000 | $108,500 | $125,500 |\n  | West   | $88,200  | $95,000  | $102,000 |\n---"
