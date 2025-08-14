@@ -19,7 +19,7 @@ class TestSpeakerNotes(unittest.TestCase):
 
     def test_add_speaker_notes(self):
         # Create a slide with speaker notes
-        slide_data = {"title": "Test Slide", "content": "This is a test slide.", "speaker_notes": "This is a speaker note."}
+        slide_data = {"layout": "Title and Content", "title": "Test Slide", "content": "This is a test slide.", "speaker_notes": "This is a speaker note."}
         slide = self.slide_builder.add_slide(self.prs, slide_data, self.content_formatter, self.image_placeholder_handler)
 
         # Check that the speaker notes were added correctly

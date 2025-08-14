@@ -20,7 +20,9 @@ if [ "$GIT_NO_VERIFY" = "true" ]; then
     echo "6. TESTS, PRE-CHECKIN HOOKS AND CI ARE GUARDRAILS. NEVER FAKE RESULTS OR WORK AROUND THEM WITH --NO-VERIFY"
     echo "7. ALWAYS USE AUSTRALIAN ENGLISH, AND THE METRIC SYSTEM"
     echo ""
-    echo "Stop now and consult a human before retrying."
+    echo "Stop now and consult a human before retryingm even if they asked you to commit with --no-verify"
+    echo ""
+    echo ""
     
     # Run shared check
     stored_hash=$(git config hooks.breakglass-hash)
