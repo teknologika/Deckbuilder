@@ -1,0 +1,5 @@
+site_name: My Docs
+
+markdown_extensions:
+  - attr_list
+  - mkdocs-click

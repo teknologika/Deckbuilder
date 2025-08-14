@@ -3,7 +3,7 @@
     "yaml_pattern": {
         "layout": "Table Only",
         "title": "str",
-        "table_data": "string"
+        "table_data": "str"
     },
     "validation": {
         "required_fields": [
@@ -27,11 +27,11 @@
             "style": "string",
             "row_style": "string",
             "border_style": "string",
-            "row_height": "number",
-            "table_width": "number",
+            "row_height": "integer",
+            "table_width": "integer",
             "column_widths": "array",
-            "header_font_size": "number",
-            "data_font_size": "number",
+            "header_font_size": "integer",
+            "data_font_size": "integer",
             "custom_colors": "object"
         }
     },

@@ -11,8 +11,7 @@ import pytest
 # Add parent directory to path for test imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../.."))  # noqa: E402
 
-from tests.utils.content_generator import ContentLength, ContentType  # noqa: E402
-from tests.utils.template_test_generator import TemplateTestGenerator  # noqa: E402
+# Note: Legacy TemplateTestGenerator removed - using new structured frontmatter test system
 
 
 @pytest.mark.integration
@@ -38,257 +37,82 @@ class TestTemplateProcessing:
             assert "placeholders" in layout_data
             assert isinstance(layout_data["placeholders"], dict)
 
-    def test_template_test_generation(self, default_template_json, deckbuilder_temp_dir):
-        """Test generating test files from template JSON."""
-        # Save template to file
-        template_file = deckbuilder_temp_dir / "test_template.json"
-        with open(template_file, "w") as f:
-            json.dump(default_template_json, f, indent=2)
+    def test_structured_frontmatter_coverage(self, default_template_json):
+        """Test that structured frontmatter examples cover template layouts."""
+        from pathlib import Path
 
-        # Generate test files
-        generator = TemplateTestGenerator()
-        output_dir = deckbuilder_temp_dir / "generated_tests"
+        # Check that our structured frontmatter test files exist
+        test_files_dir = Path(__file__).parent.parent.parent.parent / "src/deckbuilder/structured_frontmatter_patterns/test_files"
+        assert test_files_dir.exists()
 
-        report = generator.generate_test_files(template_file, output_dir, ContentType.BUSINESS, ContentLength.MEDIUM)
+        # Count example files
+        example_files = list(test_files_dir.glob("example_*.json"))
+        assert len(example_files) >= 24, f"Expected at least 24 example files, found {len(example_files)}"
 
-        # Verify report
-        assert report.template_name == "Default"
-        assert report.total_layouts == len(default_template_json["layouts"])
-        assert len(report.generated_files) >= 1  # At least one file generated
-        assert report.coverage_percentage > 0
+        # Verify template layouts are covered
+        template_layouts = set(default_template_json["layouts"].keys())
+        covered_layouts = set()
 
-        # Verify files were created
-        for generated_file in report.generated_files:
-            assert generated_file.file_path.exists()
-            assert generated_file.file_path.stat().st_size > 0
+        for example_file in example_files:
+            with open(example_file, "r") as f:
+                example_data = json.load(f)
+                if "slides" in example_data and example_data["slides"]:
+                    layout = example_data["slides"][0].get("layout")
+                    if layout:
+                        covered_layouts.add(layout)
 
-    def test_layout_coverage_validation(self, default_template_json):
-        """Test layout coverage validation."""
-        generator = TemplateTestGenerator()
-        coverage = generator.validate_layout_coverage(default_template_json)
+        # Calculate coverage
+        coverage_percentage = (len(covered_layouts & template_layouts) / len(template_layouts)) * 100
+        assert coverage_percentage >= 95, f"Template layout coverage too low: {coverage_percentage}%"
 
-        # Check coverage for known layouts
-        assert isinstance(coverage, dict)
+    def test_structured_frontmatter_examples_are_valid(self):
+        """Test that structured frontmatter examples are valid JSON."""
+        from pathlib import Path
 
-        expected_layouts = [
-            "Title Slide",
-            "Title and Content",
-            "Four Columns With Titles",
-            "Comparison",
-        ]
-        for layout in expected_layouts:
-            if layout in default_template_json["layouts"]:
-                assert layout in coverage
-                # Should be covered since these are supported layouts
-                assert coverage[layout] is True
+        test_files_dir = Path(__file__).parent.parent.parent.parent / "src/deckbuilder/structured_frontmatter_patterns/test_files"
+        example_files = list(test_files_dir.glob("example_*.json"))
 
-    def test_json_test_file_generation(self, default_template_json, deckbuilder_temp_dir):
-        """Test JSON test file generation specifically."""
-        template_file = deckbuilder_temp_dir / "test_template.json"
-        with open(template_file, "w") as f:
-            json.dump(default_template_json, f, indent=2)
+        for example_file in example_files:
+            with open(example_file, "r") as f:
+                try:
+                    data = json.load(f)
+                    # Verify basic structure
+                    assert "slides" in data
+                    assert isinstance(data["slides"], list)
+                    assert len(data["slides"]) > 0
+                    # Verify each slide has layout and placeholders
+                    for slide in data["slides"]:
+                        assert "layout" in slide
+                        assert "placeholders" in slide
+                except json.JSONDecodeError as e:
+                    pytest.fail(f"Invalid JSON in {example_file}: {e}")
 
-        generator = TemplateTestGenerator()
-        output_dir = deckbuilder_temp_dir / "json_tests"
+    def test_master_examples_files_are_current(self):
+        """Test that master example files are up to date and comprehensive."""
+        from pathlib import Path
 
-        report = generator.generate_test_files(template_file, output_dir)
+        # Check master files exist
+        assets_dir = Path(__file__).parent.parent.parent.parent / "src/deckbuilder/assets"
+        master_json = assets_dir / "master_default_presentation.json"
+        master_md = assets_dir / "master_default_presentation.md"
 
-        # Find JSON file
-        json_files = [f for f in report.generated_files if f.file_type == "json"]
-        assert len(json_files) >= 1
+        assert master_json.exists(), "Master JSON file missing"
+        assert master_md.exists(), "Master Markdown file missing"
 
-        json_file = json_files[0]
-        assert json_file.file_path.suffix == ".json"
+        # Verify master JSON structure
+        with open(master_json, "r") as f:
+            master_data = json.load(f)
 
-        # Load and validate JSON content
-        with open(json_file.file_path, "r") as f:
-            test_data = json.load(f)
+        assert "metadata" in master_data
+        assert "slides" in master_data
+        assert master_data["metadata"]["total_examples"] >= 24
+        assert len(master_data["slides"]) >= 24
 
-        assert "presentation" in test_data
-        assert "slides" in test_data["presentation"]
-        slides = test_data["presentation"]["slides"]
-        assert len(slides) > 0
+        # Verify master Markdown has all examples
+        with open(master_md, "r") as f:
+            md_content = f.read()
 
-        # Verify slide structure
-        for slide in slides:
-            assert "type" in slide
-            # Should have convention-based placeholder names
-            placeholder_keys = [k for k in slide.keys() if k not in ["type", "layout", "rich_content"]]
-            assert len(placeholder_keys) > 0
-
-    def test_markdown_test_file_generation(self, default_template_json, deckbuilder_temp_dir):
-        """Test Markdown test file generation specifically."""
-        template_file = deckbuilder_temp_dir / "test_template.json"
-        with open(template_file, "w") as f:
-            json.dump(default_template_json, f, indent=2)
-
-        generator = TemplateTestGenerator()
-        output_dir = deckbuilder_temp_dir / "md_tests"
-
-        report = generator.generate_test_files(template_file, output_dir)
-
-        # Find Markdown file
-        md_files = [f for f in report.generated_files if f.file_type == "markdown"]
-        assert len(md_files) >= 1
-
-        md_file = md_files[0]
-        assert md_file.file_path.suffix == ".md"
-
-        # Load and validate Markdown content
-        content = md_file.file_path.read_text(encoding="utf-8")
-        assert "---" in content  # YAML frontmatter markers
-        assert "layout:" in content
-
-        # Should have multiple layout sections
-        layout_sections = content.count("layout:")
-        assert layout_sections > 0
-
-    def test_content_type_variations(self, default_template_json, deckbuilder_temp_dir):
-        """Test generation with different content types."""
-        template_file = deckbuilder_temp_dir / "test_template.json"
-        with open(template_file, "w") as f:
-            json.dump(default_template_json, f, indent=2)
-
-        generator = TemplateTestGenerator()
-
-        for content_type in [ContentType.BUSINESS, ContentType.TECHNICAL, ContentType.MARKETING]:
-            output_dir = deckbuilder_temp_dir / f"tests_{content_type.value}"
-
-            report = generator.generate_test_files(template_file, output_dir, content_type, ContentLength.MEDIUM)
-
-            assert report.template_name == "Default"
-            assert len(report.generated_files) > 0
-
-            # Verify content type appears in generated files
-            for generated_file in report.generated_files:
-                if generated_file.file_type == "json":
-                    with open(generated_file.file_path, "r") as f:
-                        test_data = json.load(f)
-
-                    # Should contain content type-specific terms
-                    content_str = json.dumps(test_data).lower()
-                    # At least some content should reflect the content type
-                    assert len(content_str) > 100  # Has substantial content
-
-    def test_content_length_variations(self, default_template_json, deckbuilder_temp_dir):
-        """Test generation with different content lengths."""
-        template_file = deckbuilder_temp_dir / "test_template.json"
-        with open(template_file, "w") as f:
-            json.dump(default_template_json, f, indent=2)
-
-        generator = TemplateTestGenerator()
-        generated_files_by_length = {}
-
-        for content_length in [ContentLength.SHORT, ContentLength.MEDIUM, ContentLength.LONG]:
-            output_dir = deckbuilder_temp_dir / f"tests_{content_length.value}"
-
-            report = generator.generate_test_files(template_file, output_dir, ContentType.BUSINESS, content_length)
-
-            assert len(report.generated_files) > 0
-            generated_files_by_length[content_length] = report.generated_files
-
-        # Verify different lengths produce different content sizes
-        # (This is a rough check since exact content length depends on layout)
-        short_files = generated_files_by_length[ContentLength.SHORT]
-        long_files = generated_files_by_length[ContentLength.LONG]
-
-        # Should have generated files for both lengths
-        assert len(short_files) > 0
-        assert len(long_files) > 0
-
-    def test_structured_frontmatter_generation(self, deckbuilder_temp_dir):
-        """Test structured frontmatter generation for individual layouts."""
-        generator = TemplateTestGenerator()
-
-        layouts_to_test = ["Four Columns With Titles", "Comparison", "Two Content"]
-        output_dir = deckbuilder_temp_dir / "frontmatter_tests"
-
-        generated_files = generator.generate_structured_frontmatter_tests(layouts_to_test, output_dir)
-
-        assert len(generated_files) > 0
-
-        for generated_file in generated_files:
-            assert generated_file.file_path.exists()
-            assert generated_file.file_type == "markdown"
-
-            content = generated_file.file_path.read_text(encoding="utf-8")
-            assert "---" in content
-            assert "layout:" in content
-            assert generated_file.layout_name.replace(" ", "_").lower() in generated_file.file_path.name
-
-    def test_full_template_processing_pipeline(self, default_template_json, deckbuilder_temp_dir):
-        """Test complete template processing pipeline."""
-        # Step 1: Create template file
-        template_file = deckbuilder_temp_dir / "pipeline_template.json"
-        with open(template_file, "w") as f:
-            json.dump(default_template_json, f, indent=2)
-
-        # Step 2: Generate test files
-        generator = TemplateTestGenerator()
-        output_dir = deckbuilder_temp_dir / "pipeline_output"
-
-        report = generator.generate_test_files(template_file, output_dir)
-
-        # Step 3: Validate coverage
-        coverage = generator.validate_layout_coverage(default_template_json)
-
-        # Step 4: Generate individual layout examples
-        covered_layouts = [layout for layout, covered in coverage.items() if covered]
-        individual_files = generator.generate_structured_frontmatter_tests(covered_layouts, output_dir / "individual")
-
-        # Verify complete pipeline
-        assert report.template_name == "Default"
-        assert len(report.generated_files) >= 1
-        assert len(coverage) == report.total_layouts
-        assert len(individual_files) > 0
-
-        # Verify all files exist and have content
-        all_files = report.generated_files + individual_files
-        for generated_file in all_files:
-            assert generated_file.file_path.exists()
-            assert generated_file.file_path.stat().st_size > 0
-
-            # Verify content is valid
-            content = generated_file.file_path.read_text(encoding="utf-8")
-            if generated_file.file_type == "json":
-                # Should be valid JSON
-                json.loads(content)
-            elif generated_file.file_type == "markdown":
-                # Should have frontmatter
-                assert "---" in content
-                assert "layout:" in content
-
-    def test_error_handling_invalid_template(self, deckbuilder_temp_dir):
-        """Test error handling with invalid template JSON."""
-        # Create invalid JSON file
-        invalid_template = deckbuilder_temp_dir / "invalid_template.json"
-        invalid_template.write_text("{ invalid json }", encoding="utf-8")
-
-        generator = TemplateTestGenerator()
-        output_dir = deckbuilder_temp_dir / "error_tests"
-
-        # Should raise an exception for invalid JSON
-        with pytest.raises(json.JSONDecodeError):
-            generator.generate_test_files(invalid_template, output_dir)
-
-    def test_empty_template_handling(self, deckbuilder_temp_dir):
-        """Test handling of template with no layouts."""
-        empty_template = {
-            "template_info": {"name": "Empty Template", "version": "1.0"},
-            "layouts": {},
-        }
-
-        template_file = deckbuilder_temp_dir / "empty_template.json"
-        with open(template_file, "w") as f:
-            json.dump(empty_template, f, indent=2)
-
-        generator = TemplateTestGenerator()
-        output_dir = deckbuilder_temp_dir / "empty_tests"
-
-        report = generator.generate_test_files(template_file, output_dir)
-
-        # Should handle empty template gracefully
-        assert report.template_name == "Empty Template"
-        assert report.total_layouts == 0
-        assert report.coverage_percentage == 0.0
-        # May not generate files, but should not crash
+        # Should have proper structure
+        assert "Generated by: `scripts/generate_master_examples.py`" in md_content
+        assert "Total Examples: " in md_content
+        assert md_content.count("## Example") >= 24

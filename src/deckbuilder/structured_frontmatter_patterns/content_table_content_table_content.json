@@ -4,9 +4,9 @@
         "layout": "Content Table Content Table Content",
         "title": "str",
         "content_1": "str",
-        "table_data_1": "string",
+        "table_data_1": "str",
         "content_2": "str", 
-        "table_data_2": "string",
+        "table_data_2": "str",
         "content_3": "str"
     },
     "validation": {

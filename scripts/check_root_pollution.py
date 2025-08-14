@@ -33,6 +33,7 @@ def get_allowed_items():
         "uv.lock",
         "run_server.sh",
         "Deckbuilder.code-workspace",
+        "mkdocs.yml",
         # Development/CI files
         ".github/",
         ".coverage",
@@ -55,6 +56,7 @@ def get_allowed_items():
         "dist/",  # Distribution artifacts
         "scripts/",  # Utility scripts
         ".specs/",  # Spec server specifications
+        "templates/",  # Template symlink
         # Python build artifacts
         "src/deckbuilder.egg-info/",
         ".pytest_cache/",
