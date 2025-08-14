@@ -3,7 +3,16 @@
     "yaml_pattern": {
         "layout": "Table Only",
         "title": "str",
-        "table_data": "str"
+        "table_data": "str",
+        "style": "str",
+        "row_style": "str",
+        "border_style": "str",
+        "row_height": "int",
+        "table_width": "int",
+        "column_widths": "list",
+        "header_font_size": "int",
+        "data_font_size": "int",
+        "custom_colors": "str"
     },
     "validation": {
         "required_fields": [

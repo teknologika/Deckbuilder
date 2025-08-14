@@ -24,12 +24,12 @@
             "custom_colors"
         ],
         "field_types": {
-            "title": "string",
-            "content_left": "string",
+            "title": "str",
+            "content_left": "str",
             "table_data": "string",
-            "style": "string",
-            "row_style": "string",
-            "border_style": "string",
+            "style": "str",
+            "row_style": "str",
+            "border_style": "str",
             "row_height": "number",
             "table_width": "number",
             "column_widths": "array",
