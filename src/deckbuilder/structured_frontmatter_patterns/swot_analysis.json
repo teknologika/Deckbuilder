@@ -2,7 +2,7 @@
     "description": "SWOT analysis layout with four quadrants",
     "yaml_pattern": {
         "layout": "SWOT Analysis",
-        "title": "str",
+        "title_top": "str",
         "content_top_left": "str",
         "content_top_right": "str",
         "content_bottom_left": "str",
@@ -10,12 +10,12 @@
     },
     "validation": {
         "required_fields": [
-            "title",
+            "title_top",
             "content_top_left",
             "content_top_right",
             "content_bottom_left",
             "content_bottom_right"
         ]
     },
-    "example": "---\nlayout: SWOT Analysis\ntitle: \"**SWOT** Analysis\"\ncontent_top_left: \"**Strong** market position with *proven* technology\"\ncontent_top_right: \"___Limited___ geographic presence and **high** costs\"\ncontent_bottom_left: \"*Emerging* markets and ***digital*** transformation\"\ncontent_bottom_right: \"**Competition** and ___regulatory___ changes\"\n---"
+    "example": "---\nlayout: SWOT Analysis\ntitle_top: \"**SWOT** Analysis\"\ncontent_top_left: \"**Strong** market position with *proven* technology\"\ncontent_top_right: \"___Limited___ geographic presence and **high** costs\"\ncontent_bottom_left: \"*Emerging* markets and ***digital*** transformation\"\ncontent_bottom_right: \"**Competition** and ___regulatory___ changes\"\n---"
 }

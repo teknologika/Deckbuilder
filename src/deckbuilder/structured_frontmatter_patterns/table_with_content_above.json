@@ -2,22 +2,22 @@
     "description": "Content explanation followed by supporting data table, ideal for providing context before presenting data",
     "yaml_pattern": {
         "layout": "Table with Content Above",
-        "title": "str",
+        "title_top": "str",
         "content": "str",
         "table_data": "str"
     },
     "validation": {
         "required_fields": [
-            "title",
+            "title_top",
             "content",
             "table_data"
         ],
         "optional_fields": [],
         "field_types": {
-            "title": "string",
+            "title_top": "string",
             "content": "string",
             "table_data": "string"
         }
     },
-    "example": "---\nlayout: Table with Content Above\ntitle: Regional Performance Analysis\ncontent: |\n  Our regional sales analysis shows consistent growth across all territories. \n  The data below highlights performance metrics for each region over the past quarter.\nstyle: dark_blue_white_text\ntable_data: |\n  | Region | Sales Growth | Market Share | Customer Count |\n  |--------|--------------|--------------|----------------|\n  | North  | +15.2%       | 28%          | 1,250          |\n  | South  | +12.8%       | 22%          | 980            |\n  | East   | +18.5%       | 25%          | 1,100          |\n  | West   | +9.4%        | 25%          | 850            |\n---"
+    "example": "---\nlayout: Table with Content Above\ntitle_top: Regional Performance Analysis\ncontent: |\n  Our regional sales analysis shows consistent growth across all territories. \n  The data below highlights performance metrics for each region over the past quarter.\nstyle: dark_blue_white_text\ntable_data: |\n  | Region | Sales Growth | Market Share | Customer Count |\n  |--------|--------------|--------------|----------------|\n  | North  | +15.2%       | 28%          | 1,250          |\n  | South  | +12.8%       | 22%          | 980            |\n  | East   | +18.5%       | 25%          | 1,100          |\n  | West   | +9.4%        | 25%          | 850            |\n---"
 }

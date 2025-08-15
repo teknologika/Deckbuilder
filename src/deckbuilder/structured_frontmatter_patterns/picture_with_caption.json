@@ -2,16 +2,16 @@
     "description": "Media slide with image placeholder and caption text",
     "yaml_pattern": {
         "layout": "Picture with Caption",
-        "title": "str",
+        "title_top": "str",
         "image": "str",
         "text_caption": "str"
     },
     "validation": {
         "required_fields": [
-            "title",
+            "title_top",
             "image",
             "text_caption"
         ]
     },
-    "example": "---\nlayout: Picture with Caption\ntitle: \"Picture Layout **Test**\"\nimage: \"placeholder_image.jpg\"\ntext_caption: \"Picture placeholder with ***formatted*** captions\"\n---"
+    "example": "---\nlayout: Picture with Caption\ntitle_top: \"Picture Layout **Test**\"\nimage: \"placeholder_image.jpg\"\ntext_caption: \"Picture placeholder with ***formatted*** captions\"\n---"
 }

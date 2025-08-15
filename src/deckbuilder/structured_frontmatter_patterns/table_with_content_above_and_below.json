@@ -2,25 +2,25 @@
     "description": "Context, data table, and conclusions layout for comprehensive data presentation with interpretation",
     "yaml_pattern": {
         "layout": "Table with Content Above and Below",
-        "title": "str",
+        "title_top": "str",
         "content_above": "str",
         "table_data": "str",
         "content_below": "str"
     },
     "validation": {
         "required_fields": [
-            "title",
+            "title_top",
             "content_above",
             "table_data",
             "content_below"
         ],
         "optional_fields": [],
         "field_types": {
-            "title": "string",
+            "title_top": "string",
             "content_above": "string",
             "table_data": "string",
             "content_below": "string"
         }
     },
-    "example": "---\nlayout: Table with Content Above and Below\ntitle: Market Analysis Summary\ncontent_above: |\n  Our comprehensive market research reveals significant opportunities in emerging segments.\ntable_data: |\n  | Market Segment | Size ($M) | Growth Rate | Opportunity Score |\n  |----------------|-----------|-------------|-------------------|\n  | Enterprise     | $450      | 8.2%        | High              |\n  | SMB           | $280      | 12.5%       | Very High         |\n  | Startup       | $120      | 25.8%       | Medium            |\ncontent_below: |\n  **Key Insights**: SMB segment shows highest growth potential with 12.5% annual growth. \n  Recommend prioritizing SMB market entry strategy for Q4 implementation.\n---"
+    "example": "---\nlayout: Table with Content Above and Below\ntitle_top: Market Analysis Summary\ncontent_above: |\n  Our comprehensive market research reveals significant opportunities in emerging segments.\ntable_data: |\n  | Market Segment | Size ($M) | Growth Rate | Opportunity Score |\n  |----------------|-----------|-------------|-------------------|\n  | Enterprise     | $450      | 8.2%        | High              |\n  | SMB           | $280      | 12.5%       | Very High         |\n  | Startup       | $120      | 25.8%       | Medium            |\ncontent_below: |\n  **Key Insights**: SMB segment shows highest growth potential with 12.5% annual growth. \n  Recommend prioritizing SMB market entry strategy for Q4 implementation.\n---"
 }

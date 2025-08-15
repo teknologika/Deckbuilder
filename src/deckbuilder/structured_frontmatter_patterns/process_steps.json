@@ -2,7 +2,7 @@
     "description": "Four-step process layout for sequential workflows",
     "yaml_pattern": {
         "layout": "process_steps",
-        "title": "str",
+        "title_top": "str",
         "content_col1": "str",
         "content_col2": "str",
         "content_col3": "str",
@@ -10,12 +10,12 @@
     },
     "validation": {
         "required_fields": [
-            "title",
+            "title_top",
             "content_col1",
             "content_col2",
             "content_col3",
             "content_col4"
         ]
     },
-    "example": "---\nlayout: process_steps\ntitle: \"Customer Onboarding Process\"\ncontent_col1: \"**Step 1:** Initial *welcome* and account setup with ___verification___\"\ncontent_col2: \"**Step 2:** Product ***demonstration*** and *feature* walkthrough\"\ncontent_col3: \"**Step 3:** Training session with ___hands-on___ practice\"\ncontent_col4: \"**Step 4:** Go-live support with *ongoing* assistance\"\n---"
+    "example": "---\nlayout: process_steps\ntitle_top: \"Customer Onboarding Process\"\ncontent_col1: \"**Step 1:** Initial *welcome* and account setup with ___verification___\"\ncontent_col2: \"**Step 2:** Product ***demonstration*** and *feature* walkthrough\"\ncontent_col3: \"**Step 3:** Training session with ___hands-on___ practice\"\ncontent_col4: \"**Step 4:** Go-live support with *ongoing* assistance\"\n---"
 }

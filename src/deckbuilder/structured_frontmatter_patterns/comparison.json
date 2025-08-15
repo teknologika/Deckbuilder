@@ -2,7 +2,7 @@
     "description": "Side-by-side comparison layout for contrasting two options",
     "yaml_pattern": {
         "layout": "Comparison",
-        "title": "str",
+        "title_top": "str",
         "title_left": "str",
         "content_left": "str",
         "title_right": "str",
@@ -10,12 +10,12 @@
     },
     "validation": {
         "required_fields": [
-            "title",
+            "title_top",
             "title_left",
             "content_left",
             "title_right",
             "content_right"
         ]
     },
-    "example": "---\nlayout: Comparison\ntitle: \"Deckbuilder Advantage Analysis\"\ntitle_left: \"Traditional Approach\"\ncontent_left: \"**Manual** slide creation with *time-consuming* layout decisions and ***inconsistent*** formatting\"\ntitle_right: \"Deckbuilder Solution\"\ncontent_right: \"___Intelligent___ automation with **content-first** design and *professional* output quality\"\n---"
+    "example": "---\nlayout: Comparison\ntitle_top: \"Deckbuilder Advantage Analysis\"\ntitle_left: \"Traditional Approach\"\ncontent_left: \"**Manual** slide creation with *time-consuming* layout decisions and ***inconsistent*** formatting\"\ntitle_right: \"Deckbuilder Solution\"\ncontent_right: \"___Intelligent___ automation with **content-first** design and *professional* output quality\"\n---"
 }

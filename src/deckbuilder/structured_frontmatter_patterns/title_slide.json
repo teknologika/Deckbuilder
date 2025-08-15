@@ -2,20 +2,20 @@
     "description": "Professional title slide with main title and subtitle for presentation opening",
     "yaml_pattern": {
         "layout": "Title Slide",
-        "title": "str",
+        "title_top": "str",
         "subtitle": "str"
     },
     "validation": {
         "required_fields": [
-            "title"
+            "title_top"
         ],
         "optional_fields": [
             "subtitle"
         ],
         "field_types": {
-            "title": "string",
+            "title_top": "string",
             "subtitle": "string"
         }
     },
-    "example": "---\nlayout: Title Slide\ntitle: My Presentation Title\nsubtitle: Key insights and strategic recommendations\n---\n# Title Slide\n\nThis slide serves as the opening slide for your presentation with a professional title and subtitle."
+    "example": "---\nlayout: Title Slide\ntitle_top: My Presentation Title\nsubtitle_top: Key insights and strategic recommendations\n---\n# Title Slide\n\nThis slide serves as the opening slide for your presentation with a professional title and subtitle."
 }

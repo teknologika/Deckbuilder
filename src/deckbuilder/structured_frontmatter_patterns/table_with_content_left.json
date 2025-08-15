@@ -2,22 +2,22 @@
     "description": "Side-by-side layout with analysis content on the left and supporting data table on the right",
     "yaml_pattern": {
         "layout": "Table with Content Left",
-        "title": "str",
+        "title_top": "str",
         "content_left": "str",
         "table_data": "str"
     },
     "validation": {
         "required_fields": [
-            "title",
+            "title_top",
             "content_left",
             "table_data"
         ],
         "optional_fields": [],
         "field_types": {
-            "title": "string",
+            "title_top": "string",
             "content_left": "string",
             "table_data": "string"
         }
     },
-    "example": "---\nlayout: Table with Content Left\ntitle: Performance Dashboard\ncontent_left: |\n  ## Key Findings\n  \n  • **Revenue Growth**: 15% increase over last quarter\n  • **Customer Acquisition**: 250 new customers added\n  • **Market Expansion**: Entered 3 new geographical regions\n  \n  The data demonstrates strong performance across all key metrics, \n  with particularly impressive growth in customer acquisition.\ntable_data: |\n  | Metric | Q2 | Q3 | Change |\n  |--------|----|----|--------|\n  | Revenue | $2.1M | $2.4M | +15% |\n  | Customers | 1,200 | 1,450 | +250 |\n  | Regions | 5 | 8 | +3 |\n  | Team Size | 45 | 52 | +7 |\n---"
+    "example": "---\nlayout: Table with Content Left\ntitle_top: Performance Dashboard\ncontent_left: |\n  ## Key Findings\n  \n  • **Revenue Growth**: 15% increase over last quarter\n  • **Customer Acquisition**: 250 new customers added\n  • **Market Expansion**: Entered 3 new geographical regions\n  \n  The data demonstrates strong performance across all key metrics, \n  with particularly impressive growth in customer acquisition.\ntable_data: |\n  | Metric | Q2 | Q3 | Change |\n  |--------|----|----|--------|\n  | Revenue | $2.1M | $2.4M | +15% |\n  | Customers | 1,200 | 1,450 | +250 |\n  | Regions | 5 | 8 | +3 |\n  | Team Size | 45 | 52 | +7 |\n---"
 }

@@ -2,16 +2,16 @@
     "description": "Side-by-side layout with two content areas",
     "yaml_pattern": {
         "layout": "Two Content",
-        "title": "str",
+        "title_top": "str",
         "content_left": "str",
         "content_right": "str"
     },
     "validation": {
         "required_fields": [
-            "title",
+            "title_top",
             "content_left",
             "content_right"
         ]
     },
-    "example": "---\nlayout: Two Content\ntitle: \"Deckbuilder Core Features\"\ncontent_left: |\n  **Semantic** layout detection\n  *Automatic* content optimization\n  ***Smart*** placeholder mapping\ncontent_right: |\n  ___Enterprise-grade___ presentations\n  **Consistent** branding\n  *Polished* formatting\n---"
+    "example": "---\nlayout: Two Content\ntitle_top: \"Deckbuilder Core Features\"\ncontent_left: |\n  **Semantic** layout detection\n  *Automatic* content optimization\n  ***Smart*** placeholder mapping\ncontent_right: |\n  ___Enterprise-grade___ presentations\n  **Consistent** branding\n  *Polished* formatting\n---"
 }

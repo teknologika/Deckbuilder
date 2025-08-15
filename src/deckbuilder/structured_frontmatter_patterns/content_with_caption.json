@@ -2,23 +2,23 @@
     "description": "Content slide with additional caption area for supplementary information or context",
     "yaml_pattern": {
         "layout": "Content with Caption",
-        "title": "str",
+        "title_top": "str",
         "content": "str",
         "text_caption": "str"
     },
     "validation": {
         "required_fields": [
-            "title"
+            "title_top"
         ],
         "optional_fields": [
             "content",
             "text_caption"
         ],
         "field_types": {
-            "title": "string",
+            "title_top": "string",
             "content": "string",
             "text_caption": "string"
         }
     },
-    "example": "---\nlayout: Content with Caption\ntitle: Market Analysis Results\ncontent: |\n  Our comprehensive market research reveals:\n  \n  • **Market Size**: $2.3B total addressable market\n  • **Growth Rate**: 15% annual compound growth\n  • **Key Segments**: Enterprise (60%), SMB (40%)\n  • **Competitive Landscape**: 3 major players, fragmented long tail\ntext_caption: Data collected from 500+ interviews across 12 industries during Q3-Q4 2024\n---"
+    "example": "---\nlayout: Content with Caption\ntitle_top: Market Analysis Results\ncontent: |\n  Our comprehensive market research reveals:\n  \n  • **Market Size**: $2.3B total addressable market\n  • **Growth Rate**: 15% annual compound growth\n  • **Key Segments**: Enterprise (60%), SMB (40%)\n  • **Competitive Landscape**: 3 major players, fragmented long tail\ntext_caption: Data collected from 500+ interviews across 12 industries during Q3-Q4 2024\n---"
 }

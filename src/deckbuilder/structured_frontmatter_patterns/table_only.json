@@ -2,19 +2,19 @@
     "description": "Pure table presentation with title, ideal for data-focused slides with no additional context",
     "yaml_pattern": {
         "layout": "Table Only",
-        "title": "str",
+        "title_top": "str",
         "table_data": "str"
     },
     "validation": {
         "required_fields": [
-            "title",
+            "title_top",
             "table_data"
         ],
         "optional_fields": [],
         "field_types": {
-            "title": "string",
+            "title_top": "string",
             "table_data": "string"
         }
     },
-    "example": "---\nlayout: Table Only\ntitle: Quarterly Sales Data\nstyle: dark_blue_white_text\nrow_style: alternating_light_gray\ntable_data: |\n  | Region | Q1 Sales | Q2 Sales | Q3 Sales |\n  |--------|----------|----------|----------|\n  | North  | $125,000 | $132,000 | $145,000 |\n  | South  | $98,500  | $105,000 | $118,000 |\n  | East   | $110,000 | $108,500 | $125,500 |\n  | West   | $88,200  | $95,000  | $102,000 |\n---"
+    "example": "---\nlayout: Table Only\ntitle_top: Quarterly Sales Data\nstyle: dark_blue_white_text\nrow_style: alternating_light_gray\ntable_data: |\n  | Region | Q1 Sales | Q2 Sales | Q3 Sales |\n  |--------|----------|----------|----------|\n  | North  | $125,000 | $132,000 | $145,000 |\n  | South  | $98,500  | $105,000 | $118,000 |\n  | East   | $110,000 | $108,500 | $125,500 |\n  | West   | $88,200  | $95,000  | $102,000 |\n---"
 }

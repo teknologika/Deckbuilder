@@ -2,18 +2,18 @@
     "description": "Three-column layout with content only (no titles)",
     "yaml_pattern": {
         "layout": "Three Columns",
-        "title": "str",
+        "title_top": "str",
         "content_col1": "str",
         "content_col2": "str",
         "content_col3": "str"
     },
     "validation": {
         "required_fields": [
-            "title",
+            "title_top",
             "content_col1",
             "content_col2",
             "content_col3"
         ]
     },
-    "example": "---\nlayout: Three Columns\ntitle: \"Three Column Layout Without Titles Test\"\ncontent_col1: \"**Fast processing** with optimized algorithms and *sub-millisecond* response times\"\ncontent_col2: \"***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance\"\ncontent_col3: \"*Intuitive* interface with **minimal** learning curve and comprehensive docs\"\n---"
+    "example": "---\nlayout: Three Columns\ntitle_top: \"Three Column Layout Without Titles Test\"\ncontent_col1: \"**Fast processing** with optimized algorithms and *sub-millisecond* response times\"\ncontent_col2: \"***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance\"\ncontent_col3: \"*Intuitive* interface with **minimal** learning curve and comprehensive docs\"\n---"
 }

@@ -2,14 +2,14 @@
     "description": "Title and content with vertical text orientation",
     "yaml_pattern": {
         "layout": "Title and Vertical Text",
-        "title": "str",
+        "title_top": "str",
         "content": "str"
     },
     "validation": {
         "required_fields": [
-            "title",
+            "title_top",
             "content"
         ]
     },
-    "example": "---\nlayout: Title and Vertical Text\ntitle: \"**Vertical Text** Layout Test\"\ncontent: \"This layout demonstrates vertical text capabilities with **formatted** content and *enhanced* presentation features for ___specialized___ content.\"\n---"
+    "example": "---\nlayout: Title and Vertical Text\ntitle_top: \"**Vertical Text** Layout Test\"\ncontent: \"This layout demonstrates vertical text capabilities with **formatted** content and *enhanced* presentation features for ___specialized___ content.\"\n---"
 }

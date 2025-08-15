@@ -33,5 +33,5 @@
             "Content6"
         ]
     },
-    "example": "---\nlayout: Title and 6-item Lists\nslide_title: \"**Six Item Lists** Layout Test\"\nTitle1: \"**Features**\"\nContent1: \"*Authentication*\"\nTitle2: \"**Authorization**\"\nContent2: \"___Encryption___\"\nTitle3: \"***Benefits***\"\nContent3: \"*Performance*\"\nTitle4: \"*Performance*\"\nContent4: \"___Scalability___\"\nTitle5: \"**Reliability**\"\nContent5: \"*Monitoring*\"\nTitle6: \"***Support***\"\nContent6: \"**Documentation**\"\n---"
+    "example": "---\nlayout: Title and 6-item Lists\nslide_title_top: \"**Six Item Lists** Layout Test\"\nTitle1: \"**Features**\"\nContent1: \"*Authentication*\"\nTitle2: \"**Authorization**\"\nContent2: \"___Encryption___\"\nTitle3: \"***Benefits***\"\nContent3: \"*Performance*\"\nTitle4: \"*Performance*\"\nContent4: \"___Scalability___\"\nTitle5: \"**Reliability**\"\nContent5: \"*Monitoring*\"\nTitle6: \"***Support***\"\nContent6: \"**Documentation**\"\n---"
 }
