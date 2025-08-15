@@ -8,7 +8,3 @@ content_item4: "04 - ___MCP integration___ with Claude Desktop"
 content_item5: "05 - **Hands-on** demonstration and practice session"
 content_item6: "06 - *Implementation* planning and next steps"
 ---
-
-# Agenda 6 Textboxes Layout
-
-Comprehensive six-item agenda presentation for Deckbuilder workshop covering introduction, philosophy, technical features, integration, hands-on practice, and implementation planning.

@@ -23,7 +23,3 @@ content_col3: |
   • *Seamless* user experience
   • **Enterprise** deployment
 ---
-
-# Three Columns Layout
-
-Three-column content layout showcasing the core architectural pillars of Deckbuilder. Each column represents a major system component with detailed feature lists using rich formatting.

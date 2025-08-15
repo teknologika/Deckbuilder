@@ -11,7 +11,3 @@ content: |
   • **Quality Assurance** - Automated testing and validation framework
 text_caption: "Architecture designed for ***enterprise scalability*** with *modular components* supporting ___extensible layouts___ and **professional output quality**"
 ---
-
-# Content with Caption Layout
-
-Content presentation with supplementary caption area providing architectural overview of Deckbuilder's core system components with detailed explanatory context.

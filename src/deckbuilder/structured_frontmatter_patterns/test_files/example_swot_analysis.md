@@ -22,7 +22,3 @@ content_bottom_right: |
   • ***Regulatory*** changes
   • ___Economic___ uncertainty
 ---
-
-# SWOT Analysis
-
-Comprehensive strategic analysis demonstrating rich formatting with bullet points, varied text styling, and structured quadrant content.

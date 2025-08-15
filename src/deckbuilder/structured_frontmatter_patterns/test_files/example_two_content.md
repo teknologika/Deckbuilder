@@ -16,7 +16,3 @@ content_right: |
   • ***Automated*** workflow efficiency
   • *Scalable* presentation generation
 ---
-
-# Two Content Layout
-
-Side-by-side comparison layout demonstrating rich formatting with technical capabilities on the left and business benefits on the right. Perfect for feature comparisons and balanced presentations.

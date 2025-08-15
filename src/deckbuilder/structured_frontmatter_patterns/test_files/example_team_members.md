@@ -18,7 +18,3 @@ content_col4: |
   Specialist in *automation testing*
   and ***quality assurance***
 ---
-
-# Team Members Layout
-
-Team introduction showcasing the Deckbuilder development team with individual profiles highlighting expertise in AI engineering, template design, MCP architecture, and quality assurance.

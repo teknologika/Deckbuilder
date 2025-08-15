@@ -16,7 +16,3 @@ content_right: |
   • **Smart** layout recommendations
   • ***Reliable*** content placement
 ---
-
-# Problem Solution Layout
-
-Problem-solution framework demonstrating how Deckbuilder addresses traditional presentation creation challenges with intelligent automation and consistent professional output.

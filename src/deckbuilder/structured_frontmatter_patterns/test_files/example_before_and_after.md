@@ -18,7 +18,3 @@ content_right: |
   • **Flexible** template system
   • *Reliable* content placement
 ---
-
-# Before and After Layout
-
-Transformation showcase demonstrating the impact of Deckbuilder implementation with side-by-side comparison of traditional manual processes versus automated intelligent presentation generation.

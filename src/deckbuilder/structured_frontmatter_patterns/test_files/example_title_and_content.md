@@ -11,7 +11,3 @@ content: |
 
   Implementation can begin immediately with ___minimal disruption___ to existing operations.
 ---
-
-# Title and Content
-
-Standard presentation slide demonstrating rich formatting in both title and content with bullet points, varied text styling, and multi-paragraph structure.

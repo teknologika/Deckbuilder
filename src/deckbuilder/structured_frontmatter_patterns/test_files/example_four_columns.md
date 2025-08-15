@@ -26,7 +26,3 @@ content_col4: |
   • ___Consistent___ quality
   • **Scalable** operations
 ---
-
-# Four Columns Layout
-
-Comprehensive capability overview using four-column structure to present Deckbuilder's complete feature set across content intelligence, template engine, MCP integration, and business value dimensions.

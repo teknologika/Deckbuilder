@@ -18,7 +18,3 @@ content_right: |
   • **Consistent** branding enforcement
   • *Scalable* presentation generation
 ---
-
-# Comparison Layout
-
-Structured comparison slide demonstrating before/after scenarios with titled sections and detailed bullet points. Ideal for competitive analysis, solution comparisons, and transformation showcases.

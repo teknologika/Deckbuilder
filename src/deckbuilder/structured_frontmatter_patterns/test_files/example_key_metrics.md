@@ -18,7 +18,3 @@ content_col4: |
   *85%* time savings
   ___Automated___ workflows
 ---
-
-# Key Metrics Layout
-
-Performance dashboard showcasing Deckbuilder's key performance indicators across content processing accuracy, template quality, user satisfaction, and productivity improvements with rich formatting.

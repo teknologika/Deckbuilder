@@ -22,7 +22,3 @@ content_col4: |
   • *Ongoing* support
   • ___Performance___ monitoring
 ---
-
-# Process Steps Layout
-
-Sequential workflow presentation showing the structured Deckbuilder implementation process from initial assessment through configuration, training, and production deployment with ongoing support.

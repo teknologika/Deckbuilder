@@ -17,7 +17,3 @@ content_col3: |
   • **Team** collaboration
   • ***Unlimited*** presentations
 ---
-
-# Three Columns With Titles Layout
-
-Structured value proposition presentation with individual column titles showcasing Deckbuilder's key benefits across efficiency, quality, and scalability dimensions.

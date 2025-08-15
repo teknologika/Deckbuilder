@@ -22,7 +22,3 @@ content_col4: |
   • **Flexible** plans
   • *Proven* ROI
 ---
-
-# Four Columns With Titles Layout
-
-Competitive advantage presentation with individual column titles showcasing Deckbuilder's key differentiators across performance, quality, usability, and value propositions.
