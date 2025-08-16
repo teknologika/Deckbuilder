@@ -120,9 +120,9 @@ class FieldProcessor:
 
         return f"FAILED: {error_msg}"
 
-    ## TODO: This method should be able to be removed as we map names in structured_frontmatter_patterns
-    ## Exact name matching should be used with out ANY layout hard-coding
-    ## this logic causes a lot of bugs.
+    # TODO: This method should be able to be removed as we map names in structured_frontmatter_patterns
+    # Exact name matching should be used with out ANY layout hard-coding
+    # this logic causes a lot of bugs.
     def _resolve_semantic_field_name(self, field_name: str, available_placeholders: List[Dict]) -> str:
         """
         Map semantic field names to actual placeholder names.

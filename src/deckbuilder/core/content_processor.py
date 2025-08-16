@@ -4,9 +4,9 @@ ContentProcessor Module
 Handles content application to PowerPoint placeholders with minimal font interference.
 Focuses on content placement accuracy and proper newline support.
 
-ARCHITECTURE DECISION: 
+ARCHITECTURE DECISION:
 - NO font override logic (preserve template fonts)
-- Only handle semantic content placement 
+- Only handle semantic content placement
 - Table font logic moved to TableHandler
 - Newline support: convert \n → PowerPoint paragraphs
 """
@@ -16,7 +16,7 @@ from pptx.enum.shapes import PP_PLACEHOLDER_TYPE
 
 from ..content.placeholder_types import (
     is_content_placeholder,
-    is_media_placeholder, 
+    is_media_placeholder,
     is_subtitle_placeholder,
     is_title_placeholder,
 )
@@ -26,7 +26,7 @@ from ..utils.logging import slide_builder_print, debug_print
 class ContentProcessor:
     """
     Handles content application to PowerPoint placeholders.
-    
+
     DESIGN PRINCIPLES:
     - Preserve template fonts (no font overrides)
     - Focus on accurate content placement
@@ -51,14 +51,14 @@ class ContentProcessor:
     ) -> None:
         """
         Apply content to a single placeholder based on its semantic type.
-        
+
         SIMPLIFIED VERSION: Extracted from _apply_content_to_single_placeholder
         with font override logic removed.
-        
+
         Args:
             slide: PowerPoint slide object
             placeholder: PowerPoint placeholder shape
-            field_name: Field name being processed  
+            field_name: Field name being processed
             field_value: Content value to apply
             slide_data: Complete slide data dictionary
             content_formatter: ContentFormatter instance for formatting
@@ -74,21 +74,17 @@ class ContentProcessor:
             self._apply_title_content(placeholder, field_value, content_formatter)
 
         elif is_content_placeholder(placeholder_type):
-            self._apply_content_placeholder_content(
-                slide, placeholder, field_name, field_value, content_formatter
-            )
+            self._apply_content_placeholder_content(slide, placeholder, field_name, field_value, content_formatter)
 
         elif is_media_placeholder(placeholder_type):
-            self._apply_media_placeholder_content(
-                slide, placeholder, field_name, field_value, slide_data, image_placeholder_handler
-            )
+            self._apply_media_placeholder_content(slide, placeholder, field_name, field_value, slide_data, image_placeholder_handler)
 
     def _apply_title_content(self, placeholder, field_value: Any, content_formatter) -> None:
         """
         Apply content to title/subtitle placeholders with proper formatting.
-        
+
         NO FONT OVERRIDES: Preserve template font sizes.
-        
+
         Args:
             placeholder: Title or subtitle placeholder
             field_value: Content to apply
@@ -115,12 +111,10 @@ class ContentProcessor:
 
         debug_print(f"    Applied title content: {len(str(field_value))} chars (template fonts preserved)")
 
-    def _apply_content_placeholder_content(
-        self, slide, placeholder, field_name: str, field_value: Any, content_formatter
-    ) -> None:
+    def _apply_content_placeholder_content(self, slide, placeholder, field_name: str, field_value: Any, content_formatter) -> None:
         """
         Apply content to content placeholders, handling tables and text content.
-        
+
         Args:
             slide: PowerPoint slide object
             placeholder: Content placeholder
@@ -147,12 +141,12 @@ class ContentProcessor:
     ) -> None:
         """
         Apply content to media placeholders (images, tables, objects).
-        
+
         Args:
             slide: PowerPoint slide object
             placeholder: Media placeholder
             field_name: Field name being processed
-            field_value: Content to apply  
+            field_value: Content to apply
             slide_data: Complete slide data
             image_placeholder_handler: Handler for image processing
         """
@@ -182,7 +176,7 @@ class ContentProcessor:
     def _handle_table_content(self, slide, placeholder, field_name: str, field_value: Dict[str, Any], content_formatter) -> None:
         """
         Handle table data content by delegating to TableBuilder.
-        
+
         Args:
             slide: PowerPoint slide object
             placeholder: Content placeholder being replaced with table
@@ -200,22 +194,22 @@ class ContentProcessor:
         # Create table on slide (TableBuilder handles font sizing)
         table_builder.add_table_to_slide(slide, field_value)
 
-        # Clear the placeholder to avoid showing placeholder text  
+        # Clear the placeholder to avoid showing placeholder text
         if hasattr(placeholder, "text_frame") and placeholder.text_frame:
             placeholder.text_frame.clear()
             # Leave empty since table replaces this content
             paragraph = placeholder.text_frame.paragraphs[0] if placeholder.text_frame.paragraphs else placeholder.text_frame.add_paragraph()
             paragraph.text = ""
 
-        debug_print(f"    Table content applied via TableBuilder (fonts handled by TableHandler)")
+        debug_print("    Table content applied via TableBuilder (fonts handled by TableHandler)")
 
     def _handle_table_placeholder(self, placeholder, field_name: str, field_value: Any, slide_data: Dict[str, Any], slide) -> None:
         """
         Handle TABLE placeholder types with proper table creation.
-        
+
         Note: This method handles legacy table placeholders.
         Modern table handling uses content placeholders with table data.
-        
+
         Args:
             placeholder: Table placeholder
             field_name: Field name
@@ -232,9 +226,9 @@ class ContentProcessor:
     def convert_newlines_to_paragraphs(self, text_content: str, text_frame, content_formatter=None) -> None:
         """
         Convert newline characters (\n) to actual PowerPoint paragraphs.
-        
+
         CORE FEATURE: Proper newline support for PowerPoint presentations.
-        
+
         Args:
             text_content: Text with potential \n characters
             text_frame: PowerPoint text frame to populate
@@ -273,7 +267,7 @@ class ContentProcessor:
     def _apply_content_with_newlines(self, text_content: str, text_frame, content_formatter) -> None:
         """
         Apply text content with proper newline handling.
-        
+
         Args:
             text_content: Text content to apply
             text_frame: PowerPoint text frame

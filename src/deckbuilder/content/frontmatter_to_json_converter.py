@@ -9,6 +9,7 @@ This module orchestrates the other specialized modules to create the final JSON 
 
 from typing import Dict, Any, Optional
 from .table_parser import is_table_content  # Only keep simple table detection
+
 # Content segmenter removed - use dedicated table layouts instead
 from .table_integration import extract_table_from_content, apply_frontmatter_styling_to_table, process_markdown_content
 

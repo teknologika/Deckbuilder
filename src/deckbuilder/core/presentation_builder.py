@@ -44,7 +44,7 @@ class PresentationBuilder:
             # Update table builder with new formatter
             self.table_builder = TableBuilder(self.content_formatter)
 
-    ## TODO: Refactor and remove this pass through method
+    # TODO: Refactor and remove this pass through method
     def clear_slides(self, prs):
         """Clear all slides from the presentation."""
         return self.slide_builder.clear_slides(prs)
@@ -72,7 +72,7 @@ class PresentationBuilder:
 
         return slide
 
-    ## TODO: Refactor and remove this pass through method
+    # TODO: Refactor and remove this pass through method
     def add_slide_with_direct_mapping(self, prs, slide_data: dict):
         """
         Add slide using direct field mapping (no markdown conversion).

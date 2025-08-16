@@ -128,6 +128,7 @@ markers = [
 "unit: Unit tests",
 "integration: Integration tests",
 "slow: Slow running tests",
+"performance: Performance benchmarks",
 "deckbuilder: Deckbuilder engine tests",
 "mcp_server: MCP server tests",
 "requires_template: Tests that require template files",

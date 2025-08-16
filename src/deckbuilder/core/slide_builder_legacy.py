@@ -997,7 +997,7 @@ class SlideBuilder:
 
     # Dynamic content shapes method removed - use dedicated table layouts instead:
     # - Table Only
-    # - Table with Content Above  
+    # - Table with Content Above
     # - Table with Content Above and Below
     # - Table with Content Left
     # - Content Table Content Table Content
