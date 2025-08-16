@@ -75,50 +75,7 @@ class SlideBuilder:
         if speaker_notes:
             self.add_speaker_notes(slide, speaker_notes, content_formatter)
 
-        # ENHANCED: Handle dynamic multi-shape creation for mixed content
-        if slide_data.get("_requires_dynamic_shapes") and slide_data.get("_content_segments"):
-            # CRITICAL: Clean up content placeholder before dynamic shape creation
-            content_placeholder = self._find_content_placeholder(slide)
-            if content_placeholder and hasattr(content_placeholder, "text_frame"):
-                # Get first text segment for content placeholder
-                first_text_segment = next((seg for seg in slide_data["_content_segments"] if seg["type"] == "text"), None)
-                if first_text_segment:
-                    # Clear any existing mixed content and set only first text segment
-                    content_placeholder.text_frame.clear()
-                    content_placeholder.text_frame.text = first_text_segment["content"].strip()
-
-                    # CRITICAL: Apply consistent font sizing to match title placeholder
-                    title_placeholder = self._find_title_placeholder(slide)
-                    if title_placeholder and hasattr(title_placeholder, "text_frame"):
-                        # Get font size from title to ensure consistency
-                        title_font_size = self._get_placeholder_font_size(title_placeholder)
-
-                        # Apply same font size to content placeholder paragraphs and runs
-                        for paragraph in content_placeholder.text_frame.paragraphs:
-                            # Set paragraph level font
-                            if paragraph.font:
-                                paragraph.font.size = title_font_size
-
-                            # Set run level fonts
-                            for run in paragraph.runs:
-                                if run.font:
-                                    run.font.size = title_font_size
-
-                        # Also set default character formatting for the text frame
-                        if hasattr(content_placeholder.text_frame, "auto_size"):
-                            from pptx.enum.text import MSO_AUTO_SIZE
-
-                            content_placeholder.text_frame.auto_size = MSO_AUTO_SIZE.TEXT_TO_FIT_SHAPE
-
-                        debug_print(f"    Applied title font size ({title_font_size.pt if hasattr(title_font_size, 'pt') else title_font_size}) to content placeholder")
-
-                    debug_print(f"    Cleaned content placeholder: set to first text segment only ({len(first_text_segment['content'])} chars)")
-                else:
-                    # No text segments, clear the placeholder
-                    content_placeholder.text_frame.clear()
-                    debug_print("    Cleaned content placeholder: cleared (no text segments)")
-
-            self._create_dynamic_content_shapes(slide, slide_data, content_formatter)
+        # Dynamic multi-shape creation removed - use dedicated table layouts instead
 
         # All content should be processed through placeholders only - no legacy content blocks
         debug_print("  Slide completed using structured frontmatter placeholders only")
@@ -437,11 +394,8 @@ class SlideBuilder:
         # Process nested structures like media.image_path
         self._process_nested_image_fields(slide, slide_data, image_placeholder_handler)
 
-        # Process table data if present - ONLY if not using dynamic shapes
-        if not slide_data.get("_requires_dynamic_shapes"):
-            self._process_table_data(slide, slide_data, content_formatter)
-        else:
-            debug_print("  Skipping static table processing - using dynamic multi-shape creation")
+        # Process table data if present
+        self._process_table_data(slide, slide_data, content_formatter)
 
     def _resolve_field_name_variations(self, field_name: str, field_to_index: dict) -> str:
         """
@@ -577,8 +531,8 @@ class SlideBuilder:
                             image_placeholder_handler,
                         )
                 elif is_content_placeholder(placeholder_type):
-                    if "content" in slide_data and not slide_data.get("_requires_dynamic_shapes"):
-                        # Only process content normally if NOT using dynamic shape creation
+                    if "content" in slide_data:
+                        # Process content normally via placeholders
                         self._apply_content_to_single_placeholder(
                             slide,
                             placeholder,
@@ -782,10 +736,14 @@ class SlideBuilder:
             debug_print(f"  Table already exists ({len(existing_tables)} found), skipping duplicate table creation")
             return
 
-        # ENHANCED: Parse table markdown with formatting preservation
+        # SIMPLIFIED: Parse table markdown as plain text only (no formatting parsing)
         if table_content["markdown"]:
-            debug_print("  Parsing table markdown with formatting preservation")
-            formatted_table_data = content_formatter.parse_table_markdown_with_formatting(table_content["markdown"])
+            debug_print("  Parsing table markdown as plain text (no formatting processing)")
+            from .table_handler import TableHandler
+
+            table_handler = TableHandler()
+            plain_text_data = table_handler.parse_table_structure(table_content["markdown"])
+            formatted_table_data = {"data": plain_text_data, "type": "table"}
         else:
             # Fallback for non-markdown table data
             formatted_table_data = table_content.get("table_data", {"data": [], "type": "table"})
@@ -1037,155 +995,12 @@ class SlideBuilder:
         """
         return self._is_table_markdown(text_content)
 
-    def _create_dynamic_content_shapes(self, slide, slide_data, content_formatter):
-        """
-        Create dynamic text shapes and tables for mixed content segments.
-
-        This method processes content segments created by converter's intelligent splitting,
-        creating additional text shapes and properly positioned tables as needed.
-
-        Args:
-            slide: PowerPoint slide object
-            slide_data: Dictionary containing _content_segments
-            content_formatter: ContentFormatter instance for text formatting
-        """
-        from .table_builder import TableBuilder
-
-        content_segments = slide_data.get("_content_segments", [])
-        if not content_segments:
-            debug_print("    No content segments found for dynamic shape creation")
-            return
-
-        debug_print(f"    Creating dynamic shapes for {len(content_segments)} content segments")
-
-        # Find the content placeholder to use as reference for positioning
-        content_placeholder = None
-        for shape in slide.placeholders:
-            if hasattr(shape, "placeholder_format") and shape.placeholder_format.type == PP_PLACEHOLDER_TYPE.BODY:
-                content_placeholder = shape
-                break
-
-        if not content_placeholder:
-            # Fallback: look for any content-type placeholder
-            for shape in slide.placeholders:
-                if hasattr(shape, "text_frame"):
-                    content_placeholder = shape
-                    break
-
-        if not content_placeholder:
-            error_print("    Warning: No content placeholder found for dynamic shape positioning")
-            return
-
-        # Calculate positioning parameters using placeholder properties
-        start_left = content_placeholder.left
-        start_top = content_placeholder.top
-        available_width = content_placeholder.width
-
-        # Get font-based sizing from placeholder
-        base_font_size = self._get_placeholder_font_size(content_placeholder)
-        line_height = base_font_size * 1.2  # Standard 1.2 line spacing
-
-        # Dynamic spacing based on font size
-        text_shape_height = line_height * 2  # Height for 2 lines of text
-        spacing_between_shapes = Cm(0.5)  # 0.5cm gap as requested
-
-        # Calculate initial positioning - start after the content placeholder
-        # The content placeholder now contains the first text segment, so position after it
-        placeholder_bottom = start_top + content_placeholder.height
-        current_top = placeholder_bottom + spacing_between_shapes
-
-        # Process each content segment
-        table_builder = TableBuilder(content_formatter)
-        segment_index = 0
-
-        for segment in content_segments:
-            if segment["type"] == "text":
-                segment_index += 1
-
-                # First text segment is handled by the main content placeholder
-                # but we need to account for its space when positioning subsequent elements
-                if segment_index == 1:
-                    # Calculate height needed for this first text segment
-                    text_lines = segment["content"].count("\n") + 1
-                    first_segment_height = line_height * text_lines
-                    current_top += first_segment_height + spacing_between_shapes
-                    debug_print(f"    First text segment in main placeholder, height: {first_segment_height}, next position: {current_top}")
-                    continue
-
-                # Create additional text shape for subsequent text segments (ensure integer EMU values)
-                text_shape = slide.shapes.add_textbox(int(start_left), int(current_top), int(available_width), int(text_shape_height))
-
-                # Apply content formatting
-                content_formatter.apply_inline_formatting(segment["content"], text_shape.text_frame.paragraphs[0])
-
-                debug_print(f"    Created text shape {segment_index} at position {current_top}")
-                current_top += text_shape_height + spacing_between_shapes
-
-            elif segment["type"] == "table":
-                # Create table shape positioned at current location
-                table_data = segment["table_data"]
-
-                # Create positioned table creation function
-
-                def positioned_table_creation(slide, table_data, table_top):
-                    """Override table positioning for dynamic layout"""
-                    # Get table data
-                    data = table_data.get("data", table_data.get("rows", []))
-                    if not data:
-                        return
-
-                    # Calculate table dimensions based on content and row height
-                    rows = len(data)
-                    cols = len(data[0]) if data else 1
-
-                    # Get row height from table data or use font-based default
-                    configured_row_height = table_data.get("row_height")
-
-                    if configured_row_height:
-                        try:
-                            row_height_cm = float(configured_row_height)
-                            table_height = Cm(row_height_cm * rows + 0.5)  # Add padding
-                        except (ValueError, TypeError):
-                            table_height = line_height * rows * 1.5  # Font-based fallback
-                    else:
-                        table_height = line_height * rows * 1.5  # Font-based default
-
-                    # Create table at calculated position (ensure integer EMU values)
-                    table = slide.shapes.add_table(rows, cols, int(start_left), int(table_top), int(available_width), int(table_height)).table
-
-                    # Apply table data and styling with font-aware sizing
-                    # Use placeholder font size as base for table fonts
-                    font_size_pt = int(base_font_size.pt) if hasattr(base_font_size, "pt") else 12
-
-                    # Add font sizing to table data if not specified
-                    if not table_data.get("header_font_size"):
-                        table_data["header_font_size"] = font_size_pt
-                    if not table_data.get("data_font_size"):
-                        table_data["data_font_size"] = max(8, font_size_pt - 2)  # Slightly smaller for data
-
-                    # Apply row height if configured
-                    if configured_row_height:
-                        try:
-                            row_height_emu = Cm(float(configured_row_height))
-                            table_builder._apply_row_heights(table, row_height_emu)
-                        except (ValueError, TypeError) as e:
-                            debug_print(f"    Warning: Could not apply row height: {e}")
-
-                    table_builder._apply_table_data_and_styling(table, table_data)
-
-                    return table_height
-
-                # Create the table
-                try:
-                    table_height = positioned_table_creation(slide, table_data, current_top)
-                    debug_print(f"    Created table at position {current_top}, height: {table_height}")
-                    current_top += table_height + spacing_between_shapes
-                except Exception as e:
-                    error_print(f"    Error creating dynamic table: {e}")
-                    # Fallback to standard table creation
-                    table_builder.add_table_to_slide(slide, table_data)
-
-        debug_print(f"    Dynamic shape creation completed, final position: {current_top}")
+    # Dynamic content shapes method removed - use dedicated table layouts instead:
+    # - Table Only
+    # - Table with Content Above  
+    # - Table with Content Above and Below
+    # - Table with Content Left
+    # - Content Table Content Table Content
 
     def _apply_content_to_mapped_placeholders_selective(self, slide, slide_data, layout_name, content_formatter, image_placeholder_handler, skip_content=False):
         """
@@ -1234,7 +1049,7 @@ class SlideBuilder:
 
         # Second priority: Process direct fields in slide_data
         for field_name, content in slide_data.items():
-            if field_name in ["placeholders", "layout", "style", "_content_segments", "_requires_dynamic_shapes", "_table_count"] or field_name.startswith("_"):
+            if field_name in ["placeholders", "layout", "style", "_table_count"] or field_name.startswith("_"):
                 continue
             if field_name in processed_fields:
                 continue

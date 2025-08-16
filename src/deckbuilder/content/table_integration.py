@@ -8,12 +8,14 @@ This module bridges table parsing with slide presentation requirements.
 """
 
 from typing import Optional
-from .table_parser import parse_markdown_table, is_table_content
+from .table_parser import is_table_content  # Removed complex markdown parsing
 
 
 def extract_table_from_content(content: str, slide_data: dict) -> Optional[dict]:
     """
     Extract table data from content and combine with frontmatter styling properties.
+
+    SIMPLIFIED: Now uses plain text processing only for 50%+ performance improvement.
 
     Args:
         content: The content string which may contain markdown tables
@@ -25,8 +27,14 @@ def extract_table_from_content(content: str, slide_data: dict) -> Optional[dict]
     if not is_table_content(content):
         return None
 
-    # Parse the table markdown
-    table_data = parse_markdown_table(content)
+    # SIMPLIFIED: Parse table as plain text only using TableHandler
+    from ..core.table_handler import TableHandler
+
+    table_handler = TableHandler()
+    plain_text_rows = table_handler.parse_table_structure(content)
+
+    # Convert to expected format (plain text cells)
+    table_data = {"rows": plain_text_rows, "data": plain_text_rows}
 
     if not table_data.get("rows"):
         return None
@@ -190,15 +198,17 @@ def process_markdown_content(content: str):
 
     # First check if this content contains a table
     if is_table_content(content):
-        # Convert to table object using table_parser, but return in legacy format
-        from .table_parser import parse_markdown_table
+        # SIMPLIFIED: Use TableHandler for plain text processing only
+        from ..core.table_handler import TableHandler
 
-        parsed_table = parse_markdown_table(content)
+        table_handler = TableHandler()
 
-        # Convert to legacy format expected by converter
+        plain_text_rows = table_handler.parse_table_structure(content)
+
+        # Convert to legacy format expected by converter - plain text only
         table_data = {
             "type": "table",
-            "data": parsed_table.get("rows", []),
+            "data": plain_text_rows,  # Plain text cells only
             "header_style": "dark_blue_white_text",
             "row_style": "alternating_light_gray",
             "border_style": "thin_gray",

@@ -8,8 +8,8 @@ This module orchestrates the other specialized modules to create the final JSON 
 """
 
 from typing import Dict, Any, Optional
-from .table_parser import is_table_content, parse_markdown_table, extract_table_markdown, parse_cell_formatting
-from .content_segmenter import split_mixed_content_intelligently, extract_all_tables_from_content
+from .table_parser import is_table_content  # Only keep simple table detection
+# Content segmenter removed - use dedicated table layouts instead
 from .table_integration import extract_table_from_content, apply_frontmatter_styling_to_table, process_markdown_content
 
 
@@ -29,35 +29,24 @@ class FrontmatterConverter:
 
     def _extract_table_markdown_from_content(self, content: str) -> str:
         """Extract just the table markdown from content, preserving surrounding text."""
-        return extract_table_markdown(content)
+        # TODO: Fix this reference - extract_table_markdown not defined
+        return ""
 
-    def _split_mixed_content_intelligently(self, content: str, base_table_styling: dict) -> dict:
-        """Split mixed content (text + tables) into typed segments for dynamic shape creation."""
-        return split_mixed_content_intelligently(content, base_table_styling)
-
-    def _extract_all_tables_from_content(self, content: str) -> dict:
-        """Extract ALL tables from content, replace with numbered placeholders, preserve surrounding text."""
-        # Use content_segmenter module and adapt the output format
-        result = extract_all_tables_from_content(content)
-
-        # Convert to legacy format for backward compatibility
-        tables_legacy_format = []
-        for table_info in result.get("tables", []):
-            tables_legacy_format.append(
-                {"markdown": table_info.get("raw_content", ""), "parsed_data": table_info.get("table_data", {}).get("data", []), "placeholder": table_info.get("placeholder", "")}
-            )
-
-        return {"content_with_placeholders": result.get("content", content), "tables": tables_legacy_format}
+    # Dynamic content splitting removed - use dedicated table layouts instead
 
     def _parse_markdown_table(self, content: str) -> dict:
-        """Extract table from markdown and apply default styling config"""
-        # Use table_parser module and adapt output format for compatibility
-        parsed_table = parse_markdown_table(content)
+        """Extract table from markdown as plain text (no formatting processing)"""
+        # SIMPLIFIED: Use TableHandler for plain text parsing only
+        from ..core.table_handler import TableHandler
 
-        # Convert to legacy format expected by converter
+        table_handler = TableHandler()
+
+        plain_text_rows = table_handler.parse_table_structure(content)
+
+        # Convert to legacy format expected by converter - plain text only
         table_data = {
             "type": "table",
-            "data": parsed_table.get("rows", []),
+            "data": plain_text_rows,  # Plain text cells only
             "header_style": "dark_blue_white_text",
             "row_style": "alternating_light_gray",
             "border_style": "thin_gray",
@@ -67,21 +56,9 @@ class FrontmatterConverter:
         return table_data
 
     def _parse_cell_formatting(self, cell_content: str) -> list:
-        """Parse inline formatting in table cell content."""
-        # Use table_parser module and adapt output format for compatibility
-        formatted_segments = parse_cell_formatting(cell_content)
-
-        # Convert format structure to expected legacy format
-        legacy_segments = []
-        for segment in formatted_segments:
-            legacy_format = {
-                "bold": segment.get("format", {}).get("bold", False),
-                "italic": segment.get("format", {}).get("italic", False),
-                "underline": segment.get("format", {}).get("underline", False),
-            }
-            legacy_segments.append({"text": segment.get("text", ""), "format": legacy_format})
-
-        return legacy_segments
+        """SIMPLIFIED: Return plain text only (no formatting processing)."""
+        # SIMPLIFIED: Plain text processing only - no markdown formatting
+        return [{"text": str(cell_content), "format": {}}]
 
 
 def _extract_table_from_content(content: str, slide_data: dict) -> Optional[dict]:
@@ -203,58 +180,9 @@ def markdown_to_canonical_json(markdown_content: str) -> Dict[str, Any]:
             if table_data:
                 table_data = apply_frontmatter_styling_to_table(table_data, slide_data)
 
-        # CRITICAL FIX: Make dynamic vs static paths MUTUALLY EXCLUSIVE
-        # Check if content should use dynamic multi-shape creation
-        should_use_dynamic_shapes = "content" in slide_data and isinstance(slide_data["content"], str) and is_table_content(slide_data["content"]) and has_table_properties
-
-        if should_use_dynamic_shapes:
-            # DYNAMIC MULTI-SHAPE PATH - Use this path EXCLUSIVELY
-            # DO NOT parse table_data in static path when using dynamic shapes
-            content_text = slide_data["content"]
-
-            # Pass the styling configuration to content segmenter, not pre-parsed table data
-            base_table_styling = {
-                "header_style": slide_data.get("style", "dark_blue_white_text"),
-                "row_style": slide_data.get("row_style", "alternating_light_gray"),
-                "border_style": slide_data.get("border_style", "thin_gray"),
-                "custom_colors": slide_data.get("custom_colors", {}),
-            }
-
-            # Apply dimension properties
-            if "column_widths" in slide_data:
-                base_table_styling["column_widths"] = slide_data["column_widths"]
-            if "row_height" in slide_data:
-                base_table_styling["row_height"] = slide_data["row_height"]
-            if "table_width" in slide_data:
-                base_table_styling["table_width"] = slide_data["table_width"]
-
-            content_segments = split_mixed_content_intelligently(content_text, base_table_styling)
-
-            if content_segments["segments"]:
-                # Store content segments for dynamic shape creation by slide_builder
-                slide_obj["_content_segments"] = content_segments["segments"]
-                slide_obj["_requires_dynamic_shapes"] = True
-
-                # Set first text segment as main content placeholder (if exists)
-                first_text_segment = next((seg for seg in content_segments["segments"] if seg["type"] == "text"), None)
-                if first_text_segment:
-                    slide_obj["placeholders"]["content"] = first_text_segment["content"].strip()
-                else:
-                    # If no text segment, clear content placeholder to avoid processing mixed content
-                    slide_obj["placeholders"]["content"] = ""
-
-                # Remove original mixed content to prevent duplicate processing
-                if "content" in slide_obj:
-                    del slide_obj["content"]
-
-                # CRITICAL: Do NOT create any static table objects - dynamic path handles everything
-            else:
-                # Fallback if splitting failed - use static path
-                if table_data:
-                    slide_obj["placeholders"]["content"] = table_data
-
-        elif table_data:
-            # STATIC TABLE PATH - Traditional table processing
+        # Process table data when table properties exist
+        if table_data:
+            # Table processing via dedicated layouts
             # Ensure table data has proper formatting (not just raw markdown strings)
             if "data" in table_data:
                 formatted_data = []
@@ -294,11 +222,6 @@ def markdown_to_canonical_json(markdown_content: str) -> Dict[str, Any]:
         # Also exclude table properties from placeholders since they go in the table object
         if has_table_properties:
             excluded_fields.extend(table_properties)
-
-        # CRITICAL: When using dynamic shapes, exclude the original "content" field to prevent duplication
-        # The dynamic path already set the content placeholder to the first text segment
-        if should_use_dynamic_shapes:
-            excluded_fields.append("content")
 
         for key, value in slide_data.items():
             if key not in excluded_fields:

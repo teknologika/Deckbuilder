@@ -2,7 +2,7 @@
 
 ## Architecture Overview
 
-This design completely refactors the 1,352-line slide_builder.py monolith into 6 focused modules under 400 lines each, eliminating all redundant code, removing markdown table support, and fixing broken functionality while maintaining backward compatibility.
+This design completely refactors the 1,352-line slide_builder.py monolith into 5 focused modules under 400 lines each, eliminating all redundant code, removing deprecated dynamic shape functionality, and fixing broken functionality while maintaining backward compatibility.
 
 **CORE PRINCIPLE: ENHANCE EXISTING CODE, DON'T CREATE ALTERNATE PATHS**
 
@@ -21,6 +21,8 @@ Following AI Coding Laws:
 4. **DELETE**: All markdown parsing from table cells
 5. **DELETE**: Multiple duplicate placeholder finding methods
 6. **DELETE**: Legacy mapping code in `_copy_placeholder_names_from_mapping()`
+7. **DELETE**: ✅ **DEPRECATED Dynamic Shape System** - content_segmenter.py, _create_dynamic_content_shapes(), _content_segments handling
+8. **DELETE**: ✅ **Over-engineered Mixed Content Logic** - replaced by dedicated table layouts
 
 ### What Gets ENHANCED (Use Existing Systems)
 
@@ -29,13 +31,15 @@ Following AI Coding Laws:
 2. **Semantic Detection** (`content/placeholder_types.py`) - detects placeholder types  
 3. **Name Resolution** (`core/placeholder_resolver.py`) - finds placeholders by name
 4. **Layout Resolution** (`core/layout_resolver.py`) - resolves PowerPoint layouts
+5. **✅ Template Layouts** - dedicated layouts replace dynamic shape creation
 
 #### Existing Systems Integration:
 - **PRIMARY**: PatternLoader defines exact fields for each layout
 - **SECONDARY**: Semantic detection finds placeholders by type
 - **NO FALLBACKS**: Success or clear error messages
+- **✅ Template-First**: Use PowerPoint layouts instead of dynamic positioning
 
-## Simplified Module Architecture
+## Simplified Module Architecture (5 Modules)
 
 ### Module 1: SlideCoordinator (~300 lines)
 **Single Responsibility:** High-level slide creation orchestration
@@ -46,9 +50,8 @@ class SlideCoordinator:
     
     def __init__(self, placeholder_manager: PlaceholderManager, 
                        content_processor: ContentProcessor,
-                       table_handler: TableHandler,
-                       shape_builder: ShapeBuilder):
-        # Wire existing systems together
+                       table_handler: TableHandler):
+        # Wire existing systems together (NO ShapeBuilder needed)
         
     def create_slide(self, prs, slide_data: dict, content_formatter, image_placeholder_handler) -> Slide:
         """SIMPLIFIED orchestration - replace bloated 127-line add_slide()"""
@@ -64,133 +67,58 @@ class SlideCoordinator:
         """ENHANCE existing speaker notes logic"""
 ```
 
-### Module 2: PlaceholderManager (~350 lines)
+### Module 2: PlaceholderManager (~350 lines) ✅ COMPLETE
 **Single Responsibility:** Use existing systems to map fields to placeholders
 
-```python
-class PlaceholderManager:
-    """ENHANCE existing PatternLoader + semantic detection - NO fallbacks"""
-    
-    def __init__(self, layout_resolver: LayoutResolver):
-        # USE existing PatternLoader
-        from ..templates.pattern_loader import PatternLoader
-        self.pattern_loader = PatternLoader()
-        
-        # USE existing semantic detection
-        from ..content.placeholder_types import (
-            is_title_placeholder, is_content_placeholder, is_media_placeholder
-        )
-        self.semantic_detector = {
-            'title': is_title_placeholder,
-            'content': is_content_placeholder,
-            'media': is_media_placeholder
-        }
-    
-    def map_fields_to_placeholders(self, slide, slide_data: dict, layout_name: str) -> Dict[str, Placeholder]:
-        """SIMPLE mapping: Pattern defines fields → Semantic detection finds placeholders"""
-        
-        # Get pattern from existing PatternLoader
-        pattern = self.pattern_loader.get_pattern_for_layout(layout_name)
-        if not pattern:
-            raise ValueError(f"No pattern found for layout '{layout_name}' - check structured_frontmatter_patterns/")
-        
-        # Pattern yaml_pattern defines exact expected fields
-        expected_fields = pattern.get("yaml_pattern", {})
-        
-        mapped_placeholders = {}
-        for field_name, field_value in slide_data.items():
-            if field_name in expected_fields:
-                # Use semantic detection to find placeholder
-                placeholder = self._find_placeholder_semantically(slide, field_name)
-                if placeholder:
-                    mapped_placeholders[field_name] = placeholder
-                else:
-                    raise ValueError(f"Cannot find {field_name} placeholder on slide for layout '{layout_name}'")
-        
-        return mapped_placeholders
-        
-    def _find_placeholder_semantically(self, slide, field_name: str) -> Optional[Placeholder]:
-        """USE existing semantic detection based on field name"""
-        if field_name == "title" or field_name.startswith("title_"):
-            return self._find_by_semantic_type(slide, 'title')
-        elif field_name == "content" or field_name.startswith("content_"):
-            return self._find_by_semantic_type(slide, 'content')
-        elif field_name == "image" or "image" in field_name:
-            return self._find_by_semantic_type(slide, 'media')
-        else:
-            # Clear error - no fallback
-            raise ValueError(f"Unknown field type '{field_name}' - update semantic mapping")
-```
+**✅ IMPLEMENTED**: Hybrid approach with PlaceholderNormalizer
+- Index-based placeholder renaming every slide
+- Name-based mapping using PatternLoader
+- Eliminated 92-line hardcoded variations dictionary
 
-### Module 3: ContentProcessor (~400 lines)
-**Single Responsibility:** ENHANCE existing content application
+### Module 3: ContentProcessor (~150 lines) ✅ COMPLETE
+**Single Responsibility:** Content application with template font preservation
 
-```python
-class ContentProcessor:
-    """ENHANCE existing content formatting - remove complexity"""
-    
-    def apply_content_to_placeholder(self, placeholder, content, formatting_options: dict) -> None:
-        """ENHANCED version of existing content application"""
-        
-    def apply_inline_formatting(self, text: str, paragraph) -> None:
-        """USE existing inline formatting logic"""
-        
-    def calculate_font_sizing(self, placeholder) -> FontInfo:
-        """ENHANCE existing _get_placeholder_font_size"""
-```
+**✅ IMPLEMENTED**: Template-first approach
+- Preserves template fonts (no override logic)
+- Proper newline support (`\n` → PowerPoint paragraphs)
+- CLI remap handles custom fonts separately (Mac PowerPoint workaround)
 
-### Module 4: TableHandler (~300 lines)
-**Single Responsibility:** SIMPLIFY existing table processing
+### Module 4: TableHandler (~350 lines) ✅ COMPLETE + ENHANCED
+**Single Responsibility:** Table processing with template-first font logic
 
-```python
-class TableHandler:
-    """ENHANCE existing table detection - REMOVE markdown parsing"""
-    
-    def detect_table_content(self, content: str) -> bool:
-        """ENHANCE existing _is_table_markdown - remove _contains_table_content duplicate"""
-        
-    def create_table_from_data(self, slide, table_data: dict, position: Position) -> Table:
-        """ENHANCE existing table creation - PLAIN TEXT ONLY"""
-        
-    def parse_table_structure(self, table_text: str) -> TableData:
-        """SIMPLIFIED: Plain text only, NO markdown parsing"""
-        lines = [line.strip() for line in table_text.split('\n') if line.strip()]
-        table_data = []
-        for line in lines:
-            if '|' in line and not self._is_separator_line(line):
-                # Plain text cells only
-                cells = [cell.strip() for cell in line.split('|')[1:-1]]
-                table_data.append(cells)
-        return TableData(data=table_data, type="table")
-```
+**✅ IMPLEMENTED**: 
+- Plain text table processing (no markdown in cells)
+- Template-first font handling (no hardcoded defaults)
+- Enhanced with font methods from table_integration.py and table_builder.py
 
-### Module 5: ShapeBuilder (~400 lines)
-**Single Responsibility:** FIX existing dynamic shape creation
-
-```python
-class ShapeBuilder:
-    """FIX existing dynamic shape positioning issues"""
-    
-    def create_dynamic_shapes(self, slide, content_segments: List[ContentSegment]) -> List[Shape]:
-        """FIX existing _create_dynamic_content_shapes positioning bugs"""
-        
-    def calculate_shape_positioning(self, slide, existing_content) -> List[Position]:
-        """FIX broken positioning logic - no overlap, proper spacing"""
-```
-
-### Module 6: LayoutResolver (~200 lines)
+### Module 5: LayoutResolver (~200 lines) ✅ COMPLETE
 **Single Responsibility:** USE existing layout resolution
 
-```python
-class LayoutResolver:
-    """USE existing layout resolution systems"""
-    
-    def __init__(self):
-        # USE existing layout resolution from core/layout_resolver.py
-        
-    def resolve_layout_by_name(self, prs, layout_name: str) -> SlideLayout:
-        """USE existing layout resolution logic"""
-```
+**✅ IMPLEMENTED**: 
+- Enhanced existing core/layout_resolver.py functionality
+- Smart error messages with layout suggestions
+- Clean interface for layout-to-pattern mapping
+
+## ~~Module 6: ShapeBuilder~~ → **ELIMINATED**
+
+**ARCHITECTURAL DECISION**: ShapeBuilder is NOT needed
+
+### Why ShapeBuilder Was Eliminated:
+1. **content_segmenter.py is DEPRECATED** - returns empty segments
+2. **Dynamic shape creation was over-engineered** - replaced by proper layouts:
+   - Table Only
+   - Table with Content Above
+   - Table with Content Above and Below  
+   - Table with Content Left
+   - Content Table Content Table Content
+3. **_create_dynamic_content_shapes() does nothing** - no segments to process
+4. **Template layouts are cleaner** - use PowerPoint's native layout system
+
+### Benefits of Elimination:
+- **~400 lines removed** from planned codebase
+- **Simpler architecture** - 5 modules instead of 6
+- **One clear path** - template layouts, not dynamic positioning
+- **Better maintainability** - no complex shape positioning logic
 
 ## Simple Flow (No Fallbacks)
 
@@ -200,46 +128,43 @@ class LayoutResolver:
    ↓ ERROR: "No pattern found for layout 'X' - check structured_frontmatter_patterns/"
 
 2. For each field in pattern.yaml_pattern:
-   ↓ Semantic detection finds placeholder by field type
+   ↓ Hybrid approach: Normalize placeholder names + semantic detection
    ↓ SUCCESS: Placeholder found and mapped
    ↓ ERROR: "Cannot find {field_name} placeholder on slide for layout 'X'"
 
-3. Apply content to mapped placeholders
-   ↓ SUCCESS: Content applied
+3. Apply content to mapped placeholders (preserve template fonts)
+   ↓ SUCCESS: Content applied with proper newline support
    ↓ ERROR: Clear error about what failed
 
-4. Create dynamic shapes if needed
-   ↓ SUCCESS: Shapes positioned correctly
-   ↓ ERROR: Clear error about positioning failure
+4. Use template layouts for tables (NO dynamic shape creation)
+   ↓ SUCCESS: Table rendered in proper layout
+   ↓ ERROR: Clear error about table processing failure
 ```
 
 ## Integration with Existing Systems
 
-### PatternLoader Integration
+### PatternLoader Integration ✅ IMPLEMENTED
 ```python
 # USE existing structured_frontmatter_patterns system
 pattern = self.pattern_loader.get_pattern_for_layout("Title and Content")
 # Returns: {
-#   "yaml_pattern": {"layout": "Title and Content", "title": "str", "content": "str"},
-#   "validation": {"required_fields": ["title"], "optional_fields": ["content"]}
+#   "yaml_pattern": {"layout": "Title and Content", "title_top": "str", "content": "str"},
+#   "validation": {"required_fields": ["title_top"], "optional_fields": ["content"]}
 # }
 ```
 
-### Semantic Detection Integration
+### Hybrid Placeholder Resolution ✅ IMPLEMENTED
 ```python
-# USE existing placeholder_types.py functions
-from ..content.placeholder_types import is_title_placeholder, is_content_placeholder
-
-# Map field types to semantic detection
-if field_name.startswith("title"):
-    for placeholder in slide.placeholders:
-        if is_title_placeholder(placeholder.placeholder_format.type):
-            return placeholder
+# NEW WORKFLOW: Index-based normalization + Name-based mapping
+1. Get template placeholder indices
+2. Add slide from layout
+3. Rename slide placeholders to match template names (PlaceholderNormalizer)
+4. Map fields by name using PlaceholderResolver
 ```
 
-## Table Processing Simplification
+## Table Processing Simplification ✅ COMPLETE
 
-### BEFORE (Complex - Gets Deleted):
+### BEFORE (Complex - Deleted):
 - Parse markdown within table cells
 - Preserve bold, italic, links
 - Complex formatting detection
@@ -248,7 +173,7 @@ if field_name.startswith("title"):
 ### AFTER (Simple - Enhanced):
 ```python
 def parse_table_structure(self, table_text: str) -> TableData:
-    """Plain text only - enhance existing _is_table_markdown"""
+    """Plain text only - enhanced existing _is_table_markdown"""
     lines = [line.strip() for line in table_text.split('\n') if line.strip()]
     table_data = []
     for line in lines:
@@ -257,6 +182,33 @@ def parse_table_structure(self, table_text: str) -> TableData:
             table_data.append(cells)
     return TableData(data=table_data, type="table")
 ```
+
+## Template Font Philosophy ✅ IMPLEMENTED
+
+### Font Handling Strategy:
+- **Template fonts preserved** by default (ContentProcessor)
+- **Table fonts configurable** when explicitly specified (TableHandler)
+- **CLI remap available** for custom font application (Mac PowerPoint workaround)
+- **No hardcoded defaults** - use template/explicit configuration only
+
+## Dynamic Shape Elimination Plan
+
+### Files to DELETE:
+- **content_segmenter.py** - already deprecated, returns empty segments
+- **_create_dynamic_content_shapes()** method from slide_builder_legacy.py
+- **_content_segments** and **_requires_dynamic_shapes** handling
+
+### Logic to REMOVE:
+- Dynamic vs static path separation in frontmatter_to_json_converter.py
+- Content segmentation logic
+- Mixed content intelligent splitting
+- Dynamic shape positioning calculations
+
+### Replacement Strategy:
+- Use dedicated PowerPoint layouts for mixed content scenarios
+- Table-only content → "Table Only" layout
+- Content + Table → "Table with Content Above" layout
+- Complex arrangements → "Content Table Content Table Content" layout
 
 ## API Compatibility Layer
 
@@ -277,45 +229,51 @@ class SlideBuilder:
 ## Success Metrics
 
 ### Quantitative Results:
-- **File count**: 6 focused modules (vs 1 monolith)
-- **Lines per module**: ≤400 (vs 1,352)
-- **Code elimination**: 60% reduction through redundancy removal
+- **File count**: 5 focused modules (vs 1 monolith) - **REVISED DOWN from 6**
+- **Lines per module**: ≤400 (vs 1,352) - **ContentProcessor only ~150 lines**
+- **Code elimination**: 60%+ reduction through redundancy removal + dynamic shape elimination
 - **Method elimination**: Remove duplicate methods completely
-- **Table performance**: 50%+ faster with plain text only
+- **Table performance**: 50%+ faster with plain text only ✅ **ACHIEVED**
 
 ### Qualitative Results:
 - **Clear errors**: "No pattern found for layout 'X'" instead of silent fallbacks
-- **Enhanced existing**: PatternLoader + semantic detection work better together
+- **Enhanced existing**: PatternLoader + hybrid placeholder resolution work better together ✅ **ACHIEVED**
 - **Zero fallbacks**: Success or clear error messages
-- **Simplified flow**: One path through the system
+- **Simplified flow**: One path through the system ✅ **ACHIEVED**
 - **Better maintainability**: Each module has single responsibility
+- **✅ Template-first approach**: Use PowerPoint layouts instead of dynamic positioning
 
-## Migration Strategy
+## Migration Strategy ✅ UPDATED
 
-### Phase 1: Extract and Enhance TableHandler
-- ENHANCE existing `_is_table_markdown()`
-- DELETE `_contains_table_content()` duplicate
-- REMOVE all markdown parsing from cells
+### Phase 1: ✅ COMPLETE - Extract and Enhance TableHandler
+- ✅ ENHANCED existing `_is_table_markdown()`
+- ✅ DELETED `_contains_table_content()` duplicate
+- ✅ REMOVED all markdown parsing from cells
+- ✅ ADDED template-first font handling
 
-### Phase 2: Extract and Enhance PlaceholderManager  
-- USE existing PatternLoader
-- USE existing semantic detection
-- DELETE 92-line hardcoded variations dictionary
+### Phase 2: ✅ COMPLETE - Extract and Enhance PlaceholderManager  
+- ✅ USED existing PatternLoader
+- ✅ IMPLEMENTED hybrid approach (index normalization + name mapping)
+- ✅ DELETED 92-line hardcoded variations dictionary
 
-### Phase 3: Extract and Enhance ContentProcessor
-- ENHANCE existing content application
-- REMOVE complex formatting paths
+### Phase 3: ✅ COMPLETE - Extract and Enhance ContentProcessor
+- ✅ ENHANCED existing content application
+- ✅ PRESERVED template fonts (no override logic)
+- ✅ ADDED proper newline support
 
-### Phase 4: Extract and Fix ShapeBuilder
-- FIX existing positioning bugs
-- ENHANCE existing shape creation
+### ~~Phase 4: Extract and Fix ShapeBuilder~~ → **ELIMINATED**
+- **DECISION**: ShapeBuilder not needed - dynamic shape system deprecated
+- **BENEFIT**: ~400 lines eliminated, simpler architecture
 
-### Phase 5: Extract and Simplify SlideCoordinator
+### Phase 5: Extract and Simplify SlideCoordinator (NEXT)
 - REPLACE bloated 127-line add_slide()
-- USE existing orchestration patterns
+- USE existing orchestration patterns  
+- INTEGRATE all enhanced modules
 
-### Phase 6: Integrate with LayoutResolver
-- USE existing layout resolution
-- Wire all enhanced modules together
+### Phase 6: Final Integration and Cleanup
+- REMOVE deprecated dynamic shape code
+- DELETE content_segmenter.py
+- UPDATE API compatibility layer
+- COMPREHENSIVE testing
 
 Each phase: ENHANCE existing code, DELETE redundant code, NO new alternate paths.

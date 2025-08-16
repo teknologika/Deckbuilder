@@ -1,11 +1,13 @@
 """
 TableHandler
 
-Handles table detection, parsing, and creation. Tables only support plain text.
-Markdown formatting is not supported within tables
+Handles table detection, parsing, creation, and font configuration. 
+Tables only support plain text. Markdown formatting is not supported within tables.
+Enhanced with font logic moved from table_integration.py and table_builder.py.
 """
 
 from typing import List, Dict, Any, Optional, Tuple
+from pptx.util import Pt
 from ..utils.logging import debug_print, error_print
 
 
@@ -207,6 +209,130 @@ class TableHandler:
         debug_print(f"Found {len(existing_tables)} existing tables on slide")
         return existing_tables
 
+    # ===== FONT HANDLING METHODS (moved from table_integration.py and table_builder.py) =====
+
+    def get_default_fonts(self, slide_data: Dict[str, Any] = None) -> Dict[str, Any]:
+        """
+        Get table font sizes from slide data when explicitly specified.
+        
+        Returns only explicitly configured font sizes - does not provide fallbacks.
+        Template fonts are preserved when no explicit sizes are specified.
+        
+        Args:
+            slide_data: Optional slide data containing font specifications
+            
+        Returns:
+            Dictionary with explicitly specified font sizes (may be empty)
+        """
+        fonts = {}
+        
+        if slide_data:
+            # Only include explicitly specified font sizes
+            if "header_font_size" in slide_data and slide_data["header_font_size"] is not None:
+                fonts["header_font_size"] = slide_data["header_font_size"]
+            if "data_font_size" in slide_data and slide_data["data_font_size"] is not None:
+                fonts["data_font_size"] = slide_data["data_font_size"]
+        
+        if fonts:
+            debug_print(f"Explicit table fonts: {fonts}")
+        else:
+            debug_print("No explicit table fonts - using template defaults")
+        
+        return fonts
+
+    def validate_font_sizes(self, font_config: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Validate and sanitize font size configuration.
+        
+        Moved from table_integration.py for centralized font handling.
+        
+        Args:
+            font_config: Dictionary containing font size specifications
+            
+        Returns:
+            Validated font configuration dictionary
+        """
+        validated_config = font_config.copy()
+        
+        # Validate header and data font sizes
+        for font_field in ["header_font_size", "data_font_size"]:
+            if font_field in validated_config and validated_config[font_field] is not None:
+                try:
+                    font_size = int(validated_config[font_field])
+                    # Reasonable bounds: 8pt to 24pt for headers, 8pt to 20pt for data
+                    if font_field == "header_font_size":
+                        font_size = max(8, min(24, font_size))
+                    else:  # data_font_size
+                        font_size = max(8, min(20, font_size))
+                    
+                    validated_config[font_field] = font_size
+                    debug_print(f"Validated {font_field}: {font_size}pt")
+                    
+                except (ValueError, TypeError):
+                    # Invalid font size - remove it to use defaults
+                    debug_print(f"Invalid {font_field}: {validated_config[font_field]} - removing")
+                    del validated_config[font_field]
+        
+        return validated_config
+
+    def calculate_table_fonts(self, slide_data: Dict[str, Any], base_font_size: Optional[Any] = None) -> Dict[str, Any]:
+        """
+        Calculate appropriate font sizes for table headers and data.
+        
+        Moved logic from slide_builder_legacy.py for centralized font handling.
+        
+        Args:
+            slide_data: Slide data containing font specifications  
+            base_font_size: Optional base font size from placeholder (for relative sizing)
+            
+        Returns:
+            Dictionary with calculated font sizes (may be empty to preserve template fonts)
+        """
+        # Start with explicitly specified fonts
+        font_config = self.get_default_fonts(slide_data)
+        
+        # Validate any explicit font configurations
+        if font_config:
+            font_config = self.validate_font_sizes(font_config)
+        
+        # If base font size provided and no explicit sizes, calculate relative sizes
+        if base_font_size and not font_config.get("header_font_size") and not font_config.get("data_font_size"):
+            try:
+                base_size_pt = int(base_font_size.pt) if hasattr(base_font_size, "pt") else int(base_font_size)
+                
+                # Use base font size for headers, slightly smaller for data
+                font_config["header_font_size"] = base_size_pt
+                font_config["data_font_size"] = max(8, base_size_pt - 2)  # At least 8pt
+                
+                debug_print(f"Calculated relative table fonts from base {base_size_pt}pt: header={font_config['header_font_size']}pt, data={font_config['data_font_size']}pt")
+                
+            except (ValueError, AttributeError):
+                # No valid base font size - preserve template fonts by returning empty config
+                debug_print(f"Invalid base font size: {base_font_size} - preserving template fonts")
+                font_config = {}
+        
+        return font_config
+
+    def get_font_size_for_row(self, row_idx: int, header_font_size: int, data_font_size: int) -> int:
+        """
+        Get appropriate font size for table cell based on row type.
+        
+        Moved from table_builder.py _get_font_size method.
+        
+        Args:
+            row_idx: Row index (0 is header)
+            header_font_size: Font size for header rows  
+            data_font_size: Font size for data rows
+            
+        Returns:
+            Font size in points
+        """
+        # Validate font sizes with reasonable bounds
+        header_size = max(8, min(24, int(header_font_size))) if header_font_size else 12
+        data_size = max(8, min(20, int(data_font_size))) if data_font_size else 10
+        
+        return header_size if row_idx == 0 else data_size
+
     def find_table_content_in_slide_data(self, slide_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """
         Find table content in slide data, checking both markdown and structured data.
@@ -224,7 +350,7 @@ class TableHandler:
 
         # Check direct fields
         for field_name, field_value in slide_data.items():
-            if field_name not in ["layout", "type", "_requires_dynamic_shapes", "_content_segments"]:
+            if field_name not in ["layout", "type"]:
                 content_fields_to_check.append((field_name, field_value))
 
         # Check placeholders if they exist
