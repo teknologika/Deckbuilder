@@ -1,6 +1,6 @@
 ---
 layout: Title and Content
-title: "**Key** *Benefits* of Our ___Solution___"
+title_top: "**Key** *Benefits* of Our ___Solution___"
 content: |
   Our solution provides several ***key advantages***:
 

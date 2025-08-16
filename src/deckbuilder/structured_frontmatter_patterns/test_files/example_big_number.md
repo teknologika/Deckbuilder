@@ -1,4 +1,6 @@
 ---
 layout: Big Number
-title: "***Deckbuilder*** **Performance** *Achievement* **99.7%**"
+title_top: "99.7%"
+content: |
+  ***Deckbuilder*** Performance Achievement
 ---

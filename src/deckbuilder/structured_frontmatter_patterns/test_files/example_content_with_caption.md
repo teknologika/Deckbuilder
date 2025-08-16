@@ -1,6 +1,6 @@
 ---
 layout: Content with Caption
-title: "***Deckbuilder*** **Architecture** *Overview*"
+title_top: "***Deckbuilder*** **Architecture** *Overview*"
 content: |
   **Core System Components**
   

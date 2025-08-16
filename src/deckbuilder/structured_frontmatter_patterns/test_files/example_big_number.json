@@ -1,8 +1,11 @@
 {
-  "slides": [{
-    "layout": "Big Number",
-    "placeholders": {
-      "title": "***Deckbuilder*** **Performance** *Achievement* **99.7%**"
+  "slides": [
+    {
+      "layout": "Big Number",
+      "placeholders": {
+        "title": "99.7%",
+        "content": "***Deckbuilder*** Performance Achievement"
+      }
     }
-  }]
+  ]
 }

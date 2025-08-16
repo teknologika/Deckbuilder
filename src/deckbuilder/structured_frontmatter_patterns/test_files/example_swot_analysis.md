@@ -1,6 +1,6 @@
 ---
 layout: SWOT Analysis
-title: "**SWOT** Analysis - *Strategic* Overview"
+title_top: "**SWOT** Analysis - *Strategic* Overview"
 content_top_left: |
   **Strengths**
   • *Market leadership* position

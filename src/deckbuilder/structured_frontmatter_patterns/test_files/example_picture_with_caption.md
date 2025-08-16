@@ -1,6 +1,6 @@
 ---
 layout: Picture with Caption
-title: "***Deckbuilder*** **Content** *Transformation*"
+title_top: "***Deckbuilder*** **Content** *Transformation*"
 image: "deckbuilder_workflow_diagram.png"
 text_caption: |
   **Visual representation** of the ***content-first*** design philosophy showing how *semantic analysis* transforms ___user content___ into **professional presentations** through ___intelligent layout___ selection and ***automated formatting***.

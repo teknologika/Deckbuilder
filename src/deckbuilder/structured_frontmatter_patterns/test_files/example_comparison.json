@@ -1,12 +1,14 @@
 {
-  "slides": [{
-    "layout": "Comparison",
-    "placeholders": {
-      "title": "**Traditional** vs *Modern* Presentation Creation",
-      "title_left": "***Traditional*** Approach",
-      "content_left": "**Manual Challenges**\n• *Time-consuming* slide creation\n• ***Inconsistent*** formatting across teams\n• ___Repetitive___ layout decisions\n• **Limited** template flexibility\n• *Error-prone* content placement",
-      "title_right": "___Deckbuilder___ **Solution**",
-      "content_right": "**Intelligent Automation**\n• ***Content-first*** design philosophy\n• *Automated* layout intelligence\n• ___Professional___ output quality\n• **Consistent** branding enforcement\n• *Scalable* presentation generation"
+  "slides": [
+    {
+      "layout": "Comparison",
+      "placeholders": {
+        "title_top": "**Traditional** vs *Modern* Presentation Creation",
+        "title_left": "***Traditional*** Approach",
+        "content_left": "**Manual Challenges**\n• *Time-consuming* slide creation\n• ***Inconsistent*** formatting across teams\n• ___Repetitive___ layout decisions\n• **Limited** template flexibility\n• *Error-prone* content placement",
+        "title_right": "___Deckbuilder___ **Solution**",
+        "content_right": "**Intelligent Automation**\n• ***Content-first*** design philosophy\n• *Automated* layout intelligence\n• ___Professional___ output quality\n• **Consistent** branding enforcement\n• *Scalable* presentation generation"
+      }
     }
-  }]
+  ]
 }

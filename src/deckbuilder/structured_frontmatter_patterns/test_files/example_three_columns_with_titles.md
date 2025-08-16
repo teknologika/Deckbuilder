@@ -1,6 +1,6 @@
 ---
 layout: Three Columns With Titles
-title: "***Deckbuilder*** **Value** *Proposition*"
+title_top: "***Deckbuilder*** **Value** *Proposition*"
 title_col1: "**Efficiency**"
 content_col1: |
   • ***85%*** time savings

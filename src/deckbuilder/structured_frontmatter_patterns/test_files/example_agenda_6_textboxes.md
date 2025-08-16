@@ -1,6 +1,6 @@
 ---
 layout: Agenda, 6 Textboxes
-title: "***Deckbuilder*** **Workshop** *Agenda*"
+title_top: "***Deckbuilder*** **Workshop** *Agenda*"
 content_item1: "01 - **Introduction** to intelligent presentation generation"
 content_item2: "02 - *Content-first* design philosophy and benefits"
 content_item3: "03 - ***Template system*** and layout intelligence"

@@ -64,6 +64,10 @@ class ContentProcessor:
             content_formatter: ContentFormatter instance for formatting
             image_placeholder_handler: ImagePlaceholderHandler for images
         """
+        # 🔍 DEBUG: Log content processor calls
+        print(f"🔍 DEBUG: ContentProcessor.apply_content_to_placeholder called")
+        print(f"🔍 DEBUG: field_name='{field_name}', field_value='{field_value}'")
+        print(f"🔍 DEBUG: placeholder type = {placeholder.placeholder_format.type}")
         # Set slide context for content formatter (needed for table processing)
         content_formatter._current_slide = slide_data.get("slide_object", slide)
 

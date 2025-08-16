@@ -1,6 +1,6 @@
 ---
 layout: Table with Content Above and Below
-title: "***Quarterly*** **Performance** *Overview*"
+title_top: "***Quarterly*** **Performance** *Overview*"
 content_above: "**Executive Summary:** Strong performance across all key metrics with ___significant growth___ in revenue and customer acquisition. ***Market expansion*** successful in three new regions."
 table_data: |
   | **Quarter** | *Revenue* | **Customers** | ***Growth*** |

@@ -1,6 +1,6 @@
 ---
 layout: Comparison
-title: "***Deckbuilder*** **Adoption** *Analysis*"
+title_top: "***Deckbuilder*** **Adoption** *Analysis*"
 title_left: "**Advantages**"
 content_left: |
   • ***Automated*** presentation creation

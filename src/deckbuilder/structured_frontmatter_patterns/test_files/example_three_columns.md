@@ -1,6 +1,6 @@
 ---
 layout: Three Columns
-title: "***Deckbuilder*** **Architecture** *Pillars*"
+title_top: "***Deckbuilder*** **Architecture** *Pillars*"
 content_col1: |
   **Content Intelligence**
   • *Semantic* layout detection

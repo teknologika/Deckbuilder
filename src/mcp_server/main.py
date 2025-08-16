@@ -25,8 +25,8 @@ deck = None
 def get_deck_client():
     """Lazy initialization of deckbuilder client."""
     global deck
-    if deck is None:
-        deck = get_deckbuilder_client()
+    # Always create fresh client to avoid cached bugs during development
+    deck = get_deckbuilder_client()
     return deck
 
 

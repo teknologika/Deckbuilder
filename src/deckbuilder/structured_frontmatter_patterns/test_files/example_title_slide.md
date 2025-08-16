@@ -1,5 +1,5 @@
 ---
 layout: Title Slide
-title: "**Deckbuilder**: *Intelligent* PowerPoint Generation"
+title_top: "**Deckbuilder**: *Intelligent* PowerPoint Generation"
 subtitle: "Transforming presentations with ___automated___ layout intelligence and ***professional*** formatting"
 ---

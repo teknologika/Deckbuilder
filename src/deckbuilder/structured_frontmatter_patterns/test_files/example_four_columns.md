@@ -1,6 +1,6 @@
 ---
 layout: Four Columns
-title: "***Deckbuilder*** **Core** *Capabilities*"
+title_top: "***Deckbuilder*** **Core** *Capabilities*"
 content_col1: |
   **Content Intelligence**
   • *Semantic* analysis

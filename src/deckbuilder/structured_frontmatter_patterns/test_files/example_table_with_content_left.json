@@ -1,10 +1,12 @@
 {
-  "slides": [{
-    "layout": "Table with Content Left",
-    "placeholders": {
-      "title": "***Performance*** **Dashboard** *Analysis*",
-      "content_left": "**Key Findings:**\n\n• ***Revenue Growth:*** 15% increase over last quarter\n• **Customer Acquisition:** 250 new customers added  \n• ***Market Expansion:*** Entered 3 new geographical regions\n\nThe data demonstrates ___strong performance___ across all key metrics, with particularly impressive growth in customer acquisition and ***market penetration*** strategies.",
-      "table_data": "| **Metric** | *Q2* | **Q3** | ***Change*** |\n|------------|------|--------|---------------|\n| Revenue | $2.1M | $2.4M | +15% |\n| Customers | 1,200 | 1,450 | +250 |\n| Regions | 5 | 8 | +3 |\n| Team Size | 45 | 52 | +7 |"
+  "slides": [
+    {
+      "layout": "Table with Content Left",
+      "placeholders": {
+        "title": "***Performance*** **Dashboard** *Analysis*",
+        "content": "**Key Findings:**\n\n• ***Revenue Growth:*** 15% increase over last quarter\n• **Customer Acquisition:** 250 new customers added  \n• ***Market Expansion:*** Entered 3 new geographical regions\n\nThe data demonstrates ___strong performance___ across all key metrics, with particularly impressive growth in customer acquisition and ***market penetration*** strategies.",
+        "table_data": "| **Metric** | *Q2* | **Q3** | ***Change*** |\n|------------|------|--------|---------------|\n| Revenue | $2.1M | $2.4M | +15% |\n| Customers | 1,200 | 1,450 | +250 |\n| Regions | 5 | 8 | +3 |\n| Team Size | 45 | 52 | +7 |"
+      }
     }
-  }]
+  ]
 }

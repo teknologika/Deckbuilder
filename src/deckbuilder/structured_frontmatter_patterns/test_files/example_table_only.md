@@ -1,6 +1,6 @@
 ---
 layout: Table Only
-title: "**Quarterly** *Sales* Performance - ___Regional___ Analysis"
+title_top: "**Quarterly** *Sales* Performance - ___Regional___ Analysis"
 style: dark_blue_white_text
 row_style: alternating_light_gray
 border_style: thin_gray

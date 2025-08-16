@@ -1,7 +1,7 @@
 ---
 layout: Table with Content Left
-title: "***Performance*** **Dashboard** *Analysis*"
-content_left: |
+title_top: "***Performance*** **Dashboard** *Analysis*"
+content: |
   **Key Findings:**
   
   • ***Revenue Growth:*** 15% increase over last quarter

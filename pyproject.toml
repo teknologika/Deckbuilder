@@ -39,11 +39,6 @@ dependencies = [
     "Pillow>=10.0.0",
     "numpy>=1.24.0",
     "click>=8.0.0",
-    "mkdocs>=1.6.1",
-    "mkdocs-material>=9.6.16",
-    "mkdocstrings[python]>=0.30.0",
-    "mkdocs-click>=0.9.0",
-    "pymdown-extensions>=10.16.1",
 ]
 
 [project.optional-dependencies]
@@ -63,8 +58,15 @@ lint = [
 format = [
 "black>=22.0.0",
 ]
+docs = [
+"mkdocs>=1.6.1",
+"mkdocs-material>=9.6.16",
+"mkdocstrings[python]>=0.30.0",
+"mkdocs-click>=0.9.0",
+"pymdown-extensions>=10.16.1",
+]
 dev = [
-"deckbuilder[test,lint,format]",
+"deckbuilder[test,lint,format,docs]",
 "tomli>=2.0.1",
 "black[jupyter]>=24.4.0"
 ]

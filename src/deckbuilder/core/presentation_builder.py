@@ -2,7 +2,7 @@ from ..content.formatter import ContentFormatter
 from ..image.image_handler import ImageHandler
 from ..image.placeholder import ImagePlaceholderHandler
 from ..image.placekitten_integration import PlaceKittenIntegration
-from .slide_builder_legacy import SlideBuilder
+from .slide_builder import SlideBuilder
 from .table_builder import TableBuilder
 
 

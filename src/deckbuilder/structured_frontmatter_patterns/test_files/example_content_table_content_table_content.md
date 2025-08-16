@@ -1,6 +1,6 @@
 ---
 layout: Content Table Content Table Content
-title: "***Market*** **Analysis** *Dashboard*"
+title_top: "***Market*** **Analysis** *Dashboard*"
 content_1: "**Regional Performance:** Strong growth across ***North America*** and *Europe* with ___emerging opportunities___ in Asia-Pacific markets."
 table_1: |
   | **Region**    | *Q3 Revenue* |

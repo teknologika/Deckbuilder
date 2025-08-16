@@ -1,6 +1,6 @@
 ---
 layout: Title and Content
-title: "***Deckbuilder*** **Development** *Roadmap*"
+title_top: "***Deckbuilder*** **Development** *Roadmap*"
 content: |
   **Phase 1:** Core engine and *template* foundation
   **Phase 2:** ***MCP integration*** and Claude Desktop compatibility

@@ -1,6 +1,6 @@
 ---
 layout: Four Columns
-title: "***Deckbuilder*** **Development** *Team*"
+title_top: "***Deckbuilder*** **Development** *Team*"
 content_col1: |
   **Bruce Chen** - *AI Engineer*
   Expert in ***content intelligence***

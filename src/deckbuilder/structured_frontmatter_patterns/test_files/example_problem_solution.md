@@ -1,6 +1,6 @@
 ---
 layout: Two Content
-title: "***Presentation*** **Creation** *Challenge*"
+title_top: "***Presentation*** **Creation** *Challenge*"
 content_left: |
   **Problem:**
   • *Manual* slide creation takes hours

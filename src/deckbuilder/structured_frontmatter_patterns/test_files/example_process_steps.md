@@ -1,6 +1,6 @@
 ---
 layout: Four Columns
-title: "***Deckbuilder*** **Implementation** *Process*"
+title_top: "***Deckbuilder*** **Implementation** *Process*"
 content_col1: |
   **Step 1:** Assessment
   • *Current* workflow analysis

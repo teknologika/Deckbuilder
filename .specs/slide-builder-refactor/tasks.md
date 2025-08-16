@@ -89,37 +89,37 @@
 
 ## Phase 4 REVISED: Remove Deprecated Dynamic Shape Code
 
-- [ ] 8. **🗑️ CLEANUP: Remove deprecated dynamic shape system**
-  - [ ] 8.1. DELETE `src/deckbuilder/content/content_segmenter.py` (already deprecated)
-  - [ ] 8.2. DELETE `_create_dynamic_content_shapes()` method from slide_builder_legacy.py
-  - [ ] 8.3. REMOVE `_content_segments` and `_requires_dynamic_shapes` handling
-  - [ ] 8.4. CLEAN UP dynamic vs static path separation in frontmatter_to_json_converter.py
-  - [ ] 8.5. UPDATE imports and references to content_segmenter
-  - [ ] 8.6. VERIFY table processing works via template layouts only
+- [x] 8. **🗑️ CLEANUP: Remove deprecated dynamic shape system**
+  - [x] 8.1. DELETE `src/deckbuilder/content/content_segmenter.py` (already deprecated)
+  - [x] 8.2. DELETE `_create_dynamic_content_shapes()` method from slide_builder_legacy.py
+  - [x] 8.3. REMOVE `_content_segments` and `_requires_dynamic_shapes` handling
+  - [x] 8.4. CLEAN UP dynamic vs static path separation in frontmatter_to_json_converter.py
+  - [x] 8.5. UPDATE imports and references to content_segmenter
+  - [x] 8.6. VERIFY table processing works via template layouts only
 
 ## Phase 5: Extract and Simplify SlideCoordinator (Dependency: All enhanced modules)
 
-- [ ] 9. **Create SlideCoordinator module (~300 lines)**
-  - [ ] 9.1. REPLACE bloated 127-line `add_slide()` with clean `create_slide()`
-  - [ ] 9.2. Wire all enhanced modules together via dependency injection
-  - [ ] 9.3. ENHANCE existing `clear_slides()` logic
-  - [ ] 9.4. ENHANCE existing `add_speaker_notes()` logic
-  - [ ] 9.5. Create simple orchestration flow (no complex branching)
-  - [ ] 9.6. Implement clear error handling throughout
+- [x] 9. **Create SlideCoordinator module (~300 lines)**
+  - [x] 9.1. REPLACE bloated 127-line `add_slide()` with clean `create_slide()`
+  - [x] 9.2. Wire all enhanced modules together via dependency injection
+  - [x] 9.3. ENHANCE existing `clear_slides()` logic
+  - [x] 9.4. ENHANCE existing `add_speaker_notes()` logic
+  - [x] 9.5. Create simple orchestration flow (no complex branching)
+  - [x] 9.6. Implement clear error handling throughout
 
 ## Phase 6: Integration and API Compatibility (Dependency: SlideCoordinator)
 
-- [ ] 10. **Create backward compatibility wrapper**
-  - [ ] 10.1. Create new `SlideBuilder` class to delegate to new architecture
-  - [ ] 10.2. Maintain exact same public API signatures
-  - [ ] 10.3. Preserve all existing method interfaces
-  - [ ] 10.4. Test MCP server integration with new architecture
+- [x] 10. **Create backward compatibility wrapper**
+  - [x] 10.1. Create new `SlideBuilder` class to delegate to new architecture
+  - [x] 10.2. Maintain exact same public API signatures
+  - [x] 10.3. Preserve all existing method interfaces
+  - [x] 10.4. Test MCP server integration with new architecture
 
-- [ ] 11. **Integration testing and validation**
-  - [ ] 11.1. Run comprehensive integration tests across all modules
-  - [ ] 11.2. Validate all existing functionality preserved
-  - [ ] 11.3. Verify performance improvements (50%+ table processing)
-  - [ ] 11.4. Test with real structured frontmatter patterns
+- [x] 11. **Integration testing and validation**
+  - [x] 11.1. Run comprehensive integration tests across all modules
+  - [x] 11.2. Validate all existing functionality preserved
+  - [x] 11.3. Verify performance improvements (50%+ table processing)
+  - [x] 11.4. Test with real structured frontmatter patterns
 
 ## Testing Tasks
 
@@ -150,23 +150,23 @@
   - ~~15.3. Test positioned table creation~~
   - ~~15.4. Verify fixes for broken positioning functionality~~
 
-- [ ] 15. **SlideCoordinator unit tests** (RENUMBERED)
-  - [ ] 15.1. Test slide creation orchestration
-  - [ ] 15.2. Test module coordination and error handling
-  - [ ] 15.3. Test speaker notes functionality
-  - [ ] 15.4. Test backward compatibility
+- [x] 15. **SlideCoordinator unit tests** (RENUMBERED)
+  - [x] 15.1. Test slide creation orchestration
+  - [x] 15.2. Test module coordination and error handling
+  - [x] 15.3. Test speaker notes functionality
+  - [x] 15.4. Test backward compatibility
 
 ### Integration Tests
-- [ ] 16. **Cross-module integration tests** (RENUMBERED)
-  - [ ] 16.1. Test complete slide creation workflow
-  - [ ] 16.2. Test pattern loading → placeholder mapping → content application
-  - [ ] 16.3. Test table detection → creation → positioning → font handling
-  - [ ] 16.4. **✅ Test template layouts** (instead of dynamic shape creation)
+- [x] 16. **Cross-module integration tests** (RENUMBERED)
+  - [x] 16.1. Test complete slide creation workflow
+  - [x] 16.2. Test pattern loading → placeholder mapping → content application
+  - [x] 16.3. Test table detection → creation → positioning → font handling
+  - [x] 16.4. **✅ Test template layouts** (instead of dynamic shape creation)
 
 - [ ] 17. **System integration tests** (RENUMBERED)
-  - [ ] 17.1. Test MCP server compatibility
-  - [ ] 17.2. Test all structured frontmatter pattern types
-  - [ ] 17.3. Test backward compatibility with existing API
+  - [x] 17.1. Test MCP server compatibility
+  - [x] 17.2. Test all structured frontmatter pattern types
+  - [-] 17.3. Test backward compatibility with existing API
   - [ ] 17.4. Test performance benchmarks vs original system
 
 ### Regression Tests

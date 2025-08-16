@@ -1,12 +1,12 @@
 ---
 layout: Title Slide
-title: "**Deckbuilder: Intelligent PowerPoint Generation**"
+title_top: "**Deckbuilder: Intelligent PowerPoint Generation**"
 subtitle: "Showcasing all ___19 layouts___ with **professional** *formatting* capabilities"
 ---
 
 ---
 layout: Title and Content
-title: "Rich Content with **Professional** *Formatting*"
+title_top: "Rich Content with **Professional** *Formatting*"
 content: |
   ## Deckbuilder Features
 
@@ -22,13 +22,13 @@ content: |
 
 ---
 layout: Section Header
-title: "**Deckbuilder** *Capabilities*"
+title_top: "**Deckbuilder** *Capabilities*"
 text: "Comprehensive presentation intelligence with ___professional___ **layout** automation for streamlined content creation."
 ---
 
 ---
 layout: Two Content
-title: "Deckbuilder **Core** Features"
+title_top: "Deckbuilder **Core** Features"
 content_left: |
   **Semantic** layout detection
   *Automatic* content optimization
@@ -41,7 +41,7 @@ content_right: |
 
 ---
 layout: Comparison
-title: "Deckbuilder **Advantage** Analysis"
+title_top: "Deckbuilder **Advantage** Analysis"
 title_left: "Traditional Approach"
 content_left: "**Manual** slide creation with *time-consuming* layout decisions and ***inconsistent*** formatting"
 title_right: "Deckbuilder Solution"
@@ -50,7 +50,7 @@ content_right: "___Intelligent___ automation with **content-first** design and *
 
 ---
 layout: Title Only
-title: "Deckbuilder: **Intelligent** *Presentation* ___Generation___"
+title_top: "Deckbuilder: **Intelligent** *Presentation* ___Generation___"
 ---
 
 ---
@@ -59,7 +59,7 @@ layout: Blank
 
 ---
 layout: Content with Caption
-title: "Advanced Layout Capabilities"
+title_top: "Advanced Layout Capabilities"
 content: |
   ## Professional Features
 
@@ -73,14 +73,14 @@ text_caption: "Enterprise-grade presentation generation with ___professional___ 
 
 ---
 layout: Picture with Caption
-title: "Picture Layout **Test**"
+title_top: "Picture Layout **Test**"
 image: "placeholder_image.jpg"
 text_caption: "Picture placeholder with ***formatted*** captions"
 ---
 
 ---
 layout: Title and Vertical Text
-title: "**Vertical Text** Layout Test"
+title_top: "**Vertical Text** Layout Test"
 content: "This layout demonstrates vertical text capabilities with **formatted** content and *enhanced* presentation features for ___specialized___ content."
 ---
 
@@ -92,7 +92,7 @@ content: "This layout demonstrates vertical title and text capabilities with **f
 
 ---
 layout: Three Columns With Titles
-title: "Three Column Layout **With Titles** Test"
+title_top: "Three Column Layout **With Titles** Test"
 title_col1: "Performance"
 content_col1: "**Fast processing** with optimized algorithms"
 title_col2: "Security"
@@ -103,7 +103,7 @@ content_col3: "*Intuitive* interface with **minimal** learning curve"
 
 ---
 layout: Three Columns
-title: "Three Column Layout **Without Titles** Test"
+title_top: "Three Column Layout **Without Titles** Test"
 content_col1: "**Fast processing** with optimized algorithms and *sub-millisecond* response times"
 content_col2: "***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance"
 content_col3: "*Intuitive* interface with **minimal** learning curve and comprehensive docs"
@@ -111,7 +111,7 @@ content_col3: "*Intuitive* interface with **minimal** learning curve and compreh
 
 ---
 layout: Four Columns With Titles
-title: "Four Column Layout **With Titles** Test"
+title_top: "Four Column Layout **With Titles** Test"
 title_col1: "Performance"
 content_col1: "**Fast processing** with optimized algorithms"
 title_col2: "Security"
@@ -124,7 +124,7 @@ content_col4: "___Transparent___ pricing with **flexible** plans"
 
 ---
 layout: Four Columns
-title: "Four Column Layout **Without Titles** Test"
+title_top: "Four Column Layout **Without Titles** Test"
 content_col1: "**Fast processing** with optimized algorithms and *sub-millisecond* response times"
 content_col2: "***Enterprise-grade*** encryption with ___SOC2___ and GDPR compliance"
 content_col3: "*Intuitive* interface with **minimal** learning curve and comprehensive docs"
@@ -133,7 +133,7 @@ content_col4: "___Transparent___ pricing with **flexible** plans and *proven* RO
 
 ---
 layout: Agenda, 6 Textboxes
-title: "**Agenda** Layout Test"
+title_top: "**Agenda** Layout Test"
 content_item1: "01 - **Opening** remarks and introductions"
 content_item2: "02 - *Market* analysis and trends"
 content_item3: "03 - ***Product*** roadmap updates"
@@ -161,13 +161,13 @@ Content6: "6- **Documentation**"
 
 ---
 layout: Big Number
-title: "**42%**"
+title_top: "**42%**"
 content: "Improvement in *performance* with ___new___ architecture"
 ---
 
 ---
 layout: SWOT Analysis
-title: "**SWOT** Analysis"
+title_top: "**SWOT** Analysis"
 content_top_left: "**Strong** market position with *proven* technology"
 content_top_right: "___Limited___ geographic presence and **high** costs"
 content_bottom_left: "*Emerging* markets and ***digital*** transformation"
@@ -175,8 +175,8 @@ content_bottom_right: "**Competition** and ___regulatory___ changes"
 ---
 
 ---
-layout: table
-title: "Table Slide with **Formatted** Content"
+layout: Table Only
+title_top: "Table Slide with **Formatted** Content"
 style: dark_blue_white_text
 row_style: alternating_light_gray
 border_style: thin_gray

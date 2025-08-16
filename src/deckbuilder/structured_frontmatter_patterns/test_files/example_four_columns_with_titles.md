@@ -1,6 +1,6 @@
 ---
 layout: Four Columns With Titles
-title: "***Deckbuilder*** **Competitive** *Advantages*"
+title_top: "***Deckbuilder*** **Competitive** *Advantages*"
 title_col1: "**Performance**"
 content_col1: |
   • ***Sub-second*** processing

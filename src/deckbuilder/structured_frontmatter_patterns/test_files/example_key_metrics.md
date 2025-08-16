@@ -1,6 +1,6 @@
 ---
 layout: Four Columns
-title: "***Deckbuilder*** **Performance** *Dashboard*"
+title_top: "***Deckbuilder*** **Performance** *Dashboard*"
 content_col1: |
   **Content Processing**
   ***99.2%*** accuracy

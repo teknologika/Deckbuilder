@@ -1,6 +1,6 @@
 ---
 layout: Comparison
-title: "***Deckbuilder*** **Implementation** *Impact*"
+title_top: "***Deckbuilder*** **Implementation** *Impact*"
 title_left: "**Before** Implementation"
 content_left: |
   **Traditional Challenges**

@@ -1,6 +1,6 @@
 ---
 layout: Comparison
-title: "**Traditional** vs *Modern* Presentation Creation"
+title_top: "**Traditional** vs *Modern* Presentation Creation"
 title_left: "***Traditional*** Approach"
 content_left: |
   **Manual Challenges**

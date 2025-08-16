@@ -1,6 +1,6 @@
 ---
 layout: Two Content
-title: "**Deckbuilder** *Core* Features"
+title_top: "**Deckbuilder** *Core* Features"
 content_left: |
   **Technical Capabilities**
   • *Semantic* layout detection

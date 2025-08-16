@@ -1,4 +1,4 @@
 ---
 layout: Title Only
-title: "**Questions** & *Discussion* - ___Interactive___ Session"
+title_top: "**Questions** & *Discussion* - ___Interactive___ Session"
 ---

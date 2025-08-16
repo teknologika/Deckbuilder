@@ -206,7 +206,7 @@
     {
       "layout": "Comparison",
       "placeholders": {
-        "title": "**Traditional** vs *Modern* Presentation Creation",
+        "title_top": "**Traditional** vs *Modern* Presentation Creation",
         "title_left": "***Traditional*** Approach",
         "content_left": "**Manual Challenges**\n• *Time-consuming* slide creation\n• ***Inconsistent*** formatting across teams\n• ___Repetitive___ layout decisions\n• **Limited** template flexibility\n• *Error-prone* content placement",
         "title_right": "___Deckbuilder___ **Solution**",
@@ -331,7 +331,8 @@
     {
       "layout": "Big Number",
       "placeholders": {
-        "title": "***Deckbuilder*** **Performance** *Achievement* **99.7%**"
+        "title": "99.7%",
+        "content": "***Deckbuilder*** Performance Achievement"
       }
     },
     {
@@ -382,7 +383,7 @@
       "layout": "Table with Content Left",
       "placeholders": {
         "title": "***Performance*** **Dashboard** *Analysis*",
-        "content_left": "**Key Findings:**\n\n• ***Revenue Growth:*** 15% increase over last quarter\n• **Customer Acquisition:** 250 new customers added  \n• ***Market Expansion:*** Entered 3 new geographical regions\n\nThe data demonstrates ___strong performance___ across all key metrics, with particularly impressive growth in customer acquisition and ***market penetration*** strategies.",
+        "content": "**Key Findings:**\n\n• ***Revenue Growth:*** 15% increase over last quarter\n• **Customer Acquisition:** 250 new customers added  \n• ***Market Expansion:*** Entered 3 new geographical regions\n\nThe data demonstrates ___strong performance___ across all key metrics, with particularly impressive growth in customer acquisition and ***market penetration*** strategies.",
         "table_data": "| **Metric** | *Q2* | **Q3** | ***Change*** |\n|------------|------|--------|---------------|\n| Revenue | $2.1M | $2.4M | +15% |\n| Customers | 1,200 | 1,450 | +250 |\n| Regions | 5 | 8 | +3 |\n| Team Size | 45 | 52 | +7 |"
       }
     },
