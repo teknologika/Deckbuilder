@@ -277,8 +277,6 @@ class DeckbuilderCLI:
 
     def init_templates(self, path: str = "./templates"):
         """Initialize template folder with default files and provide setup guidance"""
-        import shutil
-
         target_path = Path(path).resolve()
 
         # Create template folder
@@ -287,13 +285,13 @@ class DeckbuilderCLI:
         try:
             # Copy directly from package assets without creating cache folder
             from importlib.resources import files
-            
+
             # Get package assets directly
             package_assets = files("deckbuilder") / "assets" / "templates"
-            
+
             # Copy template files (JSON mapping files no longer used)
             files_copied = []
-            
+
             try:
                 source_pptx = package_assets / "default.pptx"
                 if source_pptx.is_file():
@@ -303,7 +301,7 @@ class DeckbuilderCLI:
                         dst.write(src.read())
                     clear_hidden_flag(target_file)
                     files_copied.append("default.pptx")
-                    click.echo(f"✅ Copied: default.pptx")
+                    click.echo("✅ Copied: default.pptx")
                 else:
                     click.echo("❌ Source template not found: default.pptx", err=True)
             except Exception as e:

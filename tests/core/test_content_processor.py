@@ -22,7 +22,7 @@ class TestContentProcessor(unittest.TestCase):
         self.mock_placeholder = Mock()
         self.mock_content_formatter = Mock()
         self.mock_image_handler = Mock()
-        
+
         # Setup placeholder with text_frame for table content clearing
         self.mock_placeholder.text_frame = Mock()
         self.mock_placeholder.text_frame.paragraphs = [Mock()]
@@ -71,10 +71,18 @@ class TestContentProcessor(unittest.TestCase):
         """Test newline conversion without content formatter."""
         text_content = "Line 1\nLine 2"
 
+        # Create mock paragraphs for both lines
+        mock_para1 = Mock()
+        mock_para2 = Mock()
+        self.mock_text_frame.paragraphs = [mock_para1]
+        self.mock_text_frame.add_paragraph.return_value = mock_para2
+
         self.processor.convert_newlines_to_paragraphs(text_content, self.mock_text_frame, None)
 
-        # Should set text directly on paragraphs
-        self.assertEqual(self.mock_paragraph.text, "Line 1")
+        # Should set text directly on first paragraph
+        self.assertEqual(mock_para1.text, "Line 1")
+        # Should set text on added paragraph
+        self.assertEqual(mock_para2.text, "Line 2")
 
         # Should add one new paragraph
         self.mock_text_frame.add_paragraph.assert_called_once()
@@ -103,8 +111,8 @@ class TestContentProcessor(unittest.TestCase):
 
         self.processor._apply_title_content(self.mock_placeholder, field_value, self.mock_content_formatter)
 
-        # Should clear and process with newlines
-        self.mock_text_frame.clear.assert_called_once()
+        # Should clear twice: once in _apply_title_content, once in convert_newlines_to_paragraphs
+        self.assertEqual(self.mock_text_frame.clear.call_count, 2)
 
     def test_apply_title_content_formatted_segments(self):
         """Test title content with pre-formatted segments."""

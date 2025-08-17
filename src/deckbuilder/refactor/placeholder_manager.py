@@ -105,9 +105,9 @@ class PlaceholderManager:
         mapped_placeholders = {}
 
         # BUGFIX: Extract placeholder data from nested structure
-        placeholder_data = slide_data.get('placeholders', slide_data)
+        placeholder_data = slide_data.get("placeholders", slide_data)
 
-        for field_name, field_value in placeholder_data.items():
+        for field_name, _field_value in placeholder_data.items():
             # Skip metadata fields that aren't content placeholders
             if field_name in ["layout", "style", "speaker_notes"]:
                 continue

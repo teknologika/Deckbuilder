@@ -8,7 +8,6 @@ layout regressions and ensure JSON ↔ Template ↔ PPTX alignment.
 GitHub Issue: https://github.com/teknologika/Deckbuilder/issues/36
 """
 
-import json
 import re
 from pathlib import Path
 from typing import Dict, List, Any, Optional

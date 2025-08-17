@@ -8,7 +8,6 @@ Bridges existing template JSON structure with semantic metadata for content-firs
 This module implements the foundation for TDD Template Discovery (GitHub Issue #38).
 """
 
-import json
 import logging
 from pathlib import Path
 from typing import Dict, List, Optional, Any

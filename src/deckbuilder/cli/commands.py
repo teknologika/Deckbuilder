@@ -7,7 +7,6 @@ These tools are designed to be run independently for template management tasks.
 """
 
 import argparse
-import json
 import os
 import sys
 from datetime import datetime
@@ -142,6 +141,7 @@ class TemplateManager:
             project_root = Path(__file__).parent.parent.parent
             docs_folder = project_root / "docs" / "Features"
             docs_folder.mkdir(parents=True, exist_ok=True)
+            base_name = template_name.replace(".pptx", "")
             output_path = str(docs_folder / f"{base_name.title()}Template.md")
 
         with open(output_path, "w", encoding="utf-8") as f:

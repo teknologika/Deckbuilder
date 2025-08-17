@@ -9,7 +9,8 @@ Related: Semantic layout aliases implementation
 """
 
 import pytest
-import json
+
+# json import removed - not used with disabled tests
 from pathlib import Path
 
 
