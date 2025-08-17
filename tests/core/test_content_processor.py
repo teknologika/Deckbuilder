@@ -5,7 +5,7 @@ Tests content application with minimal font interference and proper newline supp
 """
 
 import unittest
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from deckbuilder.core.content_processor import ContentProcessor
 
@@ -19,6 +19,7 @@ class TestContentProcessor(unittest.TestCase):
 
         # Mock dependencies
         self.mock_slide = Mock()
+        self.mock_slide.shapes = []  # Mock empty shapes list for table detection
         self.mock_placeholder = Mock()
         self.mock_content_formatter = Mock()
         self.mock_image_handler = Mock()
@@ -136,13 +137,22 @@ class TestContentProcessor(unittest.TestCase):
         self.assertEqual(self.mock_placeholder.text, "Simple title")
 
     def test_apply_content_placeholder_with_dict_data(self):
-        """Test content placeholder with structured data (should be treated as regular content)."""
+        """Test content placeholder with structured table data (should create table)."""
         field_value = {"type": "table", "data": [["Header"], ["Data"]]}
 
-        self.processor._apply_content_placeholder_content(self.mock_slide, self.mock_placeholder, "content", field_value, self.mock_content_formatter)
+        # Mock the TableHandler methods to avoid complex table creation during test
+        with patch("deckbuilder.core.table_handler.TableHandler") as mock_table_handler_class:
+            mock_table_handler = mock_table_handler_class.return_value
+            mock_table_handler.detect_existing_tables.return_value = []
+            mock_table_handler.create_table_from_data.return_value = Mock()  # Mock table shape
+            mock_table_handler.clear_table_content_from_placeholders.return_value = None
 
-        # Should delegate to content formatter (not create table - tables go through table placeholders)
-        self.mock_content_formatter.add_content_to_placeholder.assert_called_once_with(self.mock_placeholder, field_value)
+            self.processor._apply_content_placeholder_content(self.mock_slide, self.mock_placeholder, "content", field_value, self.mock_content_formatter)
+
+            # Should detect table content and route to table processing (not content formatter)
+            mock_table_handler.create_table_from_data.assert_called_once()
+            # Should NOT delegate to content formatter for table data
+            self.mock_content_formatter.add_content_to_placeholder.assert_not_called()
 
     def test_apply_content_placeholder_regular_content(self):
         """Test content placeholder with regular text content."""
