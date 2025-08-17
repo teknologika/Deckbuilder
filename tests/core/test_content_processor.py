@@ -22,6 +22,11 @@ class TestContentProcessor(unittest.TestCase):
         self.mock_placeholder = Mock()
         self.mock_content_formatter = Mock()
         self.mock_image_handler = Mock()
+        
+        # Setup placeholder with text_frame for table content clearing
+        self.mock_placeholder.text_frame = Mock()
+        self.mock_placeholder.text_frame.paragraphs = [Mock()]
+        self.mock_placeholder.text_frame.add_paragraph = Mock(return_value=Mock())
 
         # Mock text frame for newline testing
         self.mock_text_frame = Mock()
@@ -122,19 +127,14 @@ class TestContentProcessor(unittest.TestCase):
         # Should fallback to simple text
         self.assertEqual(self.mock_placeholder.text, "Simple title")
 
-    def test_apply_content_placeholder_table_data(self):
-        """Test content placeholder with table data."""
+    def test_apply_content_placeholder_with_dict_data(self):
+        """Test content placeholder with structured data (should be treated as regular content)."""
         field_value = {"type": "table", "data": [["Header"], ["Data"]]}
 
-        with unittest.mock.patch("deckbuilder.core.content_processor.TableBuilder") as mock_table_builder:
-            mock_builder_instance = Mock()
-            mock_table_builder.return_value = mock_builder_instance
+        self.processor._apply_content_placeholder_content(self.mock_slide, self.mock_placeholder, "content", field_value, self.mock_content_formatter)
 
-            self.processor._apply_content_placeholder_content(self.mock_slide, self.mock_placeholder, "content", field_value, self.mock_content_formatter)
-
-            # Should create table via TableBuilder
-            mock_table_builder.assert_called_once_with(self.mock_content_formatter)
-            mock_builder_instance.add_table_to_slide.assert_called_once_with(self.mock_slide, field_value)
+        # Should delegate to content formatter (not create table - tables go through table placeholders)
+        self.mock_content_formatter.add_content_to_placeholder.assert_called_once_with(self.mock_placeholder, field_value)
 
     def test_apply_content_placeholder_regular_content(self):
         """Test content placeholder with regular text content."""

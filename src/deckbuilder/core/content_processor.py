@@ -126,13 +126,12 @@ class ContentProcessor:
             field_value: Content to apply
             content_formatter: ContentFormatter instance
         """
-        # Check if this is table data that should be handled specially
-        if isinstance(field_value, dict) and field_value.get("type") == "table":
-            self._handle_table_content(slide, placeholder, field_name, field_value, content_formatter)
-        else:
-            # Regular content - text, lists, etc. with inline formatting and newline support
-            content_formatter.add_content_to_placeholder(placeholder, field_value)
-            debug_print(f"    Applied content to placeholder: {field_name} ({type(field_value).__name__})")
+        # Content placeholders handle regular text content
+        # Table data should use table placeholders, not content placeholders
+        
+        # Regular content - text, lists, etc. with inline formatting and newline support
+        content_formatter.add_content_to_placeholder(placeholder, field_value)
+        debug_print(f"    Applied content to placeholder: {field_name} ({type(field_value).__name__})")
 
     def _apply_media_placeholder_content(
         self,
@@ -177,55 +176,72 @@ class ContentProcessor:
                 placeholder.text = str(field_value)
             debug_print(f"    Applied media content: {field_name} to {placeholder_type}")
 
-    def _handle_table_content(self, slide, placeholder, field_name: str, field_value: Dict[str, Any], content_formatter) -> None:
-        """
-        Handle table data content by delegating to TableBuilder.
-
-        Args:
-            slide: PowerPoint slide object
-            placeholder: Content placeholder being replaced with table
-            field_name: Field name
-            field_value: Table data dictionary
-            content_formatter: ContentFormatter instance
-        """
-        slide_builder_print(f"    SPECIAL HANDLING: Table data detected in content field '{field_name}'")
-
-        # Import TableBuilder for table creation
-        from .table_builder import TableBuilder
-
-        table_builder = TableBuilder(content_formatter)
-
-        # Create table on slide (TableBuilder handles font sizing)
-        table_builder.add_table_to_slide(slide, field_value)
-
-        # Clear the placeholder to avoid showing placeholder text
-        if hasattr(placeholder, "text_frame") and placeholder.text_frame:
-            placeholder.text_frame.clear()
-            # Leave empty since table replaces this content
-            paragraph = placeholder.text_frame.paragraphs[0] if placeholder.text_frame.paragraphs else placeholder.text_frame.add_paragraph()
-            paragraph.text = ""
-
-        debug_print("    Table content applied via TableBuilder (fonts handled by TableHandler)")
 
     def _handle_table_placeholder(self, placeholder, field_name: str, field_value: Any, slide_data: Dict[str, Any], slide) -> None:
         """
         Handle TABLE placeholder types with proper table creation.
 
-        Note: This method handles legacy table placeholders.
-        Modern table handling uses content placeholders with table data.
-
         Args:
             placeholder: Table placeholder
             field_name: Field name
-            field_value: Table content
+            field_value: Table content (can be markdown or structured data)
             slide_data: Complete slide data
             slide: PowerPoint slide object
         """
-        # TODO: Implement table placeholder handling
-        # For now, treat as text content
-        if hasattr(placeholder, "text"):
-            placeholder.text = str(field_value)
-        debug_print(f"    TABLE placeholder handled: {field_name} (legacy mode)")
+        slide_builder_print(f"    SPECIAL HANDLING: Table placeholder detected: '{field_name}'")
+        
+        # Import TableHandler for proper table processing
+        from .table_handler import TableHandler
+        
+        table_handler = TableHandler()
+        
+        # Check if this slide already has table content to avoid duplication
+        existing_tables = table_handler.detect_existing_tables(slide)
+        if existing_tables:
+            debug_print(f"    Skipping table placeholder - slide already has {len(existing_tables)} table(s)")
+            return
+        
+        # Find table content in slide data (markdown tables or structured data)
+        table_content = table_handler.find_table_content_in_slide_data(slide_data)
+        
+        if table_content:
+            # Process table content and create table shape
+            if table_handler.detect_table_content(table_content):
+                table_data = table_handler.parse_table_structure(table_content)
+                if table_data:
+                    # Create table using TableHandler
+                    table_shape = table_handler.create_table_from_data(slide, table_data, slide_data)
+                    if table_shape:
+                        # Position table appropriately 
+                        table_handler.position_table_on_slide(slide, table_shape, slide_data)
+                        # Clear table content from other placeholders to avoid duplication
+                        table_handler.clear_table_content_from_placeholders(slide, table_content)
+                        debug_print(f"    Table placeholder created table with {len(table_data)} rows")
+                    else:
+                        debug_print(f"    Failed to create table from placeholder data")
+                else:
+                    debug_print(f"    Failed to parse table structure from placeholder")
+            else:
+                debug_print(f"    No valid table content detected in placeholder")
+        else:
+            # Fallback: try to use field_value directly if it's table data
+            if isinstance(field_value, str) and table_handler.detect_table_content(field_value):
+                table_data = table_handler.parse_table_structure(field_value)
+                if table_data:
+                    table_shape = table_handler.create_table_from_data(slide, table_data, slide_data)
+                    if table_shape:
+                        table_handler.position_table_on_slide(slide, table_shape, slide_data)
+                        debug_print(f"    Table placeholder created table from field value")
+                else:
+                    # Final fallback - set as text if no table data found
+                    if hasattr(placeholder, "text"):
+                        placeholder.text = str(field_value)
+                    debug_print(f"    TABLE placeholder set as text (no table data found)")
+            else:
+                # Set as text if not table content
+                if hasattr(placeholder, "text"):
+                    placeholder.text = str(field_value)
+                debug_print(f"    TABLE placeholder set as text content")
 
     def convert_newlines_to_paragraphs(self, text_content: str, text_frame, content_formatter=None) -> None:
         """
