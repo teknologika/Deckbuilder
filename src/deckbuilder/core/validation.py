@@ -38,16 +38,7 @@ class PresentationValidator:
         self.presentation_data = presentation_data
         self.template_name = template_name
         self.template_folder = Path(template_folder)
-        self.template_mapping = self._load_template_mapping()
-
-    def _load_template_mapping(self) -> Dict[str, Any]:
-        """Load template mapping JSON file."""
-        mapping_file = self.template_folder / f"{self.template_name}.json"
-        if not mapping_file.exists():
-            raise ValidationError(f"Template mapping file not found: {mapping_file}\n" f"Fix: Create {self.template_name}.json in {self.template_folder}")
-
-        with open(mapping_file, "r") as f:
-            return json.load(f)
+        # Legacy template mapping JSON files removed - validation now uses structured frontmatter patterns
 
     def validate_markdown_to_json(self, markdown_content: str, converted_json: Dict[str, Any]):
         """
@@ -77,19 +68,15 @@ class PresentationValidator:
 
     def validate_pre_generation(self):
         """
-        Validate JSON ↔ Template mapping alignment before generation.
+        Validate JSON structure before generation.
 
-        Raises ValidationError immediately on any mapping issues.
+        Validates basic slide structure without legacy template mapping dependency.
         """
-        validation_print("🔍 JSON → Template validation: Mapping alignment...")
+        validation_print("🔍 JSON structure validation...")
 
-        # Debug: Show template mapping structure
-        validation_print(f"[Pre-Generation Validation] Template mapping loaded: {self.template_name}.json")
-        layouts = self.template_mapping.get("layouts", {})
-        validation_print(f"[Pre-Generation Validation] Available layouts: {list(layouts.keys())}")
         validation_print(f"[Pre-Generation Validation] Validating {len(self.presentation_data.get('slides', []))} slides")
 
-        # Validate each slide's placeholders can be mapped
+        # Validate each slide's basic structure
         for slide_idx, slide_data in enumerate(self.presentation_data.get("slides", [])):
             slide_num = slide_idx + 1
             layout_name = slide_data.get("layout")
@@ -99,15 +86,6 @@ class PresentationValidator:
             if not layout_name:
                 raise ValidationError(f"Slide {slide_num}: Missing 'layout' field\n" f"Fix: Add 'layout' field with valid layout name")
 
-            # Check layout exists in template mapping
-            layouts = self.template_mapping.get("layouts", {})
-            if layout_name not in layouts:
-                available_layouts = list(layouts.keys())
-                error_print(f"[Pre-Generation Validation] ERROR: Layout '{layout_name}' not found in template mapping")
-                raise ValidationError(
-                    f"Slide {slide_num}: Unknown layout '{layout_name}'\n" f"Available layouts: {', '.join(available_layouts)}\n" f"Fix: Use one of the available layouts or update template mapping"
-                )
-
             # Show slide content fields for debugging
             placeholders = slide_data.get("placeholders", {})
             validation_print(f"[Pre-Generation Validation] Placeholder fields: {list(placeholders.keys())}")
@@ -116,142 +94,13 @@ class PresentationValidator:
             if "content" in slide_data:
                 validation_print("[Pre-Generation Validation] WARNING: Legacy content blocks detected - should be converted to placeholders")
 
-            # Validate placeholder mappings
-            self._validate_slide_placeholders(slide_num, slide_data, layout_name)
-
         success_print("✅ Pre-generation validation passed")
 
-    def _validate_slide_placeholders(self, slide_num: int, slide_data: Dict[str, Any], layout_name: str):
-        """Validate that all placeholders in slide can be mapped to template."""
-        layout_info = self.template_mapping["layouts"][layout_name]
-        placeholder_mappings = layout_info.get("placeholders", {})
+    # Legacy _validate_slide_placeholders method removed - template mapping validation no longer needed
+    # Placeholder validation now handled by the PlaceholderManager during slide creation
 
-        validation_print(f"[Pre-Generation Validation]   Template placeholders for '{layout_name}': {placeholder_mappings}")
-
-        # Create reverse mapping: field_name -> placeholder_index
-        field_to_index = {}
-        for placeholder_idx, field_name in placeholder_mappings.items():
-            field_to_index[field_name] = int(placeholder_idx)
-
-        validation_print(f"[Pre-Generation Validation]   Field-to-index mapping: {field_to_index}")
-
-        # Check all placeholder fields in slide data
-        placeholders = slide_data.get("placeholders", {})
-        unmapped_fields = []
-        mapped_fields = []
-
-        for field_name in placeholders.keys():
-            if field_name in ["style", "speaker_notes", "media"]:  # Skip non-content fields
-                continue
-
-            # Check if field can be resolved
-            if self._can_resolve_field_name(field_name, field_to_index):
-                mapped_fields.append(field_name)
-                validation_print(f"[Pre-Generation Validation]     ✓ '{field_name}' can be mapped")
-            else:
-                unmapped_fields.append(field_name)
-                validation_print(f"[Pre-Generation Validation]     ✗ '{field_name}' cannot be mapped")
-
-        if unmapped_fields:
-            available_fields = list(field_to_index.keys())
-            error_print(f"[Pre-Generation Validation] ERROR: Unmapped fields found for slide {slide_num}")
-            raise ValidationError(
-                f"Slide {slide_num} ({layout_name}): Cannot map placeholder fields: {', '.join(unmapped_fields)}\n"
-                f"Available template fields: {', '.join(available_fields)}\n"
-                f"Fix: Update template mapping to include these fields or correct field names in JSON"
-            )
-
-    def _can_resolve_field_name(self, field_name: str, field_to_index: Dict[str, int]) -> bool:
-        """
-        Enhanced validation - check if field name can be resolved using same logic as slide_builder.
-
-        This uses the same field name resolution logic as the content placement system
-        to ensure validation and processing are consistent.
-        """
-        # Direct match
-        if field_name in field_to_index:
-            return True
-
-        # Always allow semantic fields that have guaranteed fallbacks
-        if field_name in ["title", "subtitle"]:
-            return True  # Always handled by semantic detection
-
-        # TODO: REMOVE THIS FALLBACK
-        # Enhanced field name resolution for common variations
-        resolved_field = self._resolve_field_name_variations(field_name, field_to_index)
-        if resolved_field != field_name and resolved_field in field_to_index:
-            return True
-
-        # Content field variations
-        if field_name == "content":
-            # Check if template has content, content_1, or other content variations
-            for variant in ["content", "content_1", "main_content", "body"]:
-                if variant in field_to_index:
-                    return True
-
-        return False
-
-    def _resolve_field_name_variations(self, field_name: str, field_to_index: dict) -> str:
-        """
-        Resolve field name variations - same logic as slide_builder for consistency.
-        """
-        # Return original if exact match exists
-        if field_name in field_to_index:
-            return field_name
-
-        # Common variations mapping - must match slide_builder.py exactly
-        variations = {
-            # Caption variations
-            "text_caption": ["text_caption_1", "caption", "caption_1"],
-            "caption": ["text_caption_1", "text_caption", "caption_1"],
-            # Title variations - CRITICAL: map "title" to "title_top" for template compatibility
-            "title": ["title_top", "title_top_1", "main_title"],
-            "title_top": ["title", "title_top_1", "main_title"],
-            "title_left": ["title_left_1", "left_title", "title_col1"],
-            "title_right": ["title_right_1", "right_title", "title_col2"],
-            # Content variations
-            "content_left": ["content_left_1", "left_content", "content_col1"],
-            "content_right": ["content_right_1", "right_content", "content_col2"],
-            "content": ["content_1", "main_content", "body"],
-            # Image variations
-            "image": ["image_1", "image_path", "picture"],
-            "image_1": ["image", "image_path", "picture"],
-            "image_path": ["image", "image_1", "picture"],
-            # SWOT Analysis variations
-            "content_top_left": ["content_16", "strengths", "strength"],
-            "content_top_right": ["content_17", "weaknesses", "weakness"],
-            "content_bottom_left": ["content_18", "opportunities", "opportunity"],
-            "content_bottom_right": ["content_19", "threats", "threat"],
-            "content_16": ["content_top_left", "strengths", "strength"],
-            "content_17": ["content_top_right", "weaknesses", "weakness"],
-            "content_18": ["content_bottom_left", "opportunities", "opportunity"],
-            "content_19": ["content_bottom_right", "threats", "threat"],
-        }
-
-        # Check if field_name has variations to try
-        if field_name in variations:
-            for variant in variations[field_name]:
-                if variant in field_to_index:
-                    return variant
-
-        # Reverse lookup - check if template has a field that maps to this user field
-        for template_field in field_to_index.keys():
-            if template_field in variations:
-                if field_name in variations[template_field]:
-                    return template_field
-
-        # Smart suffix handling - try adding/removing _1 suffix
-        if field_name.endswith("_1"):
-            base_name = field_name[:-2]
-            if base_name in field_to_index:
-                return base_name
-        else:
-            suffixed_name = field_name + "_1"
-            if suffixed_name in field_to_index:
-                return suffixed_name
-
-        # Return original if no variations found
-        return field_name
+    # Legacy field name resolution methods removed - template mapping validation no longer needed
+    # Field name resolution now handled by PlaceholderManager and PlaceholderResolver during slide creation
 
     def validate_post_generation(self, pptx_file_path: str):
         """

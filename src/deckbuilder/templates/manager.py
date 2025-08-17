@@ -43,15 +43,7 @@ class TemplateManager:
                     if os.path.exists(src_template):
                         shutil.copy2(src_template, default_template)
 
-                # Also copy the corresponding JSON mapping file
-                base_name = template_name.replace(".pptx", "")
-                json_template = os.path.join(self.template_path, base_name + ".json")
-                if not os.path.exists(json_template):
-                    # Copy from assets/templates/default.json
-                    assets_path = os.path.join(os.path.dirname(__file__), "..", "..", "assets", "templates")
-                    src_json = os.path.join(assets_path, base_name + ".json")
-                    if os.path.exists(src_json):
-                        shutil.copy2(src_json, json_template)
+                # Legacy JSON mapping file copying removed - no longer needed
             except OSError:
                 # Handle file operation errors silently
                 pass  # nosec - Continue with setup if template copy fails

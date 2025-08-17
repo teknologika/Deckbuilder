@@ -22,7 +22,7 @@ print(list(templates.glob("*.pptx")))
 # 2) Resolve a template by name (respects context/env/args)
 pm = create_library_path_manager(template_name="default")
 pptx = pm.get_template_file_path()        # -> .../default.pptx
-mapping = pm.get_template_json_path()     # -> .../default.json
+# Legacy template mapping JSON files no longer used
 
 # 3) Override via env (CLI/MCP)
 #   DECK_TEMPLATE_FOLDER=/my/templates  DECK_TEMPLATE_NAME=corp pm.get_template_file_path()
@@ -307,17 +307,7 @@ class PathManager:
         name = (template_name or self.get_template_name()).removesuffix(".pptx")
         return self.get_template_folder() / f"{name}.pptx"
 
-    def get_template_json_path(self, template_name: Optional[str] = None) -> Path:
-        """
-        Full path to a template .json file.
-
-        Example
-        -------
-        pm = create_library_path_manager(template_name="default")
-        print(pm.get_template_json_path())  # .../default.json
-        """
-        name = (template_name or self.get_template_name()).removesuffix(".json")
-        return self.get_template_folder() / f"{name}.json"
+    # Legacy get_template_json_path method removed - template mapping JSON files no longer used
 
     # -------------------------------------------------------------------------
     # Public API: validation / discovery
@@ -352,7 +342,7 @@ class PathManager:
         assert path_manager.validate_assets_exist()
         """
         root = self.get_master_presentation_files_path()
-        return (root / "templates").is_dir() and ((root / "templates" / "default.pptx").is_file() or (root / "templates" / "default.json").is_file())
+        return (root / "templates").is_dir() and (root / "templates" / "default.pptx").is_file()
 
     def list_available_templates(self) -> list[str]:
         """

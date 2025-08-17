@@ -131,18 +131,8 @@ class TemplateManager:
         if not analysis:
             return ""
 
-        # Load JSON mapping if available
-        base_name = template_name.replace(".pptx", "")
-        mapping_file = os.path.join(self.template_folder, f"{base_name}.json")
-        mapping = {}
-
-        if os.path.exists(mapping_file):
-            try:
-                with open(mapping_file, "r", encoding="utf-8") as f:
-                    mapping = json.load(f)
-                print(f"📄 Using mapping: {mapping_file}")
-            except Exception as e:
-                print(f"⚠️  Could not load mapping file: {e}")
+        # Legacy template mapping JSON files no longer used
+        mapping = {}  # Empty mapping for backward compatibility
 
         # Generate documentation
         doc_content = self._generate_template_documentation(template_name, analysis, mapping)
@@ -352,33 +342,10 @@ layout: Title Slide
             return {"status": "error", "error": str(e)}
 
     def _validate_json_mapping(self, template_name: str) -> dict:
-        """Validate JSON mapping file"""
-        base_name = template_name.replace(".pptx", "")
-        mapping_file = os.path.join(self.template_folder, f"{base_name}.json")
-
-        if not os.path.exists(mapping_file):
-            return {"status": "missing", "message": "JSON mapping file not found"}
-
-        try:
-            with open(mapping_file, "r", encoding="utf-8") as f:
-                mapping = json.load(f)
-
-            # Basic structure validation
-            required_keys = ["template_info", "layouts"]
-            missing_keys = [key for key in required_keys if key not in mapping]
-
-            if missing_keys:
-                return {
-                    "status": "issues_found",
-                    "issues": [f"Missing required keys: {missing_keys}"],
-                }
-
-            return {"status": "valid", "layouts_count": len(mapping.get("layouts", {}))}
-
-        except json.JSONDecodeError as e:
-            return {"status": "error", "error": f"Invalid JSON: {str(e)}"}
-        except Exception as e:
-            return {"status": "error", "error": str(e)}
+        """Validate template - legacy JSON mapping validation removed"""
+        # Legacy template mapping JSON files no longer used
+        # Template validation now handled by structured frontmatter patterns
+        return {"status": "valid", "message": "Template validation using structured frontmatter patterns"}
 
     def _validate_placeholder_naming(self, template_name: str) -> dict:
         """Validate placeholder naming conventions"""
@@ -388,18 +355,18 @@ layout: Title Slide
     def enhance_template(
         self,
         template_name: str,
-        mapping_file: str = None,
+        mapping_file: str = None,  # Legacy parameter - ignored
         create_backup: bool = True,
-        use_conventions: bool = False,
+        use_conventions: bool = True,  # Always use conventions now
     ) -> dict:
         """
         Enhance template by updating master slide placeholder names using semantic mapping.
 
         Args:
             template_name: Name of template to enhance
-            mapping_file: Custom JSON mapping file (optional)
+            mapping_file: Legacy parameter - ignored (JSON mapping files no longer used)
             create_backup: Create backup before modification (default: True)
-            use_conventions: Use convention-based naming system (default: False)
+            use_conventions: Always True - convention-based naming system
 
         Returns:
             Enhancement results with success/failure information
@@ -416,32 +383,14 @@ layout: Title Slide
             if not os.path.exists(template_path):
                 return {"status": "error", "error": f"Template file not found: {template_path}"}
 
-            # Determine mapping file path (only if not using conventions)
-            if not use_conventions:
-                base_name = template_name.replace(".pptx", "")
-                if not mapping_file:
-                    mapping_file = os.path.join(self.template_folder, f"{base_name}.json")
-
-                if not os.path.exists(mapping_file):
-                    return {
-                        "status": "error",
-                        "error": (f"Mapping file not found: {mapping_file}. " "Run 'analyze' first to generate mapping."),
-                    }
-
             # Create backup if requested
             if create_backup:
                 backup_path = self._create_template_backup(template_path)
                 print(f"📄 Backup created: {backup_path}")
 
-            # Load or generate mapping
-            if use_conventions:
-                print("🎯 Using convention-based naming system...")
-                # Generate convention-based mapping
-                mapping = self._generate_convention_mapping(template_path)
-            else:
-                # Load existing mapping
-                with open(mapping_file, "r", encoding="utf-8") as f:
-                    mapping = json.load(f)
+            # Always use convention-based mapping (legacy JSON files no longer supported)
+            print("🎯 Using convention-based naming system...")
+            mapping = self._generate_convention_mapping(template_path)
 
             # Enhance template
             modifications = self._modify_master_slide_placeholders(template_path, mapping)
@@ -1245,7 +1194,7 @@ Examples:
         manager.validate_template(args.template)
     elif args.command == "enhance":
         create_backup = not args.no_backup
-        manager.enhance_template(args.template, args.mapping_file, create_backup, args.use_conventions)
+        manager.enhance_template(args.template, None, create_backup, args.use_conventions)
 
 
 if __name__ == "__main__":

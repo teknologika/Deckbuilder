@@ -98,31 +98,22 @@ class PlaceholderManager:
         name_changes = normalizer.normalize_slide_placeholder_names(slide, layout)
 
         if name_changes:
-            print(f"🔄 Normalized placeholder names: {name_changes}")
+            # Placeholder names were normalized
+            pass
 
         # Step 5: Map each field to its placeholder by name (now works reliably)
         mapped_placeholders = {}
 
-        # 🔍 DEBUG: Log field iteration to identify data structure issue
-        print(f"🔍 DEBUG: PlaceholderManager.map_fields_to_placeholders called")
-        print(f"🔍 DEBUG: slide_data.items() = {list(slide_data.items())}")
-        print(f"🔍 DEBUG: expected_fields = {expected_fields}")
-
         # BUGFIX: Extract placeholder data from nested structure
         placeholder_data = slide_data.get('placeholders', slide_data)
-        print(f"🔍 DEBUG: Using placeholder_data = {placeholder_data}")
 
         for field_name, field_value in placeholder_data.items():
-            print(f"🔍 DEBUG: Processing field_name='{field_name}', type={type(field_value)}")
-            
             # Skip metadata fields that aren't content placeholders
             if field_name in ["layout", "style", "speaker_notes"]:
-                print(f"🔍 DEBUG: Skipping metadata field '{field_name}'")
                 continue
 
             # Only process fields that are expected by the pattern
             if field_name in expected_fields:
-                print(f"🔍 DEBUG: Field '{field_name}' found in expected_fields, processing...")
                 # Use name-based resolution (now guaranteed to work after normalization)
                 placeholder = self.placeholder_resolver.get_placeholder_by_name(slide, field_name)
 
@@ -138,8 +129,6 @@ class PlaceholderManager:
                         f"(after normalization). Available placeholder names: {available_names}. "
                         f"Placeholder details: {placeholder_summary}"
                     )
-            else:
-                print(f"🔍 DEBUG: Field '{field_name}' NOT in expected_fields {expected_fields} - SKIPPING")
 
         return mapped_placeholders
 

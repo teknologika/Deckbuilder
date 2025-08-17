@@ -15,7 +15,7 @@ DESIGN PRINCIPLES:
 
 from typing import Dict, Any, Optional
 from ..core.layout_resolver import LayoutResolver
-from ..utils.logging import debug_print, error_print
+from ..utils.logging import error_print
 
 
 class SlideCoordinator:
@@ -128,7 +128,7 @@ class SlideCoordinator:
             
             # Step 6: Track slide completion
             self._current_slide_index += 1
-            debug_print(f"✅ Slide {self._current_slide_index} completed using enhanced modular architecture")
+            # Slide creation completed successfully
             
             return slide
             
@@ -153,7 +153,7 @@ class SlideCoordinator:
                 prs.part.drop_rel(rId)
                 del prs.slides._sldIdLst[i]
                 
-            debug_print(f"Cleared {slide_count} slides from presentation")
+            # Slides cleared from presentation
             self._current_slide_index = 0
             
         except Exception as e:
@@ -183,7 +183,7 @@ class SlideCoordinator:
             paragraph = text_frame.paragraphs[0] if text_frame.paragraphs else text_frame.add_paragraph()
             content_formatter.apply_inline_formatting(notes_content, paragraph)
             
-            debug_print(f"Added speaker notes: {len(notes_content)} characters")
+            # Speaker notes added to slide
             
         except Exception as e:
             error_print(f"Failed to add speaker notes: {e}")
@@ -198,7 +198,7 @@ class SlideCoordinator:
             
         # Auto-parse JSON formatting for inline formatting support
         formatted_data = content_formatter.format_slide_data(slide_data)
-        debug_print(f"Validated and formatted slide data: {len(formatted_data)} fields")
+        # Slide data validated and formatted
         
         return formatted_data
     
@@ -207,7 +207,7 @@ class SlideCoordinator:
         try:
             slide_layout = self.layout_resolver.resolve_layout_by_name(prs, layout_name)
             slide = prs.slides.add_slide(slide_layout)
-            debug_print(f"Created slide with layout: {layout_name}")
+            # Slide created with resolved layout
             return slide
             
         except Exception as e:
@@ -227,7 +227,7 @@ class SlideCoordinator:
             
             # Normalize slide placeholder names to match template
             normalizer.normalize_slide_placeholder_names(slide, layout)
-            debug_print(f"Normalized placeholder names for layout: {layout_name}")
+            # Placeholder names normalized for layout
             
         except Exception as e:
             error_print(f"Placeholder normalization failed: {e}")
@@ -236,41 +236,24 @@ class SlideCoordinator:
     def _process_slide_content(self, slide, slide_data: Dict[str, Any], layout_name: str, content_formatter, image_placeholder_handler):
         """Process slide content using enhanced modules."""
         try:
-            # 🔍 DEBUG: Log data structure to identify content loss point
-            print(f"🔍 DEBUG: SlideCoordinator._process_slide_content called")
-            print(f"🔍 DEBUG: slide_data structure = {slide_data}")
-            print(f"🔍 DEBUG: slide_data.keys() = {list(slide_data.keys())}")
-            if 'placeholders' in slide_data:
-                print(f"🔍 DEBUG: slide_data['placeholders'] = {slide_data['placeholders']}")
-            else:
-                print(f"🔍 DEBUG: NO 'placeholders' key found in slide_data")
-            
             # Map fields to placeholders using PlaceholderManager
             placeholder_mapping = self.placeholder_manager.map_fields_to_placeholders(
                 slide, slide_data, layout_name, slide.slide_layout
             )
             
-            print(f"🔍 DEBUG: Mapped {len(placeholder_mapping)} fields to placeholders")
-            
             # BUGFIX: Extract placeholder data for content application
             placeholder_data = slide_data.get('placeholders', slide_data)
-            print(f"🔍 DEBUG: Using placeholder_data for content application = {placeholder_data}")
             
             # Apply content to each mapped placeholder
             for field_name, placeholder in placeholder_mapping.items():
                 if field_name in placeholder_data:
                     field_value = placeholder_data[field_name]
-                    print(f"🔍 DEBUG: Applying content for field '{field_name}' = '{field_value}'")
                     
                     # Use ContentProcessor for content application
                     self.content_processor.apply_content_to_placeholder(
                         slide, placeholder, field_name, field_value, slide_data,
                         content_formatter, image_placeholder_handler
                     )
-                else:
-                    print(f"🔍 DEBUG: Field '{field_name}' not found in placeholder_data")
-                    
-            print(f"🔍 DEBUG: Applied content to {len(placeholder_mapping)} placeholders")
             
         except Exception as e:
             error_print(f"Content processing failed: {e}")

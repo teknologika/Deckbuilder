@@ -95,22 +95,16 @@ class DeckbuilderCLI:
         # Show template selection feedback
         template_folder = self.path_manager.get_template_folder()
         template_file = self.path_manager.get_template_file_path(template_name)
-        mapping_file = self.path_manager.get_template_json_path(template_name)
 
         click.echo(f"Using template: {template_name}.pptx from {template_folder}")
 
-        # Check if template files exist and report status
+        # Check if template file exists
         if template_file.exists():
             click.echo(f"Template file: {template_file.name} ✓ Found")
         else:
             click.echo(f"✗ Template file not found: {template_file}", err=True)
             click.echo("Run 'deckbuilder init' to create template folder with default files", err=True)
             return
-
-        if mapping_file.exists():
-            click.echo(f"Mapping file: {mapping_file.name} ✓ Found")
-        else:
-            click.echo(f"Mapping file not found: {mapping_file.name} (will use fallback detection)")
 
         # Reset singleton and create fresh instance with CLI path manager
         Deckbuilder.reset()
