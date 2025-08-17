@@ -2,7 +2,7 @@
   "slides": [{
     "layout": "Content Table Content Table Content",
     "placeholders": {
-      "title": "***Market*** **Analysis** *Dashboard*",
+      "title_top": "***Market*** **Analysis** *Dashboard*",
       "content_1": "**Regional Performance:** Strong growth across ***North America*** and *Europe* with ___emerging opportunities___ in Asia-Pacific markets.",
       "table_1": "| **Region** | *Q3 Revenue* |\n|------------|---------------|\n| North America | $1.2M |\n| Europe | $890K |\n| APAC | $340K |",
       "content_2": "***Product Categories:*** Software solutions leading growth with **45% increase** while ___hardware sales___ remain stable at current levels.",

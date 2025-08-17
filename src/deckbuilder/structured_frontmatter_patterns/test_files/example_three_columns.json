@@ -2,7 +2,7 @@
   "slides": [{
     "layout": "Three Columns",
     "placeholders": {
-      "title": "***Deckbuilder*** **Architecture** *Pillars*",
+      "title_top": "***Deckbuilder*** **Architecture** *Pillars*",
       "content_col1": "**Content Intelligence**\n• *Semantic* layout detection\n• ***Smart*** placeholder mapping\n• ___Automated___ content optimization\n• **Rich** formatting support\n• *Context-aware* processing",
       "content_col2": "**Template Engine**\n• ___Professional___ PowerPoint output\n• **Dynamic** shape creation\n• *Flexible* template system\n• ***Consistent*** branding\n• *Scalable* architecture",
       "content_col3": "**MCP Integration**\n• **Claude** Desktop compatibility\n• ***Content-first*** workflow\n• ___Intelligent___ recommendations\n• *Seamless* user experience\n• **Enterprise** deployment"

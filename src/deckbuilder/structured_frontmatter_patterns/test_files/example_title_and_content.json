@@ -2,7 +2,7 @@
   "slides": [{
     "layout": "Title and Content",
     "placeholders": {
-      "title": "**Key** *Benefits* of Our ___Solution___",
+      "title_top": "**Key** *Benefits* of Our ___Solution___",
       "content": "Our solution provides several ***key advantages***:\n\n• **Increased Efficiency**: Streamlined workflows reduce processing time by *40%*\n• **Cost Savings**: Automation reduces ___manual labor___ costs significantly\n• **Improved Accuracy**: Automated validation eliminates ***human error***\n• **Scalability**: System grows with your *business needs*\n\nImplementation can begin immediately with ___minimal disruption___ to existing operations."
     }
   }]

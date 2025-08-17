@@ -2,7 +2,7 @@
   "slides": [{
     "layout": "Two Content",
     "placeholders": {
-      "title": "***Presentation*** **Creation** *Challenge*",
+      "title_top": "***Presentation*** **Creation** *Challenge*",
       "content_left": "**Problem:**\n• *Manual* slide creation takes hours\n• ***Inconsistent*** formatting across teams\n• ___Poor___ template management\n• **Repetitive** layout decisions\n• *Error-prone* content placement",
       "content_right": "**Solution:**\n• ***Automated*** content processing\n• *Consistent* professional branding\n• ___Intelligent___ template system\n• **Smart** layout recommendations\n• ***Reliable*** content placement"
     }

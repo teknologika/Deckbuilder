@@ -177,28 +177,28 @@
     {
       "layout": "Title Slide",
       "placeholders": {
-        "title": "**Deckbuilder**: *Intelligent* PowerPoint Generation",
+        "title_top": "**Deckbuilder**: *Intelligent* PowerPoint Generation",
         "subtitle": "Transforming presentations with ___automated___ layout intelligence and ***professional*** formatting"
       }
     },
     {
       "layout": "Title and Content",
       "placeholders": {
-        "title": "**Key** *Benefits* of Our ___Solution___",
+        "title_top": "**Key** *Benefits* of Our ___Solution___",
         "content": "Our solution provides several ***key advantages***:\n\n• **Increased Efficiency**: Streamlined workflows reduce processing time by *40%*\n• **Cost Savings**: Automation reduces ___manual labor___ costs significantly\n• **Improved Accuracy**: Automated validation eliminates ***human error***\n• **Scalability**: System grows with your *business needs*\n\nImplementation can begin immediately with ___minimal disruption___ to existing operations."
       }
     },
     {
       "layout": "Section Header",
       "placeholders": {
-        "title": "***Implementation*** **Strategy**",
+        "title_top": "***Implementation*** **Strategy**",
         "text": "*Deckbuilder* ___Deployment___ **Roadmap**"
       }
     },
     {
       "layout": "Two Content",
       "placeholders": {
-        "title": "***Presentation*** **Creation** *Challenge*",
+        "title_top": "***Presentation*** **Creation** *Challenge*",
         "content_left": "**Problem:**\n• *Manual* slide creation takes hours\n• ***Inconsistent*** formatting across teams\n• ___Poor___ template management\n• **Repetitive** layout decisions\n• *Error-prone* content placement",
         "content_right": "**Solution:**\n• ***Automated*** content processing\n• *Consistent* professional branding\n• ___Intelligent___ template system\n• **Smart** layout recommendations\n• ***Reliable*** content placement"
       }
@@ -216,7 +216,7 @@
     {
       "layout": "Title Only",
       "placeholders": {
-        "title": "**Questions** & *Discussion* - ___Interactive___ Session"
+        "title_top": "**Questions** & *Discussion* - ___Interactive___ Session"
       }
     },
     {
@@ -226,7 +226,7 @@
     {
       "layout": "Content with Caption",
       "placeholders": {
-        "title": "***Deckbuilder*** **Architecture** *Overview*",
+        "title_top": "***Deckbuilder*** **Architecture** *Overview*",
         "content": "**Core System Components**\n\n• ***Content Intelligence*** - Semantic analysis and layout recommendation\n• **Template Engine** - Professional PowerPoint generation with dynamic shapes\n• ___MCP Integration___ - Seamless Claude Desktop workflow integration\n• *Field Processing* - Smart placeholder mapping and content formatting\n• **Quality Assurance** - Automated testing and validation framework",
         "text_caption": "Architecture designed for ***enterprise scalability*** with *modular components* supporting ___extensible layouts___ and **professional output quality**"
       }
@@ -234,7 +234,7 @@
     {
       "layout": "Picture with Caption",
       "placeholders": {
-        "title": "***Deckbuilder*** **Content** *Transformation*",
+        "title_top": "***Deckbuilder*** **Content** *Transformation*",
         "image": "deckbuilder_workflow_diagram.png",
         "text_caption": "**Visual representation** of the ***content-first*** design philosophy showing how *semantic analysis* transforms ___user content___ into **professional presentations** through ___intelligent layout___ selection and ***automated formatting***."
       }
@@ -242,7 +242,7 @@
     {
       "layout": "Title and Vertical Text",
       "placeholders": {
-        "title": "***Deckbuilder*** **Specialized** *Layout*",
+        "title_top": "***Deckbuilder*** **Specialized** *Layout*",
         "content": "This vertical text layout demonstrates **advanced formatting** capabilities for *specialized presentations* with ___unique___ orientation requirements and ***professional*** content arrangement."
       }
     },
@@ -256,7 +256,7 @@
     {
       "layout": "Three Columns With Titles",
       "placeholders": {
-        "title": "***Deckbuilder*** **Value** *Proposition*",
+        "title_top": "***Deckbuilder*** **Value** *Proposition*",
         "title_col1": "**Efficiency**",
         "content_col1": "• ***85%*** time savings\n• *Automated* content processing\n• ___Instant___ layout optimization",
         "title_col2": "**Quality**",
@@ -268,7 +268,7 @@
     {
       "layout": "Three Columns",
       "placeholders": {
-        "title": "***Deckbuilder*** **Architecture** *Pillars*",
+        "title_top": "***Deckbuilder*** **Architecture** *Pillars*",
         "content_col1": "**Content Intelligence**\n• *Semantic* layout detection\n• ***Smart*** placeholder mapping\n• ___Automated___ content optimization\n• **Rich** formatting support\n• *Context-aware* processing",
         "content_col2": "**Template Engine**\n• ___Professional___ PowerPoint output\n• **Dynamic** shape creation\n• *Flexible* template system\n• ***Consistent*** branding\n• *Scalable* architecture",
         "content_col3": "**MCP Integration**\n• **Claude** Desktop compatibility\n• ***Content-first*** workflow\n• ___Intelligent___ recommendations\n• *Seamless* user experience\n• **Enterprise** deployment"
@@ -277,7 +277,7 @@
     {
       "layout": "Four Columns With Titles",
       "placeholders": {
-        "title": "***Deckbuilder*** **Competitive** *Advantages*",
+        "title_top": "***Deckbuilder*** **Competitive** *Advantages*",
         "title_col1": "**Performance**",
         "content_col1": "• ***Sub-second*** processing\n• *Optimized* algorithms\n• ___Scalable___ architecture",
         "title_col2": "**Quality**",
@@ -291,7 +291,7 @@
     {
       "layout": "Four Columns",
       "placeholders": {
-        "title": "***Deckbuilder*** **Core** *Capabilities*",
+        "title_top": "***Deckbuilder*** **Core** *Capabilities*",
         "content_col1": "**Content Intelligence**\n• *Semantic* analysis\n• ***Smart*** processing\n• ___Automated___ optimization\n• **Rich** formatting",
         "content_col2": "**Template Engine**\n• ___Professional___ output\n• *Dynamic* shapes\n• **Flexible** templates\n• ***Consistent*** branding",
         "content_col3": "**MCP Integration**\n• **Claude** compatibility\n• *Seamless* workflow\n• ___Intelligent___ recommendations\n• ***Enterprise*** ready",
@@ -301,7 +301,7 @@
     {
       "layout": "Agenda, 6 Textboxes",
       "placeholders": {
-        "title": "***Deckbuilder*** **Workshop** *Agenda*",
+        "title_top": "***Deckbuilder*** **Workshop** *Agenda*",
         "content_item1": "01 - **Introduction** to intelligent presentation generation",
         "content_item2": "02 - *Content-first* design philosophy and benefits",
         "content_item3": "03 - ***Template system*** and layout intelligence",
@@ -331,14 +331,14 @@
     {
       "layout": "Big Number",
       "placeholders": {
-        "title": "99.7%",
+        "title_top": "99.7%",
         "content": "***Deckbuilder*** Performance Achievement"
       }
     },
     {
       "layout": "SWOT Analysis",
       "placeholders": {
-        "title": "**SWOT** Analysis - *Strategic* Overview",
+        "title_top": "**SWOT** Analysis - *Strategic* Overview",
         "content_top_left": "**Strengths**\n• *Market leadership* position\n• ***Innovative*** technology platform\n• ___Strong___ customer relationships",
         "content_top_right": "**Weaknesses**\n• *Limited* geographic presence\n• ***High*** operational costs\n• ___Dependency___ on key suppliers",
         "content_bottom_left": "**Opportunities**\n• *Emerging* markets expansion\n• ***Digital*** transformation trends\n• ___Strategic___ partnerships",
@@ -348,7 +348,7 @@
     {
       "layout": "Table Only",
       "placeholders": {
-        "title": "**Quarterly** *Sales* Performance - ___Regional___ Analysis",
+        "title_top": "**Quarterly** *Sales* Performance - ___Regional___ Analysis",
         "table_data": "| **Region** | ***Q1 Sales*** | *Q2 Sales* | ___Q3 Sales___ |\n|--------|----------|----------|----------|\n| North  | $125,000 | $132,000 | $145,000 |\n| South  | $98,500  | $105,000 | $118,000 |\n| East   | $110,000 | $108,500 | $125,500 |\n| West   | $88,200  | $95,000  | $102,000 |",
         "style": "dark_blue_white_text",
         "row_style": "alternating_light_gray",
@@ -361,7 +361,7 @@
     {
       "layout": "Table with Content Above",
       "placeholders": {
-        "title": "***Deckbuilder*** **Performance** *Metrics*",
+        "title_top": "***Deckbuilder*** **Performance** *Metrics*",
         "content": "Our comprehensive analysis shows exceptional performance across all key areas.\nThe metrics below demonstrate **consistent excellence** in *content processing*,\n***template quality***, and ___user satisfaction___ benchmarks.",
         "table_data": "| **Metric** | ***Target*** | *Actual* | ___Status___ |\n|------------|--------------|----------|-------------|\n| Processing Speed | **< 2s** | *0.8s* | ___Exceeded___ |\n| Template Quality | ***95%*** | **99.2%** | ___Exceeded___ |\n| User Satisfaction | **90%** | ***98%*** | ___Exceeded___ |\n| Error Rate | *< 1%* | **0.3%** | ___Exceeded___ |",
         "style": "dark_blue_white_text",
@@ -373,7 +373,7 @@
     {
       "layout": "Table with Content Above and Below",
       "placeholders": {
-        "title": "***Quarterly*** **Performance** *Overview*",
+        "title_top": "***Quarterly*** **Performance** *Overview*",
         "content_above": "**Executive Summary:** Strong performance across all key metrics with ___significant growth___ in revenue and customer acquisition. ***Market expansion*** successful in three new regions.",
         "table_data": "| **Quarter** | *Revenue* | **Customers** | ***Growth*** |\n|-------------|-----------|---------------|---------------|\n| Q1 2024 | $2.1M | 1,200 | +12% |\n| Q2 2024 | $2.4M | 1,450 | +15% |\n| Q3 2024 | $2.8M | 1,680 | +18% |",
         "content_below": "***Key Takeaways:*** Revenue growth accelerating each quarter. Customer base expansion of **40%** year-to-date. ___Market position___ strengthening significantly."
@@ -382,7 +382,7 @@
     {
       "layout": "Table with Content Left",
       "placeholders": {
-        "title": "***Performance*** **Dashboard** *Analysis*",
+        "title_top": "***Performance*** **Dashboard** *Analysis*",
         "content": "**Key Findings:**\n\n• ***Revenue Growth:*** 15% increase over last quarter\n• **Customer Acquisition:** 250 new customers added  \n• ***Market Expansion:*** Entered 3 new geographical regions\n\nThe data demonstrates ___strong performance___ across all key metrics, with particularly impressive growth in customer acquisition and ***market penetration*** strategies.",
         "table_data": "| **Metric** | *Q2* | **Q3** | ***Change*** |\n|------------|------|--------|---------------|\n| Revenue | $2.1M | $2.4M | +15% |\n| Customers | 1,200 | 1,450 | +250 |\n| Regions | 5 | 8 | +3 |\n| Team Size | 45 | 52 | +7 |"
       }
@@ -390,7 +390,7 @@
     {
       "layout": "Content Table Content Table Content",
       "placeholders": {
-        "title": "***Market*** **Analysis** *Dashboard*",
+        "title_top": "***Market*** **Analysis** *Dashboard*",
         "content_1": "**Regional Performance:** Strong growth across ***North America*** and *Europe* with ___emerging opportunities___ in Asia-Pacific markets.",
         "table_1": "| **Region** | *Q3 Revenue* |\n|------------|---------------|\n| North America | $1.2M |\n| Europe | $890K |\n| APAC | $340K |",
         "content_2": "***Product Categories:*** Software solutions leading growth with **45% increase** while ___hardware sales___ remain stable at current levels.",

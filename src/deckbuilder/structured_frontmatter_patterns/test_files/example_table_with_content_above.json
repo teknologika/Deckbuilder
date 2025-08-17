@@ -2,7 +2,7 @@
   "slides": [{
     "layout": "Table with Content Above",
     "placeholders": {
-      "title": "***Deckbuilder*** **Performance** *Metrics*",
+      "title_top": "***Deckbuilder*** **Performance** *Metrics*",
       "content": "Our comprehensive analysis shows exceptional performance across all key areas.\nThe metrics below demonstrate **consistent excellence** in *content processing*,\n***template quality***, and ___user satisfaction___ benchmarks.",
       "table_data": "| **Metric** | ***Target*** | *Actual* | ___Status___ |\n|------------|--------------|----------|-------------|\n| Processing Speed | **< 2s** | *0.8s* | ___Exceeded___ |\n| Template Quality | ***95%*** | **99.2%** | ___Exceeded___ |\n| User Satisfaction | **90%** | ***98%*** | ___Exceeded___ |\n| Error Rate | *< 1%* | **0.3%** | ___Exceeded___ |",
       "style": "dark_blue_white_text",

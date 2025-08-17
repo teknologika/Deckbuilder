@@ -2,7 +2,7 @@
   "slides": [{
     "layout": "Four Columns With Titles",
     "placeholders": {
-      "title": "***Deckbuilder*** **Competitive** *Advantages*",
+      "title_top": "***Deckbuilder*** **Competitive** *Advantages*",
       "title_col1": "**Performance**",
       "content_col1": "• ***Sub-second*** processing\n• *Optimized* algorithms\n• ___Scalable___ architecture",
       "title_col2": "**Quality**",

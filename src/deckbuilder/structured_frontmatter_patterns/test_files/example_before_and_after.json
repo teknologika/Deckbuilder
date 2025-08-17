@@ -2,7 +2,7 @@
   "slides": [{
     "layout": "Comparison",
     "placeholders": {
-      "title": "***Deckbuilder*** **Implementation** *Impact*",
+      "title_top": "***Deckbuilder*** **Implementation** *Impact*",
       "title_left": "**Before** Implementation",
       "content_left": "**Traditional Challenges**\n• *Manual* presentation creation\n• ***Inconsistent*** formatting\n• ___Time-consuming___ layout decisions\n• **Limited** template flexibility\n• *Error-prone* content placement",
       "title_right": "**After** ___Deckbuilder___",

@@ -2,7 +2,7 @@
   "slides": [{
     "layout": "Two Content",
     "placeholders": {
-      "title": "**Deckbuilder** *Core* Features",
+      "title_top": "**Deckbuilder** *Core* Features",
       "content_left": "**Technical Capabilities**\n• *Semantic* layout detection\n• ***Automatic*** content optimization\n• ___Smart___ placeholder mapping\n• **Template** intelligence\n• *Dynamic* content processing",
       "content_right": "**Business Benefits**\n• ___Enterprise-grade___ presentations\n• **Consistent** branding across teams\n• *Polished* professional formatting\n• ***Automated*** workflow efficiency\n• *Scalable* presentation generation"
     }

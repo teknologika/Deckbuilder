@@ -1,5 +1,16 @@
 repos:
-  # Root directory pollution check (first to catch early)
+  # Master examples generation (first to ensure consistency)
+  - repo: local
+    hooks:
+      - id: generate-master-examples
+        name: Generate master example files
+        entry: python scripts/generate_master_examples.py
+        language: python
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]
+
+  # Root directory pollution check (second to catch early)
   - repo: local
     hooks:
       - id: check-root-pollution

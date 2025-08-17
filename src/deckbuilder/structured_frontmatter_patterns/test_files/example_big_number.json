@@ -3,7 +3,7 @@
     {
       "layout": "Big Number",
       "placeholders": {
-        "title": "99.7%",
+        "title_top": "99.7%",
         "content": "***Deckbuilder*** Performance Achievement"
       }
     }

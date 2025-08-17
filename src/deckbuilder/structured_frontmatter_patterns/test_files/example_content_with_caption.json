@@ -2,7 +2,7 @@
   "slides": [{
     "layout": "Content with Caption",
     "placeholders": {
-      "title": "***Deckbuilder*** **Architecture** *Overview*",
+      "title_top": "***Deckbuilder*** **Architecture** *Overview*",
       "content": "**Core System Components**\n\n• ***Content Intelligence*** - Semantic analysis and layout recommendation\n• **Template Engine** - Professional PowerPoint generation with dynamic shapes\n• ___MCP Integration___ - Seamless Claude Desktop workflow integration\n• *Field Processing* - Smart placeholder mapping and content formatting\n• **Quality Assurance** - Automated testing and validation framework",
       "text_caption": "Architecture designed for ***enterprise scalability*** with *modular components* supporting ___extensible layouts___ and **professional output quality**"
     }

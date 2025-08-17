@@ -2,7 +2,7 @@
   "slides": [{
     "layout": "Four Columns",
     "placeholders": {
-      "title": "***Deckbuilder*** **Development** *Team*",
+      "title_top": "***Deckbuilder*** **Development** *Team*",
       "content_col1": "**Bruce Chen** - *AI Engineer*\nExpert in ***content intelligence***\nand ___semantic processing___",
       "content_col2": "**Sarah Kim** - **Template Designer**\nSpecialist in *PowerPoint* automation\nand ***professional formatting***",
       "content_col3": "**Mike Rodriguez** - ***MCP Architect***\nExpert in *Claude integration*\nand ___workflow optimization___",

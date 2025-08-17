@@ -2,7 +2,7 @@
   "slides": [{
     "layout": "Table Only",
     "placeholders": {
-      "title": "**Quarterly** *Sales* Performance - ___Regional___ Analysis",
+      "title_top": "**Quarterly** *Sales* Performance - ___Regional___ Analysis",
       "table_data": "| **Region** | ***Q1 Sales*** | *Q2 Sales* | ___Q3 Sales___ |\n|--------|----------|----------|----------|\n| North  | $125,000 | $132,000 | $145,000 |\n| South  | $98,500  | $105,000 | $118,000 |\n| East   | $110,000 | $108,500 | $125,500 |\n| West   | $88,200  | $95,000  | $102,000 |",
       "style": "dark_blue_white_text",
       "row_style": "alternating_light_gray",

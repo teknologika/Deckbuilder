@@ -207,29 +207,19 @@ class MasterExamplesGenerator:
 
     def write_master_files(self, ordered_examples: List[Dict[str, Any]]) -> Tuple[Path, Path]:
         """
-        Write master JSON and Markdown files to both output and assets directories.
+        Write master JSON and Markdown files directly to assets directory only.
 
         Args:
             ordered_examples: List of example data in template order
 
         Returns:
-            Tuple of (json_path, md_path) for generated files
+            Tuple of (json_path, md_path) for generated assets files
         """
         # Generate content
         json_content = self.generate_master_json(ordered_examples)
         md_content = self.generate_master_markdown(ordered_examples)
 
-        # Write to output directory (for reference)
-        json_path = self.output_dir / "master_examples.json"
-        md_path = self.output_dir / "master_examples.md"
-
-        with open(json_path, "w", encoding="utf-8") as f:
-            f.write(json_content)
-
-        with open(md_path, "w", encoding="utf-8") as f:
-            f.write(md_content)
-
-        # Write to assets directory (for packaging)
+        # Write directly to assets directory (for packaging)
         assets_json_path = self.assets_dir / "master_default_presentation.json"
         assets_md_path = self.assets_dir / "master_default_presentation.md"
 
@@ -239,12 +229,10 @@ class MasterExamplesGenerator:
         with open(assets_md_path, "w", encoding="utf-8") as f:
             f.write(md_content)
 
-        print(f"📄 Generated: {json_path.relative_to(self.project_root)}")
-        print(f"📄 Generated: {md_path.relative_to(self.project_root)}")
         print(f"📦 Updated: {assets_json_path.relative_to(self.project_root)}")
         print(f"📦 Updated: {assets_md_path.relative_to(self.project_root)}")
 
-        return json_path, md_path
+        return assets_json_path, assets_md_path
 
     def generate_master_files(self, template_name: str = "default") -> Tuple[Path, Path]:
         """
@@ -282,7 +270,7 @@ def main():
         generator = MasterExamplesGenerator()
         json_path, md_path = generator.generate_master_files()
 
-        print("\n🎯 Master files ready for packaging:")
+        print("\n🎯 Assets files updated:")
         print(f"   📦 JSON: {json_path}")
         print(f"   📦 Markdown: {md_path}")
 
