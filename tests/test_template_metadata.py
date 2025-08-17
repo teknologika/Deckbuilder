@@ -128,8 +128,8 @@ class TestTemplateMetadataLoader:
                 break
 
         if title_layout:
-            assert "title" in title_layout.placeholders
-            assert "title" in title_layout.required_placeholders
+            assert "title_top" in title_layout.placeholders
+            assert "title_top" in title_layout.required_placeholders
             assert title_layout.complexity in ["simple", "medium", "complex"]
 
         # Check that we have a reasonable complexity breakdown

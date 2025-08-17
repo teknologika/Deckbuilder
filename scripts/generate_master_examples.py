@@ -174,14 +174,13 @@ class MasterExamplesGenerator:
         """
         # Combine all slides from all examples
         all_slides = []
-        metadata = {"generated_by": "scripts/generate_master_examples.py", "total_examples": len(ordered_examples), "layout_order": []}
 
         for example in ordered_examples:
             slides = example["json_data"].get("slides", [])
             all_slides.extend(slides)
-            metadata["layout_order"].append({"layout": example["layout"], "source_files": [example["json_filename"], example["md_filename"]]})
 
-        master_data = {"metadata": metadata, "slides": all_slides}
+        # Return clean presentation data without metadata
+        master_data = {"slides": all_slides}
 
         return json.dumps(master_data, indent=2, ensure_ascii=False)
 

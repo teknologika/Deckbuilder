@@ -542,7 +542,7 @@ content_col4: Feature D
             slide1 = content_val["slide_1"]
             assert slide1["layout"] == "Title Slide"
             assert slide1["status"] == "valid"
-            assert "title" in slide1["required_fields"]
+            assert "title_top" in slide1["required_fields"]
             assert len(slide1["missing_fields"]) == 0
 
             # Check slide 2 (Four Columns)

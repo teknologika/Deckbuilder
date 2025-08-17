@@ -1,12 +1,12 @@
 ---
 layout: Table with Content Above and Below
-title_top: "***Quarterly*** **Performance** *Overview*"
+title_top: "Quarterly Performance Overview"
 content_above: "**Executive Summary:** Strong performance across all key metrics with ___significant growth___ in revenue and customer acquisition. ***Market expansion*** successful in three new regions."
 table_data: |
-  | **Quarter** | *Revenue* | **Customers** | ***Growth*** |
-  | ----------- | --------- | ------------- | ------------ |
-  | Q1 2024     | $2.1M     | 1,200         | +12%         |
-  | Q2 2024     | $2.4M     | 1,450         | +15%         |
-  | Q3 2024     | $2.8M     | 1,680         | +18%         |
+  | Quarter | Revenue | Customers | Growth |
+  | ------- | ------- | --------- | ------ |
+  | Q1 2024 | $2.1M   | 1,200     | +12%   |
+  | Q2 2024 | $2.4M   | 1,450     | +15%   |
+  | Q3 2024 | $2.8M   | 1,680     | +18%   |
 content_below: "***Key Takeaways:*** Revenue growth accelerating each quarter. Customer base expansion of **40%** year-to-date. ___Market position___ strengthening significantly."
 ---

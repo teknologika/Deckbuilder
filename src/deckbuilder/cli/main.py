@@ -285,30 +285,29 @@ class DeckbuilderCLI:
         target_path.mkdir(parents=True, exist_ok=True)
 
         try:
-            # Use global path manager to locate package assets
-            from deckbuilder.utils.path import path_manager as global_pm
-
-            if not global_pm.validate_assets_exist():
-                click.echo("❌ Could not locate template assets", err=True)
-                click.echo("💡 Default templates not found in package", err=True)
-                click.echo(f"💡 Expected location: {global_pm.get_assets_templates_path()}", err=True)
-                return
-
-            assets_path = global_pm.get_assets_templates_path()
-            source_pptx = assets_path / "default.pptx"
-            source_json = assets_path / "default.json"
-
-            # Copy template files
+            # Copy directly from package assets without creating cache folder
+            from importlib.resources import files
+            
+            # Get package assets directly
+            package_assets = files("deckbuilder") / "assets" / "templates"
+            
+            # Copy template files (JSON mapping files no longer used)
             files_copied = []
-            if source_pptx.exists():
-                shutil.copy2(source_pptx, target_path / "default.pptx")
-                clear_hidden_flag(target_path / "default.pptx")
-                files_copied.append("default.pptx")
-
-            if source_json.exists():
-                shutil.copy2(source_json, target_path / "default.json")
-                clear_hidden_flag(target_path / "default.json")
-                files_copied.append("default.json")
+            
+            try:
+                source_pptx = package_assets / "default.pptx"
+                if source_pptx.is_file():
+                    # Copy directly from package to templates folder
+                    target_file = target_path / "default.pptx"
+                    with source_pptx.open("rb") as src, open(target_file, "wb") as dst:
+                        dst.write(src.read())
+                    clear_hidden_flag(target_file)
+                    files_copied.append("default.pptx")
+                    click.echo(f"✅ Copied: default.pptx")
+                else:
+                    click.echo("❌ Source template not found: default.pptx", err=True)
+            except Exception as e:
+                click.echo(f"❌ Failed to copy default.pptx: {e}", err=True)
 
             if not files_copied:
                 click.echo("❌ No template files found to copy", err=True)
@@ -396,41 +395,47 @@ class DeckbuilderCLI:
     def _copy_golden_files_as_examples(self, target_path):
         """Copy master presentation files as examples with example_ prefix"""
         import json
-        from deckbuilder.utils.path import path_manager
+        from importlib.resources import files
 
-        # Use centralized path management for master files (source of truth)
-        master_md, master_json = path_manager.get_master_presentation_files()
+        # Copy directly from package assets without creating cache folder
+        package_assets = files("deckbuilder") / "assets"
+        master_md_source = package_assets / "master_default_presentation.md"
+        master_json_source = package_assets / "master_default_presentation.json"
 
         # Update title in markdown content to showcase Deckbuilder
-        if master_md.exists():
-
-            content = master_md.read_text()
-            # Replace test title with showcase title
-            updated_content = content.replace(
-                "# **Comprehensive Layout Test** with *Inline* Formatting\n## Testing all ___19 layouts___ and **formatting** capabilities",
-                "# **Deckbuilder: Intelligent PowerPoint Generation** © Bruce McLeod\n## Showcasing all ___19 layouts___ with **professional** *formatting* capabilities",
-            )
-            # Write to target as example_presentation.md
-            with open(target_path / "example_presentation.md", "w", encoding="utf-8") as f:
-                f.write(updated_content)
+        try:
+            if master_md_source.is_file():
+                content = master_md_source.read_text(encoding="utf-8")
+                # Replace test title with showcase title
+                updated_content = content.replace(
+                    "**Deckbuilder**: *Intelligent* PowerPoint Generation",
+                    "**Deckbuilder: Intelligent PowerPoint Generation** © Bruce McLeod",
+                )
+                # Write to target as example_presentation.md
+                with open(target_path / "example_presentation.md", "w", encoding="utf-8") as f:
+                    f.write(updated_content)
+        except Exception as e:
+            click.echo(f"⚠️ Could not copy markdown example: {e}", err=True)
 
         # Update title in JSON content to showcase Deckbuilder
-        if master_json.exists():
-            with open(master_json, "r", encoding="utf-8") as f:
-                json_data = json.load(f)
+        try:
+            if master_json_source.is_file():
+                content = master_json_source.read_text(encoding="utf-8")
+                json_data = json.loads(content)
 
-            # Update first slide title if it exists
-            if json_data.get("presentation", {}).get("slides"):
-                first_slide = json_data["presentation"]["slides"][0]
-                if first_slide.get("type") == "Title Slide":
-                    first_slide["title"] = "**Deckbuilder: Intelligent PowerPoint Generation** © Bruce McLeod"
-                    # Update subtitle/rich_content if it exists
-                    if "rich_content" in first_slide and first_slide["rich_content"]:
-                        first_slide["rich_content"][0]["heading"] = "Showcasing all ___19 layouts___ with **professional** *formatting* capabilities"
+                # Update first slide title if it exists
+                if json_data.get("slides"):
+                    first_slide = json_data["slides"][0]
+                    if first_slide.get("layout") == "Title Slide":
+                        placeholders = first_slide.get("placeholders", {})
+                        if "title_top" in placeholders:
+                            placeholders["title_top"] = "**Deckbuilder: Intelligent PowerPoint Generation** © Bruce McLeod"
 
-            # Write to target as example_presentation.json
-            with open(target_path / "example_presentation.json", "w", encoding="utf-8") as f:
-                json.dump(json_data, f, indent=2, ensure_ascii=False)
+                # Write to target as example_presentation.json
+                with open(target_path / "example_presentation.json", "w", encoding="utf-8") as f:
+                    json.dump(json_data, f, indent=2, ensure_ascii=False)
+        except Exception as e:
+            click.echo(f"⚠️ Could not copy JSON example: {e}", err=True)
 
     def get_config(self):
         """Display current configuration with proper defaults and source indicators"""

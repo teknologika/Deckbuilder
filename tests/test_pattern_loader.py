@@ -85,9 +85,9 @@ class TestPatternLoader:
         # Create user pattern file
         user_pattern = {
             "description": "User custom layout",
-            "yaml_pattern": {"layout": "Custom Layout", "title": "str", "content": "str"},
-            "validation": {"required_fields": ["title", "content"]},
-            "example": "---\nlayout: Custom Layout\ntitle: Example\ncontent: Content\n---",
+            "yaml_pattern": {"layout": "Custom Layout", "title_top": "str", "content": "str"},
+            "validation": {"required_fields": ["title_top", "content"]},
+            "example": "---\nlayout: Custom Layout\ntitle_top: Example\ncontent: Content\n---",
         }
 
         custom_pattern_file = patterns_folder / "custom_layout.json"
@@ -110,7 +110,7 @@ class TestPatternLoader:
         custom = patterns["Custom Layout"]
         assert custom["description"] == "User custom layout"
         assert custom["yaml_pattern"]["layout"] == "Custom Layout"
-        assert "title" in custom["validation"]["required_fields"]
+        assert "title_top" in custom["validation"]["required_fields"]
 
     def test_user_patterns_override_built_in_patterns(self, tmp_path):
         """Test that user patterns override built-in patterns with same layout name."""
@@ -320,7 +320,7 @@ class TestPatternLoaderIntegration:
         # Test pattern example parsing
         example = loader.get_pattern_example("Title Slide")
         assert isinstance(example, dict)
-        assert "title" in example
+        assert "title_top" in example
 
         # Test validation info
         validation = loader.get_layout_validation_info("Four Columns")
