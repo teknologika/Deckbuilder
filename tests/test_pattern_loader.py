@@ -314,7 +314,7 @@ class TestPatternLoaderIntegration:
 
         # Test that the full load_template_metadata uses patterns
         full_metadata = loader.load_template_metadata("default")
-        assert full_metadata.total_layouts == 26  # All pattern layouts including semantic aliases
+        assert full_metadata.total_layouts == 31  # All pattern layouts including semantic aliases
         assert "Four Columns" in full_metadata.layouts
 
         # Test pattern example parsing

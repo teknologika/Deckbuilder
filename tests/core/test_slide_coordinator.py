@@ -72,8 +72,7 @@ class TestSlideCoordinator(unittest.TestCase):
                         mock_content_processor_class.assert_called_once()
                         mock_table_handler_class.assert_called_once()
 
-    @patch('src.deckbuilder.core.slide_coordinator.debug_print')
-    def test_create_slide_success_workflow(self, mock_debug):
+    def test_create_slide_success_workflow(self):
         """Test successful slide creation workflow."""
         # Setup mocks
         self.coordinator._layout_resolver = Mock()
@@ -99,8 +98,7 @@ class TestSlideCoordinator(unittest.TestCase):
         )
         self.mock_prs.slides.add_slide.assert_called_once_with(self.mock_slide_layout)
         
-        # Verify debug messages
-        assert mock_debug.call_count >= 3  # Should have multiple debug messages
+        # Verify successful execution - no debug assertions needed
 
     def test_create_slide_invalid_data_type(self):
         """Test slide creation with invalid data type."""

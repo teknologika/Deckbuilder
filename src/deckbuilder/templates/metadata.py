@@ -86,25 +86,18 @@ class TemplateMetadataLoader:
         if template_name in self._metadata_cache:
             return self._metadata_cache[template_name]
 
-        template_file = self.template_folder / f"{template_name}.json"
-        if not template_file.exists():
-            raise FileNotFoundError(f"Template '{template_name}' not found at {template_file}")
+        # Check if PowerPoint template exists
+        pptx_file = self.template_folder / f"{template_name}.pptx"
+        if not pptx_file.exists():
+            raise FileNotFoundError(f"Template '{template_name}' not found at {pptx_file}")
 
-        try:
-            with open(template_file, "r", encoding="utf-8") as f:
-                template_data = json.load(f)
-        except json.JSONDecodeError as e:
-            raise ValueError(f"Invalid JSON in template '{template_name}': {e}")
-
-        # Try to create metadata from patterns first (preferred approach)
+        # Create metadata from patterns (new primary approach)
         try:
             metadata = self.create_template_metadata_from_patterns(template_name)
             self.logger.info(f"Created template metadata for '{template_name}' from patterns")
         except (ValueError, FileNotFoundError) as e:
-            self.logger.warning(f"Failed to create pattern-based metadata for '{template_name}': {e}")
-            # Fall back to parsing template JSON data
-            metadata = self._parse_template_data(template_name, template_data)
-            self.logger.info(f"Created template metadata for '{template_name}' from template JSON")
+            # JSON mapping files were removed - no fallback needed
+            raise ValueError(f"Failed to create metadata for template '{template_name}': {e}. Template patterns required.")
 
         # Cache for performance
         self._metadata_cache[template_name] = metadata

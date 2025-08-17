@@ -269,7 +269,7 @@ content_bottom_right: |
 
 ---
 layout: Table Only
-title_top: "**Quarterly** *Sales* Performance - ___Regional___ Analysis"
+title_top: "Quarterly Sales Performance - Regional Analysis"
 style: dark_blue_white_text
 row_style: alternating_light_gray
 border_style: thin_gray
@@ -277,65 +277,65 @@ row_height: 0.6
 header_font_size: 12
 data_font_size: 10
 table_data: |
-  | **Region** | ***Q1 Sales*** | *Q2 Sales* | ___Q3 Sales___ |
-  | ---------- | -------------- | ---------- | -------------- |
-  | North      | $125,000       | $132,000   | $145,000       |
-  | South      | $98,500        | $105,000   | $118,000       |
-  | East       | $110,000       | $108,500   | $125,500       |
-  | West       | $88,200        | $95,000    | $102,000       |
+  | Region | Q1 Sales | Q2 Sales | Q3 Sales |
+  | ------ | -------- | -------- | -------- |
+  | North  | $125,000 | $132,000 | $145,000 |
+  | South  | $98,500  | $105,000 | $118,000 |
+  | East   | $110,000 | $108,500 | $125,500 |
+  | West   | $88,200  | $95,000  | $102,000 |
 ---
 
 ---
 layout: Table with Content Above
-title_top: "***Deckbuilder*** **Performance** *Metrics*"
+title_top: "   Deckbuilder      Performance    Metrics "
 content: |
   Our comprehensive analysis shows exceptional performance across all key areas.
-  The metrics below demonstrate **consistent excellence** in *content processing*,
-  ***template quality***, and ___user satisfaction___ benchmarks.
+  The metrics below demonstrate   consistent excellence   in  content processing ,
+     template quality   , and ___user satisfaction___ benchmarks.
 style: dark_blue_white_text
 row_style: alternating_light_gray
 header_font_size: 12
 data_font_size: 10
 table_data: |
-  | **Metric**        | ***Target*** | *Actual*  | ___Status___   |
-  | ----------------- | ------------ | --------- | -------------- |
-  | Processing Speed  | **< 2s**     | *0.8s*    | ___Exceeded___ |
-  | Template Quality  | ***95%***    | **99.2%** | ___Exceeded___ |
-  | User Satisfaction | **90%**      | ***98%*** | ___Exceeded___ |
-  | Error Rate        | *< 1%*       | **0.3%**  | ___Exceeded___ |
+  | Metric            | Target | Actual | Status   |
+  | ----------------- | ------ | ------ | -------- |
+  | Processing Speed  | < 2s   | 0.8s   | Exceeded |
+  | Template Quality  | 95%    | 99.2%  | Exceeded |
+  | User Satisfaction | 90%    | 98%    | Exceeded |
+  | Error Rate        | < 1%   | 0.3%   | Exceeded |
 ---
 
 ---
 layout: Table with Content Above and Below
-title_top: "***Quarterly*** **Performance** *Overview*"
+title_top: "Quarterly Performance Overview"
 content_above: "**Executive Summary:** Strong performance across all key metrics with ___significant growth___ in revenue and customer acquisition. ***Market expansion*** successful in three new regions."
 table_data: |
-  | **Quarter** | *Revenue* | **Customers** | ***Growth*** |
-  | ----------- | --------- | ------------- | ------------ |
-  | Q1 2024     | $2.1M     | 1,200         | +12%         |
-  | Q2 2024     | $2.4M     | 1,450         | +15%         |
-  | Q3 2024     | $2.8M     | 1,680         | +18%         |
+  | Quarter | Revenue | Customers | Growth |
+  | ------- | ------- | --------- | ------ |
+  | Q1 2024 | $2.1M   | 1,200     | +12%   |
+  | Q2 2024 | $2.4M   | 1,450     | +15%   |
+  | Q3 2024 | $2.8M   | 1,680     | +18%   |
 content_below: "***Key Takeaways:*** Revenue growth accelerating each quarter. Customer base expansion of **40%** year-to-date. ___Market position___ strengthening significantly."
 ---
 
 ---
 layout: Table with Content Left
-title_top: "***Performance*** **Dashboard** *Analysis*"
-content: |
-  **Key Findings:**
+title_top: " Performance Dashboard Analysis"
+content_left: |
+    Key Findings:  
   
-  • ***Revenue Growth:*** 15% increase over last quarter
-  • **Customer Acquisition:** 250 new customers added  
-  • ***Market Expansion:*** Entered 3 new geographical regions
+  - Revenue Growth: 15% increase over last quarter
+  - Customer Acquisition: 250 new customers added  
+  - Market Expansion: Entered 3 new geographical regions
   
-  The data demonstrates ___strong performance___ across all key metrics, with particularly impressive growth in customer acquisition and ***market penetration*** strategies.
+  The data demonstrates ___strong performance___ across all key metrics, with particularly impressive growth in customer acquisition and market penetration strategies.
 table_data: |
-  | **Metric** | *Q2*  | **Q3** | ***Change*** |
-  | ---------- | ----- | ------ | ------------ |
-  | Revenue    | $2.1M | $2.4M  | +15%         |
-  | Customers  | 1,200 | 1,450  | +250         |
-  | Regions    | 5     | 8      | +3           |
-  | Team Size  | 45    | 52     | +7           |
+  | Metric    | Q2    | Q3    | Change |
+  | --------- | ----- | ----- | ------ |
+  | Revenue   | $2.1M | $2.4M | +15%   |
+  | Customers | 1,200 | 1,450 | +250   |
+  | Regions   | 5     | 8     | +3     |
+  | Team Size | 45    | 52    | +7     |
 ---
 
 ---
