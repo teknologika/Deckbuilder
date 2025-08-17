@@ -7,7 +7,7 @@ Validates dependency injection, error handling, and clean workflow coordination.
 
 import unittest
 from unittest.mock import Mock, patch, MagicMock
-from src.deckbuilder.core.slide_coordinator import SlideCoordinator
+from deckbuilder.core.slide_coordinator import SlideCoordinator
 
 
 class TestSlideCoordinator(unittest.TestCase):

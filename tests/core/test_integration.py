@@ -7,8 +7,8 @@ to all enhanced modules, ensuring seamless integration and backward compatibilit
 
 import unittest
 from unittest.mock import Mock, patch, MagicMock
-from src.deckbuilder.core.slide_builder import SlideBuilder
-from src.deckbuilder.core.presentation_builder import PresentationBuilder
+from deckbuilder.core.slide_builder import SlideBuilder
+from deckbuilder.core.presentation_builder import PresentationBuilder
 
 
 class TestArchitectureIntegration(unittest.TestCase):
@@ -215,21 +215,23 @@ class TestMCPServerCompatibility(unittest.TestCase):
     def test_slidebuilder_import_compatibility(self):
         """Test that SlideBuilder can be imported as before."""
         # Test import from core module
-        from src.deckbuilder.core import SlideBuilder
+        from deckbuilder.core import SlideBuilder
         builder = SlideBuilder()
         
         # Test that it has the enhanced architecture
         assert hasattr(builder, 'coordinator')
         assert hasattr(builder, 'layout_resolver')
         
-    def test_legacy_slidebuilder_still_available(self):
-        """Test that legacy SlideBuilder is still available if needed."""
-        from src.deckbuilder.core import SlideBuilderLegacy
-        legacy_builder = SlideBuilderLegacy()
+    def test_slidebuilder_uses_enhanced_architecture_only(self):
+        """Test that SlideBuilder now uses only the enhanced modular architecture."""
+        from deckbuilder.core import SlideBuilder
+        builder = SlideBuilder()
         
-        # Should be the old implementation
-        assert not hasattr(legacy_builder, 'coordinator')
-        assert hasattr(legacy_builder, 'field_processor')
+        # Should have enhanced architecture components
+        assert hasattr(builder, 'coordinator')
+        assert hasattr(builder, 'layout_resolver')
+        # Should NOT have legacy field_processor
+        assert not hasattr(builder, 'field_processor')
 
 
 if __name__ == '__main__':

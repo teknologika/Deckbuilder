@@ -167,11 +167,11 @@
   - [x] 17.1. Test MCP server compatibility
   - [x] 17.2. Test all structured frontmatter pattern types
   - [-] 17.3. Test backward compatibility with existing API
-  - [ ] 17.4. Test performance benchmarks vs original system
+  - [x] 17.4. Test performance benchmarks vs original system
 
 ### Regression Tests
 - [ ] 18. **Comprehensive regression testing** (RENUMBERED)
-  - [ ] 18.1. Run all existing test suites against new architecture
+  - [x] 18.1. Run all existing test suites against new architecture
   - [ ] 18.2. Verify zero functionality regressions
   - [ ] 18.3. Test edge cases and error conditions
   - [ ] 18.4. **✅ Validate template layouts work** (replacing broken dynamic positioning)

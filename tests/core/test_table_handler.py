@@ -18,7 +18,7 @@ import pytest
 from unittest.mock import Mock, patch
 from pptx.util import Cm
 
-from src.deckbuilder.core.table_handler import TableHandler
+from deckbuilder.core.table_handler import TableHandler
 
 
 class TestTableHandler:

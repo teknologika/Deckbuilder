@@ -7,7 +7,7 @@ Tests content application with minimal font interference and proper newline supp
 import unittest
 from unittest.mock import Mock
 
-from src.deckbuilder.core.content_processor import ContentProcessor
+from deckbuilder.core.content_processor import ContentProcessor
 
 
 class TestContentProcessor(unittest.TestCase):
@@ -126,7 +126,7 @@ class TestContentProcessor(unittest.TestCase):
         """Test content placeholder with table data."""
         field_value = {"type": "table", "data": [["Header"], ["Data"]]}
 
-        with unittest.mock.patch("src.deckbuilder.core.content_processor.TableBuilder") as mock_table_builder:
+        with unittest.mock.patch("deckbuilder.core.content_processor.TableBuilder") as mock_table_builder:
             mock_builder_instance = Mock()
             mock_table_builder.return_value = mock_builder_instance
 

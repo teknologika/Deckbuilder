@@ -1,7 +1,6 @@
 from .engine import Deckbuilder
 from .presentation_builder import PresentationBuilder
-from .slide_builder import SlideBuilder  # New backward compatibility wrapper
-from .slide_builder_legacy import SlideBuilder as SlideBuilderLegacy  # Legacy implementation
+from .slide_builder import SlideBuilder  # Enhanced modular architecture
 
 # New modular architecture modules
 from .table_handler import TableHandler
@@ -11,8 +10,7 @@ from .slide_coordinator import SlideCoordinator
 __all__ = [
     "Deckbuilder",
     "PresentationBuilder",
-    "SlideBuilder",  # Now uses enhanced architecture with backward compatibility
-    "SlideBuilderLegacy",  # Available for fallback if needed
+    "SlideBuilder",  # Enhanced modular architecture
     "TableHandler",
     "ContentProcessor",
     "SlideCoordinator",

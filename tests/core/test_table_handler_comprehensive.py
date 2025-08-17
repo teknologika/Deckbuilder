@@ -9,7 +9,7 @@ from unittest.mock import Mock, MagicMock
 from typing import List, Dict, Any, Tuple
 
 # Import the actual TableHandler
-from src.deckbuilder.core.table_handler import TableHandler
+from deckbuilder.core.table_handler import TableHandler
 
 
 class TestTableDetection:

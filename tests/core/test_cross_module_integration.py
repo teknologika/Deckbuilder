@@ -16,10 +16,10 @@ from unittest.mock import Mock, MagicMock, patch
 from pathlib import Path
 
 # Import refactored modules
-from src.deckbuilder.core.layout_resolver import LayoutResolver
-from src.deckbuilder.core.table_handler import TableHandler
-from src.deckbuilder.core.placeholder_resolver import PlaceholderResolver
-from src.deckbuilder.core.content_processor import ContentProcessor
+from deckbuilder.core.layout_resolver import LayoutResolver
+from deckbuilder.core.table_handler import TableHandler
+from deckbuilder.core.placeholder_resolver import PlaceholderResolver
+from deckbuilder.core.content_processor import ContentProcessor
 
 
 class TestCrossModuleIntegration:

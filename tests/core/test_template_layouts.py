@@ -10,8 +10,8 @@ from unittest.mock import Mock, MagicMock, patch
 from pathlib import Path
 
 # Import core modules
-from src.deckbuilder.core.layout_resolver import LayoutResolver
-from src.deckbuilder.templates.pattern_loader import PatternLoader
+from deckbuilder.core.layout_resolver import LayoutResolver
+from deckbuilder.templates.pattern_loader import PatternLoader
 
 
 class TestTemplateLayoutSystem:
@@ -190,7 +190,7 @@ class TestNoDynamicShapeCreation:
         """Verify dynamic shape creation methods don't exist."""
         # Import slide builder modules and check they don't have dynamic shape methods
         try:
-            from src.deckbuilder.core import slide_builder
+            from deckbuilder.core import slide_builder
             
             # Check that slide_builder doesn't have dynamic shape methods
             assert not hasattr(slide_builder, '_create_dynamic_content_shapes'), \

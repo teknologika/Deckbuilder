@@ -4,7 +4,7 @@
 import unittest
 from unittest.mock import MagicMock
 from pptx import Presentation
-from deckbuilder.core.slide_builder_legacy import SlideBuilder
+from deckbuilder.core.slide_builder import SlideBuilder
 from deckbuilder.content.formatter import ContentFormatter
 from deckbuilder.image.placeholder import ImagePlaceholderHandler
 

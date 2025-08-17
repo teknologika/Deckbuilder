@@ -10,7 +10,7 @@ from unittest.mock import Mock, patch
 from pathlib import Path
 
 # Import core functionality
-from src.deckbuilder.core.layout_resolver import LayoutResolver
+from deckbuilder.core.layout_resolver import LayoutResolver
 
 
 class TestTemplateLayoutIntegration:
