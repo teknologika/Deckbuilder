@@ -1,6 +1,6 @@
 ---
 layout: Table with Content Above
-title_top: "   Deckbuilder      Performance    Metrics "
+title_top: "Deckbuilder Performance Metrics "
 content: |
   Our comprehensive analysis shows exceptional performance across all key areas.
   The metrics below demonstrate   consistent excellence   in  content processing ,
