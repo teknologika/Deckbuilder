@@ -5,7 +5,7 @@
       "placeholders": {
         "title_top": "Deckbuilder Performance Metrics ",
         "content": "Our comprehensive analysis shows exceptional performance across all key areas.\nThe metrics below demonstrate   consistent excellence   in  content processing ,\n   template quality   , and    user satisfaction    benchmarks.",
-        "table data": "|   Metric   |    Target    |  Actual  |    Status    |\n|------------|--------------|----------|-------------|\n| Processing Speed |   < 2s   |  0.8s  |    Exceeded    |\n| Template Quality |    95%    |   99.2%   |    Exceeded    |\n| User Satisfaction |   90%   |    98%    |    Exceeded    |\n| Error Rate |  < 1%  |   0.3%   |    Exceeded    |",
+        "table_data": "|   Metric   |    Target    |  Actual  |    Status    |\n|------------|--------------|----------|-------------|\n| Processing Speed |   < 2s   |  0.8s  |    Exceeded    |\n| Template Quality |    95%    |   99.2%   |    Exceeded    |\n| User Satisfaction |   90%   |    98%    |    Exceeded    |\n| Error Rate |  < 1%  |   0.3%   |    Exceeded    |",
         "style": "dark blue white text",
         "row style": "alternating light gray",
         "header font size": 12,

@@ -129,7 +129,7 @@ jobs:
         
         # Test basic functionality
         deckbuilder --help > /dev/null
-        python -c "from src.deckbuilder.engine import Deckbuilder; print('✅ Package import test passed')"
+        python -c "from deckbuilder.core.engine import get_deckbuilder_client; print('✅ Package import test passed')"
         
         # Cleanup
         deactivate
