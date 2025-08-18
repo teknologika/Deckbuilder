@@ -20,7 +20,7 @@ from ..content.placeholder_types import (
     is_subtitle_placeholder,
     is_title_placeholder,
 )
-from ..utils.logging import slide_builder_print, debug_print
+from ..utils.logging import debug_print
 
 
 class ContentProcessor:
@@ -64,10 +64,6 @@ class ContentProcessor:
             content_formatter: ContentFormatter instance for formatting
             image_placeholder_handler: ImagePlaceholderHandler for images
         """
-        # 🔍 DEBUG: Log content processor calls
-        print("🔍 DEBUG: ContentProcessor.apply_content_to_placeholder called")
-        print(f"🔍 DEBUG: field_name='{field_name}', field_value='{field_value}'")
-        print(f"🔍 DEBUG: placeholder type = {placeholder.placeholder_format.type}")
         # Set slide context for content formatter (needed for table processing)
         content_formatter._current_slide = slide_data.get("slide_object", slide)
 
@@ -206,64 +202,53 @@ class ContentProcessor:
             slide_data: Complete slide data
             slide: PowerPoint slide object
         """
-        slide_builder_print(f"    SPECIAL HANDLING: Table placeholder detected: '{field_name}'")
-
         # Import TableHandler for proper table processing
         from .table_handler import TableHandler
 
         table_handler = TableHandler()
 
-        # Check if this slide already has table content to avoid duplication
-        existing_tables = table_handler.detect_existing_tables(slide)
-        if existing_tables:
-            debug_print(f"    Skipping table placeholder - slide already has {len(existing_tables)} table(s)")
-            return
+        # Use the field_value directly instead of searching slide_data
+        table_content = field_value
 
-        # Find table content in slide data (markdown tables or structured data)
-        table_content = table_handler.find_table_content_in_slide_data(slide_data)
+        if table_content and table_handler.detect_table_content(table_content):
+            table_data = table_handler.parse_table_structure(table_content)
+            if table_data:
+                # Get number of rows and columns from parsed data
+                num_rows = len(table_data)
+                num_cols = len(table_data[0]) if table_data else 0
 
-        if table_content:
-            # Process table content and create table shape
-            if table_handler.detect_table_content(table_content):
-                table_data = table_handler.parse_table_structure(table_content)
-                if table_data:
-                    # Create table using TableHandler with proper position and size
-                    position = (1.0, 3.0)  # inches from left, inches from top
-                    size = (8.0, 4.0)  # width, height in inches
-                    table_shape = table_handler.create_table_from_data(slide, table_data, position, size)
-                    if table_shape:
-                        # Table positioning is handled in create_table_from_data
-                        debug_print(f"    Table placeholder table created at position {position}")
-                        # Clear table content from other placeholders to avoid duplication
-                        table_handler.clear_table_content_from_placeholders(slide, table_content)
-                        debug_print(f"    Table placeholder created table with {len(table_data)} rows")
-                    else:
-                        debug_print("    Failed to create table from placeholder data")
+                if num_rows > 0 and num_cols > 0:
+                    # Use placeholder.insert_table() to insert table INTO the placeholder
+                    try:
+                        graphic_frame = placeholder.insert_table(rows=num_rows, cols=num_cols)
+                        table = graphic_frame.table
+
+                        # Populate the table with our data
+                        for row_idx, row_data in enumerate(table_data):
+                            for col_idx, cell_data in enumerate(row_data):
+                                if row_idx < len(table.rows) and col_idx < len(table.columns):
+                                    table.cell(row_idx, col_idx).text = str(cell_data)
+
+                        debug_print(f"    ✅ Table inserted into placeholder: {num_rows}x{num_cols}")
+
+                    except Exception as e:
+                        debug_print(f"    Failed to insert table into placeholder: {e}")
+                        # Fallback to text content
+                        if hasattr(placeholder, "text"):
+                            placeholder.text = str(field_value)
                 else:
-                    debug_print("    Failed to parse table structure from placeholder")
-            else:
-                debug_print("    No valid table content detected in placeholder")
-        else:
-            # Fallback: try to use field_value directly if it's table data
-            if isinstance(field_value, str) and table_handler.detect_table_content(field_value):
-                table_data = table_handler.parse_table_structure(field_value)
-                if table_data:
-                    # Create table with proper position and size
-                    position = (1.0, 3.0)  # inches from left, inches from top
-                    size = (8.0, 4.0)  # width, height in inches
-                    table_shape = table_handler.create_table_from_data(slide, table_data, position, size)
-                    if table_shape:
-                        debug_print("    Table placeholder created table from field value")
-                else:
-                    # Final fallback - set as text if no table data found
+                    debug_print("    Invalid table dimensions - no data to insert")
                     if hasattr(placeholder, "text"):
                         placeholder.text = str(field_value)
-                    debug_print("    TABLE placeholder set as text (no table data found)")
             else:
-                # Set as text if not table content
+                debug_print("    Failed to parse table structure from placeholder")
                 if hasattr(placeholder, "text"):
                     placeholder.text = str(field_value)
-                debug_print("    TABLE placeholder set as text content")
+        else:
+            # No table content detected - treat as regular text
+            if hasattr(placeholder, "text"):
+                placeholder.text = str(field_value)
+            debug_print("    TABLE placeholder set as text content (no table detected)")
 
     def _handle_table_in_content_placeholder(self, slide, placeholder, field_name: str, field_value, table_handler) -> None:
         """
