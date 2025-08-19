@@ -261,15 +261,15 @@ class SlideCoordinator:
                 # User-friendly error for placeholder mapping issues
                 layout = slide_data.get("layout", "Unknown")
                 error_print(f"⚠️  Skipping slide with layout '{layout}' - template placeholder issue")
-                error_print(f"💡 Check your template has the required placeholders for this layout")
+                error_print("💡 Check your template has the required placeholders for this layout")
                 return  # Skip this slide, continue processing
             else:
                 raise  # Re-raise other ValueError types
-        except Exception as e:
+        except Exception:
             # Other unexpected errors - provide user-friendly message but don't expose internals
             layout = slide_data.get("layout", "Unknown")
             error_print(f"⚠️  Skipping slide with layout '{layout}' - content processing error")
-            error_print(f"💡 Check slide content format and template compatibility")
+            error_print("💡 Check slide content format and template compatibility")
             return  # Skip this slide, continue processing
 
     def _add_speaker_notes_if_present(self, slide, slide_data: Dict[str, Any], content_formatter):

@@ -220,7 +220,7 @@ content_item6: "06 - *Implementation* planning and next steps"
 
 ---
 layout: Title and 6-item Lists
-slide_title: "***Deckbuilder*** **Implementation** *Checklist*"
+title_top: "***Deckbuilder*** **Implementation** *Checklist*"
 Title1: "**1. Setup**"
 Content1: "*Environment* Configuration"
 Title2: "**2. Templates**"

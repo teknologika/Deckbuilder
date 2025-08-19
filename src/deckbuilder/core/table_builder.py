@@ -462,8 +462,9 @@ class TableBuilder:
             for paragraph in cell.text_frame.paragraphs:
                 for run in paragraph.runs:
                     run.font.size = Pt(font_size_pt)
-        except Exception:
+        except Exception:  # nosec B110
             # Ignore font sizing errors to prevent breaking table creation
+            # This is intentional - font errors shouldn't break table functionality
             pass
 
     def _apply_column_widths(self, table, column_widths):

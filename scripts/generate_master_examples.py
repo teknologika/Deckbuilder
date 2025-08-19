@@ -195,12 +195,12 @@ class MasterExamplesGenerator:
             Clean markdown string containing only YAML frontmatter blocks
         """
         slides = []
-        
+
         for example in ordered_examples:
             # Extract clean markdown content (just the YAML frontmatter)
             markdown_content = example["markdown_content"].strip()
             slides.append(markdown_content)
-        
+
         # Join all slides with double newlines for clean separation
         return "\n\n".join(slides)
 

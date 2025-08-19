@@ -87,8 +87,9 @@ class PlaceholderNormalizer:
                     # Placeholder has no name - use default based on type/index
                     mapping[idx] = f"placeholder_{idx}"
 
-        except Exception:
+        except Exception:  # nosec B110
             # If we can't read layout names, return empty mapping
+            # This is intentional - layout reading errors shouldn't crash the system
             pass
 
         return mapping
@@ -108,7 +109,8 @@ class PlaceholderNormalizer:
             for ph in layout.placeholders:
                 if ph.placeholder_format.idx == target_idx:
                     return ph
-        except Exception:
+        except Exception:  # nosec B110
+            # Ignore placeholder access errors - return None for missing placeholders
             pass
         return None
 
