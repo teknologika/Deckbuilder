@@ -89,15 +89,15 @@ table_width: 18.0  # Columns auto-sized equally
 
 ## Custom Colors
 
-Override any style with custom hex colors:
+Override any style with HTML color names:
 
 ```yaml
 custom_colors:
-  header_bg: "#003366"      # Header background
-  header_text: "#FFFFFF"    # Header text color
-  primary_row: "#F5F5F5"    # Primary row background
-  alt_row: "#E8E8E8"        # Alternate row background
-  border_color: "#888888"   # Border color
+  header_bg: "navy"         # Header background
+  header_text: "white"      # Header text color
+  primary_row: "lightgray"  # Primary row background
+  alt_row: "gainsboro"      # Alternate row background
+  border_color: "gray"      # Border color
 ```
 
 ### Color Examples
@@ -106,8 +106,8 @@ custom_colors:
 ```yaml
 style: white_dark_text
 custom_colors:
-  header_bg: "#1F4E79"
-  header_text: "#FFFFFF"
+  header_bg: "darkblue"
+  header_text: "white"
 ```
 
 **Minimal Grayscale:**
@@ -116,8 +116,8 @@ style: light_gray_dark_text
 row_style: solid_white
 border_style: header_only
 custom_colors:
-  header_bg: "#E5E5E5"
-  border_color: "#CCCCCC"
+  header_bg: "lightgray"
+  border_color: "silver"
 ```
 
 **Transparent Overlay:**
@@ -126,8 +126,8 @@ style: white_dark_text
 row_style: no_fill
 border_style: no_borders
 custom_colors:
-  header_bg: "rgba(0,0,0,0)"  # Transparent header
-  header_text: "#FFFFFF"      # White text
+  header_bg: "transparent"    # Transparent header
+  header_text: "white"        # White text
 ```
 
 ## Complete Examples
@@ -166,8 +166,8 @@ border_style: header_only
 header_font_size: 12
 data_font_size: 10
 custom_colors:
-  header_bg: "#F0F0F0"
-  border_color: "#D0D0D0"
+  header_bg: "gainsboro"
+  border_color: "lightgray"
 table_data: |
   | Team Member | Project | Status | Complete |
   | Alice Johnson | Website Redesign | In Progress | 75% |
@@ -187,9 +187,9 @@ border_style: outer_only
 header_font_size: 14
 data_font_size: 11
 custom_colors:
-  header_bg: "#8B0000"      # Dark red brand color
-  header_text: "#FFFFFF"
-  border_color: "#8B0000"
+  header_bg: "darkred"      # Dark red brand color
+  header_text: "white"
+  border_color: "darkred"
 table_data: |
   | Color Name | Hex Code | RGB Values | Usage |
   | Brand Red | #8B0000 | 139, 0, 0 | Primary brand |
@@ -286,17 +286,17 @@ row_height: 0.8  # Increase for better spacing
 
 **Colors not applying:**
 ```yaml
-# Ensure proper hex format
+# Use valid HTML color names
 custom_colors:
-  header_bg: "#FF0000"  # Include # symbol
-  # not "FF0000" or "red"
+  header_bg: "red"      # Use HTML color names
+  # not "#FF0000" or invalid names
 ```
 
 **Borders not showing:**
 ```yaml
 border_style: thin_gray  # Ensure valid style name
 custom_colors:
-  border_color: "#333333"  # Dark enough to see
+  border_color: "darkgray"  # Dark enough to see
 ```
 
 ## Next Steps

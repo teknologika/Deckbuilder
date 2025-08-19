@@ -262,31 +262,34 @@ class TableBuilder:
 
     def _parse_custom_color(self, color_value):
         """
-        Parse a custom color value (hex string) to RGBColor.
+        Parse a custom color value using HTML color names or 'transparent'.
 
         Args:
-            color_value: Hex color string (e.g., "#FF0000")
+            color_value: HTML color name (e.g., "red", "navy", "lightgray") or "transparent"
 
         Returns:
-            RGBColor object or None if invalid
+            RGBColor object or None for transparent/invalid
         """
         if not color_value or not isinstance(color_value, str):
             return None
 
         try:
-            # Remove # if present
-            color_value = color_value.lstrip("#")
+            import webcolors
 
-            # Convert hex to RGB
-            if len(color_value) == 6:
-                r = int(color_value[0:2], 16)
-                g = int(color_value[2:4], 16)
-                b = int(color_value[4:6], 16)
-                return RGBColor(r, g, b)
-        except (ValueError, TypeError):
-            pass
+            # Normalize the color name
+            color_name = color_value.strip().lower()
 
-        return None
+            # Handle transparent specially
+            if color_name == "transparent":
+                return None
+
+            # Convert HTML color name to RGB using webcolors
+            rgb_tuple = webcolors.name_to_rgb(color_name)
+            return RGBColor(rgb_tuple.red, rgb_tuple.green, rgb_tuple.blue)
+
+        except (ValueError, TypeError, AttributeError):
+            # webcolors raises ValueError for unknown color names
+            return None
 
     def _parse_dimensions(self, table_data, column_count):
         """

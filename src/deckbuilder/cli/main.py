@@ -306,6 +306,22 @@ class DeckbuilderCLI:
             except Exception as e:
                 click.echo(f"❌ Failed to copy default.pptx: {e}", err=True)
 
+            # Copy HTML color reference file
+            try:
+                package_assets_root = files("deckbuilder") / "assets"
+                source_html = package_assets_root / "html_colors_reference.html"
+                if source_html.is_file():
+                    target_file = target_path / "HTML_Colors_Reference.html"
+                    with source_html.open("rb") as src, open(target_file, "wb") as dst:
+                        dst.write(src.read())
+                    clear_hidden_flag(target_file)
+                    files_copied.append("HTML_Colors_Reference.html")
+                    click.echo("✅ Copied: HTML_Colors_Reference.html")
+                else:
+                    click.echo("⚠️ HTML color reference not found", err=True)
+            except Exception as e:
+                click.echo(f"⚠️ Failed to copy HTML color reference: {e}", err=True)
+
             if not files_copied:
                 click.echo("❌ No template files found to copy", err=True)
                 return
@@ -353,8 +369,9 @@ class DeckbuilderCLI:
                 # Enhanced success messaging
                 click.echo("🚀 Next steps:")
                 click.echo("   1. Read: Getting_Started.md")
-                click.echo("   2. Try: deckbuilder create example_presentation.md")
-                click.echo("   3. Compare: Both example files show the same content in different formats")
+                click.echo("   2. Open: HTML_Colors_Reference.html (in browser)")
+                click.echo("   3. Try: deckbuilder create example_presentation.md")
+                click.echo("   4. Compare: Both example files show the same content in different formats")
                 click.echo()
 
             except ImportError as e:

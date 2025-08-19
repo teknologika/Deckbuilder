@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Color Names Reference - Deckbuilder</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        .content {
+            padding: 30px;
+        }
+        .intro {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 0 5px 5px 0;
+        }
+        .intro h2 {
+            margin-top: 0;
+            color: #1976d2;
+        }
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+        .color-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .color-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .color-box {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            margin-right: 15px;
+            border: 1px solid #ddd;
+            flex-shrink: 0;
+        }
+        .color-info {
+            flex-grow: 1;
+        }
+        .color-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        .color-values {
+            font-size: 0.9em;
+            color: #666;
+            font-family: 'Courier New', monospace;
+        }
+        .special-colors {
+            background: #fff3e0;
+            border: 1px solid #ffb74d;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 30px 0;
+        }
+        .special-colors h3 {
+            margin-top: 0;
+            color: #e65100;
+        }
+        .usage-example {
+            background: #f5f5f5;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+        .transparent-demo {
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><rect x="0" y="0" width="10" height="10" fill="%23f0f0f0"/><rect x="10" y="10" width="10" height="10" fill="%23f0f0f0"/></svg>');
+            color: #333;
+            font-weight: bold;
+        }
+        .section {
+            margin: 40px 0;
+        }
+        .section h3 {
+            color: #333;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            color: #666;
+            border-top: 1px solid #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>HTML Color Names Reference</h1>
+            <p>Complete guide to 140+ HTML color names for Deckbuilder table styling</p>
+        </div>
+
+        <div class="content">
+            <div class="intro">
+                <h2>🎨 Using HTML Colors in Deckbuilder</h2>
+                <p>Deckbuilder now supports all 140 standard HTML color names plus 'transparent' for table styling. Use these human-readable color names instead of hex codes for easier customization.</p>
+                
+                <div class="usage-example">
+<strong>Example usage in frontmatter:</strong>
+custom_colors:
+  header_bg: "navy"         # Dark blue header
+  header_text: "white"      # White text
+  primary_row: "lightgray"  # Light gray rows
+  alt_row: "transparent"    # Transparent alternating rows
+  border_color: "silver"    # Silver borders
+                </div>
+            </div>
+
+            <div class="special-colors">
+                <h3>🔍 Special Color: Transparent</h3>
+                <div class="color-item">
+                    <div class="color-box transparent-demo" style="color: #333;">TRANSPARENT</div>
+                    <div class="color-info">
+                        <div class="color-name">transparent</div>
+                        <div class="color-values">Creates truly transparent backgrounds</div>
+                    </div>
+                </div>
+                <p><strong>Perfect for:</strong> Overlay tables, status indicators, and clean minimal designs</p>
+            </div>
+
+            <div class="section">
+                <h3>🔴 Red Family</h3>
+                <div class="color-grid" id="red-colors"></div>
+            </div>
+
+            <div class="section">
+                <h3>🟠 Orange Family</h3>
+                <div class="color-grid" id="orange-colors"></div>
+            </div>
+
+            <div class="section">
+                <h3>🟡 Yellow Family</h3>
+                <div class="color-grid" id="yellow-colors"></div>
+            </div>
+
+            <div class="section">
+                <h3>🟢 Green Family</h3>
+                <div class="color-grid" id="green-colors"></div>
+            </div>
+
+            <div class="section">
+                <h3>🔵 Blue Family</h3>
+                <div class="color-grid" id="blue-colors"></div>
+            </div>
+
+            <div class="section">
+                <h3>🟣 Purple Family</h3>
+                <div class="color-grid" id="purple-colors"></div>
+            </div>
+
+            <div class="section">
+                <h3>🤍 White/Gray Family</h3>
+                <div class="color-grid" id="gray-colors"></div>
+            </div>
+
+            <div class="section">
+                <h3>🤎 Brown Family</h3>
+                <div class="color-grid" id="brown-colors"></div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>📚 For more information, see the <a href="https://github.com/teknologika/deckbuilder">Deckbuilder Documentation</a></p>
+            <p>💡 <strong>Tip:</strong> Color names are case-insensitive. "RED", "red", and "Red" all work the same way.</p>
+        </div>
+    </div>
+
+    <script>
+        // HTML color definitions organized by family
+        const colorFamilies = {
+            red: [
+                {name: 'red', rgb: [255, 0, 0]},
+                {name: 'darkred', rgb: [139, 0, 0]},
+                {name: 'firebrick', rgb: [178, 34, 34]},
+                {name: 'crimson', rgb: [220, 20, 60]},
+                {name: 'indianred', rgb: [205, 92, 92]},
+                {name: 'lightcoral', rgb: [240, 128, 128]},
+                {name: 'salmon', rgb: [250, 128, 114]},
+                {name: 'darksalmon', rgb: [233, 150, 122]},
+                {name: 'lightsalmon', rgb: [255, 160, 122]},
+                {name: 'rosybrown', rgb: [188, 143, 143]},
+                {name: 'mistyrose', rgb: [255, 228, 225]},
+            ],
+            orange: [
+                {name: 'orange', rgb: [255, 165, 0]},
+                {name: 'darkorange', rgb: [255, 140, 0]},
+                {name: 'orangered', rgb: [255, 69, 0]},
+                {name: 'tomato', rgb: [255, 99, 71]},
+                {name: 'coral', rgb: [255, 127, 80]},
+                {name: 'chocolate', rgb: [210, 105, 30]},
+                {name: 'sandybrown', rgb: [244, 164, 96]},
+                {name: 'peachpuff', rgb: [255, 218, 185]},
+                {name: 'moccasin', rgb: [255, 228, 181]},
+                {name: 'bisque', rgb: [255, 228, 196]},
+                {name: 'navajowhite', rgb: [255, 222, 173]},
+                {name: 'papayawhip', rgb: [255, 239, 213]},
+            ],
+            yellow: [
+                {name: 'yellow', rgb: [255, 255, 0]},
+                {name: 'gold', rgb: [255, 215, 0]},
+                {name: 'goldenrod', rgb: [218, 165, 32]},
+                {name: 'darkgoldenrod', rgb: [184, 134, 11]},
+                {name: 'palegoldenrod', rgb: [238, 232, 170]},
+                {name: 'khaki', rgb: [240, 230, 140]},
+                {name: 'darkkhaki', rgb: [189, 183, 107]},
+                {name: 'lightyellow', rgb: [255, 255, 224]},
+                {name: 'lightgoldenrodyellow', rgb: [250, 250, 210]},
+                {name: 'lemonchiffon', rgb: [255, 250, 205]},
+                {name: 'cornsilk', rgb: [255, 248, 220]},
+                {name: 'beige', rgb: [245, 245, 220]},
+                {name: 'blanchedalmond', rgb: [255, 235, 205]},
+                {name: 'wheat', rgb: [245, 222, 179]},
+                {name: 'burlywood', rgb: [222, 184, 135]},
+                {name: 'tan', rgb: [210, 180, 140]},
+            ],
+            green: [
+                {name: 'green', rgb: [0, 128, 0]},
+                {name: 'darkgreen', rgb: [0, 100, 0]},
+                {name: 'forestgreen', rgb: [34, 139, 34]},
+                {name: 'seagreen', rgb: [46, 139, 87]},
+                {name: 'mediumseagreen', rgb: [60, 179, 113]},
+                {name: 'darkseagreen', rgb: [143, 188, 143]},
+                {name: 'lightseagreen', rgb: [32, 178, 170]},
+                {name: 'lime', rgb: [0, 255, 0]},
+                {name: 'limegreen', rgb: [50, 205, 50]},
+                {name: 'lightgreen', rgb: [144, 238, 144]},
+                {name: 'palegreen', rgb: [152, 251, 152]},
+                {name: 'greenyellow', rgb: [173, 255, 47]},
+                {name: 'chartreuse', rgb: [127, 255, 0]},
+                {name: 'lawngreen', rgb: [124, 252, 0]},
+                {name: 'springgreen', rgb: [0, 255, 127]},
+                {name: 'mediumspringgreen', rgb: [0, 250, 154]},
+                {name: 'yellowgreen', rgb: [154, 205, 50]},
+                {name: 'darkolivegreen', rgb: [85, 107, 47]},
+                {name: 'olivedrab', rgb: [107, 142, 35]},
+                {name: 'olive', rgb: [128, 128, 0]},
+                {name: 'honeydew', rgb: [240, 255, 240]},
+                {name: 'mintcream', rgb: [245, 255, 250]},
+            ],
+            blue: [
+                {name: 'blue', rgb: [0, 0, 255]},
+                {name: 'darkblue', rgb: [0, 0, 139]},
+                {name: 'navy', rgb: [0, 0, 128]},
+                {name: 'midnightblue', rgb: [25, 25, 112]},
+                {name: 'mediumblue', rgb: [0, 0, 205]},
+                {name: 'royalblue', rgb: [65, 105, 225]},
+                {name: 'cornflowerblue', rgb: [100, 149, 237]},
+                {name: 'dodgerblue', rgb: [30, 144, 255]},
+                {name: 'deepskyblue', rgb: [0, 191, 255]},
+                {name: 'skyblue', rgb: [135, 206, 235]},
+                {name: 'lightskyblue', rgb: [135, 206, 250]},
+                {name: 'lightblue', rgb: [173, 216, 230]},
+                {name: 'powderblue', rgb: [176, 224, 230]},
+                {name: 'lightcyan', rgb: [224, 255, 255]},
+                {name: 'cyan', rgb: [0, 255, 255]},
+                {name: 'aqua', rgb: [0, 255, 255]},
+                {name: 'darkcyan', rgb: [0, 139, 139]},
+                {name: 'teal', rgb: [0, 128, 128]},
+                {name: 'darkturquoise', rgb: [0, 206, 209]},
+                {name: 'turquoise', rgb: [64, 224, 208]},
+                {name: 'mediumturquoise', rgb: [72, 209, 204]},
+                {name: 'paleturquoise', rgb: [175, 238, 238]},
+                {name: 'aquamarine', rgb: [127, 255, 212]},
+                {name: 'mediumaquamarine', rgb: [102, 205, 170]},
+                {name: 'cadetblue', rgb: [95, 158, 160]},
+                {name: 'steelblue', rgb: [70, 130, 180]},
+                {name: 'lightsteelblue', rgb: [176, 196, 222]},
+                {name: 'aliceblue', rgb: [240, 248, 255]},
+                {name: 'azure', rgb: [240, 255, 255]},
+            ],
+            purple: [
+                {name: 'purple', rgb: [128, 0, 128]},
+                {name: 'indigo', rgb: [75, 0, 130]},
+                {name: 'darkviolet', rgb: [148, 0, 211]},
+                {name: 'darkorchid', rgb: [153, 50, 204]},
+                {name: 'darkmagenta', rgb: [139, 0, 139]},
+                {name: 'mediumorchid', rgb: [186, 85, 211]},
+                {name: 'mediumpurple', rgb: [147, 112, 219]},
+                {name: 'mediumslateblue', rgb: [123, 104, 238]},
+                {name: 'slateblue', rgb: [106, 90, 205]},
+                {name: 'darkslateblue', rgb: [72, 61, 139]},
+                {name: 'blueviolet', rgb: [138, 43, 226]},
+                {name: 'magenta', rgb: [255, 0, 255]},
+                {name: 'fuchsia', rgb: [255, 0, 255]},
+                {name: 'violet', rgb: [238, 130, 238]},
+                {name: 'plum', rgb: [221, 160, 221]},
+                {name: 'orchid', rgb: [218, 112, 214]},
+                {name: 'mediumvioletred', rgb: [199, 21, 133]},
+                {name: 'palevioletred', rgb: [219, 112, 147]},
+                {name: 'deeppink', rgb: [255, 20, 147]},
+                {name: 'hotpink', rgb: [255, 105, 180]},
+                {name: 'lightpink', rgb: [255, 182, 193]},
+                {name: 'pink', rgb: [255, 192, 203]},
+                {name: 'thistle', rgb: [216, 191, 216]},
+                {name: 'lavender', rgb: [230, 230, 250]},
+                {name: 'lavenderblush', rgb: [255, 240, 245]},
+            ],
+            gray: [
+                {name: 'black', rgb: [0, 0, 0]},
+                {name: 'dimgray', rgb: [105, 105, 105]},
+                {name: 'gray', rgb: [128, 128, 128]},
+                {name: 'darkgray', rgb: [169, 169, 169]},
+                {name: 'silver', rgb: [192, 192, 192]},
+                {name: 'lightgray', rgb: [211, 211, 211]},
+                {name: 'gainsboro', rgb: [220, 220, 220]},
+                {name: 'whitesmoke', rgb: [245, 245, 245]},
+                {name: 'white', rgb: [255, 255, 255]},
+                {name: 'snow', rgb: [255, 250, 250]},
+                {name: 'ghostwhite', rgb: [248, 248, 255]},
+                {name: 'floralwhite', rgb: [255, 250, 240]},
+                {name: 'linen', rgb: [250, 240, 230]},
+                {name: 'antiquewhite', rgb: [250, 235, 215]},
+                {name: 'oldlace', rgb: [253, 245, 230]},
+                {name: 'seashell', rgb: [255, 245, 238]},
+                {name: 'ivory', rgb: [255, 255, 240]},
+                {name: 'lightslategray', rgb: [119, 136, 153]},
+                {name: 'slategray', rgb: [112, 128, 144]},
+                {name: 'darkslategray', rgb: [47, 79, 79]},
+            ],
+            brown: [
+                {name: 'maroon', rgb: [128, 0, 0]},
+                {name: 'brown', rgb: [165, 42, 42]},
+                {name: 'saddlebrown', rgb: [139, 69, 19]},
+                {name: 'sienna', rgb: [160, 82, 45]},
+                {name: 'peru', rgb: [205, 133, 63]},
+            ]
+        };
+
+        function createColorItem(colorData) {
+            const rgb = colorData.rgb;
+            const hex = '#' + rgb.map(c => c.toString(16).padStart(2, '0')).join('');
+            
+            return `
+                <div class="color-item">
+                    <div class="color-box" style="background-color: ${colorData.name};"></div>
+                    <div class="color-info">
+                        <div class="color-name">${colorData.name}</div>
+                        <div class="color-values">RGB(${rgb.join(', ')}) • ${hex}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function populateColorFamily(familyName, colors) {
+            const container = document.getElementById(familyName + '-colors');
+            if (container) {
+                container.innerHTML = colors.map(createColorItem).join('');
+            }
+        }
+
+        // Populate all color families
+        Object.entries(colorFamilies).forEach(([family, colors]) => {
+            populateColorFamily(family, colors);
+        });
+    </script>
+</body>
+</html>

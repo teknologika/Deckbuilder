@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "deckbuilder"
-version = "1.3.2"
+version = "1.4.0"
 description = "Microsoft PowerPoint, presentation slide library, MCP server and CLI tools. Designed for LLM generation of PPTX slides."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -39,6 +39,7 @@ dependencies = [
     "Pillow>=10.0.0",
     "numpy>=1.24.0",
     "click>=8.0.0",
+    "webcolors>=1.13.0",
 ]
 
 [project.optional-dependencies]
@@ -94,6 +95,7 @@ deckbuilder = [
 "assets/master_default_presentation.md",
 "assets/templates/*.json",
 "assets/templates/*.pptx",
+"assets/*.html",
 "layout_intelligence.json",
 "structured_frontmatter_patterns/*.json",
 "language_mappings/*.json"
