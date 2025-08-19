@@ -2,6 +2,12 @@
 
 Learn how to create professionally styled tables in your presentations with complete control over colors, fonts, borders, and dimensions.
 
+## ✨ What's New in 1.4.0
+
+**🎨 HTML Color Names**: Use intuitive color names like `navy`, `lightgray`, `transparent` instead of hex codes
+**🧠 Smart Height Calculation**: Tables automatically size themselves based on content - no more manual height tweaking
+**🎯 Per-Cell Colors**: Status tables with `GREEN`, `RED`, `BLUE` cells that auto-color for visual indicators
+
 ## Quick Start
 
 ```yaml
@@ -72,10 +78,23 @@ data_font_size: 11      # Data row font size (points)
 ## Dimension Controls
 
 ### Table Sizing
+
+**🧠 Smart Height Calculation (New!):**
+Tables now automatically calculate optimal height based on content. Manual row heights are rarely needed:
+
 ```yaml
-table_width: 20.0       # Total width in cm
-table_height: 12.0      # Total height in cm
-row_height: 0.8         # Uniform row height in cm
+# ✅ Just works automatically - no height settings needed!
+table_data: |
+  | Project | Long Description |
+  | Setup | This is a very long description that will wrap automatically |
+  | Deploy | Short text |
+```
+
+**Manual Override (when needed for design):**
+```yaml
+table_width: 20.0       # Total width in cm  
+table_height: 12.0      # Override smart height calculation
+row_height: 0.8         # Override smart per-row calculation
 ```
 
 ### Column Width Control

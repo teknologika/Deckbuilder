@@ -366,37 +366,38 @@ System achieved 100% pattern coverage:
 
 #### **📋 Sprint Tasks**
 
-**Sprint 1: Core Color System** 
-- [ ] Add webcolors dependency to pyproject.toml
-- [ ] Replace _parse_custom_color() to use webcolors.name_to_rgb()
-- [ ] Remove hex color support entirely (breaking change)
-- [ ] Add 'transparent' color support for true transparency
-- [ ] Create comprehensive HTML color reference documentation
-- [ ] Add CLI color discovery commands: `deckbuilder colors list/search/families`
-- [ ] Update all existing documentation to use HTML color names
+**Sprint 1: Core Color System** ✅ COMPLETED
+- [x] Add webcolors dependency to pyproject.toml
+- [x] Replace _parse_custom_color() to use webcolors.name_to_rgb()
+- [x] Remove hex color support entirely (breaking change)
+- [x] Add 'transparent' color support for true transparency
+- [x] Create comprehensive HTML color reference documentation
+- [x] Copy HTML color reference to templates folder during init
+- [x] Update all existing documentation to use HTML color names
 
-**Sprint 2: Per-Cell Color System**
-- [ ] Implement cell content color detection (GREEN, AQUA, RED, etc.)
-- [ ] Add automatic background + text color application for invisible text effect
-- [ ] Create configuration option to enable/disable per-cell colors
-- [ ] Support uppercase/lowercase color names in cells
-- [ ] Add comprehensive examples for status tables
-- [ ] Create documentation for status table creation
+**Sprint 2: Per-Cell Color System** ✅ COMPLETED
+- [x] Implement cell content color detection (GREEN, AQUA, RED, etc.)
+- [x] Add automatic background + text color application for invisible text effect
+- [x] Create configuration option to enable/disable per-cell colors
+- [x] Support uppercase/lowercase color names in cells
+- [x] Add comprehensive examples for status tables
+- [x] Create documentation for status table creation
 
-**Sprint 3: Advanced Table Controls**
-- [ ] Add per-row height arrays: `row_heights: [1.2, 0.8, 0.8, 0.8]`
-- [ ] Add per-row font arrays: `font_sizes: [14, 11, 11, 11]`
-- [ ] Enhance transparency system with proper RGBA support
-- [ ] Add advanced row configuration options
-- [ ] Update documentation to clarify current vs enhanced behaviors
-- [ ] Create migration guide for breaking changes
+**Sprint 3: Smart Height & Core Improvements** ✅ COMPLETED
+- [x] Implement smart table height calculation based on content analysis
+- [x] Eliminate need for manual row_height in most cases
+- [x] Update documentation to clarify current vs enhanced behaviors
+- [x] Create migration guide for breaking changes
+- [ ] ~~Add per-row height arrays~~ (deferred to v1.5.0)
+- [ ] ~~Add per-row font arrays~~ (deferred to v1.5.0)
+- [ ] ~~Enhance transparency system with proper RGBA support~~ (deferred to v1.5.0)
 
-**Sprint 4: Testing & Release**
+**Sprint 4: Testing & Release** 🚧 IN PROGRESS
+- [x] Update all table documentation with new examples
+- [x] Create breaking change migration guide
 - [ ] Comprehensive testing of all color features
-- [ ] Update all table documentation with new examples
-- [ ] Create breaking change migration guide
-- [ ] Version bump to 1.4.0
-- [ ] Release with breaking change notice
+- [ ] Final release preparation
+- [x] Version bump to 1.4.0
 
 #### **🔧 Breaking Changes**
 - **Hex colors removed**: #FF0000 → red, #0000FF → blue

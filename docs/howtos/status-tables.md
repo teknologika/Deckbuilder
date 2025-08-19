@@ -9,6 +9,7 @@ Status tables use **per-cell color detection** to automatically apply colors bas
 1. **Sets the background color** to match the color name
 2. **Sets the text color** to match the background (creating invisible text effect)
 3. **Creates visual status indicators** perfect for dashboards and reports
+4. **🧠 Smart height calculation** ensures optimal table sizing without manual adjustment
 
 ## Quick Start
 

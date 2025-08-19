@@ -51,7 +51,7 @@ class TableBuilder:
         data_font_size = table_data.get("data_font_size", 10)  # 10pt default for data
 
         # Parse dimension options
-        dimensions = self._parse_dimensions(table_data, len(data[0]) if data else 0)
+        dimensions = self._parse_dimensions(table_data, len(data[0]) if data else 0, len(data) if data else 0)
 
         # Find content placeholder or create table in available space
         content_placeholder = None
@@ -68,14 +68,14 @@ class TableBuilder:
             left = content_placeholder.left
             top = content_placeholder.top + content_offset
             width = dimensions["table_width"] or (content_placeholder.width - Cm(1))
-            height = dimensions["table_height"] or Cm(10)  # Reasonable default
+            height = dimensions["table_height"] or self._calculate_smart_table_height(data, header_font_size, data_font_size)
 
         else:
             # Default positioning if no content placeholder found
             left = Cm(2.5)
             top = Cm(5)
             width = dimensions["table_width"] or Cm(20)
-            height = dimensions["table_height"] or Cm(12)
+            height = dimensions["table_height"] or self._calculate_smart_table_height(data, header_font_size, data_font_size)
 
         # Create the table
         rows = len(data)
@@ -355,13 +355,105 @@ class TableBuilder:
         # Default to dark text for transparent cells (works on most backgrounds)
         return RGBColor(64, 64, 64)  # Dark gray for good visibility
 
-    def _parse_dimensions(self, table_data, column_count):
+    def _calculate_smart_table_height(self, data, header_font_size=12, data_font_size=10):
+        """
+        Calculate smart table height based on content analysis.
+
+        Estimates appropriate height based on:
+        - Text content length and wrapping
+        - Font sizes
+        - Number of rows
+        - Content complexity
+
+        Args:
+            data: Table data array
+            header_font_size: Font size for header row
+            data_font_size: Font size for data rows
+
+        Returns:
+            Cm object for estimated table height
+        """
+        if not data:
+            return Cm(3)  # Minimal height for empty table
+
+        total_estimated_height = 0
+
+        for row_idx, row_data in enumerate(data):
+            # Determine if this is header row (first row)
+            is_header = row_idx == 0
+            font_size = header_font_size if is_header else data_font_size
+
+            # Estimate row height based on content
+            row_height = self._estimate_row_height(row_data, font_size, is_header)
+            total_estimated_height += row_height
+
+        return Cm(total_estimated_height)
+
+    def _estimate_row_height(self, row_data, font_size, is_header=False):
+        """
+        Estimate height needed for a single row based on content.
+
+        Args:
+            row_data: List of cell data for the row
+            font_size: Font size in points
+            is_header: Whether this is a header row
+
+        Returns:
+            Height in cm (float)
+        """
+        # Base height for font size (rough estimate: font_size in pt * 0.035 = height in cm)
+        base_height = font_size * 0.04  # Slightly generous for readability
+
+        # Header rows get extra padding
+        if is_header:
+            base_height += 0.3
+
+        # Find the longest content in this row
+        max_content_length = 0
+        longest_text = ""
+
+        for cell_data in row_data:
+            if isinstance(cell_data, dict) and "text" in cell_data:
+                text = str(cell_data["text"]).strip()
+            else:
+                text = str(cell_data).strip()
+
+            if len(text) > max_content_length:
+                max_content_length = len(text)
+                longest_text = text
+
+        # Estimate text wrapping (approximate: chars per line varies by table width)
+        # Conservative estimate for table columns (narrower columns = fewer chars per line)
+        estimated_chars_per_line = 60  # More conservative for typical table columns
+        estimated_lines = max(1, (max_content_length + estimated_chars_per_line - 1) // estimated_chars_per_line)  # Ceiling division
+
+        # Check for explicit line breaks
+        line_breaks = longest_text.count("\n") + longest_text.count("\\n")
+        estimated_lines = max(estimated_lines, line_breaks + 1)
+
+        # Calculate height based on lines needed
+        if estimated_lines > 1:
+            # Multi-line content needs more space
+            line_height = font_size * 0.05  # Line spacing (slightly more generous)
+            total_height = estimated_lines * line_height + 0.3  # Extra padding for multi-line
+        else:
+            # Single line content
+            total_height = base_height
+
+        # Apply minimum and maximum constraints
+        min_height = 0.6  # Minimum readable height
+        max_height = 5.0  # Maximum before it gets unwieldy (increased for long content)
+
+        return max(min_height, min(max_height, total_height))
+
+    def _parse_dimensions(self, table_data, column_count, row_count=None):
         """
         Parse and validate table dimension parameters.
 
         Args:
             table_data: Dictionary containing table configuration
             column_count: Number of columns in the table data
+            row_count: Number of rows in the table data (for row_heights validation)
 
         Returns:
             Dictionary with parsed dimensions or None values
@@ -371,6 +463,7 @@ class TableBuilder:
             "table_height": None,
             "column_widths": None,
             "row_height": None,
+            "row_heights": None,  # New: per-row height array
         }
 
         # Parse table width
@@ -430,6 +523,34 @@ class TableBuilder:
                     dimensions["row_height"] = Cm(row_height_value)
             except (ValueError, TypeError):
                 print(f"Warning: Invalid row_height '{table_data['row_height']}', using default")
+
+        # Parse per-row heights array
+        if "row_heights" in table_data and row_count is not None:
+            row_heights_raw = table_data["row_heights"]
+            if isinstance(row_heights_raw, list):
+                try:
+                    row_heights = [float(h) for h in row_heights_raw if float(h) > 0]
+
+                    # Validate row count
+                    if len(row_heights) < row_count:
+                        # Extend with default height (average of specified heights or 0.8cm)
+                        default_height = sum(row_heights) / len(row_heights) if row_heights else 0.8
+                        missing_count = row_count - len(row_heights)
+                        row_heights.extend([default_height] * missing_count)
+                        print(f"Warning: Only {len(row_heights_raw)} row heights specified for {row_count} rows. Extended with {default_height}cm default.")
+
+                    elif len(row_heights) > row_count:
+                        # Truncate to match actual rows
+                        row_heights = row_heights[:row_count]
+                        print(f"Warning: {len(row_heights_raw)} row heights specified for {row_count} rows. Truncated to match.")
+
+                    # Convert to Cm objects
+                    dimensions["row_heights"] = [Cm(h) for h in row_heights]
+
+                except (ValueError, TypeError) as e:
+                    print(f"Warning: Invalid row_heights '{row_heights_raw}', using default: {e}")
+            else:
+                print(f"Warning: row_heights must be a list, got {type(row_heights_raw)}")
 
         return dimensions
 
