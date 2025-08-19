@@ -256,9 +256,21 @@ class SlideCoordinator:
                     # Use ContentProcessor for content application
                     self.content_processor.apply_content_to_placeholder(slide, placeholder, field_name, field_value, slide_data, content_formatter, image_placeholder_handler)
 
+        except ValueError as e:
+            if "Cannot find placeholder named" in str(e):
+                # User-friendly error for placeholder mapping issues
+                layout = slide_data.get("layout", "Unknown")
+                error_print(f"⚠️  Skipping slide with layout '{layout}' - template placeholder issue")
+                error_print(f"💡 Check your template has the required placeholders for this layout")
+                return  # Skip this slide, continue processing
+            else:
+                raise  # Re-raise other ValueError types
         except Exception as e:
-            error_print(f"Content processing failed: {e}")
-            raise RuntimeError(f"Content processing failed: {e}") from e
+            # Other unexpected errors - provide user-friendly message but don't expose internals
+            layout = slide_data.get("layout", "Unknown")
+            error_print(f"⚠️  Skipping slide with layout '{layout}' - content processing error")
+            error_print(f"💡 Check slide content format and template compatibility")
+            return  # Skip this slide, continue processing
 
     def _add_speaker_notes_if_present(self, slide, slide_data: Dict[str, Any], content_formatter):
         """Add speaker notes if present in slide data."""
