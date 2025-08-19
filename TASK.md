@@ -349,6 +349,71 @@ System achieved 100% pattern coverage:
 - **After**: `create_presentation_from_file(path)` uses 15-20 tokens
 - **Savings**: 95-99% token reduction with identical output quality
 
-**Last Updated**: 2025-07-12
-**Current Branch**: main
-**Latest Achievement**: 100% Foundation Class Implementation - Complete TDD Core System (Phase 4 Sprint 2)
+---
+
+## 🚧 CURRENT PHASE: Version 1.4.0 - Enhanced Table Color System
+
+### **Phase: Enhanced Table Color System** - 🚧 IN PROGRESS 2025-08-19
+**Status**: 🚧 Development Started
+**Version**: 1.4.0 (Breaking Change)
+**Focus**: HTML Color Names + Per-Cell Colors + Advanced Table Controls
+
+#### **🎯 Phase Goals**
+1. **HTML Color Name Support** - Replace hex colors with 140 HTML color names
+2. **Per-Cell Color Overrides** - Auto-detect colors in cell content for status tables
+3. **Enhanced Table Configuration** - Per-row heights, font sizes, transparency
+4. **Comprehensive Color Discovery** - CLI commands and documentation
+
+#### **📋 Sprint Tasks**
+
+**Sprint 1: Core Color System** 
+- [ ] Add webcolors dependency to pyproject.toml
+- [ ] Replace _parse_custom_color() to use webcolors.name_to_rgb()
+- [ ] Remove hex color support entirely (breaking change)
+- [ ] Add 'transparent' color support for true transparency
+- [ ] Create comprehensive HTML color reference documentation
+- [ ] Add CLI color discovery commands: `deckbuilder colors list/search/families`
+- [ ] Update all existing documentation to use HTML color names
+
+**Sprint 2: Per-Cell Color System**
+- [ ] Implement cell content color detection (GREEN, AQUA, RED, etc.)
+- [ ] Add automatic background + text color application for invisible text effect
+- [ ] Create configuration option to enable/disable per-cell colors
+- [ ] Support uppercase/lowercase color names in cells
+- [ ] Add comprehensive examples for status tables
+- [ ] Create documentation for status table creation
+
+**Sprint 3: Advanced Table Controls**
+- [ ] Add per-row height arrays: `row_heights: [1.2, 0.8, 0.8, 0.8]`
+- [ ] Add per-row font arrays: `font_sizes: [14, 11, 11, 11]`
+- [ ] Enhance transparency system with proper RGBA support
+- [ ] Add advanced row configuration options
+- [ ] Update documentation to clarify current vs enhanced behaviors
+- [ ] Create migration guide for breaking changes
+
+**Sprint 4: Testing & Release**
+- [ ] Comprehensive testing of all color features
+- [ ] Update all table documentation with new examples
+- [ ] Create breaking change migration guide
+- [ ] Version bump to 1.4.0
+- [ ] Release with breaking change notice
+
+#### **🔧 Breaking Changes**
+- **Hex colors removed**: #FF0000 → red, #0000FF → blue
+- **Major version bump**: 1.3.2 → 1.4.0
+- **Migration required**: All custom_colors must use HTML names
+- **Clear migration guide**: Hex to HTML name conversions documented
+
+#### **✨ New Features**
+- **140 HTML color names**: red, blue, navy, lightgray, transparent, etc.
+- **Per-cell color auto-detection**: Cell content "GREEN" → green background + text
+- **Invisible text effects**: Status tables with visual indicators
+- **Per-row configuration**: Individual row heights and font sizes
+- **Enhanced transparency**: True RGBA support
+- **CLI color tools**: Discovery and validation commands
+
+---
+
+**Last Updated**: 2025-08-19
+**Current Branch**: main → feature/enhanced-table-colors (pending)
+**Latest Achievement**: Enhanced Table Color System Planning Complete

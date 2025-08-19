@@ -52,9 +52,19 @@ deckbuilder create slides.json
 
 ## Docs
 
+### Getting Started
 - [Quick start](tutorials/first-deck.md)
 - [Branded templates](tutorials/branded-template.md)
+
+### Styling & Customization
+- [Table styling guide](howtos/table-styling.md)
+- [Transparent tables](howtos/transparent-tables.md)
 - [Fonts & proofing language](howtos/fonts-language.md)
+
+### Integration
 - [Run as MCP server](howtos/mcp.md)
 - [CLI reference](cli.md)
+
+### Reference
+- [Table styles reference](reference/table-styles.md)
 - [Python API](reference/deckbuilder.md)
