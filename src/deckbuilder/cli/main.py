@@ -56,12 +56,11 @@ class DeckbuilderCLI:
 
     def _get_available_templates(self):
         """Get list of available templates with error handling"""
-        template_folder = os.getenv("DECK_TEMPLATE_FOLDER")
-        if not template_folder or not Path(template_folder).exists():
+        template_folder = self.path_manager.get_template_folder()
+        if not template_folder.exists():
             return []
 
-        template_path = Path(template_folder)
-        return [template.stem for template in template_path.glob("*.pptx")]
+        return [template.stem for template in template_folder.glob("*.pptx")]
 
     def create_presentation(self, input_file: str, output_name: Optional[str] = None, template: Optional[str] = None) -> str:
         """
@@ -89,8 +88,8 @@ class DeckbuilderCLI:
         if not output_name:
             output_name = input_path.stem
 
-        # Use default template if none provided
-        template_name = template or "default"
+        # Use PathManager to get template name (respects CLI arg > env var > default)
+        template_name = template or self.path_manager.get_template_name()
 
         # Show template selection feedback
         template_folder = self.path_manager.get_template_folder()

@@ -7,7 +7,7 @@ structured frontmatter processing.
 
 from .core.engine import Deckbuilder, get_deckbuilder_client
 
-__version__ = "1.2.8"
+__version__ = "1.3.1"
 __all__ = [
     "Deckbuilder",
     "get_deckbuilder_client",
