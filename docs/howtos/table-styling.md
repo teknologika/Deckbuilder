@@ -299,8 +299,24 @@ custom_colors:
   border_color: "darkgray"  # Dark enough to see
 ```
 
+## Per-Cell Color Detection (New!)
+
+Enable automatic color detection where cell content determines cell colors:
+
+```yaml
+cell_color_mode: auto              # Enable per-cell colors
+table_data: |
+  | Task | Status | Priority |
+  | Setup Database | GREEN | HIGH |
+  | Write Tests | YELLOW | MEDIUM |
+  | Deploy Code | RED | HIGH |
+```
+
+Cells containing color names like "GREEN", "RED", "BLUE" automatically get colored backgrounds with invisible text for clean status indicators.
+
 ## Next Steps
 
-- See [Table Style Reference](../reference/table-styles.md) for complete style listings
-- Check [Structured Frontmatter Patterns](../reference/frontmatter-patterns.md) for layout options
-- View [Brand Customization Guide](./brand-customization.md) for corporate styling
+- **NEW:** [Status Tables Guide](./status-tables.md) for per-cell color detection
+- See [Table Style Reference](../reference/table-styles.md) for complete style listings  
+- Check [HTML Colors Reference](../assets/html_colors_reference.html) for all available colors
+- View [Structured Frontmatter Patterns](../reference/frontmatter-patterns.md) for layout options

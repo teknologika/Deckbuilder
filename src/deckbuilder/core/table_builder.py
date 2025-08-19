@@ -116,6 +116,11 @@ class TableBuilder:
         # Apply styling with font size control
         self._apply_table_styling(table, header_style, row_style, border_style, custom_colors, table_data, header_font_size, data_font_size)
 
+        # Apply per-cell color overrides based on configuration
+        cell_color_mode = table_data.get("cell_color_mode", "auto")
+        if cell_color_mode in ["auto", "enabled"]:
+            self._apply_per_cell_colors(table, data, cell_color_mode)
+
     def _apply_table_styling(self, table, header_style, row_style, border_style, custom_colors, table_data=None, header_font_size=12, data_font_size=10):
         """
         Apply styling to a table with font size control.
@@ -290,6 +295,65 @@ class TableBuilder:
         except (ValueError, TypeError, AttributeError):
             # webcolors raises ValueError for unknown color names
             return None
+
+    def _apply_per_cell_colors(self, table, data, mode="auto"):
+        """
+        Apply per-cell color overrides based on cell content detection.
+
+        This creates status tables where cell content like "GREEN", "RED", "BLUE"
+        automatically gets colored backgrounds with matching text for invisible text effect.
+
+        Args:
+            table: PowerPoint table object
+            data: Table data array
+            mode: Color detection mode - "auto" (default), "enabled", or "disabled"
+        """
+        for row_idx, row_data in enumerate(data):
+            for col_idx, cell_data in enumerate(row_data):
+                if row_idx >= len(table.rows) or col_idx >= len(table.columns):
+                    continue
+
+                cell = table.cell(row_idx, col_idx)
+
+                # Get cell text content
+                if isinstance(cell_data, dict) and "text" in cell_data:
+                    cell_text = str(cell_data["text"]).strip()
+                else:
+                    cell_text = str(cell_data).strip()
+
+                # Check if cell text is a valid color name
+                detected_color = self._parse_custom_color(cell_text)
+                if detected_color is not None:
+                    # Apply background color (same as detected color)
+                    cell.fill.solid()
+                    cell.fill.fore_color.rgb = detected_color
+
+                    # Apply text color (same as background for invisible text effect)
+                    for paragraph in cell.text_frame.paragraphs:
+                        for run in paragraph.runs:
+                            run.font.color.rgb = detected_color
+
+                elif cell_text.upper() == "TRANSPARENT":
+                    # Make cell completely transparent
+                    cell.fill.background()
+
+                    # Make text white or black based on overall table styling for visibility
+                    text_color = self._get_transparent_cell_text_color()
+                    if text_color:
+                        for paragraph in cell.text_frame.paragraphs:
+                            for run in paragraph.runs:
+                                run.font.color.rgb = text_color
+
+    def _get_transparent_cell_text_color(self):
+        """
+        Get appropriate text color for transparent cells.
+
+        Returns white for dark themes, black for light themes.
+        """
+        from pptx.dml.color import RGBColor
+
+        # Default to dark text for transparent cells (works on most backgrounds)
+        return RGBColor(64, 64, 64)  # Dark gray for good visibility
 
     def _parse_dimensions(self, table_data, column_count):
         """
@@ -545,3 +609,8 @@ class TableBuilder:
 
         # Apply styling using existing method
         self._apply_table_styling(table, header_style, row_style, border_style, custom_colors, table_data, header_font_size, data_font_size)
+
+        # Apply per-cell color overrides based on configuration
+        cell_color_mode = table_data.get("cell_color_mode", "auto")
+        if cell_color_mode in ["auto", "enabled"]:
+            self._apply_per_cell_colors(table, data, cell_color_mode)
