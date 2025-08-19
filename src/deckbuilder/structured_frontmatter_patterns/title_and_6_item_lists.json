@@ -2,7 +2,7 @@
     "description": "Six-item list layout with numbers, titles, and content",
     "yaml_pattern": {
         "layout": "Title and 6-item Lists",
-        "slide_title": "str",
+        "title_top": "str",
         "Title1": "str",
         "Content1": "str",
         "Title2": "str",
@@ -18,7 +18,7 @@
     },
     "validation": {
         "required_fields": [
-            "slide_title",
+            "title_top",
             "Title1",
             "Content1",
             "Title2",
