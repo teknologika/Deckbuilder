@@ -152,50 +152,69 @@ class PlaceKittenIntegration:
 
     def _select_image_id(self, context: Optional[Dict] = None) -> int:
         """
-        Select consistent image ID based on context.
+        Select varied image ID with some consistency based on context.
 
         Args:
             context: Optional context with slide information
 
         Returns:
-            int: Image ID (1-based) for consistent selection
+            int: Image ID (1-based) for varied but somewhat consistent selection
         """
-        if not context:
-            return 1  # Default to first image
+        import hashlib
+        import time
 
-        # Use slide index for consistency within presentations
-        if "slide_index" in context:
-            slide_index = context["slide_index"]
-            # Cycle through available images based on slide index
-            available_images = self.pk.get_image_count()
-            return (slide_index % available_images) + 1
+        available_images = self.pk.get_image_count()
 
-        # Use layout type for consistency
-        if "layout" in context:
-            layout = context["layout"]
-            # Simple hash-based selection for consistent results
-            layout_hash = hash(layout) % self.pk.get_image_count()
-            return layout_hash + 1
+        # Create a hash seed from context for variety
+        hash_input = ""
 
-        return 1  # Default fallback
+        if context:
+            # Use slide index for primary variation
+            if "slide_index" in context and context["slide_index"] > 0:
+                # Add layout and slide index for variety
+                hash_input += f"slide_{context['slide_index']}"
+
+            # Add layout for additional variation
+            if "layout" in context:
+                hash_input += f"_layout_{context['layout']}"
+
+            # Add field name for variety between different image placeholders on same slide
+            if "field_name" in context:
+                hash_input += f"_field_{context['field_name']}"
+
+        # If no meaningful context, use current time for variety
+        if not hash_input:
+            # Use current time in seconds for different images on different calls
+            hash_input = f"random_{int(time.time() / 10)}"  # Changes every 10 seconds
+
+        # Generate hash-based image selection (not for security, just variety)
+        hash_bytes = hashlib.md5(hash_input.encode(), usedforsecurity=False).digest()
+        hash_value = int.from_bytes(hash_bytes[:4], byteorder="big")  # Use first 4 bytes
+        image_id = (hash_value % available_images) + 1
+
+        return image_id
 
     def _generate_fallback_cache_key(self, dimensions: Tuple[int, int], context: Optional[Dict] = None) -> str:
         """
-        Generate cache key for fallback image.
+        Generate cache key for fallback image including image variety.
 
         Args:
             dimensions: Target dimensions
             context: Optional context information
 
         Returns:
-            str: Cache key for consistent fallback generation
+            str: Cache key for consistent fallback generation with variety
         """
         width, height = dimensions
+
+        # Get the selected image ID to ensure different images get different cache keys
+        image_id = self._select_image_id(context)
 
         # Base key with dimensions and styling
         key_parts = [
             "placekitten_fallback",
             f"{width}x{height}",
+            f"img{image_id}",  # Include image ID for variety
             self.professional_config["base_filter"],
             f'contrast{self.professional_config["contrast_adjustment"]}',
             f'brightness{self.professional_config["brightness_adjustment"]}',
@@ -203,10 +222,16 @@ class PlaceKittenIntegration:
 
         # Add context-based components for consistency
         if context:
-            if "slide_index" in context:
+            if "slide_index" in context and context["slide_index"] > 0:
                 key_parts.append(f'slide{context["slide_index"]}')
-            elif "layout" in context:
-                key_parts.append(f'layout{hash(context["layout"])}')
+            if "layout" in context:
+                # Use a shorter hash to keep cache keys manageable
+                layout_hash = abs(hash(context["layout"])) % 10000
+                key_parts.append(f"layout{layout_hash}")
+            if "field_name" in context:
+                # Add field name for unique images per placeholder
+                field_hash = abs(hash(context["field_name"])) % 1000
+                key_parts.append(f"field{field_hash}")
 
         return "_".join(str(part) for part in key_parts)
 

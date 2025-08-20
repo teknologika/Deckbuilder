@@ -143,8 +143,12 @@ class TestArchitectureIntegration(unittest.TestCase):
     @patch("src.deckbuilder.core.slide_coordinator.debug_print")
     def test_end_to_end_slide_creation_workflow(self, mock_debug):
         """Test complete end-to-end slide creation workflow."""
-        # Mock all dependencies for a complete workflow test
-        with patch.object(self.slide_builder.layout_resolver, "resolve_layout_by_name", return_value=self.mock_slide_layout):
+        # Mock all dependencies for a complete workflow test - now uses the new safe layout resolution
+        with patch.object(
+            self.slide_builder.layout_resolver,
+            "resolve_layout_with_fallback_safely",
+            return_value={"success": True, "layout": self.mock_slide_layout, "used_layout": "Title and Content", "used_fallback": False},
+        ):
             with patch.object(self.slide_builder.placeholder_manager, "map_fields_to_placeholders", return_value={"title": Mock()}):
                 with patch.object(self.slide_builder.content_processor, "apply_content_to_placeholder"):
 
@@ -158,7 +162,7 @@ class TestArchitectureIntegration(unittest.TestCase):
                     assert result == self.mock_slide
 
                     # Verify workflow steps were executed
-                    self.slide_builder.layout_resolver.resolve_layout_by_name.assert_called_once()
+                    self.slide_builder.layout_resolver.resolve_layout_with_fallback_safely.assert_called_once()
                     self.mock_prs.slides.add_slide.assert_called_once()
                     self.slide_builder.placeholder_manager.map_fields_to_placeholders.assert_called_once()
                     self.slide_builder.content_processor.apply_content_to_placeholder.assert_called_once()

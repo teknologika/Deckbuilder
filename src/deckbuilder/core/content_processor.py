@@ -48,6 +48,7 @@ class ContentProcessor:
         slide_data: Dict[str, Any],
         content_formatter,
         image_placeholder_handler,
+        slide_index: int = None,
     ) -> None:
         """
         Apply content to a single placeholder based on its semantic type.
@@ -77,7 +78,7 @@ class ContentProcessor:
             self._apply_content_placeholder_content(slide, placeholder, field_name, field_value, content_formatter)
 
         elif is_media_placeholder(placeholder_type):
-            self._apply_media_placeholder_content(slide, placeholder, field_name, field_value, slide_data, image_placeholder_handler)
+            self._apply_media_placeholder_content(slide, placeholder, field_name, field_value, slide_data, image_placeholder_handler, slide_index)
 
     def _apply_title_content(self, placeholder, field_value: Any, content_formatter) -> None:
         """
@@ -156,6 +157,7 @@ class ContentProcessor:
         field_value: Any,
         slide_data: Dict[str, Any],
         image_placeholder_handler,
+        slide_index: int = None,
     ) -> None:
         """
         Apply content to media placeholders (images, tables, objects).
@@ -171,7 +173,7 @@ class ContentProcessor:
         placeholder_type = placeholder.placeholder_format.type
 
         if placeholder_type == PP_PLACEHOLDER_TYPE.PICTURE:
-            image_placeholder_handler.handle_image_placeholder(placeholder, field_name, field_value, slide_data)
+            image_placeholder_handler.handle_image_placeholder(placeholder, field_name, field_value, slide_data, slide_index)
 
         elif placeholder_type == PP_PLACEHOLDER_TYPE.TABLE:
             # TABLE placeholders - handle table data

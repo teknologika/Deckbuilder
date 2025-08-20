@@ -15,7 +15,7 @@ class ImagePlaceholderHandler:
         self.image_handler = image_handler
         self.placekitten = placekitten
 
-    def handle_image_placeholder(self, placeholder, field_name, field_value, slide_data):
+    def handle_image_placeholder(self, placeholder, field_name, field_value, slide_data, slide_index=None):
         """
         Handle image insertion into PICTURE placeholders with smart fallback.
 
@@ -24,6 +24,7 @@ class ImagePlaceholderHandler:
             field_name: Name of the field (e.g., 'image_path', 'media.image_path')
             field_value: Image path or URL
             slide_data: Complete slide data for context
+            slide_index: Current slide index for image variety (optional)
         """
         try:
             # Get placeholder dimensions for proper image sizing
@@ -31,10 +32,11 @@ class ImagePlaceholderHandler:
             height = placeholder.height
             dimensions = (int(width.inches * 96), int(height.inches * 96))  # Convert to pixels
 
-            # Prepare context for consistent PlaceKitten generation
+            # Prepare context for varied PlaceKitten generation
             context = {
                 "layout": slide_data.get("layout", slide_data.get("type", "unknown")),
-                "slide_index": getattr(self, "_current_slide_index", 0),
+                "slide_index": slide_index if slide_index is not None else getattr(self, "_current_slide_index", 0),
+                "field_name": field_name,  # Add field name for more variety
             }
 
             # Try to use provided image path

@@ -208,16 +208,48 @@ class SlideCoordinator:
         return formatted_data
 
     def _create_slide_with_layout(self, prs, layout_name: str):
-        """Create slide with resolved layout."""
-        try:
-            slide_layout = self.layout_resolver.resolve_layout_by_name(prs, layout_name)
-            slide = prs.slides.add_slide(slide_layout)
-            # Slide created with resolved layout
-            return slide
+        """Create slide with resolved layout using graceful fallback."""
+        # Define common fallback layouts in order of preference
+        fallback_layouts = ["Title and Content", "Title Only", "Blank", "Content with Caption"]
 
-        except Exception as e:
-            error_print(f"Layout resolution failed for '{layout_name}': {e}")
-            raise ValueError(f"Cannot resolve layout '{layout_name}': {e}") from e
+        # Use safe resolution with fallbacks to prevent crashes
+        result = self.layout_resolver.resolve_layout_with_fallback_safely(prs, layout_name, fallback_layouts)
+
+        if result["success"]:
+            slide = prs.slides.add_slide(result["layout"])
+
+            # Log fallback usage for user awareness
+            if result["used_fallback"]:
+                error_print(f"⚠️  Layout '{layout_name}' not found - using fallback '{result['used_layout']}' instead")
+
+            return slide
+        else:
+            # Even fallbacks failed - provide helpful error but don't crash
+            available = result["available_layouts"]
+            suggestions = result["suggestions"]
+
+            error_msg = f"⚠️  Cannot find layout '{layout_name}' or any fallbacks."
+            error_msg += f"\n   Available layouts: {', '.join(available[:5])}"
+            if len(available) > 5:
+                error_msg += f" (and {len(available) - 5} more)"
+            if suggestions:
+                error_msg += f"\n   Did you mean: {', '.join(suggestions)}?"
+
+            error_print(error_msg)
+
+            # Use the first available layout as last resort
+            if available:
+                error_print(f"🔄 Using first available layout '{available[0]}' as emergency fallback")
+                try:
+                    emergency_layout = self.layout_resolver.resolve_layout_by_name(prs, available[0])
+                    return prs.slides.add_slide(emergency_layout)
+                except Exception as emergency_error:  # nosec B110
+                    # Emergency fallback failed - this is expected in severely broken templates
+                    error_print(f"Emergency fallback failed: {emergency_error}")
+                    # Continue to final error - this is intentional
+
+            # Absolute last resort - let the original error propagate but with better message
+            raise ValueError(f"Cannot resolve layout '{layout_name}' and no fallbacks available. Available layouts: {available}")
 
     def _normalize_placeholder_names(self, slide, layout_name: str):
         """Normalize placeholder names using hybrid approach."""
@@ -253,8 +285,10 @@ class SlideCoordinator:
                 if field_name in placeholder_data:
                     field_value = placeholder_data[field_name]
 
-                    # Use ContentProcessor for content application
-                    self.content_processor.apply_content_to_placeholder(slide, placeholder, field_name, field_value, slide_data, content_formatter, image_placeholder_handler)
+                    # Use ContentProcessor for content application (pass slide index for image variety)
+                    self.content_processor.apply_content_to_placeholder(
+                        slide, placeholder, field_name, field_value, slide_data, content_formatter, image_placeholder_handler, self._current_slide_index
+                    )
 
         except ValueError as e:
             if "Cannot find placeholder named" in str(e):

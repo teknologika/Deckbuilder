@@ -70,7 +70,13 @@ class TestSlideCoordinator(unittest.TestCase):
         self.coordinator._placeholder_manager = Mock()
         self.coordinator._content_processor = Mock()
 
-        self.coordinator._layout_resolver.resolve_layout_by_name.return_value = self.mock_slide_layout
+        # Mock the new safe layout resolution method
+        self.coordinator._layout_resolver.resolve_layout_with_fallback_safely.return_value = {
+            "success": True,
+            "layout": self.mock_slide_layout,
+            "used_layout": "Title and Content",
+            "used_fallback": False,
+        }
         self.mock_prs.slides.add_slide.return_value = self.mock_slide
         self.coordinator._placeholder_manager.map_fields_to_placeholders.return_value = {"title": Mock()}
 
@@ -82,7 +88,9 @@ class TestSlideCoordinator(unittest.TestCase):
 
         # Verify workflow
         assert result == self.mock_slide
-        self.coordinator._layout_resolver.resolve_layout_by_name.assert_called_once_with(self.mock_prs, "Title and Content")
+        self.coordinator._layout_resolver.resolve_layout_with_fallback_safely.assert_called_once_with(
+            self.mock_prs, "Title and Content", ["Title and Content", "Title Only", "Blank", "Content with Caption"]
+        )
         self.mock_prs.slides.add_slide.assert_called_once_with(self.mock_slide_layout)
 
         # Verify successful execution - no debug assertions needed
@@ -235,7 +243,7 @@ class TestSlideCoordinator(unittest.TestCase):
         # Verify workflow
         self.coordinator._placeholder_manager.map_fields_to_placeholders.assert_called_once()
         self.coordinator._content_processor.apply_content_to_placeholder.assert_called_once_with(
-            self.mock_slide, mock_placeholder, "title", "Test Title", slide_data, self.mock_content_formatter, self.mock_image_handler
+            self.mock_slide, mock_placeholder, "title", "Test Title", slide_data, self.mock_content_formatter, self.mock_image_handler, 0
         )
 
     def test_speaker_notes_detection_multiple_locations(self):
