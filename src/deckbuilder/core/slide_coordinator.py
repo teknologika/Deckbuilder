@@ -37,7 +37,7 @@ class SlideCoordinator:
     7. Return completed slide
     """
 
-    def __init__(self, layout_resolver=None, placeholder_manager=None, content_processor=None, table_handler=None):
+    def __init__(self, layout_resolver=None, placeholder_manager=None, content_processor=None, table_handler=None, background_handler=None):
         """
         Initialize SlideCoordinator with dependency injection.
 
@@ -46,12 +46,14 @@ class SlideCoordinator:
             placeholder_manager: PlaceholderManager instance (optional - will create if None)
             content_processor: ContentProcessor instance (optional - will create if None)
             table_handler: TableHandler instance (optional - will create if None)
+            background_handler: BackgroundImageHandler instance (optional - will create if None)
         """
         # Dependency injection with lazy loading
         self._layout_resolver = layout_resolver
         self._placeholder_manager = placeholder_manager
         self._content_processor = content_processor
         self._table_handler = table_handler
+        self._background_handler = background_handler
 
         # Initialize slide tracking
         self._current_slide_index = 0
@@ -92,6 +94,23 @@ class SlideCoordinator:
             self._table_handler = TableHandler()
         return self._table_handler
 
+    @property
+    def background_handler(self):
+        """Lazy-loaded BackgroundImageHandler."""
+        if self._background_handler is None:
+            from .background_handler import BackgroundImageHandler
+            from ..utils.path import get_placekitten
+            from ..image.image_handler import ImageHandler
+            from ..image.placekitten_integration import PlaceKittenIntegration
+
+            # Create dependencies for background handler
+            image_handler = ImageHandler()
+            PlaceKitten = get_placekitten()
+            placekitten_integration = PlaceKittenIntegration(image_handler) if PlaceKitten else None
+
+            self._background_handler = BackgroundImageHandler(image_handler, placekitten_integration)
+        return self._background_handler
+
     def create_slide(self, prs, slide_data: Dict[str, Any], content_formatter, image_placeholder_handler):
         """
         Create a single slide using clean orchestration flow.
@@ -120,16 +139,19 @@ class SlideCoordinator:
             layout_name = slide_data.get("layout", slide_data.get("type", "Title and Content"))
             slide = self._create_slide_with_layout(prs, layout_name)
 
-            # Step 3: Normalize placeholder names using hybrid approach
+            # Step 3: Apply background image if specified (before content so it appears behind)
+            self._apply_background_image_if_present(slide, slide_data)
+
+            # Step 4: Normalize placeholder names using hybrid approach
             self._normalize_placeholder_names(slide, layout_name)
 
-            # Step 4: Process content using enhanced modules
+            # Step 5: Process content using enhanced modules
             self._process_slide_content(slide, slide_data, layout_name, content_formatter, image_placeholder_handler)
 
-            # Step 5: Add speaker notes if present
+            # Step 6: Add speaker notes if present
             self._add_speaker_notes_if_present(slide, slide_data, content_formatter)
 
-            # Step 6: Track slide completion
+            # Step 7: Track slide completion
             self._current_slide_index += 1
             # Slide creation completed successfully
 
@@ -318,3 +340,18 @@ class SlideCoordinator:
 
         if speaker_notes:
             self.add_speaker_notes(slide, speaker_notes, content_formatter)
+
+    def _apply_background_image_if_present(self, slide, slide_data: Dict[str, Any]):
+        """Apply background image if background_image field is present in slide data."""
+        try:
+            if self.background_handler.should_apply_background(slide_data):
+                background_image_path = self.background_handler.get_background_image_path(slide_data)
+                if background_image_path:
+                    success = self.background_handler.apply_background_image(slide, background_image_path, slide_data, self._current_slide_index)
+                    if success:
+                        debug_print(f"✅ Applied background image: {background_image_path}")
+                    else:
+                        debug_print(f"⚠️  Failed to apply background image: {background_image_path}")
+        except Exception as e:
+            error_print(f"Background image processing failed: {e}")
+            # Don't raise - continue slide creation without background

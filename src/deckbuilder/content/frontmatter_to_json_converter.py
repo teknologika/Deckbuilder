@@ -209,6 +209,10 @@ def markdown_to_canonical_json(markdown_content: str) -> Dict[str, Any]:
         if "speaker_notes" in slide_data:
             slide_obj["speaker_notes"] = slide_data["speaker_notes"]
 
+        # Add background_image to slide level if present (for BackgroundHandler)
+        if "background_image" in slide_data:
+            slide_obj["background_image"] = slide_data["background_image"]
+
         # Add other placeholder fields from frontmatter (exclude internal fields and table properties)
         excluded_fields = [
             "type",
@@ -218,6 +222,7 @@ def markdown_to_canonical_json(markdown_content: str) -> Dict[str, Any]:
             "title_formatted",
             "subtitle_formatted",
             "speaker_notes",  # Handle at slide level, not as placeholder
+            "background_image",  # Handle at slide level for BackgroundHandler
         ]
 
         # Also exclude table properties from placeholders since they go in the table object
