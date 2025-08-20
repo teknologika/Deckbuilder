@@ -315,7 +315,7 @@ image_1: "src/placekitten/images/ACuteKitten-1.png"
         canonical_data = markdown_to_canonical_json(markdown)
         with pytest.raises(Exception) as exc_info:
             deck.create_presentation(canonical_data, "test_invalid_layout")
-        assert "not found" in str(exc_info.value)
+        assert "No pattern found" in str(exc_info.value)
 
     def test_missing_image_with_no_fallback(self, deckbuilder_with_env, monkeypatch):
         """Test behavior when image is missing and fallback fails."""
