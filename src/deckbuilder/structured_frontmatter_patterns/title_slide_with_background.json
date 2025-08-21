@@ -15,5 +15,5 @@
             "background_image"
         ]
     },
-    "example": "---\nlayout: \"Title Slide\"\ntitle: \"Welcome to Our Company\"\nsubtitle: \"Annual Report 2024 - Building the Future Together\"\nbackground_image: \"/path/to/company-background.jpg\"\n---"
+    "example": "---\nlayout: Title Slide\ntitle: \"Welcome to Our Company\"\nsubtitle: \"Annual Report 2024 - Building the Future Together\"\nbackground_image: \"/path/to/company-background.jpg\"\n---"
 }
