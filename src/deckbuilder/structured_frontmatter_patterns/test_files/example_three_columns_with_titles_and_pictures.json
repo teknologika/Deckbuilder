@@ -1,0 +1,19 @@
+{
+  "slides": [
+    {
+      "layout": "Three Columns With Titles and Pictures",
+      "placeholders": {
+        "title_top": "***Deckbuilder*** **Competitive** *Advantages*",
+        "title_col1": "**Performance**",
+        "picture_col1": "placeholder.png",
+        "content_col1": "• ***Sub-second*** processing\n• *Optimized* algorithms\n• ___Scalable___ architecture",
+        "title_col2": "**Quality**",
+        "picture_col2": "placeholder.png",
+        "content_col2": "• **Professional** output\n• ***Consistent*** formatting\n• ___Enterprise-grade___ reliability",
+        "title_col3": "**Usability**",
+        "content_col3": "• *Intuitive* interface\n• **Minimal** learning curve\n• ***Seamless*** integration",
+        "picture_col3": "placeholder.png"
+      }
+    }
+  ]
+}

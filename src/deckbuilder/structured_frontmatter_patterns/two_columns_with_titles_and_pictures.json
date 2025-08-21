@@ -1,0 +1,25 @@
+{
+    "description": "Two-column layout with individual titles, content, and pictures for each column",
+    "yaml_pattern": {
+        "layout": "Two Content With Titles and Pictures",
+        "title_top": "str",
+        "title_col1": "str",
+        "content_col1": "str",
+        "picture_col1": "str",
+        "title_col2": "str",
+        "content_col2": "str",
+        "picture_col2": "str"
+    },
+    "validation": {
+        "required_fields": [
+            "title_top",
+            "title_col1",
+            "content_col1",
+            "picture_col1",
+            "title_col2",
+            "content_col2",
+            "picture_col2"
+        ]
+    },
+    "example": "---\nlayout: Two Content With Titles and Pictures\ntitle_top: \"***Deckbuilder*** **Competitive** *Advantages*\"\ntitle_col1: \"**Performance**\"\ncontent_col1: |\n  - ***Sub-second*** processing\n  - *Optimized* algorithms\n  - ___Scalable___ architecture\npicture_col1: \"placeholder.png\"\ntitle_col2: \"**Quality**\"\ncontent_col2: |\n  - **Professional** output\n  - ***Consistent*** formatting\n  - ___Enterprise-grade___ reliability\npicture_col2: \"placeholder.png\"\n---"
+}

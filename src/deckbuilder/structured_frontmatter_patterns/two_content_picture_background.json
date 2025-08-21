@@ -1,0 +1,23 @@
+{
+    "description": "Two-content layout with left and right content areas plus image backgrounds for each side",
+    "yaml_pattern": {
+        "layout": "Two Content Picture Background",
+        "title_top": "str",
+        "content_left": "str",
+        "image_left": "str",
+        "content_right": "str",
+        "image_right": "str"
+    },
+    "validation": {
+        "required_fields": [
+            "title_top",
+            "content_left",
+            "content_right"
+        ],
+        "optional_fields": [
+            "image_left",
+            "image_right"
+        ]
+    },
+    "example": "---\nlayout: Two Content Picture Background\ntitle_top: \"**Deckbuilder** *Core* Features\"\ncontent_left: |\n  **Technical Capabilities**\n  • *Semantic* layout detection\n  • ***Automatic*** content optimization\n  • ___Smart___ placeholder mapping\n  • **Template** intelligence\n  • *Dynamic* content processing\nimage_left: \"placeholder_right.png\"\ncontent_right: |\n  **Business Benefits**\n  • ___Enterprise-grade___ presentations\n  • **Consistent** branding across teams\n  • *Polished* professional formatting\n  • ***Automated*** workflow efficiency\n  • *Scalable* presentation generation\nimage_right: \"placeholder_right.png\"\n---"
+}

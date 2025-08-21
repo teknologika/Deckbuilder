@@ -1,0 +1,19 @@
+{
+    "description": "Title slide layout with background image support",
+    "yaml_pattern": {
+        "layout": "Title Slide",
+        "title": "str",
+        "subtitle": "str",
+        "background_image": "str"
+    },
+    "validation": {
+        "required_fields": [
+            "title",
+            "subtitle"
+        ],
+        "optional_fields": [
+            "background_image"
+        ]
+    },
+    "example": "---\nlayout: \"Title Slide\"\ntitle: \"Welcome to Our Company\"\nsubtitle: \"Annual Report 2024 - Building the Future Together\"\nbackground_image: \"/path/to/company-background.jpg\"\n---"
+}

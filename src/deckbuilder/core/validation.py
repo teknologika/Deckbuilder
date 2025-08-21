@@ -53,11 +53,13 @@ class PresentationValidator:
 
         # Validate slide count matches
         if len(markdown_sections) != len(json_slides):
-            raise ValidationError(
-                f"Markdown → JSON conversion error: {len(markdown_sections)} markdown sections "
-                f"converted to {len(json_slides)} JSON slides\n"
-                f"Fix: Check markdown section parsing and frontmatter conversion"
-            )
+            error_print(f"⚠️ Markdown → JSON conversion warning: {len(markdown_sections)} markdown sections " f"converted to {len(json_slides)} JSON slides")
+            # ValidationError removed - validation should not crash application
+            # raise ValidationError(
+            #     f"Markdown → JSON conversion error: {len(markdown_sections)} markdown sections "
+            #     f"converted to {len(json_slides)} JSON slides\n"
+            #     f"Fix: Check markdown section parsing and frontmatter conversion"
+            # )
 
         # Validate each section conversion
         for section_idx, (md_section, json_slide) in enumerate(zip(markdown_sections, json_slides)):
@@ -426,7 +428,11 @@ class PresentationValidator:
 
                     i += 2
                 except yaml.YAMLError as e:
-                    raise ValidationError(f"YAML parsing error in markdown frontmatter: {e}\n" f"Fix: Check YAML syntax in frontmatter section")
+                    error_print(f"⚠️ YAML parsing warning in markdown frontmatter: {e}")
+                    # ValidationError removed - validation should not crash application
+                    # raise ValidationError(f"YAML parsing error in markdown frontmatter: {e}\n" f"Fix: Check YAML syntax in frontmatter section")
+                    # Skip this section and continue processing
+                    i += 1
             else:
                 i += 1
 

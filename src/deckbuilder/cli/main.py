@@ -110,49 +110,57 @@ class DeckbuilderCLI:
         db = Deckbuilder(path_manager_instance=self.path_manager)
 
         try:
-            presentation_data = {}
-            markdown_content = None
-
             if input_path.suffix.lower() == ".md":
-                from deckbuilder.content.frontmatter_to_json_converter import markdown_to_canonical_json
-                from deckbuilder.core.validation import PresentationValidator
-
-                # Process markdown file
+                # Process markdown file using new safe method
                 markdown_content = input_path.read_text(encoding="utf-8")
                 click.echo(f"Processing markdown file: {input_path.name}")
-                presentation_data = markdown_to_canonical_json(markdown_content)
 
-                # STEP 0: Validate Markdown → JSON conversion
-                template_folder = str(self.path_manager.get_template_folder())
-                validator = PresentationValidator(presentation_data, template_name, template_folder)
-                validator.validate_markdown_to_json(markdown_content, presentation_data)
+                # Use new safe method that handles all validation internally
+                result = db.create_presentation_from_markdown(
+                    markdown_content,
+                    fileName=output_name,
+                    templateName=template_name,
+                    language_code=self.language,
+                    font_name=self.font,
+                )
+
+                # Handle structured result
+                if result.success:
+                    click.echo(f"✓ Presentation created successfully: {result.filename}")
+                    return result.filename
+                else:
+                    click.echo(f"✗ {result.error_message}", err=True)
+                    return
+
             elif input_path.suffix.lower() == ".json":
-                # Process JSON file directly
+                # Process JSON file directly (keep existing approach for now)
                 with open(input_path, "r", encoding="utf-8") as f:
                     presentation_data = json.load(f)
                 click.echo(f"Processing JSON file: {input_path.name}")
+
+                result_message = db.create_presentation(
+                    presentation_data,
+                    fileName=output_name,
+                    templateName=template_name,
+                    language_code=self.language,
+                    font_name=self.font,
+                )
+
+                # Check if result indicates an error
+                if result_message and ("Error creating presentation from markdown:" in result_message or "Error creating presentation from JSON:" in result_message):
+                    click.echo(f"✗ {result_message}", err=True)
+                    return
+
+                click.echo(f"✓ {result_message}")
+                return result_message
+
             else:
-                raise ValueError(f"Unsupported file format: {input_path.suffix}. " "Supported formats: .md, .json")
-
-            result = db.create_presentation(
-                presentation_data,
-                fileName=output_name,
-                templateName=template_name,
-                language_code=self.language,  # Pass language from CLI/env vars
-                font_name=self.font,  # Pass font from CLI/env vars
-            )
-
-            # Check if result indicates an error
-            if result and ("Error creating presentation from markdown:" in result or "Error creating presentation from JSON:" in result):
-                click.echo(f"✗ {result}", err=True)
-                raise RuntimeError(result)
-
-            click.echo(f"✓ Presentation created successfully: {result}")
-            return result
+                click.echo(f"✗ Unsupported file format: {input_path.suffix}. Supported formats: .md, .json", err=True)
+                return
 
         except Exception as e:
-            click.echo(f"❌ Error creating presentation: {e}", err=True)
-            raise
+            click.echo(f"❌ Unexpected error creating presentation: {e}", err=True)
+            # Don't re-raise since we want graceful CLI behavior
 
     def analyze_template(self, template_name: str = "default", verbose: bool = False):
         """Analyze PowerPoint template structure"""

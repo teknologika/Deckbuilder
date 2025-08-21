@@ -30,6 +30,16 @@
       }
     },
     {
+      "layout": "Two Content Picture Background",
+      "placeholders": {
+        "title_top": "**Deckbuilder** *Core* Features",
+        "content_left": "**Technical Capabilities**\n• *Semantic* layout detection\n• ***Automatic*** content optimization\n• ___Smart___ placeholder mapping\n• **Template** intelligence\n• *Dynamic* content processing",
+        "image_left": "placeholder_left.png",
+        "content_right": "**Business Benefits**\n• ___Enterprise-grade___ presentations\n• **Consistent** branding across teams\n• *Polished* professional formatting\n• ***Automated*** workflow efficiency\n• *Scalable* presentation generation",
+        "image_right": "placeholder_right.png"
+      }
+    },
+    {
       "layout": "Comparison",
       "placeholders": {
         "title_top": "**Traditional** vs *Modern* Presentation Creation",
@@ -89,6 +99,21 @@
         "content_col2": "• **Professional** formatting\n• ***Consistent*** branding\n• ___Error-free___ output",
         "title_col3": "**Scalability**",
         "content_col3": "• *Enterprise-grade* performance\n• **Team** collaboration\n• ***Unlimited*** presentations"
+      }
+    },
+    {
+      "layout": "Three Columns With Titles and Pictures",
+      "placeholders": {
+        "title_top": "***Deckbuilder*** **Competitive** *Advantages*",
+        "title_col1": "**Performance**",
+        "picture_col1": "placeholder.png",
+        "content_col1": "• ***Sub-second*** processing\n• *Optimized* algorithms\n• ___Scalable___ architecture",
+        "title_col2": "**Quality**",
+        "picture_col2": "placeholder.png",
+        "content_col2": "• **Professional** output\n• ***Consistent*** formatting\n• ___Enterprise-grade___ reliability",
+        "title_col3": "**Usability**",
+        "content_col3": "• *Intuitive* interface\n• **Minimal** learning curve\n• ***Seamless*** integration",
+        "picture_col3": "placeholder.png"
       }
     },
     {

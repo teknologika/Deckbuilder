@@ -2,6 +2,7 @@
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any, Optional
+import yaml
 
 from pptx import Presentation
 
@@ -10,6 +11,7 @@ from .presentation_builder import PresentationBuilder
 from ..content.processor import ContentProcessor
 from ..templates.manager import TemplateManager
 from ..image.image_handler import ImageHandler
+from .result import PresentationResult, ValidationResult
 
 # PlaceKitten will be imported lazily when needed
 from ..utils.path import get_placekitten
@@ -172,6 +174,109 @@ class Deckbuilder:
         success_print(f"✅ Presentation complete: {file_name} ({slide_count} slides)")
 
         return f"Successfully created presentation with {slide_count} slides. {write_result}"
+
+    def create_presentation_from_markdown(
+        self,
+        markdown_content: str,
+        fileName: str = "Sample_Presentation",
+        templateName: str = "default",
+        language_code: Optional[str] = None,
+        font_name: Optional[str] = None,
+    ) -> PresentationResult:
+        """
+        Creates a presentation from markdown content with frontmatter.
+
+        Handles all validation internally and returns structured result instead of throwing exceptions.
+        This is the new recommended method for creating presentations from markdown.
+
+        Args:
+            markdown_content: Raw markdown string with frontmatter
+            fileName: Output filename (without extension)
+            templateName: Template to use
+            language_code: Language for formatting
+            font_name: Font to use
+
+        Returns:
+            PresentationResult with success/error information
+        """
+        try:
+            # Parse markdown to canonical JSON with internal error handling
+            conversion_result = self._convert_markdown_to_json_safe(markdown_content)
+            if not conversion_result.valid:
+                # Convert validation errors to presentation error
+                error_messages = "\n".join(conversion_result.errors)
+                return PresentationResult.content_error_result(error_messages, "Check markdown frontmatter syntax and structure")
+
+            # Get the converted data
+            presentation_data = conversion_result.context.get("presentation_data")
+            if not presentation_data:
+                return PresentationResult.content_error_result("Failed to convert markdown to presentation data", "Ensure markdown has valid frontmatter sections")
+
+            # Use existing presentation creation (but handle its exceptions)
+            try:
+                result_message = self.create_presentation(
+                    presentation_data,
+                    fileName=fileName,
+                    templateName=templateName,
+                    language_code=language_code,
+                    font_name=font_name,
+                )
+
+                # Parse success message to extract details
+                slide_count = len(presentation_data.get("slides", []))
+                filename = self._extract_filename_from_result(result_message)
+
+                return PresentationResult.success_result(filename, slide_count)
+
+            except ValueError as e:
+                return PresentationResult.validation_error_result(str(e), "Check presentation data structure and template compatibility")
+            except Exception as e:
+                return PresentationResult.error_result(f"Unexpected error during presentation creation: {str(e)}")
+
+        except Exception as e:
+            return PresentationResult.error_result(f"Unexpected error processing markdown: {str(e)}")
+
+    def _convert_markdown_to_json_safe(self, markdown_content: str) -> ValidationResult:
+        """
+        Safely convert markdown to canonical JSON with comprehensive error handling.
+
+        Returns ValidationResult instead of throwing exceptions.
+        """
+        try:
+            from ..content.frontmatter_to_json_converter import markdown_to_canonical_json
+
+            # Try conversion - this may internally handle some YAML errors
+            presentation_data = markdown_to_canonical_json(markdown_content)
+
+            # Basic validation of the result
+            if not isinstance(presentation_data, dict):
+                return ValidationResult.error_result(["Conversion failed: Result is not a valid dictionary"])
+
+            if "slides" not in presentation_data:
+                return ValidationResult.error_result(["Conversion failed: No slides found in markdown", "Ensure markdown has frontmatter sections with layout specifications"])
+
+            if not isinstance(presentation_data["slides"], list):
+                return ValidationResult.error_result(["Conversion failed: Slides data is not a list"])
+
+            if len(presentation_data["slides"]) == 0:
+                return ValidationResult.error_result(["Conversion failed: No slides generated from markdown", "Check that frontmatter sections are properly formatted"])
+
+            result = ValidationResult.success_result()
+            result.context = {"presentation_data": presentation_data}
+            return result
+
+        except yaml.YAMLError as e:
+            # Handle YAML parsing errors gracefully
+            error_str = str(e)
+            return ValidationResult.error_result([f"YAML syntax error in frontmatter: {error_str}", "Fix: Check YAML indentation and syntax in frontmatter sections"])
+        except Exception as e:
+            return ValidationResult.error_result([f"Error converting markdown to presentation format: {str(e)}"])
+
+    def _extract_filename_from_result(self, result_message: str) -> str:
+        """Extract filename from success message."""
+        if "Successfully created presentation: " in result_message:
+            return result_message.split("Successfully created presentation: ")[1].strip()
+        return "presentation.pptx"
 
     # Removed _process_mixed_content_for_json - table handling now uses dedicated layouts
 
